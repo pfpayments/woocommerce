@@ -1,0 +1,224 @@
+<?php
+if (!defined('ABSPATH')) {
+	exit();
+}
+/**
+ * PostFinance Checkout WooCommerce
+ *
+ * This WooCommerce plugin enables to process payments with PostFinance Checkout (https://www.postfinance.ch).
+ *
+ * @author customweb GmbH (http://www.customweb.com/)
+ * @license http://www.apache.org/licenses/LICENSE-2.0 Apache Software License (ASL 2.0)
+ */
+/**
+ * WC PostFinanceCheckout Admin class
+ */
+class WC_PostFinanceCheckout_Admin {
+	
+	/**
+	 * The single instance of the class.
+	 *
+	 * @var WC_PostFinanceCheckout_Admin
+	 */
+	protected static $_instance = null;
+
+	/**
+	 * Main WooCommerce PostFinanceCheckout Admin Instance.
+	 *
+	 * Ensures only one instance of WC PostFinanceCheckout Admin is loaded or can be loaded.
+	 *
+	 * @return WC_PostFinanceCheckout_Admin - Main instance.
+	 */
+	public static function instance(){
+		if (self::$_instance === null) {
+			self::$_instance = new self();
+		}
+		return self::$_instance;
+	}
+
+	/**
+	 * WC PostFinanceCheckout Admin Constructor.
+	 */
+	protected function __construct(){
+		$this->includes();
+		$this->init_hooks();
+	}
+
+	/**
+	 * Include required core files used in admin and on the frontend.
+	 */
+	private function includes(){
+	    require_once (WC_POSTFINANCECHECKOUT_ABSPATH . 'includes/admin/class-wc-postfinancecheckout-admin-document.php');
+	    require_once (WC_POSTFINANCECHECKOUT_ABSPATH . 'includes/admin/class-wc-postfinancecheckout-admin-transaction.php');
+	    require_once (WC_POSTFINANCECHECKOUT_ABSPATH . 'includes/admin/class-wc-postfinancecheckout-admin-notices.php');
+	    require_once (WC_POSTFINANCECHECKOUT_ABSPATH . 'includes/admin/class-wc-postfinancecheckout-admin-order-completion.php');
+	    require_once (WC_POSTFINANCECHECKOUT_ABSPATH . 'includes/admin/class-wc-postfinancecheckout-admin-order-void.php');
+	    require_once (WC_POSTFINANCECHECKOUT_ABSPATH . 'includes/admin/class-wc-postfinancecheckout-admin-refund.php');
+	}
+
+	private function init_hooks(){
+		add_action('plugins_loaded', array(
+			$this,
+			'loaded' 
+		), 0);
+		
+		add_filter('woocommerce_get_settings_pages', array(
+			$this,
+			'add_settings' 
+		));
+		
+		add_filter('plugin_action_links_' . WC_POSTFINANCECHECKOUT_PLUGIN_BASENAME, array(
+			$this,
+			'plugin_action_links' 
+		));
+		
+		add_filter('woocommerce_hidden_order_itemmeta', array(
+			$this,
+			'hide_order_unique_id_meta' 
+		), 10, 1);
+		
+		add_action('woocommerce_order_item_add_action_buttons', array(
+			$this,
+			'render_authorized_action_buttons' 
+		), 1);
+		
+		add_action('wp_ajax_woocommerce_postfinancecheckout_update_order', array(
+			$this,
+			'update_order' 
+		));
+		add_action('admin_init', array(
+			$this,
+			'handle_woocommerce_active'
+		));
+		
+		add_action('woocommerce_admin_order_actions', array(
+			$this,
+			'remove_not_wanted_order_actions'
+		), 10, 2);
+	}
+	
+	public function handle_woocommerce_active(){
+		// WooCommerce plugin not activated
+		if (!is_plugin_active('woocommerce/woocommerce.php'))
+		{
+			// Deactivate myself
+		    deactivate_plugins(WC_POSTFINANCECHECKOUT_PLUGIN_BASENAME);
+			add_action('admin_notices', array(
+				'WC_PostFinanceCheckout_Admin_Notices',
+				'plugin_deactivated'
+			));
+		}
+	}
+	
+	public function render_authorized_action_buttons(WC_Order $order){
+		$gateway = wc_get_payment_gateway_by_order($order);
+		if ($gateway instanceof WC_PostFinanceCheckout_Gateway) {
+		    $transaction_info = WC_PostFinanceCheckout_Entity_Transaction_Info::load_by_order_id($order->get_id());
+		    if ($transaction_info->get_state() == \PostFinanceCheckout\Sdk\Model\TransactionState::AUTHORIZED) {
+		        if (WC_PostFinanceCheckout_Entity_Completion_Job::count_running_completion_for_transaction($transaction_info->get_space_id(), 
+		            $transaction_info->get_transaction_id()) > 0 || WC_PostFinanceCheckout_Entity_Void_Job::count_running_void_for_transaction(
+						$transaction_info->get_space_id(), $transaction_info->get_transaction_id()) > 0) {
+					echo '<span class="postfinancecheckout-action-in-progress">' . __('There is a completion/void in progress.', 'woo-postfinancecheckout') . '</span>';
+					echo '<button type="button" class="button postfinancecheckout-update-order">' . __('Update', 'woo-postfinancecheckout') . '</button>';
+				}
+				else {
+					echo '<button type="button" class="button postfinancecheckout-void-show">' . __('Void', 'woo-postfinancecheckout') . '</button>';
+					echo '<button type="button" class="button button-primary postfinancecheckout-completion-show">' . __('Completion', 'woo-postfinancecheckout') .
+							 '</button>';
+				}
+			}
+		}
+	}
+	
+	public function remove_not_wanted_order_actions(array $actions, WC_Order $order){
+		$gateway = wc_get_payment_gateway_by_order($order);
+		if ($gateway instanceof WC_PostFinanceCheckout_Gateway) {
+			if($order->has_status('on-hold')){
+				unset($actions['processing']);
+				unset($actions['complete']);
+			}
+		}
+		return $actions;
+	}
+
+	/**
+	 * Init WooCommerce PostFinanceCheckout when plugins are loaded. 
+	 */
+	public function loaded(){
+		add_action('admin_enqueue_scripts', array(
+			$this,
+			'enque_script_and_css' 
+		));
+	}
+
+	public function enque_script_and_css(){
+	    wp_enqueue_style('woo-postfinancecheckout-admin-styles', WooCommerce_PostFinanceCheckout::instance()->plugin_url() . '/assets/css/admin.css');
+	    wp_enqueue_script('postfinancecheckout-admin-js', WooCommerce_PostFinanceCheckout::instance()->plugin_url() . '/assets/js/admin/management.js', 
+				array(
+					'jquery',
+					'wc-admin-meta-boxes' 
+				), null, false);
+		
+		$localize = array(
+			'i18n_do_void' => __('Are you sure you wish to process this void? This action cannot be undone.', 'woo-postfinancecheckout'),
+			'i18n_do_completion' => __('Are you sure you wish to process this completion? This action cannot be undone.', 'woo-postfinancecheckout') 
+		);
+		wp_localize_script('postfinancecheckout-admin-js', 'postfinancecheckout_admin_js_params', $localize);
+	}
+
+	public function hide_order_unique_id_meta($arr){
+		$arr[] = '_postfinancecheckout_unique_line_item_id';
+		return $arr;
+	}
+
+	public function update_order(){
+		ob_start();
+		
+		check_ajax_referer('order-item', 'security');
+		
+		if (!current_user_can('edit_shop_orders')) {
+			wp_die(-1);
+		}
+		
+		$order_id = absint($_POST['order_id']);
+		$order = WC_Order_Factory::get_order($order_id);
+		try {
+			do_action('postfinancecheckout_update_running_jobs', $order);
+		}
+		catch (Exception $e) {
+			wp_send_json_error(array(
+				'error' => $e->getMessage() 
+			));
+		}
+		wp_send_json_success();
+	}
+
+	/**
+	 * Add WooCommerce PostFinanceCheckout Settings Tab
+	 *
+	 * @param array $integrations
+	 * @return array
+	 */
+	public function add_settings($integrations){
+	    $integrations[] = new WC_PostFinanceCheckout_Admin_Settings_Page();
+		return $integrations;
+	}
+
+	/**
+	 * Show action links on the plugin screen.
+	 *
+	 * @param	mixed $links Plugin Action links
+	 * @return	array
+	 */
+	public function plugin_action_links($links){
+		$action_links = array(
+			'settings' => '<a href="' . admin_url('admin.php?page=wc-settings&tab=postfinancecheckout') . '" aria-label="' .
+                    esc_attr__('View Settings', 'woo-postfinancecheckout') . '">' . esc_html__('Settings', 'woo-postfinancecheckout') . '</a>'
+		);
+		
+		return array_merge($action_links, $links);
+	}
+	
+}
+
+WC_PostFinanceCheckout_Admin::instance();

@@ -1,0 +1,162 @@
+/**
+ * PostFinance Checkout WooCommerce
+ *
+ * This WooCommerce plugin enables to process payments with PostFinance Checkout (https://www.postfinance.ch).
+ *
+ * @author customweb GmbH (http://www.customweb.com/)
+ * @license http://www.apache.org/licenses/LICENSE-2.0 Apache Software License (ASL 2.0)
+ */
+/* Icons for status */
+@font-face {
+  font-family: 'woocommerce-wallee';
+  src: url('../font/woocommerce-wallee.eot?8310684');
+  src: url('../font/woocommerce-wallee.eot?8310684#iefix') format('embedded-opentype'),
+       url('../font/woocommerce-wallee.woff2?8310684') format('woff2'),
+       url('../font/woocommerce-wallee.woff?8310684') format('woff'),
+       url('../font/woocommerce-wallee.ttf?8310684') format('truetype'),
+       url('../font/woocommerce-wallee.svg?8310684#woocommerce-wallee') format('svg');
+  font-weight: normal;
+  font-style: normal;
+}
+
+/* Status Icons */
+.widefat .column-order_status mark.postf-redirected::after, .widefat .column-order_status mark.postf-waiting::after,
+	.widefat .column-order_status mark.postf-manual::after {
+	font-family: woocommerce-wallee;
+	speak: none;
+	font-weight: 400;
+	text-transform: none;
+	line-height: 1;
+	-webkit-font-smoothing: antialiased;
+	margin: 0;
+	text-indent: 0;
+	position: absolute;
+	top: 0;
+	left: 0;
+	width: 100%;
+	height: 100%;
+	text-align: center;
+	border-radius: 100%;
+}
+
+.widefat .column-order_status mark.postf-redirected:after {
+	content: "\e800";
+	background-color: #ffba00;
+	color: #ffffff;
+	line-height: 1.2;
+	font-size: 75%;
+}
+
+.widefat .column-order_status mark.postf-waiting:after {
+	content: "\f252";
+	background-color: #baba00;
+	color: #ffffff;
+	line-height: 1.6;
+	font-size: 65%;
+}
+
+.widefat .column-order_status mark.postf-manual:after {
+	content: "\e801";
+	background-color: #ff2000;
+	color: #ffffff;
+	line-height: 1.4;
+	font-size: 75%;
+}
+
+.order-status.status-postf-redirected{
+	
+}
+
+.order-status.status-postf-waiting{
+	background-color: #f8e8a7;
+	color: #94790c;
+}
+
+.order-status.status-postf-manual{
+	background-color: #f8bfa7;
+	color: #94340c;
+	
+}
+
+/* Invoice & PackingSlip Download */
+
+.order_actions .postfinancecheckout-button-download-invoice,.order_actions .postfinancecheckout-button-download-packingslip {
+    display: block;
+    text-indent: -9999px;
+    position: relative;
+    height: 1em;
+    width: 1em;
+    padding: 0!important;
+    height: 2em!important;
+    width: 2em
+}
+
+.order_actions .postfinancecheckout-button-download-invoice::after {
+	font-family: woocommerce-wallee;
+	speak: none;
+	font-weight: 400;
+	text-transform: none;
+	-webkit-font-smoothing: antialiased;
+	text-indent: 0px;
+	position: absolute;
+	top: 0px;
+	left: 0px;
+	width: 100%;
+	height: 100%;
+	text-align: center;
+	content: "\f0f6";
+	line-height: 1.85;
+	margin: 0px;
+}
+
+.order_actions .postfinancecheckout-button-download-packingslip::after {
+	font-family: woocommerce-wallee;
+	speak: none;
+	font-weight: 400;
+	text-transform: none;
+	-webkit-font-smoothing: antialiased;
+	text-indent: 0px;
+	position: absolute;
+	top: 0px;
+	left: 0px;
+	width: 100%;
+	height: 100%;
+	text-align: center;
+	content: "\e802";
+	line-height: 1.85;
+	margin: 0px;
+}
+
+/* Backend Transction info */
+.order-postfinancecheckout-transaction-metabox {
+	
+}
+
+.order-postfinancecheckout-transaction-metabox .postfinancecheckout-transaction-data-column-container
+	{
+	overflow: auto;
+}
+
+.order-postfinancecheckout-transaction-metabox .postfinancecheckout-transaction-data-column-container .postfinancecheckout-transaction-column
+	{
+	float: left;
+	margin-right: 40px;
+}
+
+#woocommerce-order-items button.button-primary.postfinancecheckout-completion-show {
+	float: left;
+	margin-right: .25em;
+}
+
+/* Completion / Void in progess info */
+.postfinancecheckout-action-in-progress {
+	float: left;
+}
+
+.postfinancecheckout-refund-state-pending {
+	background-color: rgba(255, 186, 0, 0.55);
+}
+
+.postfinancecheckout-refund-state-failue {
+	background-color: rgba(170, 0, 0, 0.55);
+}

@@ -1,0 +1,646 @@
+* {
+  -webkit-box-sizing: border-box;
+  -moz-box-sizing: border-box;
+  box-sizing: border-box;
+}
+
+*:before, *:after {
+  -webkit-box-sizing: border-box;
+  -moz-box-sizing: border-box;
+  box-sizing: border-box;
+}
+
+html {
+  font-size: 100%;
+  font-family: sans-serif;
+  line-height: 1.15;
+  -webkit-text-size-adjust: 100%;
+  -ms-text-size-adjust: 100%;
+  -ms-overflow-style: scrollbar;
+  -webkit-tap-highlight-color: transparent;
+}
+
+@-ms-viewport {
+  width: device-width;
+}
+
+article, aside, dialog, figcaption, figure, footer, header, hgroup, main, nav, section {
+  display: block;
+}
+
+body {
+  margin: 0;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol";
+  font-size: 1rem;
+  font-weight: 300;
+  line-height: 1.5;
+  color: #212529;
+  text-align: left;
+  background-color: #fff;
+  padding-right: 0 !important;
+  position: relative;
+}
+
+html,body {
+  width: 100%;
+  height: 100%;
+}
+
+[tabindex="-1"]:focus {
+  outline: 0 !important;
+}
+
+hr {
+  box-sizing: content-box;
+  height: 0;
+  overflow: visible;
+}
+
+h1, h2, h3, h4, h5, h6 {
+  margin-top: 0;
+  margin-bottom: 0.5rem;
+}
+
+h1 {
+  font-size: 2.5rem;
+  font-weight: 200;
+  margin-bottom: 1.875rem;
+}
+
+h2 {
+  font-size: 1.625rem;
+  font-weight: 300;
+  margin-bottom: 1.875rem;
+}
+
+h3 {
+  font-size: 1.3rem;
+  font-weight: 300;
+  margin-top: 1.875rem;
+}
+
+h4 {
+  font-size: 1.125rem;
+  font-weight: 400;
+  margin-top: 1.875rem;
+  margin-bottom: 1.875rem;
+}
+
+h5 {
+  font-size: 1rem;
+  font-weight: bold;
+  margin-top: 1.875rem;
+  margin-bottom: 1.875rem;
+}
+
+p {
+  margin-top: 0;
+  margin-bottom: 1rem;
+}
+
+abbr[title], abbr[data-original-title] {
+  text-decoration: underline;
+  -webkit-text-decoration: underline dotted;
+  text-decoration: underline dotted;
+  cursor: help;
+  border-bottom: 0;
+}
+
+address {
+  margin-bottom: 1rem;
+  font-style: normal;
+  line-height: inherit;
+}
+
+ol, ul, dl {
+  margin-top: 0;
+  margin-bottom: 1rem;
+}
+
+ol ol, ul ul, ol ul, ul ol {
+  margin-bottom: 0;
+}
+
+dt {
+  font-weight: 700;
+}
+
+dd {
+  margin-bottom: .5rem;
+  margin-left: 0;
+}
+
+blockquote {
+  margin: 0 0 1rem;
+}
+
+dfn {
+  font-style: italic;
+}
+
+b, strong {
+  font-weight: bolder;
+}
+
+small {
+  font-size: 80%;
+}
+
+sub, sup {
+  position: relative;
+  font-size: 75%;
+  line-height: 0;
+  vertical-align: baseline;
+}
+
+sub {
+  bottom: -.25em;
+}
+
+sup {
+  top: -.5em;
+}
+
+a {
+  color: #007bff;
+  text-decoration: none;
+  background-color: transparent;
+  -webkit-text-decoration-skip: objects;
+}
+
+a:hover {
+  color: #0056b3;
+  text-decoration: underline;
+}
+
+a:not([href]):not([tabindex]) {
+  color: inherit;
+  text-decoration: none;
+}
+
+a:not([href]):not([tabindex]):hover, a:not([href]):not([tabindex]):focus {
+  color: inherit;
+  text-decoration: none;
+}
+
+a:not([href]):not([tabindex]):focus {
+  outline: 0;
+}
+
+pre, code, kbd, samp {
+  font-family: monospace, monospace;
+  font-size: 1em;
+}
+
+pre {
+  margin-top: 0;
+  margin-bottom: 1rem;
+  overflow: auto;
+  -ms-overflow-style: scrollbar;
+}
+
+figure {
+  margin: 0 0 1rem;
+}
+
+img {
+  vertical-align: middle;
+  border-style: none;
+}
+
+svg:not(:root) {
+  overflow: hidden;
+}
+
+table {
+  border-collapse: collapse;
+  background-color: transparent;
+}
+
+caption {
+  padding-top: 8px;
+  padding-bottom: 8px;
+  color: #a7a7a7;
+  text-align: left;
+}
+
+th {
+  text-align: left;
+}
+
+output {
+  display: inline-block;
+}
+
+summary {
+  display: list-item;
+  cursor: pointer;
+}
+
+template {
+  display: none;
+}
+
+table col[class*="col-"] {
+  position: static;
+  float: none;
+  display: table-column;
+}
+
+table td[class*="col-"],table th[class*="col-"] {
+  position: static;
+  float: none;
+  display: table-cell;
+}
+
+.layout-wrapper {
+  position: relative;
+  width: 100%;
+  height: auto;
+  min-height: 100%;
+}
+
+.layout-title {
+  padding: 1.875rem 0;
+  border-bottom: 1px solid #f0f0f0;
+}
+
+.layout-title h1 {
+  font-size: 3rem;
+  font-weight: 200;
+  text-align: center;
+  margin: 0;
+}
+
+.layout-title h2 {
+  font-size: 2rem;
+  font-weight: 200;
+  text-align: center;
+  color: #999;
+  margin-bottom: 0;
+}
+
+.layout-navigation .nav {
+  padding: 1.875rem 0;
+  border-bottom: 1px solid #f0f0f0;
+  text-align: center;
+  background: #fff;
+  z-index: 1000;
+}
+
+.layout-navigation .nav > li {
+  display: inline-block;
+}
+
+.layout-navigation .nav > li > a {
+  border: 1px solid #007bff;
+  border-radius: 100px;
+  padding: 6px 12px;
+  margin: 0 8px;
+}
+
+.layout-navigation .nav > li > a:hover, .layout-navigation .nav > li > a:active, .layout-navigation .nav > li > a:focus {
+  border: 1px solid #0056b3;
+  color: #0056b3;
+  text-decoration: none;
+}
+
+.layout-content {
+  position: relative;
+}
+
+.layout-content:before, .layout-content:after {
+  content: " ";
+  display: table;
+}
+
+.layout-content:after {
+  clear: both;
+}
+
+.layout-content .col-right {
+  width: 25%;
+  float: right;
+}
+
+.layout-content .col-right-wrapper {
+  width: 100%;
+  position: relative;
+  overflow-x: hidden;
+  overflow-y: auto;
+  padding: 2.5rem 2rem 0;
+}
+
+.layout-content .col-body {
+  width: 75%;
+  float: left;
+}
+
+.layout-content .col-body:before, .layout-content .col-body:after {
+  content: " ";
+  display: table;
+}
+
+.layout-content .col-body:after {
+  clear: both;
+}
+
+.layout-content .col-body-wrapper {
+  position: relative;
+  width: 100%;
+  padding: 2.5rem 2rem 0;
+}
+
+.nav {
+  padding-left: 0;
+  margin-bottom: 0;
+  list-style: none;
+  line-height: 2;
+}
+
+.table-of-contents {
+  padding: 1.25rem 0;
+}
+
+.table-of-contents .nav > li > a {
+  display: flex;
+}
+
+.table-of-contents .nav > li > a .item-number {
+  display: none;
+}
+
+.table-of-contents .nav > li > a .item-title {
+  color: #212529;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  flex-grow: 1;
+  white-space: nowrap;
+}
+
+.table-of-contents .nav > li > a .item-title:hover {
+  color: #0056b3;
+}
+
+.table-of-contents .nav > li.extended > a .item-title, .table-of-contents .nav > li.active > a .item-title, .table-of-contents .nav > li.extended > a .item-title:hover, .table-of-contents .nav > li.active > a .item-title:hover {
+  color: #007bff;
+}
+
+.table-of-contents > .nav > li > .nav {
+  display: none;
+  margin-bottom: 0.5rem;
+}
+
+.table-of-contents > .nav > li > .nav > li > a {
+  padding-left: 1rem;
+}
+
+.table-of-contents > .nav > li > .nav > li > a .item-title {
+  font-size: 0.875rem;
+}
+
+.table-of-contents > .nav > li.active > .nav {
+  display: block;
+}
+
+.chapter {
+  margin: 0 0 6rem;
+  font-weight: 300;
+}
+
+.section {
+  margin-top: 3rem;
+}
+
+.chapter > .chapter-title h1, .chapter > .chapter-title h2, .chapter > .chapter-title h3, .chapter > .chapter-title h4, .chapter > .chapter-title h5, .chapter > .chapter-title h6, .section > .section-title h1, .section > .section-title h2, .section > .section-title h3, .section > .section-title h4, .section > .section-title h5, .section > .section-title h6 {
+  margin-top: 0;
+}
+
+.chapter-title .title-number, .section-title .title-number {
+  display: none;
+}
+
+.paragraph {
+  line-height: 2em;
+}
+
+.paragraph + .paragraph {
+  margin-top: 1em;
+}
+
+.dlist {
+  margin-top: 30px;
+}
+
+.dlist dl dt {
+  float: left;
+  width: 160px;
+  clear: left;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.dlist dl dd {
+  margin-left: 180px;
+}
+
+.ulist {
+  margin-top: 30px;
+}
+
+.imageblock {
+  margin: 30px auto;
+}
+
+.imageblock .content img {
+  max-width: 100%;
+}
+
+.imageblock .title {
+  padding: 10px 0 0;
+}
+
+.exampleblock, .quoteblock, .literalblock {
+  background: #f5f4f4;
+  padding: 20px;
+  margin: 30px 0;
+}
+
+.exampleblock .title, .quoteblock .title, .literalblock .title {
+  text-transform: uppercase;
+  font-size: 0.75em;
+  font-weight: 400;
+  color: #979797;
+  margin-bottom: 10px;
+}
+
+.quoteblock blockquote {
+  margin: 0;
+  padding: 0;
+  border: 0;
+  font-size: inherit;
+}
+
+.quoteblock blockquote p:last-child, .quoteblock blockquote ul:last-child, .quoteblock blockquote ol:last-child {
+  margin-bottom: 9px;
+}
+
+.literalblock pre {
+  border: 0;
+  padding: 0;
+  margin: 0;
+}
+
+.listingblock {
+  margin: 30px 0;
+}
+
+.listingblock pre {
+  border: 0;
+  padding: 0;
+  margin: 0;
+}
+
+.listingblock pre code {
+  padding: 20px;
+}
+
+.admonitionblock {
+  line-height: 1.8em;
+  padding: 20px;
+  margin: 30px 0;
+}
+
+.admonitionblock .icon {
+  display: none;
+}
+
+.admonitionblock.important {
+  background: #fce1e1;
+}
+
+.admonitionblock.note, .admonitionblock.tip {
+  background: #e0f2fc;
+}
+
+.admonitionblock.caution, .admonitionblock.warning {
+  background: #fdf3d8;
+}
+
+table.tableblock {
+  background-color: #fff;
+  width: 100%;
+  max-width: 100%;
+  margin-bottom: 18px;
+  margin: 30px 0;
+}
+
+table.tableblock > thead > tr > th, table.tableblock > tbody > tr > th, table.tableblock > tfoot > tr > th, table.tableblock > thead > tr > td, table.tableblock > tbody > tr > td, table.tableblock > tfoot > tr > td {
+  padding: 8px;
+  line-height: 1.42857143;
+  vertical-align: top;
+  border-top: 1px solid #eee;
+}
+
+table.tableblock > thead > tr > th {
+  vertical-align: bottom;
+  border-bottom: 2px solid #eee;
+}
+
+table.tableblock > caption + thead > tr:first-child > th, table.tableblock > colgroup + thead > tr:first-child > th, table.tableblock > thead:first-child > tr:first-child > th, table.tableblock > caption + thead > tr:first-child > td, table.tableblock > colgroup + thead > tr:first-child > td, table.tableblock > thead:first-child > tr:first-child > td {
+  border-top: 0;
+}
+
+table.tableblock > tbody + tbody {
+  border-top: 2px solid #eee;
+}
+
+table.tableblock .table {
+  background-color: #fff;
+}
+
+table.tableblock > tbody > tr:nth-of-type(odd) {
+  background-color: #f7f7f7;
+}
+
+table.tableblock > thead > tr > th p:last-child, table.tableblock > tbody > tr > th p:last-child, table.tableblock > tfoot > tr > th p:last-child, table.tableblock > thead > tr > td p:last-child, table.tableblock > tbody > tr > td p:last-child, table.tableblock > tfoot > tr > td p:last-child {
+  margin-bottom: 0;
+}
+
+.loaded .table-of-contents .nav .nav {
+  display: none;
+}
+
+@media (min-width: 1200px) {
+  .layout-wrapper .layout-title, .layout-wrapper .layout-navigation, .layout-wrapper .layout-content {
+    max-width: 1200px;
+    margin-left: auto;
+    margin-right: auto;
+  }
+}
+
+@media (max-width: 991px) {
+  html {
+    font-size: 90%;
+  }
+
+  .layout-content .col-right {
+    display: none;
+  }
+
+  .layout-content .col-body {
+    width: 100%;
+  }
+}
+
+@media print {
+  body {
+    color: #000;
+    font-family: Georgia, "Times New Roman", Times, serif;
+  }
+
+  a {
+    color: #000;
+  }
+
+  h1 {
+    font-size: 1.6rem;
+  }
+
+  h2 {
+    font-size: 1.4rem;
+  }
+
+  h3 {
+    font-size: 1.2rem;
+  }
+
+  h4 {
+    font-size: 1rem;
+  }
+
+  h5 {
+    font-size: 0.9rem;
+  }
+
+  .layout-title h1 {
+    font-size: 2rem;
+  }
+
+  .layout-content .col-right {
+    display: none;
+  }
+
+  .layout-content .col-body {
+    width: 100%;
+  }
+
+  .chapter {
+    margin-bottom: 3rem;
+  }
+
+  .section {
+    margin-top: 2rem;
+  }
+}

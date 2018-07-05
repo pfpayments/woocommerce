@@ -1,0 +1,37 @@
+language: generic
+
+before_deploy:
+  - if ! [ "$BEFORE_DEPLOY_RUN" ]; then
+      export BEFORE_DEPLOY_RUN=1;
+      mkdir build;
+      mkdir build/src;
+      rsync -r --exclude 'build' --exclude '.git' --exclude '.travis.yml' --exclude 'README.md' . build/src;
+      perl -plne 'print "$ENV{'FEATURES'}" if(/== Installation ==/); print "$ENV{'FAQ_ENTRIES'}" if(/== Changelog ==/);' build/src/readme.txt > build/src/readme_mod.txt;
+      rm build/src/readme.txt;
+      mv build/src/readme_mod.txt build/src/readme.txt;
+      mkdir build/$WORDPRESS_ORG_SLUG;
+      rsync -r build/src/ build/$WORDPRESS_ORG_SLUG/;
+      cd build;
+      zip -r $TRAVIS_BUILD_DIR/$WORDPRESS_ORG_SLUG.zip $WORDPRESS_ORG_SLUG;
+      cd ..;
+    fi  
+ 
+deploy:
+  - provider: releases
+    api_key: $GITHUB_API_KEY
+    file: "$WORDPRESS_ORG_SLUG.zip"
+    skip_cleanup: true
+    on:
+       tags: true
+  - provider: wordpress-plugin
+    edge:
+      source: TypistTech/dpl
+      branch: add-wordpress-plugin-deployment
+    on:
+      tags: true
+      repo: pfpayments/woocommerce
+    skip_cleanup: true
+    slug: $WORDPRESS_ORG_SLUG
+    username: $WORDPRESS_ORG_USERNAME
+    password: $WORDPRESS_ORG_PASSWORD
+    build_dir: build/src

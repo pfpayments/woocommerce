@@ -1,0 +1,225 @@
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<meta charset="utf-8">
+		<meta http-equiv="X-UA-Compatible" content="IE=edge">
+		<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+		<meta name="keywords" value="PostFinance Checkout, WooCommerce, Wordpress Plugin, WooCommerce Extension, Payment, Payment Integration, Documentation"><meta name="description" value="The documentation for the WooCommerce PostFinance Checkout plugin that enables processing payments with PostFinance Checkout.">		<link rel="canonical" href="https://plugin-documentation.wallee.com/wallee-payment/woocommerce/master/docs/en/documentation.html" />
+		<title>Documentation</title>
+		<link href="assets/base.css" rel="stylesheet" />
+	</head>
+	<body class="documentation">
+		<div class="layout-wrapper">
+							<div class="layout-title">
+					<h1>Documentation</h1>
+<h2>Documentation</h2>				</div>
+										<div class="layout-navigation">
+					<ul class="nav">
+	<li>
+		<a href="https://www.postfinance-checkout.ch/user/signup">
+			Sign Up
+		</a>
+	</li>
+	<li>
+		<a href="https://github.com/pfpayments/woocommerce/releases/tag/1.1.4/">
+			Source
+		</a>
+	</li>
+</ul>				</div>
+										<div class="layout-content">
+												<div class="col-body">
+							<div class="col-body-wrapper">
+																	<div class="body-container">
+																						<div class="chapter" id="_prerequisites">
+	<div class="chapter-title">
+		<h1>
+			<span class="title-number">1</span>Prerequisites					</h1>
+	</div>
+	<div class="chapter-body">
+					<div class="paragraph">
+<p>If you don&#8217;t already have one, create a <a href="https://www.postfinance.ch/">PostFinance Checkout</a> account and set up a space by following the setup assistant.</p>
+</div>					</div>
+</div>	<div class="chapter" id="_installation">
+	<div class="chapter-title">
+		<h1>
+			<span class="title-number">2</span>Installation					</h1>
+	</div>
+	<div class="chapter-body">
+					<div class="olist arabic">
+<ol class="arabic">
+<li>
+<p>Install it directly from your Wordpress Installation under <strong>Plugins &gt; Add New</strong> search for <strong>PostFinance Checkout</strong>.</p>
+</li>
+<li>
+<p>The plugin will now be visible under Plugins. You can install the plugin directly from here. After the plugin is installed, you can open the configuration.</p>
+</li>
+</ol>
+</div>					</div>
+</div>	<div class="chapter" id="_configuration">
+	<div class="chapter-title">
+		<h1>
+			<span class="title-number">3</span>Configuration					</h1>
+	</div>
+	<div class="chapter-body">
+					<div class="olist arabic">
+<ol class="arabic">
+<li>
+<p>The plugin&#8217;s configuration can be found under <strong>WooCommerce &gt; Settings &gt; PostFinance Checkout</strong> or click the link on the plugin site.</p>
+</li>
+<li>
+<p>Enter the credentials from before which means the PostFinance Checkout application user&#8217;s access information and the space id. The configuration will be done automatically.</p>
+<div class="imageblock">
+<div class="content">
+<img src="resource/settings.png" alt="Settings"/>
+</div>
+</div>
+</li>
+</ol>
+</div>					</div>
+</div>	<div class="chapter" id="_payment_method_configuration">
+	<div class="chapter-title">
+		<h1>
+			<span class="title-number">4</span>Payment Method Configuration					</h1>
+	</div>
+	<div class="chapter-body">
+					<div class="paragraph">
+<p>Most of the payment method configuration is done in PostFinance Checkout. After following the steps of the basic configuration, the PostFinance Checkout payment method configuration will be synchronized automatically into the WooCommerce shop.</p>
+</div><div class="paragraph">
+<p>The synchronized methods are listed under  <strong>WooCommerce &gt; Settings &gt; Payment</strong>.</p>
+</div><div class="imageblock">
+<div class="content">
+<img src="resource/method.png" alt="Method Settings"/>
+</div>
+</div>					</div>
+</div>	<div class="chapter" id="_refunds">
+	<div class="chapter-title">
+		<h1>
+			<span class="title-number">5</span>Refunds					</h1>
+	</div>
+	<div class="chapter-body">
+					<div class="paragraph">
+<p>A refund at PostFinance Checkout can be in a pending state. There are different reasons for this e.g: The processor is not reachable at the time or the processor executes refunds as a batch at a specific time of the day. The WooCommerce Refund object will be in the state 'pending' as well. After the refund is in a final state, it will be automtically updated in your shop. If you have automated process for refunds, ensure they are only executed if a refund is in the 'completed' state.</p>
+</div>					</div>
+</div>	<div class="chapter" id="_faq">
+	<div class="chapter-title">
+		<h1>
+			<span class="title-number">6</span>FAQ					</h1>
+	</div>
+	<div class="chapter-body">
+							<div class="section" id="_how_can_i_make_the_payment_methods_appear_in_the_checkout">
+	<div class="section-title">
+		<h2>
+			<span class="title-number">6.1</span>How can I make the payment methods appear in the checkout?					</h2>
+	</div>
+	<div class="section-body">
+					<div class="paragraph">
+<p>Make sure that you followed the <a href="#_configuration">Configuration</a> section by stating your PostFinance Checkout space ID and application user&#8217;s access information in the settings page. By saving the configuration form the synchronization of the payment methods and the set up of the webhooks are initiated.
+Ensure the payment method are visible in the WooCommerce Settings &gt; Payment section and the methods are active.</p>
+</div><div class="paragraph">
+<p>If this does not solve the problem, make sure no other plugin is hiding the payment methods.</p>
+</div>					</div>
+</div>					<div class="section" id="_how_can_i_translate_the_plugin">
+	<div class="section-title">
+		<h2>
+			<span class="title-number">6.2</span>How can I translate the plugin?					</h2>
+	</div>
+	<div class="section-body">
+					<div class="olist arabic">
+<ol class="arabic">
+<li>
+<p>Install the Wordpress Loco Translate plugin.</p>
+</li>
+<li>
+<p>Go to <strong>Loco Translate &gt; Plugins</strong>.</p>
+</li>
+<li>
+<p>Click on <strong>WooCommere PostFinance Checkout</strong>.</p>
+<div class="olist loweralpha">
+<ol class="loweralpha" type="a">
+<li>
+<p>Click on the existing language and adapt the translations.</p>
+</li>
+<li>
+<p>Cick <strong>New Langugage</strong> and translate the strings.</p>
+</li>
+</ol>
+</div>
+</li>
+</ol>
+</div>					</div>
+</div>			</div>
+</div>	<div class="chapter" id="_support">
+	<div class="chapter-title">
+		<h1>
+			<span class="title-number">7</span>Support					</h1>
+	</div>
+	<div class="chapter-body">
+					<div class="paragraph">
+<p>If you need help, feel free to contact our <a href="https://www.postfinance.ch/en/business/support/written-contact/contact-form.html">support</a>.</p>
+</div>					</div>
+</div>																			</div>
+															</div>
+						</div>
+						<div class="col-right">
+		<div class="col-right-wrapper">
+							<div class="table-of-contents">
+	<ul class="nav">
+					<li class="nav-level-1">
+	<a href="#_prerequisites">
+		<span class="item-number">1</span>
+		<span class="item-title">Prerequisites</span>
+			</a>
+    </li>					<li class="nav-level-1">
+	<a href="#_installation">
+		<span class="item-number">2</span>
+		<span class="item-title">Installation</span>
+			</a>
+    </li>					<li class="nav-level-1">
+	<a href="#_configuration">
+		<span class="item-number">3</span>
+		<span class="item-title">Configuration</span>
+			</a>
+    </li>					<li class="nav-level-1">
+	<a href="#_payment_method_configuration">
+		<span class="item-number">4</span>
+		<span class="item-title">Payment Method Configuration</span>
+			</a>
+    </li>					<li class="nav-level-1">
+	<a href="#_refunds">
+		<span class="item-number">5</span>
+		<span class="item-title">Refunds</span>
+			</a>
+    </li>					<li class="nav-level-1">
+	<a href="#_faq">
+		<span class="item-number">6</span>
+		<span class="item-title">FAQ</span>
+			</a>
+        	<ul  class="nav">
+    		    			<li class="nav-level-2">
+	<a href="#_how_can_i_make_the_payment_methods_appear_in_the_checkout">
+		<span class="item-number">6.1</span>
+		<span class="item-title">How can I make the payment methods appear in the checkout?</span>
+			</a>
+    </li>    		    			<li class="nav-level-2">
+	<a href="#_how_can_i_translate_the_plugin">
+		<span class="item-number">6.2</span>
+		<span class="item-title">How can I translate the plugin?</span>
+			</a>
+    </li>    		    	</ul>
+    </li>					<li class="nav-level-1">
+	<a href="#_support">
+		<span class="item-number">7</span>
+		<span class="item-title">Support</span>
+			</a>
+    </li>			</ul>
+</div>					</div>
+	</div>
+				</div>
+					</div>
+
+		<script type="text/javascript" src="assets/jquery.js"></script>
+		<script type="text/javascript" src="assets/scrollspy.js"></script>
+		<script type="text/javascript" src="assets/sticky-kit.js"></script>
+		<script type="text/javascript" src="assets/base.js"></script>
+	</body>
+</html>
