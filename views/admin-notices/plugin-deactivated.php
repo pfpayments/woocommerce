@@ -11,4 +11,4 @@ if (!defined('ABSPATH')) {
  * @license http://www.apache.org/licenses/LICENSE-2.0 Apache Software License (ASL 2.0)
  */
 ?>
-<div class="error"><p>WooCommerce PostFinance Checkout <?php _e('deactivated because it depends on WooCommerce.', 'woocoommerce-postfinancecheckout'); ?></p></div>
+<div class="error"><p><?php _e('WooCommerce PostFinance Checkout deactivated because it depends on WooCommerce.', 'woo-postfinancecheckout'); ?></p></div>
