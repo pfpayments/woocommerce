@@ -145,7 +145,7 @@ class WC_PostFinanceCheckout_Admin_Settings_Page extends WC_Settings_Page {
 		$settings = array(
 		    array(
 		        'links' => array(
-		            'https://plugin-documentation.postfinance-checkout.ch/pfpayments/woocommerce/1.1.5/docs/en/documentation.html' => __('Documentation', 'woo-postfinancecheckout'),
+		            'https://plugin-documentation.postfinance-checkout.ch/pfpayments/woocommerce/1.1.6/docs/en/documentation.html' => __('Documentation', 'woo-postfinancecheckout'),
 		            'https://www.postfinance-checkout.ch/user/signup' => __('Sign Up', 'woo-postfinancecheckout')
 		        ),
 		        'type' => 'postfinancecheckout_links',
@@ -159,10 +159,18 @@ class WC_PostFinanceCheckout_Admin_Settings_Page extends WC_Settings_Page {
 				'type' => 'title',
 				'id' => 'general_options' 
 			),
+		    
+		    array(
+		        'title' => __('Space Id', 'woo-postfinancecheckout'),
+		        'id' => WooCommerce_PostFinanceCheckout::CK_SPACE_ID,
+		        'type' => 'text',
+		        'css' => 'min-width:300px;',
+		        'desc' => __('(required)', 'woo-postfinancecheckout')
+		    ),
 			
 			array(
 				'title' => __('User Id', 'woo-postfinancecheckout'),
-				'desc_tip' => __('The Application User needs to have full permissions in the space this shop is linked to.', 'woo-postfinancecheckout'),
+				'desc_tip' => __('The user needs to have full permissions in the space this shop is linked to.', 'woo-postfinancecheckout'),
 			    'id' => WooCommerce_PostFinanceCheckout::CK_APP_USER_ID,
 				'type' => 'text',
 				'css' => 'min-width:300px;',
@@ -170,17 +178,9 @@ class WC_PostFinanceCheckout_Admin_Settings_Page extends WC_Settings_Page {
 			),
 			
 			array(
-				'title' => __('Application Key', 'woo-postfinancecheckout'),
+				'title' => __('Authentication Key', 'woo-postfinancecheckout'),
 			    'id' => WooCommerce_PostFinanceCheckout::CK_APP_USER_KEY,
 				'type' => 'password',
-				'css' => 'min-width:300px;',
-				'desc' => __('(required)', 'woo-postfinancecheckout') 
-			),
-			
-			array(
-				'title' => __('Space Id', 'woo-postfinancecheckout'),
-			    'id' => WooCommerce_PostFinanceCheckout::CK_SPACE_ID,
-				'type' => 'text',
 				'css' => 'min-width:300px;',
 				'desc' => __('(required)', 'woo-postfinancecheckout') 
 			),

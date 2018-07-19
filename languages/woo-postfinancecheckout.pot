@@ -395,7 +395,7 @@ msgstr ""
 
 #: includes/admin/class-wc-postfinancecheckout-admin-settings-page.php:165
 msgid ""
-"The Application User needs to have full permissions in the space this shop "
+"The user needs to have full permissions in the space this shop "
 "is linked to."
 msgstr ""
 
@@ -406,7 +406,7 @@ msgid "(required)"
 msgstr ""
 
 #: includes/admin/class-wc-postfinancecheckout-admin-settings-page.php:173
-msgid "Application Key"
+msgid "Authentication Key"
 msgstr ""
 
 #: includes/admin/class-wc-postfinancecheckout-admin-settings-page.php:181

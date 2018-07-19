@@ -421,10 +421,10 @@ msgstr "Benutzer ID"
 
 #: includes/admin/class-wc-postfinancecheckout-admin-settings-page.php:165
 msgid ""
-"The Application User needs to have full permissions in the space this shop "
+"The user needs to have full permissions in the space this shop "
 "is linked to."
 msgstr ""
-"Der Anwendungsbenutzer muss über volle Berechtigungen in dem Bereich "
+"Der Benutzer muss über volle Berechtigungen in dem Bereich "
 "verfügen, mit dem dieser Shop verknüpft ist."
 
 #: includes/admin/class-wc-postfinancecheckout-admin-settings-page.php:169
@@ -434,8 +434,8 @@ msgid "(required)"
 msgstr "(Pflicht)"
 
 #: includes/admin/class-wc-postfinancecheckout-admin-settings-page.php:173
-msgid "Application Key"
-msgstr "Applikationsschlüssel"
+msgid "Authentication Key"
+msgstr "Authentication Key"
 
 #: includes/admin/class-wc-postfinancecheckout-admin-settings-page.php:181
 msgid "Space Id"
@@ -443,7 +443,7 @@ msgstr "Space ID"
 
 #: includes/admin/class-wc-postfinancecheckout-admin-settings-page.php:189
 msgid "Space View Id"
-msgstr "Space VIew ID"
+msgstr "Space View ID"
 
 #: includes/admin/class-wc-postfinancecheckout-admin-settings-page.php:201
 msgid "Email Options"

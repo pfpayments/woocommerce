@@ -95,3 +95,8 @@
 
 * Fix - Fixes Fatal Error with newest version of WooCommerce Multilingual
 
+= 1.1.6 - July 19, 2018 =
+
+* Tweak - Updated settings page
+* Dev - Updated to PostFinance Checkout SDK 1.1.8
+
