@@ -21,7 +21,7 @@
 		</a>
 	</li>
 	<li>
-		<a href="https://github.com/pfpayments/woocommerce/releases/tag/1.1.7/">
+		<a href="https://github.com/pfpayments/woocommerce/releases/tag/1.1.8/">
 			Source
 		</a>
 	</li>
@@ -37,7 +37,7 @@
 	</div>
 	<div class="chapter-body">
 					<div class="paragraph">
-<p>If you don&#8217;t already have one, create a <a href="https://www.postfinance.ch/">PostFinance Checkout</a> account and set up a space by following the setup assistant.</p>
+<p>If you don&#8217;t already have one, create a <a href="https://www.postfinance.ch/">PostFinance Checkout</a> account.</p>
 </div>					</div>
 </div>	<div class="chapter" id="_installation">
 	<div class="chapter-title">
@@ -48,12 +48,23 @@
 					<div class="olist arabic">
 <ol class="arabic">
 <li>
-<p>Install it directly from your Wordpress Installation under <strong>Plugins &gt; Add New</strong> search for <strong>PostFinance Checkout</strong>.</p>
+<p>Install it directly from your Wordpress backend under <strong>Plugins</strong> &#8594; Add New. Search for <strong>PostFinance Checkout</strong>.</p>
 </li>
 <li>
-<p>The plugin will now be visible under Plugins. You can install the plugin directly from here. After the plugin is installed, you can open the configuration.</p>
+<p>The plugin will now be visible under Plugins. You can install the plugin directly from here. Once it is installed, you will be able to open the configuration.</p>
 </li>
 </ol>
+</div><div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<div class="title">Note</div>
+</td>
+<td class="content">
+You will automatically be notified here once there are updates available for the plugin.
+</td>
+</tr>
+</table>
 </div>					</div>
 </div>	<div class="chapter" id="_configuration">
 	<div class="chapter-title">
@@ -64,17 +75,20 @@
 					<div class="olist arabic">
 <ol class="arabic">
 <li>
-<p>The plugin&#8217;s configuration can be found under <strong>WooCommerce &gt; Settings &gt; PostFinance Checkout</strong> or click the link on the plugin site.</p>
-</li>
-<li>
-<p>Enter the credentials from before which means the PostFinance Checkout application user&#8217;s access information and the space id. The configuration will be done automatically.</p>
+<p>Navigate to WooCommerce &#8594; Settings &#8594; PostFinance Checkout in your Wordpress backend and enter the PostFinance Checkout Space ID, User ID and Authentification Key that you can create in the <a href="https://www.postfinance-checkout.ch/space/select?target=/space/assistant" target="_blank">setup assistant</a>. Alternatively, you can manually create an <a href="https://www.postfinance-checkout.ch/en-us/doc/permission-concept#_create_application_users" target="_blank">application user</a>.</p>
 <div class="imageblock">
 <div class="content">
-<img src="resource/settings.png" alt="Settings"/>
+<img src="resource/settings.png" alt="settings"/>
 </div>
 </div>
 </li>
+<li>
+<p>After saving the configuration, the payment methods are created in the WooCommerce store and the necessary webhooks are set up.</p>
+</li>
 </ol>
+</div><div class="paragraph">
+<p>The setup is now finished. You should see the payment methods in your checkout. To view the payment method configuration in the Wordpress backend go to
+WooCommerce &gt; Settings &gt; Payment.</p>
 </div>					</div>
 </div>	<div class="chapter" id="_payment_method_configuration">
 	<div class="chapter-title">
@@ -82,34 +96,226 @@
 			<span class="title-number">4</span>Payment Method Configuration					</h1>
 	</div>
 	<div class="chapter-body">
+							<div class="section" id="_setup">
+	<div class="section-title">
+		<h2>
+			<span class="title-number">4.1</span>Setup					</h2>
+	</div>
+	<div class="section-body">
 					<div class="paragraph">
-<p>Most of the payment method configuration is done in PostFinance Checkout. After following the steps of the basic configuration, the PostFinance Checkout payment method configuration will be synchronized automatically into the WooCommerce shop.</p>
-</div><div class="paragraph">
-<p>The synchronized methods are listed under  <strong>WooCommerce &gt; Settings &gt; Payment</strong>.</p>
+<p>The PostFinance Checkout payment method configurations are synchronized automatically into the WooCommerce store. There are just a few payment method settings in the WooCommerce store in WooCommerce &gt; Settings &gt; Payment.</p>
 </div><div class="imageblock">
 <div class="content">
 <img src="resource/method.png" alt="Method Settings"/>
 </div>
+</div><div class="paragraph">
+<p>Additional payment methods are directly added in PostFinance Checkout. This can be done in the <a href="https://www.postfinance-checkout.ch/space/select?target=/space/assistant/payment" target="_blank">setup assistant</a>. Changes are synchronized automatically.</p>
 </div>					</div>
-</div>	<div class="chapter" id="_refunds">
+</div>					<div class="section" id="_customization">
+	<div class="section-title">
+		<h2>
+			<span class="title-number">4.2</span>Customization					</h2>
+	</div>
+	<div class="section-body">
+					<div class="paragraph">
+<p>If you want to change the payment method description, title, logo, etc you need to do this in the <a href="https://www.postfinance-checkout.ch/space/select?target=/payment/method-configuration/list" target="_blank">payment method configuration</a>. Changes will be synchronized automatically.</p>
+</div>					</div>
+</div>			</div>
+</div>	<div class="chapter" id="_state_graph">
 	<div class="chapter-title">
 		<h1>
-			<span class="title-number">5</span>Refunds					</h1>
+			<span class="title-number">5</span>State Graph					</h1>
 	</div>
 	<div class="chapter-body">
 					<div class="paragraph">
-<p>A refund at PostFinance Checkout can be in a pending state. There are different reasons for this e.g: The processor is not reachable at the time or the processor executes refunds as a batch at a specific time of the day. The WooCommerce Refund object will be in the state 'pending' as well. After the refund is in a final state, it will be automtically updated in your shop. If you have automated process for refunds, ensure they are only executed if a refund is in the 'completed' state.</p>
+<p>The Payment Process of PostFinance Checkout is <strong>completely standardized for every payment method</strong> you can process. This gives you the ability to simply add
+a payment method or processor without changes inside of your WooCommerce configuration. An overview about the states and the payment processes of PostFinance Checkout
+can be found in the <a href="https://www.postfinance-checkout.ch/en-us/doc/payment/transaction-process" target="_blank">Payment Documentation</a>.</p>
+</div><div class="paragraph">
+<p>Below you find a diagram that shows the state machine of WooCommerce for orders including additional information for the state transitions.</p>
+</div><div class="imageblock">
+<div class="content">
+<img src="resource/state_graph.svg" alt="state graph"/>
+</div>
 </div>					</div>
+</div>	<div class="chapter" id="_transaction_management">
+	<div class="chapter-title">
+		<h1>
+			<span class="title-number">6</span>Transaction Management					</h1>
+	</div>
+	<div class="chapter-body">
+					<div class="paragraph">
+<p>You can capture, cancel and refund transactions directly from within the Wordpress backend. Please note
+if you refund, void or capture transaction inside PostFinance Checkout the events may not be synchronized into
+WooCommerce.</p>
+</div>							<div class="section" id="_complete_capture_an_order">
+	<div class="section-title">
+		<h2>
+			<span class="title-number">6.1</span>Complete (capture) an order					</h2>
+	</div>
+	<div class="section-body">
+					<div class="paragraph">
+<p>You have the possibility for your transactions to the payment only authorized after the order is placed. Inside the <a href="https://www.postfinance-checkout.ch/space/select?target=/payment/connector-configuration/list" target="_blank">connector configuration</a> you have the option, if the payment method supports it, to define whether the payment should be completed immediately or deferred.</p>
+</div><div class="paragraph">
+<p>In order to capture a transaction, open the order and click on the <code>Completion</code> button.</p>
+</div><div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<div class="title">Note</div>
+</td>
+<td class="content">
+When the completion is pending in PostFinance Checkout the order will stay in on hold state.
+</td>
+</tr>
+</table>
+</div><div class="imageblock">
+<div class="content">
+<img src="resource/order-capture-woocommerce.png" alt="order capture woocommerce"/>
+</div>
+</div>					</div>
+</div>					<div class="section" id="_void_a_transaction">
+	<div class="section-title">
+		<h2>
+			<span class="title-number">6.2</span>Void a Transaction					</h2>
+	</div>
+	<div class="section-body">
+					<div class="paragraph">
+<p>In order to void a transaction, open the order and click on the <code>Void</code> button.</p>
+</div><div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<div class="title">Note</div>
+</td>
+<td class="content">
+You can only void transactions that are not yet completed.
+</td>
+</tr>
+</table>
+</div><div class="imageblock">
+<div class="content">
+<img src="resource/order-void-woocommerce.png" alt="order void woocommerce"/>
+</div>
+</div>					</div>
+</div>					<div class="section" id="_refund_of_a_transaction">
+	<div class="section-title">
+		<h2>
+			<span class="title-number">6.3</span>Refund of a Transaction					</h2>
+	</div>
+	<div class="section-body">
+					<div class="paragraph">
+<p>You have the possibility to refund already completed transactions. In order to do so, open the order and click on the <code>Refund</code> button.</p>
+</div><div class="imageblock">
+<div class="content">
+<img src="resource/order-refund-woocommerce.png" alt="order refund woocommerce"/>
+</div>
+</div><div class="paragraph">
+<p>Enter the amount you wish to refund. You can make partial or full refunds.</p>
+</div><div class="imageblock">
+<div class="content">
+<img src="resource/order-refund-woocommerce2.png" alt="order refund woocommerce2"/>
+</div>
+</div><div class="paragraph">
+<p>You can carry out as many individual refunds as you wish until you have reached the quantity of the original order.
+The status of the order then automatically switches to complete.</p>
+</div><div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<div class="title">Note</div>
+</td>
+<td class="content">
+It can take some time until you see the refund in WooCommerce. Refunds will only be visible once they have been processed successfully.
+</td>
+</tr>
+</table>
+</div>					</div>
+</div>					<div class="section" id="_on_hold_orders">
+	<div class="section-title">
+		<h2>
+			<span class="title-number">6.4</span>On Hold Orders					</h2>
+	</div>
+	<div class="section-body">
+					<div class="paragraph">
+<p>As long as the delivery should not be done the state of the order will be in <code>On Hold</code>. This happens when the transaction in PostFinance Checkout
+has not reached the fulfill state.</p>
+</div><div class="paragraph">
+<p>There are essentially two reasons why this can happen:</p>
+</div><div class="ulist">
+<ul>
+<li>
+<p>The transaction is not completed. In this case you have to complete the transaction as written above.</p>
+</li>
+<li>
+<p>As long as we are not able to tell you if you should fulfill the order. The delivery decision is done automatically. If this does not happen
+within the defined time frame, PostFinance Checkout will generate a manual task which you should observe and follow the instructions.
+When there is a manual task we will also display it in the Wordpress Backend.</p>
+</li>
+</ul>
+</div><div class="paragraph">
+<p>You can find more information about manual tasks in our <a href="https://www.postfinance-checkout.ch/en-us/doc/manual-tasks" target="_blank">Manual Task Documentation</a>.</p>
+</div>					</div>
+</div>					<div class="section" id="_tokenization">
+	<div class="section-title">
+		<h2>
+			<span class="title-number">6.5</span>Tokenization					</h2>
+	</div>
+	<div class="section-body">
+					<div class="paragraph">
+<p>In case the payment method supports tokenization you can store the payment details of your customer for future purchases.
+In order to use this feature make sure that the <strong>One-Click-Payment Mode</strong> in your <a href="https://www.postfinance-checkout.ch/space/select?target=/payment/method-configuration/list">payment method configuration</a> is set to <code>allow</code> or <code>force</code> storage.</p>
+</div><div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<div class="title">Note</div>
+</td>
+<td class="content">
+Tokenization is not available for guest checkouts.
+</td>
+</tr>
+</table>
+</div>					</div>
+</div>					<div class="section" id="_limitations_of_the_synchronization_between_whitelabelname_and_woocommerce">
+	<div class="section-title">
+		<h2>
+			<span class="title-number">6.6</span>Limitations of the Synchronization between PostFinance Checkout and WooCommerce					</h2>
+	</div>
+	<div class="section-body">
+					<div class="paragraph">
+<p>Please note that captures, voids and refunds done in PostFinance Checkout are synchronized. However, there are some
+limitations. Inside PostFinance Checkout you are able to change the <strong>unit price</strong> and the <strong>quantity</strong> at once. This can not
+be done in the WooCommerce backend. We therefore recommend that you
+perform the refunds always inside the WooCommerce backend and not inside PostFinance Checkout. If a refund
+cannot be synchronized it will be sent to the processor but it could be that you do not see it inside
+your WooCommerce backend.</p>
+</div><div class="paragraph">
+<p>You can find more information about Refunds in PostFinance Checkout in our <a href="https://www.postfinance-checkout.ch/en-us/doc/payment/refund" target="_blank">Refund Documentation</a>.</p>
+</div>					</div>
+</div>					<div class="section" id="_woocommerce_subscriptions">
+	<div class="section-title">
+		<h2>
+			<span class="title-number">6.7</span>WooCommerce Subscriptions					</h2>
+	</div>
+	<div class="section-body">
+					<div class="paragraph">
+<p>In case you want to sell Subscriptions with WooCommerce and PostFinance Checkout this is possible. However, you need to get the PostFinance Checkout Subscription Plugin for
+Woocommerce that you also find under Plugins &#8594; Search &#8594; <strong>PostFinance Checkout Subscriptions</strong>.</p>
+</div><div class="paragraph">
+<p>This plugin is needed to sell subscription plugins and recurring orders. The plugins <strong>requires</strong> <a href="https://woocommerce.com/products/woocommerce-subscriptions" target="_blank">WooCommerce Subscription</a> to be installed.</p>
+</div>					</div>
+</div>			</div>
 </div>	<div class="chapter" id="_faq">
 	<div class="chapter-title">
 		<h1>
-			<span class="title-number">6</span>FAQ					</h1>
+			<span class="title-number">7</span>FAQ					</h1>
 	</div>
 	<div class="chapter-body">
 							<div class="section" id="_how_can_i_make_the_payment_methods_appear_in_the_checkout">
 	<div class="section-title">
 		<h2>
-			<span class="title-number">6.1</span>How can I make the payment methods appear in the checkout?					</h2>
+			<span class="title-number">7.1</span>How can I make the payment methods appear in the checkout?					</h2>
 	</div>
 	<div class="section-body">
 					<div class="paragraph">
@@ -118,10 +324,20 @@ Ensure the payment method are visible in the WooCommerce Settings &gt; Payment s
 </div><div class="paragraph">
 <p>If this does not solve the problem, make sure no other plugin is hiding the payment methods.</p>
 </div>					</div>
+</div>					<div class="section" id="_how_can_i_update_the_plugin">
+	<div class="section-title">
+		<h2>
+			<span class="title-number">7.2</span>How can I update the plugin?					</h2>
+	</div>
+	<div class="section-body">
+					<div class="paragraph">
+<p>Plugin updates can be done directly in your Wordpress backend under Plugins.
+Search for the plugin WooCommerce PostFinance Checkout and click on <code>update now</code>. To perform the update, WordPress will need to access your web server. You will therefore have to enter your FTP credentials to proceed.</p>
+</div>					</div>
 </div>					<div class="section" id="_how_can_i_translate_the_plugin">
 	<div class="section-title">
 		<h2>
-			<span class="title-number">6.2</span>How can I translate the plugin?					</h2>
+			<span class="title-number">7.3</span>How can I translate the plugin?					</h2>
 	</div>
 	<div class="section-body">
 					<div class="olist arabic">
@@ -151,7 +367,7 @@ Ensure the payment method are visible in the WooCommerce Settings &gt; Payment s
 </div>	<div class="chapter" id="_support">
 	<div class="chapter-title">
 		<h1>
-			<span class="title-number">7</span>Support					</h1>
+			<span class="title-number">8</span>Support					</h1>
 	</div>
 	<div class="chapter-body">
 					<div class="paragraph">
@@ -184,31 +400,90 @@ Ensure the payment method are visible in the WooCommerce Settings &gt; Payment s
 		<span class="item-number">4</span>
 		<span class="item-title">Payment Method Configuration</span>
 			</a>
+        	<ul  class="nav">
+    		    			<li class="nav-level-2">
+	<a href="#_setup">
+		<span class="item-number">4.1</span>
+		<span class="item-title">Setup</span>
+			</a>
+    </li>    		    			<li class="nav-level-2">
+	<a href="#_customization">
+		<span class="item-number">4.2</span>
+		<span class="item-title">Customization</span>
+			</a>
+    </li>    		    	</ul>
     </li>					<li class="nav-level-1">
-	<a href="#_refunds">
+	<a href="#_state_graph">
 		<span class="item-number">5</span>
-		<span class="item-title">Refunds</span>
+		<span class="item-title">State Graph</span>
 			</a>
     </li>					<li class="nav-level-1">
-	<a href="#_faq">
+	<a href="#_transaction_management">
 		<span class="item-number">6</span>
+		<span class="item-title">Transaction Management</span>
+			</a>
+        	<ul  class="nav">
+    		    			<li class="nav-level-2">
+	<a href="#_complete_capture_an_order">
+		<span class="item-number">6.1</span>
+		<span class="item-title">Complete (capture) an order</span>
+			</a>
+    </li>    		    			<li class="nav-level-2">
+	<a href="#_void_a_transaction">
+		<span class="item-number">6.2</span>
+		<span class="item-title">Void a Transaction</span>
+			</a>
+    </li>    		    			<li class="nav-level-2">
+	<a href="#_refund_of_a_transaction">
+		<span class="item-number">6.3</span>
+		<span class="item-title">Refund of a Transaction</span>
+			</a>
+    </li>    		    			<li class="nav-level-2">
+	<a href="#_on_hold_orders">
+		<span class="item-number">6.4</span>
+		<span class="item-title">On Hold Orders</span>
+			</a>
+    </li>    		    			<li class="nav-level-2">
+	<a href="#_tokenization">
+		<span class="item-number">6.5</span>
+		<span class="item-title">Tokenization</span>
+			</a>
+    </li>    		    			<li class="nav-level-2">
+	<a href="#_limitations_of_the_synchronization_between_whitelabelname_and_woocommerce">
+		<span class="item-number">6.6</span>
+		<span class="item-title">Limitations of the Synchronization between PostFinance Checkout and WooCommerce</span>
+			</a>
+    </li>    		    			<li class="nav-level-2">
+	<a href="#_woocommerce_subscriptions">
+		<span class="item-number">6.7</span>
+		<span class="item-title">WooCommerce Subscriptions</span>
+			</a>
+    </li>    		    	</ul>
+    </li>					<li class="nav-level-1">
+	<a href="#_faq">
+		<span class="item-number">7</span>
 		<span class="item-title">FAQ</span>
 			</a>
         	<ul  class="nav">
     		    			<li class="nav-level-2">
 	<a href="#_how_can_i_make_the_payment_methods_appear_in_the_checkout">
-		<span class="item-number">6.1</span>
+		<span class="item-number">7.1</span>
 		<span class="item-title">How can I make the payment methods appear in the checkout?</span>
 			</a>
     </li>    		    			<li class="nav-level-2">
+	<a href="#_how_can_i_update_the_plugin">
+		<span class="item-number">7.2</span>
+		<span class="item-title">How can I update the plugin?</span>
+			</a>
+    </li>    		    			<li class="nav-level-2">
 	<a href="#_how_can_i_translate_the_plugin">
-		<span class="item-number">6.2</span>
+		<span class="item-number">7.3</span>
 		<span class="item-title">How can I translate the plugin?</span>
 			</a>
     </li>    		    	</ul>
     </li>					<li class="nav-level-1">
 	<a href="#_support">
-		<span class="item-number">7</span>
+		<span class="item-number">8</span>
 		<span class="item-title">Support</span>
 			</a>
     </li>			</ul>

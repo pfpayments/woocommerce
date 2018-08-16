@@ -40,20 +40,27 @@ jQuery(function($) {
 		check_form_data_change : function() {
 		    var $required_inputs =  $(this.checkout_form_identifier).find( '.address-field.validate-required' ).find('input, select');
 		    var current = '';
+		    var complete = true;
 		    if ( $required_inputs.length ) {
 				$required_inputs.each( function() {
 					if (! $( this ).is(':visible')) {
-					    	return;
+					    	return true;
+					}
+					if(!$( this ).val()){
+						complete = false;
+						return false;
 					}
 					current += $(this).attr('name') +"="+$(this).val()+"&";
 				});
-				old = this.form_data;
-				this.form_data = current;
-				if(current != old && !this.update_sent){
-				    $required_inputs.filter('.input-text').first().trigger('keydown');
-				    this.handle_description_for_empty_iframe(this.get_selected_payment_method());
-				}
-				this.update_sent = false;
+				if(complete){
+					old = this.form_data;
+					this.form_data = current;
+					if(current != old && !this.update_sent){
+					    $required_inputs.filter('.input-text').first().trigger('keydown');
+					    this.handle_description_for_empty_iframe(this.get_selected_payment_method());
+					}
+					this.update_sent = false;
+		    	}
 		    }
 		    
 		},

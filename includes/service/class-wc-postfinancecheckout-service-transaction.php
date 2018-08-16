@@ -79,7 +79,7 @@ class WC_PostFinanceCheckout_Service_Transaction extends WC_PostFinanceCheckout_
 		$start_time = microtime(true);
 		while (true) {
 			
-		    $transaction_info = WC_PostFinanceCheckout_Entity_Transaction_Info::load_by_order_id($order->get_id());
+		    $transaction_info = WC_PostFinanceCheckout_Entity_Transaction_Info::load_newest_by_mapped_order_id($order->get_id());
 			if (in_array($transaction_info->get_state(), $states)) {
 				return true;
 			}
@@ -87,7 +87,7 @@ class WC_PostFinanceCheckout_Service_Transaction extends WC_PostFinanceCheckout_
 			if (microtime(true) - $start_time >= $max_wait_time) {
 				return false;
 			}
-			sleep(2);
+			sleep(1);
 		}
 	}
 
@@ -193,7 +193,10 @@ class WC_PostFinanceCheckout_Service_Transaction extends WC_PostFinanceCheckout_
 		    $transaction->getState() == \PostFinanceCheckout\Sdk\Model\TransactionState::DECLINE) {
 			$failed_charge_attempt = $this->get_failed_charge_attempt($transaction->getLinkedSpaceId(), $transaction->getId());
 			if ($failed_charge_attempt != null && $failed_charge_attempt->getFailureReason() != null) {
-				$info->set_failure_reason($failed_charge_attempt->getFailureReason()->getDescription());
+			    $info->set_failure_reason($failed_charge_attempt->getFailureReason()->getDescription());
+			}
+			else if($transaction->getFailureReason() != null){
+			    $info->set_failure_reason($transaction->getFailureReason()->getDescription());
 			}
 		}
 		$info = apply_filters('wc_postfinancecheckout_update_transaction_info', $info, $transaction, $order);

@@ -63,7 +63,7 @@ class WC_PostFinanceCheckout_Return_Handler {
 		$transaction_service->wait_for_transaction_state($order, array(
 		    \PostFinanceCheckout\Sdk\Model\TransactionState::FAILED 
 		), 5);
-		$transaction = WC_PostFinanceCheckout_Entity_Transaction_Info::load_by_order_id($order->get_id());
+		$transaction = WC_PostFinanceCheckout_Entity_Transaction_Info::load_newest_by_mapped_order_id($order->get_id());
 		
 		$failure_reason = $transaction->get_failure_reason();
 		if ($failure_reason !== null) {

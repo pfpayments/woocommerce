@@ -104,3 +104,8 @@
 
 * Dev - Updated to PostFinance Checkout SDK 1.1.9
 
+= 1.1.8 - August 16, 2018 =
+
+* Fix - Errormessage not displayed in all cases
+* Tweak - Improved javascript
+
