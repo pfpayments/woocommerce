@@ -416,66 +416,77 @@ msgstr ""
 "haben."
 
 #: includes/admin/class-wc-postfinancecheckout-admin-settings-page.php:164
-msgid "User Id"
-msgstr "Benutzer ID"
+msgid "Space Id"
+msgstr "Space ID"
 
-#: includes/admin/class-wc-postfinancecheckout-admin-settings-page.php:165
-msgid ""
-"The user needs to have full permissions in the space this shop "
-"is linked to."
-msgstr ""
-"Der Benutzer muss über volle Berechtigungen in dem Bereich "
-"verfügen, mit dem dieser Shop verknüpft ist."
-
-#: includes/admin/class-wc-postfinancecheckout-admin-settings-page.php:169
+#: includes/admin/class-wc-postfinancecheckout-admin-settings-page.php:168
 #: includes/admin/class-wc-postfinancecheckout-admin-settings-page.php:177
 #: includes/admin/class-wc-postfinancecheckout-admin-settings-page.php:185
 msgid "(required)"
 msgstr "(Pflicht)"
 
+#: includes/admin/class-wc-postfinancecheckout-admin-settings-page.php:172
+msgid "User Id"
+msgstr "Benutzer ID"
+
 #: includes/admin/class-wc-postfinancecheckout-admin-settings-page.php:173
+msgid ""
+"The user needs to have full permissions in the space this shop is linked to."
+msgstr ""
+"Der Benutzer muss über volle Berechtigungen in dem Bereich verfügen, mit dem "
+"dieser Shop verknüpft ist."
+
+#: includes/admin/class-wc-postfinancecheckout-admin-settings-page.php:181
 msgid "Authentication Key"
 msgstr "Authentication Key"
 
-#: includes/admin/class-wc-postfinancecheckout-admin-settings-page.php:181
-msgid "Space Id"
-msgstr "Space ID"
-
-#: includes/admin/class-wc-postfinancecheckout-admin-settings-page.php:189
-msgid "Space View Id"
-msgstr "Space View ID"
-
-#: includes/admin/class-wc-postfinancecheckout-admin-settings-page.php:201
+#: includes/admin/class-wc-postfinancecheckout-admin-settings-page.php:194
 msgid "Email Options"
 msgstr "Email Einstellungen"
 
-#: includes/admin/class-wc-postfinancecheckout-admin-settings-page.php:207
+#: includes/admin/class-wc-postfinancecheckout-admin-settings-page.php:200
 msgid "Send Order Email"
 msgstr "Bestellungsbestätigung versenden"
 
-#: includes/admin/class-wc-postfinancecheckout-admin-settings-page.php:208
+#: includes/admin/class-wc-postfinancecheckout-admin-settings-page.php:201
 msgid "Send the Woocommerce's order email."
 msgstr "Versenden Sie Emails von WooCommerce."
 
-#: includes/admin/class-wc-postfinancecheckout-admin-settings-page.php:221
+#: includes/admin/class-wc-postfinancecheckout-admin-settings-page.php:214
 msgid "Document Options"
 msgstr "Dokumenteeinstellungen"
 
-#: includes/admin/class-wc-postfinancecheckout-admin-settings-page.php:227
+#: includes/admin/class-wc-postfinancecheckout-admin-settings-page.php:220
 msgid "Invoice Download"
 msgstr "Rechnung herunterladen"
 
-#: includes/admin/class-wc-postfinancecheckout-admin-settings-page.php:228
+#: includes/admin/class-wc-postfinancecheckout-admin-settings-page.php:221
 msgid "Allow customer's to download the invoice."
 msgstr "Erlauben Sie dem Kunden, die Rechnung herunterzuladen."
 
-#: includes/admin/class-wc-postfinancecheckout-admin-settings-page.php:235
+#: includes/admin/class-wc-postfinancecheckout-admin-settings-page.php:228
 msgid "Packing Slip Download"
 msgstr "Lieferschein herunterladen"
 
-#: includes/admin/class-wc-postfinancecheckout-admin-settings-page.php:236
+#: includes/admin/class-wc-postfinancecheckout-admin-settings-page.php:229
 msgid "Allow customer's to download the packing slip."
 msgstr "Erlauben Sie dem Kunden, den Lieferschein herunterzuladen."
+
+#: includes/admin/class-wc-postfinancecheckout-admin-settings-page.php:242
+msgid "Space View Options"
+msgstr "Space View Options"
+
+#: includes/admin/class-wc-postfinancecheckout-admin-settings-page.php:248
+msgid "Space View Id"
+msgstr "Space View ID"
+
+#: includes/admin/class-wc-postfinancecheckout-admin-settings-page.php:249
+msgid ""
+"The Space View Id allows to control the styling of the payment form and the "
+"payment page within the space."
+msgstr ""
+"Die Space View ID kontrolliert das Styling des Zahlungsformulars und der "
+"Zahlungsseite im Space."
 
 #: includes/webhook/class-wc-postfinancecheckout-webhook-delivery-indication.php:52
 msgid "A manual decision about whether to accept the payment is required."

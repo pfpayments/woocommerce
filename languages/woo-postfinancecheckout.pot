@@ -390,63 +390,72 @@ msgid ""
 msgstr ""
 
 #: includes/admin/class-wc-postfinancecheckout-admin-settings-page.php:164
-msgid "User Id"
+msgid "Space Id"
 msgstr ""
 
-#: includes/admin/class-wc-postfinancecheckout-admin-settings-page.php:165
-msgid ""
-"The user needs to have full permissions in the space this shop "
-"is linked to."
-msgstr ""
-
-#: includes/admin/class-wc-postfinancecheckout-admin-settings-page.php:169
+#: includes/admin/class-wc-postfinancecheckout-admin-settings-page.php:168
 #: includes/admin/class-wc-postfinancecheckout-admin-settings-page.php:177
 #: includes/admin/class-wc-postfinancecheckout-admin-settings-page.php:185
 msgid "(required)"
 msgstr ""
 
+#: includes/admin/class-wc-postfinancecheckout-admin-settings-page.php:172
+msgid "User Id"
+msgstr ""
+
 #: includes/admin/class-wc-postfinancecheckout-admin-settings-page.php:173
-msgid "Authentication Key"
+msgid ""
+"The user needs to have full permissions in the space this shop is linked to."
 msgstr ""
 
 #: includes/admin/class-wc-postfinancecheckout-admin-settings-page.php:181
-msgid "Space Id"
+msgid "Authentication Key"
 msgstr ""
 
-#: includes/admin/class-wc-postfinancecheckout-admin-settings-page.php:189
-msgid "Space View Id"
-msgstr ""
-
-#: includes/admin/class-wc-postfinancecheckout-admin-settings-page.php:201
+#: includes/admin/class-wc-postfinancecheckout-admin-settings-page.php:194
 msgid "Email Options"
 msgstr ""
 
-#: includes/admin/class-wc-postfinancecheckout-admin-settings-page.php:207
+#: includes/admin/class-wc-postfinancecheckout-admin-settings-page.php:200
 msgid "Send Order Email"
 msgstr ""
 
-#: includes/admin/class-wc-postfinancecheckout-admin-settings-page.php:208
+#: includes/admin/class-wc-postfinancecheckout-admin-settings-page.php:201
 msgid "Send the Woocommerce's order email."
 msgstr ""
 
-#: includes/admin/class-wc-postfinancecheckout-admin-settings-page.php:221
+#: includes/admin/class-wc-postfinancecheckout-admin-settings-page.php:214
 msgid "Document Options"
 msgstr ""
 
-#: includes/admin/class-wc-postfinancecheckout-admin-settings-page.php:227
+#: includes/admin/class-wc-postfinancecheckout-admin-settings-page.php:220
 msgid "Invoice Download"
 msgstr ""
 
-#: includes/admin/class-wc-postfinancecheckout-admin-settings-page.php:228
+#: includes/admin/class-wc-postfinancecheckout-admin-settings-page.php:221
 msgid "Allow customer's to download the invoice."
 msgstr ""
 
-#: includes/admin/class-wc-postfinancecheckout-admin-settings-page.php:235
+#: includes/admin/class-wc-postfinancecheckout-admin-settings-page.php:228
 msgid "Packing Slip Download"
 msgstr ""
 
-#: includes/admin/class-wc-postfinancecheckout-admin-settings-page.php:236
+#: includes/admin/class-wc-postfinancecheckout-admin-settings-page.php:229
 msgid "Allow customer's to download the packing slip."
+msgstr ""
+
+#: includes/admin/class-wc-postfinancecheckout-admin-settings-page.php:242
+msgid "Space View Options"
+msgstr ""
+
+#: includes/admin/class-wc-postfinancecheckout-admin-settings-page.php:248
+msgid "Space View Id"
+msgstr ""
+
+#: includes/admin/class-wc-postfinancecheckout-admin-settings-page.php:249
+msgid ""
+"The Space View Id allows to control the styling of the payment form and the "
+"payment page within the space."
 msgstr ""
 
 #: includes/webhook/class-wc-postfinancecheckout-webhook-delivery-indication.php:52

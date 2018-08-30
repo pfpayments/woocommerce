@@ -109,3 +109,8 @@
 * Fix - Errormessage not displayed in all cases
 * Tweak - Improved javascript
 
+= 1.1.9 - August 30, 2018 =
+
+* Tweak - Settings descriptions
+* Doc - Improved documentation
+

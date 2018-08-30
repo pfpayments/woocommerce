@@ -145,7 +145,7 @@ class WC_PostFinanceCheckout_Admin_Settings_Page extends WC_Settings_Page {
 		$settings = array(
 		    array(
 		        'links' => array(
-		            'https://plugin-documentation.postfinance-checkout.ch/pfpayments/woocommerce/1.1.8/docs/en/documentation.html' => __('Documentation', 'woo-postfinancecheckout'),
+		            'https://plugin-documentation.postfinance-checkout.ch/pfpayments/woocommerce/1.1.9/docs/en/documentation.html' => __('Documentation', 'woo-postfinancecheckout'),
 		            'https://www.postfinance-checkout.ch/user/signup' => __('Sign Up', 'woo-postfinancecheckout')
 		        ),
 		        'type' => 'postfinancecheckout_links',
@@ -184,14 +184,7 @@ class WC_PostFinanceCheckout_Admin_Settings_Page extends WC_Settings_Page {
 				'css' => 'min-width:300px;',
 				'desc' => __('(required)', 'woo-postfinancecheckout') 
 			),
-			
-			array(
-				'title' => __('Space View Id', 'woo-postfinancecheckout'),
-			    'id' => WooCommerce_PostFinanceCheckout::CK_SPACE_VIEW_ID,
-				'type' => 'text',
-				'css' => 'min-width:300px;' 
-			),
-			
+						
 			array(
 				'type' => 'sectionend',
 				'id' => 'general_options' 
@@ -243,7 +236,26 @@ class WC_PostFinanceCheckout_Admin_Settings_Page extends WC_Settings_Page {
 			array(
 				'type' => 'sectionend',
 				'id' => 'document_options' 
-			) 
+			) ,
+		    
+		    array(
+		        'title' => __('Space View Options', 'woo-postfinancecheckout'),
+		        'type' => 'title',
+		        'id' => 'space_view_options'
+		    ),
+		   
+		    array(
+		        'title' => __('Space View Id', 'woo-postfinancecheckout'),
+		        'desc_tip' => __('The Space View Id allows to control the styling of the payment form and the payment page within the space.', 'woo-postfinancecheckout'),
+		        'id' => WooCommerce_PostFinanceCheckout::CK_SPACE_VIEW_ID,
+		        'type' => 'text',
+		        'css' => 'min-width:300px;'
+		    ),
+		    
+		    array(
+		        'type' => 'sectionend',
+		        'id' => 'space_view_options'
+		    ) 
 		
 		);
 		
