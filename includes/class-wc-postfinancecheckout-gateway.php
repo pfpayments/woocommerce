@@ -298,7 +298,7 @@ class WC_PostFinanceCheckout_Gateway extends WC_Payment_Gateway {
 		parent::payment_fields();
 		?>
 		
-<div id="payment-form-<?php echo $this->id?>"></div>
+<div id="payment-form-<?php echo $this->id?>"><input type="hidden" id="postfinancecheckout-iframe-possible-<?php echo $this->id?>" name="postfinancecheckout-iframe-possible-<?php echo $this->id?>" value="false" /></div>
 <div id="postfinancecheckout-method-configuration-<?php echo $this->id?>"
 	class="postfinancecheckout-method-configuration" style="display: none;"
 	data-method-id="<?php echo $this->id; ?>"
@@ -336,12 +336,13 @@ class WC_PostFinanceCheckout_Gateway extends WC_Payment_Gateway {
 			    $existing = WC_PostFinanceCheckout_Entity_Transaction_Info::load_by_order_id($order_id);
 			    if($existing->get_id() > 0 && $existing->get_state() != \PostFinanceCheckout\Sdk\Model\TransactionState::PENDING){
 			        WooCommerce_PostFinanceCheckout::instance()->add_notice(__('There was an issue, while processing your order. Please try again or use another payment method.', 'woo-postfinancecheckout'), 'error');
+			        $order = wc_get_order($order_id);
 			        $order->update_status( 'failed' );
 			        WC()->session->set('reload_checkout', true);
 			        return array(
 			            'result' => 'failure'
 			        );
-			    }			    
+			    }
 			}
 						
 			$order = wc_get_order($order_id);
@@ -354,11 +355,23 @@ class WC_PostFinanceCheckout_Gateway extends WC_Payment_Gateway {
 			$order->delete_meta_data('_wc_postfinancecheckout_restocked');
 			
 			$order->save();
+			
 			$result =array(
 			    'result' => 'success',
 			    'postfinancecheckout' => 'true'
 			);
+			$no_iframe = isset($_POST['postfinancecheckout-iframe-possible-'.$this->id]) && $_POST['postfinancecheckout-iframe-possible-'.$this->id] == 'false';
+			if($no_iframe){
+			    $result = array(
+			        'result' => 'success',
+			        'redirect' => $transaction_service->get_payment_page_url($transaction->getLinkedSpaceId(), $transaction->getId()).'&paymentMethodConfigurationId='.$this->get_payment_method_configuration()->get_configuration_id()
+			    );
+	        }	
+			
 			if($is_order_pay_endpoint){
+			    if($no_iframe){
+			        return $result;
+			    }		    
 			    wp_send_json( $result );
 			    exit;
 			}

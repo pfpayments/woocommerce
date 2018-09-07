@@ -174,6 +174,12 @@ jQuery(function($) {
 		},
 	
 		register_method : function(method_id, configuration_id, container_id) {
+			if (typeof window.IframeCheckoutHandler == 'undefined') {
+				this.payment_methods[method_id] = {
+						height : 0
+				    };
+				return;
+			}
 	
 		    if (typeof this.payment_methods[method_id] != 'undefined'
 			    && $('#' + container_id).find("iframe").length > 0) {

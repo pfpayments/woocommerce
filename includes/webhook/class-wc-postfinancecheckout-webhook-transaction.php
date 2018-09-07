@@ -86,7 +86,6 @@ class WC_PostFinanceCheckout_Webhook_Transaction extends WC_PostFinanceCheckout_
     		$status = apply_filters('wc_postfinancecheckout_authorized_status', 'on-hold', $order);
     		$order->add_meta_data("_postfinancecheckout_authorized", "true", true);
     		$order->update_status($status);
-    		
     		if (isset(WC()->cart)) {
     			WC()->cart->empty_cart();
     		}
@@ -97,8 +96,7 @@ class WC_PostFinanceCheckout_Webhook_Transaction extends WC_PostFinanceCheckout_
 		if (!$order->get_meta('_postfinancecheckout_manual_check', true)) {
 		    do_action('wc_postfinancecheckout_completed', $transaction , $order);
 			$status = apply_filters('wc_postfinancecheckout_completed_status', 'postf-waiting', $order);
-			$order->update_status($status);
-			
+			$order->update_status($status);			
 		}
 	}
 

@@ -100,6 +100,15 @@ class WC_PostFinanceCheckout_Service_Transaction extends WC_PostFinanceCheckout_
 		$transaction = $this->get_transaction_from_session();
 		return $this->get_transaction_service()->buildJavaScriptUrl($transaction->getLinkedSpaceId(), $transaction->getId());
 	}
+	
+	/**
+	 * Returns the URL to PostFinance Checkout's JavaScript library that is necessary to display the payment form.
+	 *
+	 * @return string
+	 */
+	public function get_payment_page_url($space_id, $transaction_id){
+	    return $this->get_transaction_service()->buildPaymentPageUrl($space_id, $transaction_id);
+	}
 
 	/**
 	 * Returns the transaction with the given id.
