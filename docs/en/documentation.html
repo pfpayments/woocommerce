@@ -21,7 +21,7 @@
 		</a>
 	</li>
 	<li>
-		<a href="https://github.com/pfpayments/woocommerce/releases/tag/1.1.10/">
+		<a href="https://github.com/pfpayments/woocommerce/releases/tag/1.1.11/">
 			Source
 		</a>
 	</li>
@@ -149,6 +149,10 @@ can be found in the <a href="https://www.postfinance-checkout.ch/en-us/doc/payme
 <div class="content">
 <img src="resource/state_graph.svg" alt="state graph"/>
 </div>
+</div><div class="paragraph">
+<p>Once the completion of a transaction is successful the order will switch into the <code>Fulfill</code> state in PostFinance Checkout and into <code>Processing</code> state in WooCommerce. This is when you can start the fulfillment process and switch the order into <code>Completed</code> state in WooCommerce.</p>
+</div><div class="paragraph">
+<p>For information about deferred completion, see <a href="#_complete_capture_an_order">Complete (capture) an order</a></p>
 </div>					</div>
 </div>	<div class="chapter" id="_transaction_management">
 	<div class="chapter-title">
@@ -185,6 +189,30 @@ When the completion is pending in PostFinance Checkout the order will stay in on
 <div class="content">
 <img src="resource/order-capture-woocommerce.png" alt="order capture woocommerce"/>
 </div>
+</div><div class="paragraph">
+<p><strong>Deferred payment completion</strong></p>
+</div><div class="paragraph">
+<p>Retailers often have the case that they want to authorize transactions only and start the fulfillment process once all items are shippable. This is also possible with PostFinance Checkout.</p>
+</div><div class="paragraph">
+<p>However, certain processes should be followed. If you have configured payment completion to be deferred you should capture the transaction before you initiate the shipment
+as it can always happen that a completion fails. If you want to be sure that you do not ship items for which you have not been paid you should postpone the shipment until
+the fulfill state is reached. Initially the transaction will be in the <code>Authorized</code> state in PostFinance Checkout and <code>On hold</code> in WooCommerce. If you want to start the fulfillment process make sure you initiate the completion process as described above. Once the completion was successful the order will switch into the <code>Fulfill</code> state in PostFinance Checkout and into <code>Processing</code> state in WooCommerce.</p>
+</div><div class="paragraph">
+<p>You can now start the fulfillment process and switch the order into the <code>Processing</code> state in WooCommerce.</p>
+</div><div class="paragraph">
+<p>For a streamlined deferred completion process in your shop, we recommend the following steps:</p>
+</div><div class="olist arabic">
+<ol class="arabic">
+<li>
+<p>Filter all  orders and select <code>On hold</code> orders.</p>
+</li>
+<li>
+<p>Capture all <code>onHold</code> orders. Once the completion has successfully finished the order will automatically switch into the <code>Processing</code> or <code>Completed</code> state depending on the type of products (digital, physical).</p>
+</li>
+<li>
+<p>You can now start to fulfill all orders in the <code>Processing</code> state.</p>
+</li>
+</ol>
 </div>					</div>
 </div>					<div class="section" id="_void_a_transaction">
 	<div class="section-title">
