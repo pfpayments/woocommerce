@@ -292,7 +292,7 @@ class WC_PostFinanceCheckout_Gateway extends WC_Payment_Gateway {
 	        wp_localize_script('postfinancecheckout-checkout-js', 'postfinancecheckout_js_params', $localize);
 	    }
 	    catch(Exception $e){
-	        $this->log($e->getMessage(), WC_Log_Levels::DEBUG);
+	        WooCommerce_PostFinanceCheckout::instance()->log($e->getMessage(), WC_Log_Levels::DEBUG);
 	    }
 	    
 		parent::payment_fields();
@@ -335,7 +335,7 @@ class WC_PostFinanceCheckout_Gateway extends WC_Payment_Gateway {
 			    $transaction_id = $session_handler->get('postfinancecheckout_transaction_id');
 			    $existing = WC_PostFinanceCheckout_Entity_Transaction_Info::load_by_order_id($order_id);
 			    if($existing->get_id() > 0 && $existing->get_state() != \PostFinanceCheckout\Sdk\Model\TransactionState::PENDING){
-			        WooCommerce_PostFinanceCheckout::instance()->add_notice(__('There was an issue, while processing your order. Please try again or use another payment method.', 'woo-postfinancecheckout'), 'error');
+			        WC()->session->set( 'postfinancecheckout_failure_message', __('There was an issue, while processing your order. Please try again or use another payment method.', 'woo-postfinancecheckout') );
 			        $order = wc_get_order($order_id);
 			        $order->update_status( 'failed' );
 			        WC()->session->set('reload_checkout', true);
@@ -383,7 +383,7 @@ class WC_PostFinanceCheckout_Gateway extends WC_Payment_Gateway {
 		catch (Exception $e) {
 			$message = $e->getMessage();
 			$cleaned = preg_replace("/^\[[A-Fa-f\d\-]+\] /", "", $message);
-			WooCommerce_PostFinanceCheckout::instance()->add_notice($cleaned, 'error');
+			WC()->session->set( 'postfinancecheckout_failure_message', $cleaned);
 			$order->update_status( 'failed' );
 			if($is_order_pay_endpoint){
 			    $result =array(

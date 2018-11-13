@@ -69,6 +69,7 @@ jQuery(function($) {
 		    var self = event.data.self;
 		    var current_method = self.get_selected_payment_method();
 		    if (!self.is_supported_method(current_method)) {
+		    	self.enable_place_order_button();
 		    	return;
 		    }
 		    var configuration = $("#postfinancecheckout-method-configuration-"
@@ -77,6 +78,7 @@ jQuery(function($) {
 			    .data("configuration-id"), configuration
 			    .data("container-id"));
 		    self.handle_description_for_empty_iframe(current_method);
+		    self.handle_place_order_button_status(current_method);
 		},
 	
 		handle_description_for_empty_iframe : function(method_id) {
@@ -112,10 +114,10 @@ jQuery(function($) {
 			}
 			
 		    if (((!description || description == "false")
-			    && this.payment_methods[method_id]['height'] == 0) || !has_full_address) {
+			    && this.payment_methods[method_id].height == 0) || !has_full_address) {
 				item.css('position', 'absolute');
 				item.css('left', '-100000px');
-		    } else if ((this.payment_methods[method_id]['height'] == 0) || !has_full_address) {
+		    } else if ((this.payment_methods[method_id].height == 0) || !has_full_address) {
 				item.find("p").css("margin-bottom", 0);
 				form.css('position', 'absolute');
 				form.css('left', '-100000px');
@@ -128,7 +130,28 @@ jQuery(function($) {
 				form.css('left', '');
 		    }
 		},
-	
+		
+		handle_place_order_button_status: function(method_id){
+			if(!this.payment_methods[method_id].button_active){
+				this.disable_place_order_button();
+			}
+			else{
+				this.enable_place_order_button();
+			}
+		},
+		
+		enable_place_order_button: function(){
+			var order_button = $('#place_order');
+			order_button.removeAttr('disabled');
+			order_button.removeClass('postfinancecheckout-disabled');
+		},
+		
+		disable_place_order_button: function(){
+			var order_button = $('#place_order');
+			order_button.prop('disabled', true);
+			order_button.addClass('postfinancecheckout-disabled');
+		},
+		    
 		register_ajax_prefilter : function() {
 		    var self = this;
 		    $.ajaxPrefilter(
@@ -176,7 +199,8 @@ jQuery(function($) {
 		register_method : function(method_id, configuration_id, container_id) {
 			if (typeof window.IframeCheckoutHandler == 'undefined') {
 				this.payment_methods[method_id] = {
-						height : 0
+						height : 0,
+						button_active : true
 				    };
 				return;
 			}
@@ -203,6 +227,7 @@ jQuery(function($) {
 				configuration_id : configuration_id,
 				container_id : tmp_container_id,
 				handler : window.IframeCheckoutHandler(configuration_id),
+				button_active :  true,
 				height : 0
 		    };
 		    this.payment_methods[method_id].handler
@@ -211,13 +236,23 @@ jQuery(function($) {
 			    });
 		    this.payment_methods[method_id].handler
 			    .setHeightChangeCallback(function(height) {
-				self.payment_methods[method_id]['height'] = height;
+				self.payment_methods[method_id].height = height;
 				self.handle_description_for_empty_iframe(method_id)
 			    });
 		    
 		    this.payment_methods[method_id].handler.setInitializeCallback(function(){
 		    	$(self.checkout_form_identifier).unblock();
 		    });
+		    
+		    this.payment_methods[method_id].handler.setEnableSubmitCallback(function(){
+		    	self.payment_methods[method_id].button_active=true;
+		    	self.handle_place_order_button_status(method_id);
+		    });
+		    
+		    this.payment_methods[method_id].handler.setDisableSubmitCallback(function(){
+		    	self.payment_methods[method_id].button_active=false;
+		    	self.handle_place_order_button_status(method_id);
+            });
 	
 		    this.payment_methods[method_id].handler
 			    .create(self.payment_methods[method_id].container_id);

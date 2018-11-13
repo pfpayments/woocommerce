@@ -85,7 +85,22 @@ class WC_PostFinanceCheckout_Service_Line_Item extends WC_PostFinanceCheckout_Se
 			}
 			$line_item->setUniqueId($unique_id);
 			
-			$items[] = $this->clean_line_item($line_item);
+			$attributes = $this->get_base_attributes($product->get_id());
+			foreach ($values['variation'] as $key => $value){
+			    if(strpos($key, 'attribute_') === 0){
+			        $taxonomy = substr($key, 10);
+			        $attribute_key_cleaned = $this->clean_attribute_key($taxonomy);
+			        if(isset($attributes[$attribute_key_cleaned])){
+			            $term = get_term_by('slug', $value, $taxonomy, 'display');
+			            $attributes[$attribute_key_cleaned]->setValue($this->fix_length($term->name, 512));
+			        }
+			    }
+			}
+			if(!empty($attributes)){
+			  $line_item->setAttributes($attributes);
+			}
+			
+			$items[] = apply_filters('wc_postfinancecheckout_modify_line_item_product_session', $this->clean_line_item($line_item), $values);
 		}
 		return $items;
 	}
@@ -127,7 +142,7 @@ class WC_PostFinanceCheckout_Service_Line_Item extends WC_PostFinanceCheckout_Se
 			    $line_item->setType(\PostFinanceCheckout\Sdk\Model\LineItemType::FEE);
 				$line_item->setUniqueId('fee-' . $fee->id);
 			}
-			$fees[] = $this->clean_line_item($line_item);
+			$fees[] = apply_filters('wc_postfinancecheckout_modify_line_item_fee_session', $this->clean_line_item($line_item), $fee);
 		}
 		return $fees;
 	}
@@ -174,7 +189,7 @@ class WC_PostFinanceCheckout_Service_Line_Item extends WC_PostFinanceCheckout_Se
 				}
 				$line_item->setUniqueId($unique_id);
 				
-				$shippings[] = $this->clean_line_item($line_item);
+				$shippings[] = apply_filters('wc_postfinancecheckout_modify_line_item_shipping_session', $this->clean_line_item($line_item), $shipping_rate);
 			}
 		}
 		return $shippings;
@@ -242,7 +257,25 @@ class WC_PostFinanceCheckout_Service_Line_Item extends WC_PostFinanceCheckout_Se
 			$line_item->setType(\PostFinanceCheckout\Sdk\Model\LineItemType::PRODUCT);
 			$line_item->setUniqueId($item->get_meta('_postfinancecheckout_unique_line_item_id', true));
 			
-			$items[] = $this->clean_line_item($line_item);
+			$attributes = $this->get_base_attributes($product->get_id());
+			
+			// Only for product variation
+			if($product->is_type('variation')){
+			    $variation_attributes = $product->get_variation_attributes();
+			    foreach($variation_attributes as $attribute_key => $ignore){
+			        $taxonomy = str_replace('attribute_', '', $attribute_key );
+		            $attribute_key_cleaned = $this->clean_attribute_key($taxonomy);
+			        if(isset($attributes[$attribute_key_cleaned])){
+			            $term = get_term_by('slug', wc_get_order_item_meta($item->get_id(), $taxonomy, true), $taxonomy, 'display');
+			            $attributes[$attribute_key_cleaned]->setValue($this->fix_length($term->name, 512));
+			        }
+			    }
+			}						
+			if(!empty($attributes)){
+			    $line_item->setAttributes($attributes);
+			}
+			
+			$items[] = apply_filters('wc_postfinancecheckout_modify_line_item_product_order', $this->clean_line_item($line_item), $item);
 		}
 		return $items;
 	}
@@ -290,7 +323,7 @@ class WC_PostFinanceCheckout_Service_Line_Item extends WC_PostFinanceCheckout_Se
 			
 			$line_item->setUniqueId($fee->get_meta('_postfinancecheckout_unique_line_item_id', true));
 			
-			$fees[] = $this->clean_line_item($line_item);
+			$fees[] = apply_filters('wc_postfinancecheckout_modify_line_item_fee_order', $this->clean_line_item($line_item), $fee);
 		}
 		return $fees;
 	}
@@ -330,7 +363,7 @@ class WC_PostFinanceCheckout_Service_Line_Item extends WC_PostFinanceCheckout_Se
 			$line_item->setType(\PostFinanceCheckout\Sdk\Model\LineItemType::SHIPPING);
 			$line_item->setUniqueId($shipping->get_meta('_postfinancecheckout_unique_line_item_id', true));
 			
-			$shippings[] = $this->clean_line_item($line_item);
+			$shippings[] = apply_filters('wc_postfinancecheckout_modify_line_item_shipping_order', $this->clean_line_item($line_item), $shipping);
 		}
 		return $shippings;
 	}
@@ -396,7 +429,25 @@ class WC_PostFinanceCheckout_Service_Line_Item extends WC_PostFinanceCheckout_Se
 			$line_item->setType(\PostFinanceCheckout\Sdk\Model\LineItemType::PRODUCT);
 			$line_item->setUniqueId($item->get_meta('_postfinancecheckout_unique_line_item_id', true));
 			
-			$items[] = $this->clean_line_item($line_item);
+			$attributes = $this->get_base_attributes($product->get_id());
+			
+			// Only for product variation
+			if($product->is_type('variation')){
+			    $variation_attributes = $product->get_variation_attributes();
+			    foreach($variation_attributes as $attribute_key => $ignore){
+			        $taxonomy = str_replace('attribute_', '', $attribute_key );
+			        $attribute_key_cleaned = $this->clean_attribute_key($taxonomy);
+			        if(isset($attributes[$attribute_key_cleaned])){
+			            $term = get_term_by('slug', wc_get_order_item_meta($item->get_id(), $taxonomy, true), $taxonomy, 'display');
+			            $attributes[$attribute_key_cleaned]->setValue($this->fix_length($term->name, 512));
+			        }
+			    }
+			}
+			if(!empty($attributes)){
+			    $line_item->setAttributes($attributes);
+			}
+			
+			$items[] = apply_filters('wc_postfinancecheckout_modify_line_item_product_backend', $this->clean_line_item($line_item), $item);
 		}
 		return $items;
 	}
@@ -457,7 +508,7 @@ class WC_PostFinanceCheckout_Service_Line_Item extends WC_PostFinanceCheckout_Se
 			
 			$line_item->setUniqueId($fee->get_meta('_postfinancecheckout_unique_line_item_id', true));
 			
-			$fees[] = $this->clean_line_item($line_item);
+			$fees[] = apply_filters('wc_postfinancecheckout_modify_line_item_fee_backend', $this->clean_line_item($line_item), $fee);
 		}
 		return $fees;
 	}
@@ -508,7 +559,7 @@ class WC_PostFinanceCheckout_Service_Line_Item extends WC_PostFinanceCheckout_Se
 			$line_item->setType(\PostFinanceCheckout\Sdk\Model\LineItemType::SHIPPING);
 			$line_item->setUniqueId($shipping->get_meta('_postfinancecheckout_unique_line_item_id', true));
 			
-			$shippings[] = $this->clean_line_item($line_item);
+			$shippings[] = apply_filters('wc_postfinancecheckout_modify_line_item_shipping_backend', $this->clean_line_item($line_item), $shipping);
 		}
 		return $shippings;
 	}
@@ -538,5 +589,53 @@ class WC_PostFinanceCheckout_Service_Line_Item extends WC_PostFinanceCheckout_Se
 		}
 		
 		return $tax_rates;
+	}
+	
+	private function get_base_attributes($product_id){
+	    
+	    $products_to_check = array($product_id);
+	    $current_product = wc_get_product($product_id);
+	    
+	    /**
+	     * @var WC_Product $product
+	     */
+	    while($current_product && $current_product->get_parent_id('edit') != 0){
+	        $products_to_check[] = $current_product->get_parent_id('edit');
+	        $current_product = wc_get_product($current_product->get_parent_id('edit'));
+	    }
+	    $products_to_check = array_reverse($products_to_check);
+	    $attributes = array();
+	    
+	    foreach($products_to_check as $id){
+	        $product = wc_get_product($id);
+
+	        $product_attributes = $product->get_attributes('edit');
+	        
+	        foreach($product_attributes as $key => $object){
+	            if(is_a($object, 'WC_Product_Attribute')){
+	                if($object->is_taxonomy()){
+	                    $attribute_options = WC_PostFinanceCheckout_Entity_Attribute_Options::load_by_attribute_id($object->get_id());
+	                    if($attribute_options->get_send()){
+    	                    $attribute = new \PostFinanceCheckout\Sdk\Model\LineItemAttributeCreate();
+    	                    $attribute->setLabel($this->fix_length(wc_attribute_label($key, $product), 512));
+    	                    $terms = $object->get_terms();
+    	                    $value = array();
+    	                    if($terms != null){
+    	                        foreach($terms as $term){
+    	                            $value[] = get_term_field('name', $term); 
+    	                        }
+    	                    }
+    	                    $attribute->setValue($this->fix_length(implode('|',$value), 512));
+    	                    $attributes[$this->clean_attribute_key($key)] = $attribute;
+	                    }
+	                }
+	            }
+	        }	        
+	    }
+	    return $attributes;
+	}
+	
+	private function clean_attribute_key($key){
+	    return preg_replace("/[^a-z0-9_]+/i", "_", $key);
 	}
 }

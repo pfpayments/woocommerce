@@ -3,9 +3,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: WooCommerce PostFinance Checkout\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2018-06-25 10:08+0000\n"
-"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
-"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"POT-Creation-Date: 2018-11-13 07:49+0000\n"
 "Language-Team: \n"
 "Language: \n"
 "Plural-Forms: nplurals=INTEGER; plural=EXPRESSION;\n"
@@ -29,39 +27,39 @@ msgstr ""
 msgid "%1$s stock increased from %2$s to %3$s."
 msgstr ""
 
-#: includes/class-wc-postfinancecheckout-migration.php:92
+#: includes/class-wc-postfinancecheckout-migration.php:93
 #, php-format
 msgid "PHP %s+ is required. (You're running version %s)"
 msgstr ""
 
-#: includes/class-wc-postfinancecheckout-migration.php:95
+#: includes/class-wc-postfinancecheckout-migration.php:96
 #, php-format
 msgid "Wordpress %s+ is required. (You're running version %s)"
 msgstr ""
 
-#: includes/class-wc-postfinancecheckout-migration.php:100
+#: includes/class-wc-postfinancecheckout-migration.php:101
 #, php-format
 msgid "Woocommerce %s+ has to be active."
 msgstr ""
 
-#: includes/class-wc-postfinancecheckout-migration.php:106
+#: includes/class-wc-postfinancecheckout-migration.php:107
 #, php-format
 msgid "Woocommerce %s+ is required. (You're running version %s)"
 msgstr ""
 
-#: includes/class-wc-postfinancecheckout-migration.php:118
+#: includes/class-wc-postfinancecheckout-migration.php:119
 msgid "Could not activate plugin WooCommerce PostFinance Checkout."
 msgstr ""
 
-#: includes/class-wc-postfinancecheckout-migration.php:120
+#: includes/class-wc-postfinancecheckout-migration.php:121
 msgid "Please check the following requirements before activating:"
 msgstr ""
 
-#: includes/class-wc-postfinancecheckout-migration.php:263
+#: includes/class-wc-postfinancecheckout-migration.php:264
 msgid "View Documentation"
 msgstr ""
 
-#: includes/class-wc-postfinancecheckout-migration.php:263
+#: includes/class-wc-postfinancecheckout-migration.php:264
 #: includes/admin/class-wc-postfinancecheckout-admin-settings-page.php:148
 msgid "Documentation"
 msgstr ""
@@ -130,7 +128,7 @@ msgid ""
 "another payment method."
 msgstr ""
 
-#: includes/class-wc-postfinancecheckout-gateway.php:405
+#: includes/class-wc-postfinancecheckout-gateway.php:418
 msgid "There was a problem creating the refund."
 msgstr ""
 
@@ -152,40 +150,52 @@ msgstr ""
 msgid "Could not fetch the document from PostFinance Checkout."
 msgstr ""
 
-#: includes/admin/class-wc-postfinancecheckout-admin.php:121
+#: includes/admin/class-wc-postfinancecheckout-admin.php:133
 msgid "There is a completion/void in progress."
 msgstr ""
 
-#: includes/admin/class-wc-postfinancecheckout-admin.php:122
+#: includes/admin/class-wc-postfinancecheckout-admin.php:134
 #: includes/admin/class-wc-postfinancecheckout-admin-refund.php:61
 msgid "Update"
 msgstr ""
 
-#: includes/admin/class-wc-postfinancecheckout-admin.php:125
+#: includes/admin/class-wc-postfinancecheckout-admin.php:137
 msgid "Void"
 msgstr ""
 
-#: includes/admin/class-wc-postfinancecheckout-admin.php:126
+#: includes/admin/class-wc-postfinancecheckout-admin.php:138
 msgid "Completion"
 msgstr ""
 
-#: includes/admin/class-wc-postfinancecheckout-admin.php:163
+#: includes/admin/class-wc-postfinancecheckout-admin.php:175
 msgid ""
 "Are you sure you wish to process this void? This action cannot be undone."
 msgstr ""
 
-#: includes/admin/class-wc-postfinancecheckout-admin.php:164
+#: includes/admin/class-wc-postfinancecheckout-admin.php:176
 msgid ""
 "Are you sure you wish to process this completion? This action cannot be "
 "undone."
 msgstr ""
 
-#: includes/admin/class-wc-postfinancecheckout-admin.php:216
+#: includes/admin/class-wc-postfinancecheckout-admin.php:228
 msgid "View Settings"
 msgstr ""
 
-#: includes/admin/class-wc-postfinancecheckout-admin.php:216
+#: includes/admin/class-wc-postfinancecheckout-admin.php:228
 msgid "Settings"
+msgstr ""
+
+#: includes/admin/class-wc-postfinancecheckout-admin.php:256
+#: includes/admin/class-wc-postfinancecheckout-admin.php:267
+msgid "Send attribute to PostFinance Checkout."
+msgstr ""
+
+#: includes/admin/class-wc-postfinancecheckout-admin.php:260
+#: includes/admin/class-wc-postfinancecheckout-admin.php:268
+msgid ""
+"Should this product attribute be sent to PostFinance Checkout as line "
+"item attribute?"
 msgstr ""
 
 #: includes/admin/class-wc-postfinancecheckout-admin-refund.php:60
@@ -200,13 +210,14 @@ msgstr ""
 msgid "Please wait until the pending refund is processed."
 msgstr ""
 
-#: includes/admin/class-wc-postfinancecheckout-admin-refund.php:148
+#: includes/admin/class-wc-postfinancecheckout-admin-refund.php:154
+#: includes/admin/class-wc-postfinancecheckout-admin-refund.php:161
 #, php-format
 msgid ""
 "There has been an error while sending the refund to the gateway. Error: %s"
 msgstr ""
 
-#: includes/admin/class-wc-postfinancecheckout-admin-refund.php:168
+#: includes/admin/class-wc-postfinancecheckout-admin-refund.php:181
 #, php-format
 msgid "Error updating refund job with id %d: %s"
 msgstr ""
@@ -253,7 +264,7 @@ msgstr ""
 msgid "The completion is updated automatically once the result is available."
 msgstr ""
 
-#: includes/admin/class-wc-postfinancecheckout-admin-order-completion.php:272
+#: includes/admin/class-wc-postfinancecheckout-admin-order-completion.php:298
 #, php-format
 msgid "Error updating completion job with id %d: %s"
 msgstr ""
@@ -282,7 +293,7 @@ msgstr ""
 msgid "The transaction is updated automatically once the result is available."
 msgstr ""
 
-#: includes/admin/class-wc-postfinancecheckout-admin-order-void.php:173
+#: includes/admin/class-wc-postfinancecheckout-admin-order-void.php:187
 #, php-format
 msgid "Error updating void job with id %d: %s"
 msgstr ""
@@ -462,8 +473,8 @@ msgstr ""
 msgid "A manual decision about whether to accept the payment is required."
 msgstr ""
 
-#: includes/service/class-wc-postfinancecheckout-service-transaction.php:307
-msgid "The checkout expired, please try again"
+#: includes/service/class-wc-postfinancecheckout-service-transaction.php:327
+msgid "The checkout expired, please try again."
 msgstr ""
 
 #: views/admin-notices/manual-tasks.php:18

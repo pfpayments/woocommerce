@@ -28,40 +28,40 @@ msgstr "Rundungskorrektur"
 msgid "%1$s stock increased from %2$s to %3$s."
 msgstr "%1$s Lagerbestand erhöht von %2$s auf %3$s."
 
-#: includes/class-wc-postfinancecheckout-migration.php:92
+#: includes/class-wc-postfinancecheckout-migration.php:93
 #, php-format
 msgid "PHP %s+ is required. (You're running version %s)"
 msgstr "PHP %s+ wird benötigt. (Du verwendest Version %s)"
 
-#: includes/class-wc-postfinancecheckout-migration.php:95
+#: includes/class-wc-postfinancecheckout-migration.php:96
 #, php-format
 msgid "Wordpress %s+ is required. (You're running version %s)"
 msgstr "Wordpress %s+ wird benötigt. (Du verwendest Version %s)"
 
-#: includes/class-wc-postfinancecheckout-migration.php:100
+#: includes/class-wc-postfinancecheckout-migration.php:101
 #, php-format
 msgid "Woocommerce %s+ has to be active."
 msgstr "Woocommerce %s+ muss aktiviert sein."
 
-#: includes/class-wc-postfinancecheckout-migration.php:106
+#: includes/class-wc-postfinancecheckout-migration.php:107
 #, php-format
 msgid "Woocommerce %s+ is required. (You're running version %s)"
 msgstr "Woocommerce %s+ wird benötigt. (Du verwendest Version %s)"
 
-#: includes/class-wc-postfinancecheckout-migration.php:118
+#: includes/class-wc-postfinancecheckout-migration.php:119
 msgid "Could not activate plugin WooCommerce PostFinance Checkout."
 msgstr "Das Plugin WooCommerce PostFinance Checkout konnte nicht aktiviert werden."
 
-#: includes/class-wc-postfinancecheckout-migration.php:120
+#: includes/class-wc-postfinancecheckout-migration.php:121
 msgid "Please check the following requirements before activating:"
 msgstr ""
 "Bitte überprüfe die folgenden Anforderungen bevor das Modul aktiviert wird:"
 
-#: includes/class-wc-postfinancecheckout-migration.php:263
+#: includes/class-wc-postfinancecheckout-migration.php:264
 msgid "View Documentation"
 msgstr "Dokumentation ansehen."
 
-#: includes/class-wc-postfinancecheckout-migration.php:263
+#: includes/class-wc-postfinancecheckout-migration.php:264
 #: includes/admin/class-wc-postfinancecheckout-admin-settings-page.php:148
 msgid "Documentation"
 msgstr "Dokumentation"
@@ -132,7 +132,7 @@ msgstr ""
 "Es gab ein Problem beim Verarbeiten Ihrer Bestellung. Bitte versuchen Sie es "
 "erneut oder wählen Sie eine andere Zahlmethode."
 
-#: includes/class-wc-postfinancecheckout-gateway.php:405
+#: includes/class-wc-postfinancecheckout-gateway.php:418
 msgid "There was a problem creating the refund."
 msgstr "Es gab ein Problem bei der Erstellung der Rückerstattung."
 
@@ -154,31 +154,31 @@ msgstr "postfinancecheckout Dokumente"
 msgid "Could not fetch the document from PostFinance Checkout."
 msgstr "Das Dokument konnte nicht abgeholt werden."
 
-#: includes/admin/class-wc-postfinancecheckout-admin.php:121
+#: includes/admin/class-wc-postfinancecheckout-admin.php:133
 msgid "There is a completion/void in progress."
 msgstr "Es eine Verbuchung/Annullierung in Berabeitung."
 
-#: includes/admin/class-wc-postfinancecheckout-admin.php:122
+#: includes/admin/class-wc-postfinancecheckout-admin.php:134
 #: includes/admin/class-wc-postfinancecheckout-admin-refund.php:61
 msgid "Update"
 msgstr "Aktualisieren"
 
-#: includes/admin/class-wc-postfinancecheckout-admin.php:125
+#: includes/admin/class-wc-postfinancecheckout-admin.php:137
 msgid "Void"
 msgstr "Annullierung"
 
-#: includes/admin/class-wc-postfinancecheckout-admin.php:126
+#: includes/admin/class-wc-postfinancecheckout-admin.php:137
 msgid "Completion"
 msgstr "Verbuchung"
 
-#: includes/admin/class-wc-postfinancecheckout-admin.php:163
+#: includes/admin/class-wc-postfinancecheckout-admin.php:175
 msgid ""
 "Are you sure you wish to process this void? This action cannot be undone."
 msgstr ""
 "Sind Sie sicher, dass Sie diese Annullierung bearbeiten möchten? Diese "
 "Aktion kann nicht rückgängig gemacht werden."
 
-#: includes/admin/class-wc-postfinancecheckout-admin.php:164
+#: includes/admin/class-wc-postfinancecheckout-admin.php:176
 msgid ""
 "Are you sure you wish to process this completion? This action cannot be "
 "undone."
@@ -186,13 +186,27 @@ msgstr ""
 "Sind Sie sicher, dass Sie diese Verbuchung bearbeiten möchten? Diese Aktion "
 "kann nicht rückgängig gemacht werden."
 
-#: includes/admin/class-wc-postfinancecheckout-admin.php:216
+#: includes/admin/class-wc-postfinancecheckout-admin.php:228
 msgid "View Settings"
 msgstr "Einstellungen Ansicht"
 
-#: includes/admin/class-wc-postfinancecheckout-admin.php:216
+#: includes/admin/class-wc-postfinancecheckout-admin.php:228
 msgid "Settings"
 msgstr "Einstellungen"
+
+#: includes/admin/class-wc-postfinancecheckout-admin.php:256
+#: includes/admin/class-wc-postfinancecheckout-admin.php:267
+msgid "Send attribute to PostFinance Checkout."
+msgstr "Übermittle das Attribute an PostFinance Checkout."
+
+#: includes/admin/class-wc-postfinancecheckout-admin.php:260
+#: includes/admin/class-wc-postfinancecheckout-admin.php:268
+msgid ""
+"Should this product attribute be sent to PostFinance Checkout as line item "
+"attribute?"
+msgstr ""
+"Soll dieses Produkt Attribute als Line Item Attribute an PostFinance Checkout "
+"gesendet werden."
 
 #: includes/admin/class-wc-postfinancecheckout-admin-refund.php:60
 msgid "There is a refund in progress."
@@ -207,14 +221,15 @@ msgid "Please wait until the pending refund is processed."
 msgstr ""
 "Bitte warten Sie, bis die existierende Rückerstattung verarbeitet wurde."
 
-#: includes/admin/class-wc-postfinancecheckout-admin-refund.php:148
+#: includes/admin/class-wc-postfinancecheckout-admin-refund.php:154
+#: includes/admin/class-wc-postfinancecheckout-admin-refund.php:161
 #, php-format
 msgid ""
 "There has been an error while sending the refund to the gateway. Error: %s"
 msgstr ""
 "Es gab einen Fehler bei der Übermittlung der Rückerstattung. Fehler : %s"
 
-#: includes/admin/class-wc-postfinancecheckout-admin-refund.php:168
+#: includes/admin/class-wc-postfinancecheckout-admin-refund.php:181
 #, php-format
 msgid "Error updating refund job with id %d: %s"
 msgstr "Fehler bei der Aktualisierung der Rückerstattung mit id %d: %s"
@@ -267,7 +282,7 @@ msgstr ""
 "Die Verbuchung wird automatisch aktualisiert sobald das Resultat verfügbar "
 "ist."
 
-#: includes/admin/class-wc-postfinancecheckout-admin-order-completion.php:272
+#: includes/admin/class-wc-postfinancecheckout-admin-order-completion.php:298
 #, php-format
 msgid "Error updating completion job with id %d: %s"
 msgstr "Fehler bei der Verbuchung mit id %d: %s"
@@ -302,7 +317,7 @@ msgstr ""
 "Die Transaktion wird automatisch aktualisiert sobald das Resultat verfügbar "
 "ist."
 
-#: includes/admin/class-wc-postfinancecheckout-admin-order-void.php:173
+#: includes/admin/class-wc-postfinancecheckout-admin-order-void.php:187
 #, php-format
 msgid "Error updating void job with id %d: %s"
 msgstr "Fehler bei der Aktualisierung der Annullierung mit id %d: %s"
@@ -493,8 +508,8 @@ msgid "A manual decision about whether to accept the payment is required."
 msgstr ""
 "Eine manuelle Entscheidung über die Annahme der Zahlung ist erforderlich."
 
-#: includes/service/class-wc-postfinancecheckout-service-transaction.php:307
-msgid "The checkout expired, please try again"
+#: includes/service/class-wc-postfinancecheckout-service-transaction.php:327
+msgid "The checkout expired, please try again."
 msgstr "Der Checkout ist abgelaufen, bitte versuchen Sie es erneut."
 
 #: views/admin-notices/manual-tasks.php:18
@@ -519,7 +534,8 @@ msgstr ""
 
 #: views/admin-notices/plugin-deactivated.php:14
 msgid "WooCommerce PostFinance Checkout deactivated because it depends on WooCommerce."
-msgstr "WooCommerce PostFinance Checkout wurde deaktiviert, weil es von WooCommerce abhängig ist."
+msgstr ""
+"WooCommerce PostFinance Checkout wurde deaktiviert, weil es von WooCommerce abhängig ist."
 
 #. Name of the plugin
 msgid "WooCommerce PostFinance Checkout"

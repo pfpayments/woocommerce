@@ -57,7 +57,7 @@ class WC_PostFinanceCheckout_Admin_Document {
 								'postfinancecheckout_admin' => 'download_invoice' 
 							), admin_url('post.php')), 'download_invoice', 'nonce');
 			$title = esc_attr(__('Invoice', 'woo-postfinancecheckout'));
-			printf('<a class="button tips postfinancecheckout-button-download-invoice" href="%1s" data-tip="%2s">%2s</a>', $url, $title, $title);
+			printf('<a class="button tips postfinancecheckout-action-button  postfinancecheckout-button-download-invoice" href="%1s" data-tip="%2s">%2s</a>', $url, $title, $title);
 		}
 		if ($transaction_info->get_state() == \PostFinanceCheckout\Sdk\Model\TransactionState::FULFILL) {
 			$url = wp_nonce_url(
@@ -68,7 +68,7 @@ class WC_PostFinanceCheckout_Admin_Document {
 								'postfinancecheckout_admin' => 'download_packing' 
 							), admin_url('post.php')), 'download_packing', 'nonce');
 			$title = esc_attr(__('Packing Slip', 'woo-postfinancecheckout'));
-			printf('<a class="button tips postfinancecheckout-button-download-packingslip" href="%1s" data-tip="%2s">%2s</a>', $url, $title, $title);
+			printf('<a class="button tips postfinancecheckout-action-button postfinancecheckout-button-download-packingslip" href="%1s" data-tip="%2s">%2s</a>', $url, $title, $title);
 		}
 	}
 

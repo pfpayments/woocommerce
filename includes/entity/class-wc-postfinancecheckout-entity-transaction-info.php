@@ -43,6 +43,8 @@ if (!defined('ABSPATH')) {
  * @method int get_order_mapping_id()
  * @method void set_order_mapping_id(int $id)
  * @method void set_failure_reason(map[string,string] $reasons)
+ * @method string get_user_failure_message()
+ * @method void set_user_failure_message(string $message)
  *  
  */
 class WC_PostFinanceCheckout_Entity_Transaction_Info extends WC_PostFinanceCheckout_Entity_Abstract {
@@ -64,6 +66,7 @@ class WC_PostFinanceCheckout_Entity_Transaction_Info extends WC_PostFinanceCheck
 		    'order_id' => WC_PostFinanceCheckout_Entity_Resource_Type::INTEGER,
 		    'order_mapping_id' => WC_PostFinanceCheckout_Entity_Resource_Type::INTEGER,
 		    'failure_reason' => WC_PostFinanceCheckout_Entity_Resource_Type::OBJECT,
+		    'user_failure_message' =>  WC_PostFinanceCheckout_Entity_Resource_Type::STRING,
 		    'locked_at' => WC_PostFinanceCheckout_Entity_Resource_Type::DATETIME 
 		);
 	}

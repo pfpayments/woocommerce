@@ -91,7 +91,7 @@
     width: 2em
 }
 
-.order_actions .postfinancecheckout-button-download-invoice::after {
+.order_actions .postfinancecheckout-button-download-invoice::after, .widefat .wc_actions .postfinancecheckout-action-button.wallee-button-download-invoice::after {
 	font-family: woocommerce-wallee;
 	speak: none;
 	font-weight: 400;
@@ -109,7 +109,7 @@
 	margin: 0px;
 }
 
-.order_actions .postfinancecheckout-button-download-packingslip::after {
+.order_actions .postfinancecheckout-button-download-packingslip::after, .widefat .wc_actions .postfinancecheckout-action-button.wallee-button-download-packingslip::after  {
 	font-family: woocommerce-wallee;
 	speak: none;
 	font-weight: 400;

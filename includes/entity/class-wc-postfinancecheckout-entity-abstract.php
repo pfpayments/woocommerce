@@ -136,12 +136,9 @@ abstract class WC_PostFinanceCheckout_Entity_Abstract {
 			}
 			$data_array[$key] = $value;
 		}
-		$data_array['updated_at'] = current_time('mysql');
-		$type_array[] = "%s";
+		$this->prepare_base_fields_for_storage($data_array, $type_array);
 		
 		if ($this->get_id() === null) {
-			$data_array['created_at'] = $data_array['updated_at'];
-			$type_array[] = "%s";
 			$wpdb->insert($wpdb->prefix . $this->get_table_name(), $data_array, $type_array);
 			$this->set_id($wpdb->insert_id);
 		}
@@ -152,6 +149,16 @@ abstract class WC_PostFinanceCheckout_Entity_Abstract {
 				"%d" 
 			));
 		}
+	}
+	
+	
+	protected function prepare_base_fields_for_storage($data_array, $type_array){
+	    $data_array['updated_at'] = current_time('mysql');
+	    $type_array[] = "%s";
+	    if($this->get_id() === null){
+	        $data_array['created_at'] = $data_array['updated_at'];
+	        $type_array[] = "%s";
+	    }
 	}
 
 	/**

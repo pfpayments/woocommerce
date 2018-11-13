@@ -95,6 +95,18 @@ class WC_PostFinanceCheckout_Admin {
 			$this,
 			'remove_not_wanted_order_actions'
 		), 10, 2);
+
+		add_action('woocommerce_after_edit_attribute_fields', array(
+		    $this,
+		    'display_attribute_options_edit'
+		), 10, 0);
+		
+		add_action('woocommerce_after_add_attribute_fields', array(
+		    $this,
+		    'display_attribute_options_add'
+		), 10, 0);
+		
+		
 	}
 	
 	public function handle_woocommerce_active(){
@@ -219,6 +231,45 @@ class WC_PostFinanceCheckout_Admin {
 		return array_merge($action_links, $links);
 	}
 	
+	
+	
+	public function store_attribute_options($product, $data_storage){
+	    global $postfinancecheckout_attributes_options;
+	    if(!empty($postfinancecheckout_attributes_options)){
+	        $product->add_meta_data('_postfinancecheckout_attribute_options', $postfinancecheckout_attributes_options, true);
+	    }	    
+	}
+	
+		
+	
+	public function display_attribute_options_edit(){
+	    
+	    $edit = absint( $_GET['edit'] );
+	    $checked = false;
+	    
+	    $attribute_options = WC_PostFinanceCheckout_Entity_Attribute_Options::load_by_attribute_id($edit);
+	    if($attribute_options->get_id() > 0 && $attribute_options->get_send()){
+	        $checked = true;
+	    }
+	    echo '<tr class="form-field form-required">
+					<th scope="row" valign="top">
+							<label for="postfinancecheckout_attribute_option_send">'.esc_html__( 'Send attribute to PostFinance Checkout.', 'woo-postfinancecheckout' ).'</label>
+					</th>
+						<td>
+								<input name="postfinancecheckout_attribute_option_send" id="postfinancecheckout_attribute_option_send" type="checkbox" value="1" '.checked( $checked, true, false).'/>
+								<p class="description">'.esc_html__( 'Should this product attribute be sent to PostFinance Checkout as line item attribute?', 'woo-postfinancecheckout' ).'</p>
+						</td>
+				</tr>';	    
+	}
+	
+	public function display_attribute_options_add(){
+	    echo '<div class="form-field">
+    				<label for="postfinancecheckout_attribute_option_send"><input name="postfinancecheckout_attribute_option_send" id="postfinancecheckout_attribute_option_send" type="checkbox" value="1">'.esc_html__( 'Send attribute to PostFinance Checkout.', 'woo-postfinancecheckout' ).'</label>
+       				<p class="description">'.esc_html__( 'Should this product attribute be sent to PostFinance Checkout as line item attribute?', 'woo-postfinancecheckout' ).'</p>
+    			</div>';
+	}
+	
+
 }
 
 WC_PostFinanceCheckout_Admin::instance();

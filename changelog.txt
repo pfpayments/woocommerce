@@ -81,7 +81,12 @@
 
 = 1.1.11 - September 20, 2018 =
 
-* FIxes - Improved handling of backend actions
+* Fixes - Improved handling of backend actions
+
+= 1.1.12 - November 13, 2018 =
+
+* Feature - Added option to send global product attributes to PostFinance Checkout
+* Tweak - Improved customer experience if the payment failes.
 
 = 1.1.2 - May 22, 2018 =
 

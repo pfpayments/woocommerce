@@ -3,15 +3,15 @@
  * Plugin Name: WooCommerce PostFinance Checkout
  * Plugin URI: https://wordpress.org/plugins/woo-postfinancecheckout
  * Description: Process WooCommerce payments with PostFinance Checkout.
- * Version: 1.1.11
+ * Version: 1.1.12
  * License: Apache2
  * License URI: http://www.apache.org/licenses/LICENSE-2.0
  * Author: customweb GmbH
  * Author URI: https://www.customweb.com
  * Requires at least: 4.7
- * Tested up to: 4.9.6
+ * Tested up to: 4.9.8
  * WC requires at least: 3.0.0
- * WC tested up to: 3.4.3
+ * WC tested up to: 3.5.1
  *
  * Text Domain: woo-postfinancecheckout
  * Domain Path: /languages/
@@ -43,7 +43,7 @@ if (!class_exists('WooCommerce_PostFinanceCheckout')) {
 		 *
 		 * @var string
 		 */
-		private $version = '1.1.11';
+		private $version = '1.1.12';
 		
 		/**
 		 * The single instance of the class.
@@ -146,6 +146,10 @@ if (!class_exists('WooCommerce_PostFinanceCheckout')) {
 				$this,
 				'enqueue_javascript_script' 
 			));
+			add_action('wp_enqueue_scripts', array(
+			    $this,
+			    'enqueue_stylesheets'
+			));
 			add_filter('script_loader_tag', array(
 				$this,
 				'set_js_async' 
@@ -208,6 +212,31 @@ if (!class_exists('WooCommerce_PostFinanceCheckout')) {
 				$this,
 				'update_additional_customer_data' 
 			));
+			add_action('woocommerce_before_checkout_form', array(
+			    $this,
+			    'show_checkout_error_msg'
+			), 5, 0);
+			
+			add_action('woocommerce_attribute_added', array(
+			    $this,
+			    'woocommerce_attribute_added'
+			), 10, 2);
+			
+			add_action('woocommerce_attribute_updated', array(
+			    $this,
+			    'woocommerce_attribute_updated'
+			), 10, 3);
+			
+			add_action('woocommerce_rest_insert_product_attribute', array(
+			    $this,
+			    'woocommerce_rest_insert_product_attribute'
+			), 10, 3);
+			
+			add_filter('woocommerce_rest_prepare_product_attribute', array(
+			    $this,
+			    'woocommerce_rest_prepare_product_attribute'
+			), 10, 3);
+			
 		}
 
 		public function register_order_statuses(){
@@ -275,6 +304,12 @@ if (!class_exists('WooCommerce_PostFinanceCheckout')) {
 						$unique_id;
 				wp_enqueue_script('postfinancecheckout-device-id-js', $script_url, array(), null, true);
 			}
+		}
+		
+		public function enqueue_stylesheets(){
+		    if(is_checkout()){
+		        wp_enqueue_style( 'postfinancecheckout-checkout-css', $this->plugin_url() . '/assets/css/checkout.css' );
+		    }
 		}
 
 		public function order_editable_check($allowed, WC_Order $order = null){
@@ -387,6 +422,14 @@ if (!class_exists('WooCommerce_PostFinanceCheckout')) {
 						));
 			}
 		}
+		
+		public function show_checkout_error_msg(){
+		    $msg  = WC()->session->get( 'postfinancecheckout_failure_message',  null );
+		    if(!empty($msg)){
+		        $this->add_notice($msg, 'error');
+		        WC()->session->set('postfinancecheckout_failure_message',  null );
+		    }
+		}
 
 		/**
 		 * Define constant if not already set.
@@ -445,6 +488,52 @@ if (!class_exists('WooCommerce_PostFinanceCheckout')) {
 		public function plugin_path(){
 			return untrailingslashit(plugin_dir_path(__FILE__));
 		}
+		
+		
+		protected function update_attribute_options($attribute_id, $send){
+		    $attribute_options = WC_PostFinanceCheckout_Entity_Attribute_Options::load_by_attribute_id($attribute_id);
+		    $attribute_options->set_attribute_id($attribute_id);
+		    $attribute_options->set_send($send);
+		    $attribute_options->save();
+		}
+		
+		public function woocommerce_attribute_added($attribute_id, $data){
+		    if(did_action('product_page_product_attributes')){
+		        //edit through backend form, check POST data
+		        $send = isset( $_POST['postfinancecheckout_attribute_option_send'] ) ? 1 : 0;
+		        $this->update_attribute_options($attribute_id, $send);
+		    }
+		    //edit thorugh rest api is handled with woocommerce_rest_insert_product_attribute filter, as we can not get the rest request object otherwise
+		}
+				
+		public function woocommerce_attribute_updated($attribute_id, $data, $old_slug){
+		    $this->woocommerce_attribute_added($attribute_id, $data);
+		}
+		
+		public function woocommerce_rest_insert_product_attribute($attribute, $request, $create){
+		    if(isset($request['postfinancecheckout_attribute_option_send'])){
+		        if($request['postfinancecheckout_attribute_option_send']){
+		            $this->update_attribute_options($attribute->attribute_id, true);
+		        }
+		        else{
+		            $this->update_attribute_options($attribute->attribute_id, false);
+		        }
+		    }
+		}
+		
+		public function woocommerce_rest_prepare_product_attribute($response, $item, $request){
+		    
+		    $context = ! empty( $request['context'] ) ? $request['context'] : 'view';
+		    if($context == 'view' || $context == 'edit'){
+		        $data = $response->get_data();
+		        $send = false;
+		        $attribute_options = WC_PostFinanceCheckout_Entity_Attribute_Options::load_by_attribute_id($item->attribute_id);
+		        $data['postfinancecheckout_attribute_option_send'] = $attribute_options->get_id() > 0 && $attribute_options->get_send();
+		        $response->set_data($data);
+		    }
+		    return $response;
+		}
+		
 	}
 }
 
