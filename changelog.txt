@@ -88,6 +88,10 @@
 * Feature - Added option to send global product attributes to PostFinance Checkout
 * Tweak - Improved customer experience if the payment failes.
 
+= 1.1.13 - November 16, 2018 =
+
+* Tweakes - Integrated hooks to remove product attribute options
+
 = 1.1.2 - May 22, 2018 =
 
 * Fix - Issue with refunds

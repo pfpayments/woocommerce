@@ -3,7 +3,7 @@
  * Plugin Name: WooCommerce PostFinance Checkout
  * Plugin URI: https://wordpress.org/plugins/woo-postfinancecheckout
  * Description: Process WooCommerce payments with PostFinance Checkout.
- * Version: 1.1.12
+ * Version: 1.1.13
  * License: Apache2
  * License URI: http://www.apache.org/licenses/LICENSE-2.0
  * Author: customweb GmbH
@@ -43,7 +43,7 @@ if (!class_exists('WooCommerce_PostFinanceCheckout')) {
 		 *
 		 * @var string
 		 */
-		private $version = '1.1.12';
+		private $version = '1.1.13';
 		
 		/**
 		 * The single instance of the class.
@@ -225,6 +225,11 @@ if (!class_exists('WooCommerce_PostFinanceCheckout')) {
 			add_action('woocommerce_attribute_updated', array(
 			    $this,
 			    'woocommerce_attribute_updated'
+			), 10, 3);
+			
+			add_action('woocommerce_attribute_deleted', array(
+			    $this,
+			    'woocommerce_attribute_deleted'
 			), 10, 3);
 			
 			add_action('woocommerce_rest_insert_product_attribute', array(
@@ -508,6 +513,11 @@ if (!class_exists('WooCommerce_PostFinanceCheckout')) {
 				
 		public function woocommerce_attribute_updated($attribute_id, $data, $old_slug){
 		    $this->woocommerce_attribute_added($attribute_id, $data);
+		}
+		
+		public function woocommerce_attribute_deleted($attribute_id, $name, $taxonomy_name){
+		    $attribute_options = WC_PostFinanceCheckout_Entity_Attribute_Options::load_by_attribute_id($attribute_id);
+		    $attribute_options->delete();
 		}
 		
 		public function woocommerce_rest_insert_product_attribute($attribute, $request, $create){
