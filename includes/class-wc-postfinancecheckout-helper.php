@@ -282,38 +282,6 @@ class WC_PostFinanceCheckout_Helper {
 		$session_handler->set('postfinancecheckout_current_cart_id', null);
 	}
 
-	public function maybe_restock_items_for_order(WC_Order $order){
-		$restocked = $order->get_meta('_wc_postfinancecheckout_restocked', true);
-		$reduced = get_post_meta($order->get_id(), '_order_stock_reduced',true);
-		if (apply_filters('wc_postfinancecheckout_order_restock', !$restocked && $reduced == 'yes', $order)) {
-		    $this->restock_items_for_order($order);
-		    delete_post_meta($order->get_id(), '_order_stock_reduced');
-			$order->add_meta_data('_wc_postfinancecheckout_restocked', true, true);
-			$order->save();
-		}
-	}
-
-	protected function restock_items_for_order(WC_Order $order){
-		if ('yes' === get_option('woocommerce_manage_stock') && $order && apply_filters('wc_postfinancecheckout_can_increase_order_stock', true, $order) &&
-				 sizeof($order->get_items()) > 0) {
-			foreach ($order->get_items() as $item) {
-				if ($item->is_type('line_item') && ($product = $item->get_product()) && $product->managing_stock()) {
-					$qty = apply_filters('woocommerce_order_item_quantity', $item->get_quantity(), $order, $item);
-					$item_name = $product->get_formatted_name();
-					$new_stock = wc_update_product_stock($product, $qty, 'increase');
-					
-					if (!is_wp_error($new_stock)) {
-						/* translators: 1: item name 2: old stock quantity 3: new stock quantity */
-						$order->add_order_note(
-								sprintf(__('%1$s stock increased from %2$s to %3$s.', 'woo-postfinancecheckout'), $item_name, $new_stock - $qty, 
-										$new_stock));
-					}
-				}
-			}
-			do_action('wc_postfinancecheckout_restocked_order', $order);
-		}
-	}
-
 	/**
 	 * Create a lock to prevent concurrency.
 	 *
@@ -330,7 +298,7 @@ class WC_PostFinanceCheckout_Helper {
 		);
 		$wpdb->query(
 				$wpdb->prepare(
-						"SELECT locked_at FROM " . $wpdb->prefix .
+						"SELECT * FROM " . $wpdb->prefix .
 								 "woocommerce_postfinancecheckout_transaction_info WHERE transaction_id = %d and space_id = %d FOR UPDATE", $transaction_id, 
 								$space_id));
 		
@@ -367,6 +335,52 @@ class WC_PostFinanceCheckout_Helper {
 			return null;
 		}
 		return $language->getIetfCode();
-		
 	}
+	
+	/**
+	 * Try to parse the given date string. Returns a newly created DateTime object, or false if the string could not been parsed
+	 * 
+	 * @param String $date_string 
+	 * @return DateTime | boolean
+	 */
+	public function try_to_parse_date($date_string){
+	    $date_of_birth = false;
+	    $custom_date_of_birth_format = apply_filters('wc_postfinancecheckout_custom_date_of_birth_format', '');
+	    if(!empty($custom_date_of_birth_format)){
+	        $date_of_birth =  DateTime::createFromFormat($custom_date_of_birth_format, $date_string);
+	    }
+	    else{
+	        $date_of_birth = DateTime::createFromFormat('d.m.Y', $date_string);
+	        if(!$date_of_birth){
+	            $date_of_birth = DateTime::createFromFormat('d-m-Y', $date_string);
+	        }
+	        if(!$date_of_birth){
+	            $date_of_birth = DateTime::createFromFormat('m/d/Y', $date_string);
+	        }
+	        if(!$date_of_birth){
+	            $date_of_birth = DateTime::createFromFormat('Y-m-d', $date_string);
+	        }
+	        if(!$date_of_birth){
+	            $date_of_birth = DateTime::createFromFormat('Y/m/d', $date_string);
+	        }
+	    }
+	    return $date_of_birth;
+	}
+	
+	public function start_database_transaction(){
+	    global $wpdb;
+	    $wpdb->query("SET TRANSACTION ISOLATION LEVEL READ COMMITTED");
+	    wc_transaction_query("start");
+	    
+	}
+	
+	public function commit_database_transaction(){
+	    wc_transaction_query("commit");
+	   
+	}
+	
+	public function rollback_database_transaction(){
+	    wc_transaction_query("rollback");
+	}
+
 }

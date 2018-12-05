@@ -3,15 +3,15 @@
  * Plugin Name: WooCommerce PostFinance Checkout
  * Plugin URI: https://wordpress.org/plugins/woo-postfinancecheckout
  * Description: Process WooCommerce payments with PostFinance Checkout.
- * Version: 1.1.13
+ * Version: 1.1.14
  * License: Apache2
  * License URI: http://www.apache.org/licenses/LICENSE-2.0
  * Author: customweb GmbH
  * Author URI: https://www.customweb.com
  * Requires at least: 4.7
- * Tested up to: 4.9.8
+ * Tested up to: 5.0.0
  * WC requires at least: 3.0.0
- * WC tested up to: 3.5.1
+ * WC tested up to: 3.5.2
  *
  * Text Domain: woo-postfinancecheckout
  * Domain Path: /languages/
@@ -43,7 +43,7 @@ if (!class_exists('WooCommerce_PostFinanceCheckout')) {
 		 *
 		 * @var string
 		 */
-		private $version = '1.1.13';
+		private $version = '1.1.14';
 		
 		/**
 		 * The single instance of the class.
@@ -241,7 +241,6 @@ if (!class_exists('WooCommerce_PostFinanceCheckout')) {
 			    $this,
 			    'woocommerce_rest_prepare_product_attribute'
 			), 10, 3);
-			
 		}
 
 		public function register_order_statuses(){
@@ -426,12 +425,89 @@ if (!class_exists('WooCommerce_PostFinanceCheckout')) {
 							'shipping_last_name' => isset($post_data['shipping_last_name']) ? wp_unslash($post_data['shipping_last_name']) : null 
 						));
 			}
+			
+			//Handle custom created fields (Date of Birth / gender)			
+			$billing_date_of_birth = '';
+            $custom_billing_date_of_birth_field_name = apply_filters('wc_postfinancecheckout_billing_date_of_birth_field_name', '');
+						
+			if(!empty($custom_billing_date_of_birth_field_name) && !empty($post_data[$custom_billing_date_of_birth_field_name])){
+			    $billing_date_of_birth = wp_unslash($post_data[$custom_billing_date_of_birth_field_name]);
+			}
+			elseif(!empty($post_data['billing_date_of_birth'])){
+			    $billing_date_of_birth =  wp_unslash($post_data['billing_date_of_birth']);
+			}
+			elseif(!empty($post_data['_billing_date_of_birth'])){
+			    $billing_date_of_birth = wp_unslash($post_data['_billing_date_of_birth']);
+			}
+			
+			$billing_gender = '';			
+			$custom_billing_gender_field_name = apply_filters('wc_postfinancecheckout_billing_gender_field_name', '');
+			
+			if(!empty($custom_billing_gender_field_name) && !empty($post_data[$custom_billing_gender_field_name])){
+			    $billing_gender =  wp_unslash($post_data[$custom_billing_gender_field_name]);
+			}
+			elseif(!empty($post_data['billing_gender'])){
+			    $billing_gender = wp_unslash($post_data['billing_gender']);
+			}
+			elseif(!empty($post_data['_billing_gender'])){
+			    $billing_gender = wp_unslash($post_data['_billing_gender']);
+			}
+			
+			if(!empty($billing_date_of_birth)){
+			    WC()->customer->add_meta_data('_whitelabelmachine128_billing_date_of_birth', $billing_date_of_birth, true);
+			}			
+			if(!empty($billing_gender)){
+			    WC()->customer->add_meta_data('_whitelabelmachine128_billing_gender', $billing_gender, true);
+			}
+			
+			if ( ! empty( $post_data['ship_to_different_address'] ) && ! wc_ship_to_billing_address_only()) {
+			    $shipping_date_of_birth = '';
+			    $custom_shipping_date_of_birth_field_name = apply_filters('wc_postfinancecheckout_shipping_date_of_birth_field_name', '');
+			    
+			    if(!empty($custom_shipping_date_of_birth_field_name) && !empty($post_data[$custom_shipping_date_of_birth_field_name])){
+			        $shipping_date_of_birth = wp_unslash($post_data[$custom_shipping_date_of_birth_field_name]);
+			    }
+			    elseif(!empty($post_data['shipping_date_of_birth'])){
+			        $shipping_date_of_birth =  wp_unslash($post_data['shipping_date_of_birth']);
+			    }
+			    elseif(!empty($post_data['_shipping_date_of_birth'])){
+			        $shipping_date_of_birth = wp_unslash($post_data['_shipping_date_of_birth']);
+			    }
+			    
+			    $shipping_gender = '';
+			    $custom_shipping_gender_field_name = apply_filters('wc_postfinancecheckout_shipping_gender_field_name', '');
+			    
+			    if(!empty($custom_shipping_gender_field_name) && !empty($post_data[$custom_shipping_gender_field_name])){
+			        $shipping_gender =  wp_unslash($post_data[$custom_shipping_gender_field_name]);
+			    }
+			    elseif(!empty($post_data['shipping_gender'])){
+			        $shipping_gender = wp_unslash($post_data['shipping_gender']);
+			    }
+			    elseif(!empty($post_data['_shipping_gender'])){
+			        $shipping_gender = wp_unslash($post_data['_shipping_gender']);
+			    }
+			    
+			    if(!empty($shipping_date_of_birth)){
+			        WC()->customer->add_meta_data('_whitelabelmachine128_shipping_date_of_birth', $shipping_date_of_birth, true);
+			    }
+			    if(!empty($shipping_gender)){
+			        WC()->customer->add_meta_data('_whitelabelmachine128_shipping_gender', $shipping_gender, true);
+			    }
+			}
+			else{
+			    if(!empty($billing_date_of_birth)){
+			        WC()->customer->add_meta_data('_whitelabelmachine128_shipping_date_of_birth', $billing_date_of_birth, true);
+			    }
+			    if(!empty($billing_gender)){
+			        WC()->customer->add_meta_data('_whitelabelmachine128_shipping_gender', $billing_gender, true);
+			    }
+			}
 		}
 		
 		public function show_checkout_error_msg(){
-		    $msg  = WC()->session->get( 'postfinancecheckout_failure_message',  null );
+		    $msg = WC()->session->get( 'postfinancecheckout_failure_message',  null );
 		    if(!empty($msg)){
-		        $this->add_notice($msg, 'error');
+		        $this->add_notice((string) $msg, 'error');
 		        WC()->session->set('postfinancecheckout_failure_message',  null );
 		    }
 		}
@@ -543,7 +619,6 @@ if (!class_exists('WooCommerce_PostFinanceCheckout')) {
 		    }
 		    return $response;
 		}
-		
 	}
 }
 

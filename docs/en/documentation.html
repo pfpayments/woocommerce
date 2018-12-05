@@ -21,7 +21,7 @@
 		</a>
 	</li>
 	<li>
-		<a href="https://github.com/pfpayments/woocommerce/releases/tag/1.1.13/">
+		<a href="https://github.com/pfpayments/woocommerce/releases/tag/1.1.14/">
 			Source
 		</a>
 	</li>
@@ -427,6 +427,109 @@ Search for the plugin WooCommerce PostFinance Checkout and click on <code>update
 </li>
 </ol>
 </div>					</div>
+</div>					<div class="section" id="_how_can_i_add_the_value_of_a_strong_date_of_birth_strong_of_strong_gender_strong_input_field_from_my_checkout_form_to_the_whitelabelname_addresses">
+	<div class="section-title">
+		<h2>
+			<span class="title-number">8.5</span>How can I add the value of a <strong>Date Of Birth</strong> of <strong>Gender</strong> input field from my checkout form to the PostFinance Checkout addresses?					</h2>
+	</div>
+	<div class="section-body">
+							<div class="section" id="_billing_address_date_of_birth">
+	<div class="section-title">
+		<h3>
+			<span class="title-number">8.5.1</span>Billing Address Date of Birth					</h3>
+	</div>
+	<div class="section-body">
+					<div class="paragraph">
+<p>For a custom billing date of birth input fiel to be used in the address the following conditions must be fulfilled:</p>
+</div><div class="olist arabic">
+<ol class="arabic">
+<li>
+<p>The form field name has to be 'billing_date_of_birth' or '_billing_date_of_birth' or an action has to be registered for the filter 'wc_postfinancecheckout_billing_date_of_birth_field_name' which returns the field name.</p>
+</li>
+<li>
+<p>The field must be submitted in the 'post_data' parameter in the <code>update_order_review</code> request.</p>
+</li>
+<li>
+<p>The date must be saved on the order meta data with the key 'billing_date_of_birth' or '_billing_date_of_birth' or an action has to be registered for the filter 'wc_postfinancecheckout_billing_date_of_birth_order_meta_name' which returns the meta key.</p>
+</li>
+<li>
+<p>The value must be in one of the following formats 'd.m.Y', 'd-m-Y', 'm/d/Y', 'Y-m-d', 'Y/m/d', or an action has to be registered for the filter 'wc_postfinancecheckout_custom_date_of_birth_format' which returns a custom date format. (For more information on the date format check the following link: <a href="https://secure.php.net/manual/en/datetime.createfromformat.php">PHP DateTime Format</a>)</p>
+</li>
+</ol>
+</div>					</div>
+</div>					<div class="section" id="_billing_address_gender">
+	<div class="section-title">
+		<h3>
+			<span class="title-number">8.5.2</span>Billing Address Gender					</h3>
+	</div>
+	<div class="section-body">
+					<div class="paragraph">
+<p>For a custom billing gender input fiel to be used in the address the following conditions must be fulfilled:</p>
+</div><div class="olist arabic">
+<ol class="arabic">
+<li>
+<p>The form field name has to be 'billing_gender' or '_billing_gender' or an action has to be registered for the filter 'wc_postfinancecheckout_billing_gender_field_name' which returns the field name.</p>
+</li>
+<li>
+<p>The field must be submitted in the 'post_data' parameter in the <code>update_order_review</code> request.</p>
+</li>
+<li>
+<p>The date must be saved on the order meta data with the key 'billing_gender' or '_billing_gender' or an action has to be registered for the filter 'wc_postfinancecheckout_billing_gender_order_meta_name' which returns the meta key.</p>
+</li>
+<li>
+<p>The value must be either 'm' or 'male' for male and 'f' or 'female' for female.</p>
+</li>
+</ol>
+</div>					</div>
+</div>					<div class="section" id="_shipping_address_date_of_birth">
+	<div class="section-title">
+		<h3>
+			<span class="title-number">8.5.3</span>Shipping Address Date of Birth					</h3>
+	</div>
+	<div class="section-body">
+					<div class="paragraph">
+<p>For a custom shipping date of birth input fiel to be used in the address the following conditions must be fulfilled:</p>
+</div><div class="olist arabic">
+<ol class="arabic">
+<li>
+<p>The form field name has to be <strong>shipping_date_of_birth</strong> or <strong>_shipping_date_of_birth</strong> or an action has to be registered for the filter <strong>wc_postfinancecheckout_shipping_date_of_birth_field_name</strong> which returns the field name.</p>
+</li>
+<li>
+<p>The field must be submitted in the <strong>post_data</strong> parameter in the <strong>update_order_review</strong> request.</p>
+</li>
+<li>
+<p>The date must be saved on the order meta data with the key <strong>shipping_date_of_birth</strong> or <strong>_shipping_date_of_birth</strong> or an action has to be registered for the filter <strong>wc_postfinancecheckout_shipping_date_of_birth_order_meta_name</strong> which returns the meta key.</p>
+</li>
+<li>
+<p>The value must be in one of the following formats <strong>d.m.Y</strong>, <strong>d-m-Y</strong>, <strong>m/d/Y</strong>, <strong>Y-m-d</strong>, <strong>Y/m/d</strong>, or an action has to be registered for the filter <strong>wc_postfinancecheckout_custom_date_of_birth_format</strong> which returns a custom date format. (For more information on the date format check the following link: <a href="https://secure.php.net/manual/en/datetime.createfromformat.php">PHP DateTime Format</a>)</p>
+</li>
+</ol>
+</div>					</div>
+</div>					<div class="section" id="_shipping_address_gender">
+	<div class="section-title">
+		<h3>
+			<span class="title-number">8.5.4</span>Shipping Address Gender					</h3>
+	</div>
+	<div class="section-body">
+					<div class="paragraph">
+<p>For a custom shipping gender input fiel to be used in the address the following conditions must be fulfilled:</p>
+</div><div class="olist arabic">
+<ol class="arabic">
+<li>
+<p>The form field name has to be 'shipping_gender' or '_shipping_gender' or an action has to be registered for the filter 'wc_postfinancecheckout_shipping_gender_field_name' which returns the field name.</p>
+</li>
+<li>
+<p>The field must be submitted in the 'post_data' parameter in the <code>update_order_review</code> request.</p>
+</li>
+<li>
+<p>The date must be saved on the order meta data with the key 'shipping_gender' or '_shipping_gender' or an action has to be registered for the filter 'wc_postfinancecheckout_shipping_gender_order_meta_name' which returns the meta key.</p>
+</li>
+<li>
+<p>The value must be either 'm' or 'male' for male and 'f' or 'female' for female.</p>
+</li>
+</ol>
+</div>					</div>
+</div>			</div>
 </div>			</div>
 </div>	<div class="chapter" id="_support">
 	<div class="chapter-title">
@@ -554,6 +657,33 @@ Search for the plugin WooCommerce PostFinance Checkout and click on <code>update
 		<span class="item-number">8.4</span>
 		<span class="item-title">How can I translate the plugin?</span>
 			</a>
+    </li>    		    			<li class="nav-level-2">
+	<a href="#_how_can_i_add_the_value_of_a_strong_date_of_birth_strong_of_strong_gender_strong_input_field_from_my_checkout_form_to_the_whitelabelname_addresses">
+		<span class="item-number">8.5</span>
+		<span class="item-title">How can I add the value of a &lt;strong&gt;Date Of Birth&lt;/strong&gt; of &lt;strong&gt;Gender&lt;/strong&gt; input field from my checkout form to the PostFinance Checkout addresses?</span>
+			</a>
+        	<ul  class="nav">
+    		    			<li class="nav-level-3">
+	<a href="#_billing_address_date_of_birth">
+		<span class="item-number">8.5.1</span>
+		<span class="item-title">Billing Address Date of Birth</span>
+			</a>
+    </li>    		    			<li class="nav-level-3">
+	<a href="#_billing_address_gender">
+		<span class="item-number">8.5.2</span>
+		<span class="item-title">Billing Address Gender</span>
+			</a>
+    </li>    		    			<li class="nav-level-3">
+	<a href="#_shipping_address_date_of_birth">
+		<span class="item-number">8.5.3</span>
+		<span class="item-title">Shipping Address Date of Birth</span>
+			</a>
+    </li>    		    			<li class="nav-level-3">
+	<a href="#_shipping_address_gender">
+		<span class="item-number">8.5.4</span>
+		<span class="item-title">Shipping Address Gender</span>
+			</a>
+    </li>    		    	</ul>
     </li>    		    	</ul>
     </li>					<li class="nav-level-1">
 	<a href="#_support">

@@ -127,7 +127,7 @@ class WC_PostFinanceCheckout_Admin_Order_Completion {
 				throw new Exception(__('The line item total does not correspond to the total amount to complete.', 'woo-postfinancecheckout'));
 			}
 			
-			wc_transaction_query("start");
+			WC_PostFinanceCheckout_Helper::instance()->start_database_transaction();
 			$transaction_info = WC_PostFinanceCheckout_Entity_Transaction_Info::load_by_order_id($order_id);
 			if (!$transaction_info->get_id()) {
 				throw new Exception(__('Could not load corresponding transaction'));
@@ -160,10 +160,10 @@ class WC_PostFinanceCheckout_Admin_Order_Completion {
 			$completion_job->set_amount($completion_amount);
 			$completion_job->save();
 			$current_completion_id = $completion_job->get_id();
-			wc_transaction_query("commit");
+			WC_PostFinanceCheckout_Helper::instance()->commit_database_transaction();
 		}
 		catch (Exception $e) {
-			wc_transaction_query("rollback");
+		    WC_PostFinanceCheckout_Helper::instance()->rollback_database_transaction();
 			wp_send_json_error(array(
 				'error' => $e->getMessage() 
 			));
@@ -189,14 +189,14 @@ class WC_PostFinanceCheckout_Admin_Order_Completion {
 	protected static function update_line_items($completion_job_id){
 		global $wpdb;
 		$completion_job = WC_PostFinanceCheckout_Entity_Completion_Job::load_by_id($completion_job_id);
-		wc_transaction_query("start");
+		WC_PostFinanceCheckout_Helper::instance()->start_database_transaction();
 		WC_PostFinanceCheckout_Helper::instance()->lock_by_transaction_id($completion_job->get_space_id(), $completion_job->get_transaction_id());
 		//Reload void job;
 		$completion_job = WC_PostFinanceCheckout_Entity_Completion_Job::load_by_id($completion_job_id);
 		
 		if ($completion_job->get_state() != WC_PostFinanceCheckout_Entity_Completion_Job::STATE_CREATED) {
 			//Already updated in the meantime
-			wc_transaction_query("rollback");
+		    WC_PostFinanceCheckout_Helper::instance()->rollback_database_transaction();
 			return;
 		}
 		try {
@@ -206,24 +206,24 @@ class WC_PostFinanceCheckout_Admin_Order_Completion {
 					$line_items);
 		    $completion_job->set_state(WC_PostFinanceCheckout_Entity_Completion_Job::STATE_ITEMS_UPDATED);
 			$completion_job->save();
-			wc_transaction_query("commit");
+			WC_PostFinanceCheckout_Helper::instance()->commit_database_transaction();
 		}
 		catch (\PostFinanceCheckout\Sdk\ApiException $e) {
 		    if ($e->getResponseObject() instanceof \PostFinanceCheckout\Sdk\Model\ClientError) {
 		        $completion_job->set_state(WC_PostFinanceCheckout_Entity_Completion_Job::STATE_DONE);
 		        $completion_job->save();
-		        wc_transaction_query("commit");
+		        WC_PostFinanceCheckout_Helper::instance()->commit_database_transaction();
 		    }
 		    else{
 		        $completion_job->save();
-		        wc_transaction_query("commit");
+		        WC_PostFinanceCheckout_Helper::instance()->commit_database_transaction();
 		        WooCommerce_PostFinanceCheckout::instance()->log('Error updating line items. '.$e->getMessage(), WC_Log_Levels::INFO);
 		        throw $e;
 		    }
 		}
 		catch (Exception $e) {
 			$completion_job->save();
-			wc_transaction_query("commit");
+			WC_PostFinanceCheckout_Helper::instance()->commit_database_transaction();
 			WooCommerce_PostFinanceCheckout::instance()->log('Error updating line items. '.$e->getMessage(), WC_Log_Levels::INFO);
 			throw $e;
 		}
@@ -232,14 +232,14 @@ class WC_PostFinanceCheckout_Admin_Order_Completion {
 	protected static function send_completion($completion_job_id){
 		global $wpdb;
 		$completion_job = WC_PostFinanceCheckout_Entity_Completion_Job::load_by_id($completion_job_id);
-		wc_transaction_query("start");
+		WC_PostFinanceCheckout_Helper::instance()->start_database_transaction();
 		WC_PostFinanceCheckout_Helper::instance()->lock_by_transaction_id($completion_job->get_space_id(), $completion_job->get_transaction_id());
 		//Reload void job;
 		$completion_job = WC_PostFinanceCheckout_Entity_Completion_Job::load_by_id($completion_job_id);
 		
 		if ($completion_job->get_state() != WC_PostFinanceCheckout_Entity_Completion_Job::STATE_ITEMS_UPDATED) {
 			//Already sent in the meantime
-			wc_transaction_query("rollback");
+		    WC_PostFinanceCheckout_Helper::instance()->rollback_database_transaction();
 			return;
 		}
 		try {
@@ -250,24 +250,24 @@ class WC_PostFinanceCheckout_Admin_Order_Completion {
 			$completion_job->set_completion_id($completion->getId());
 			$completion_job->set_state(WC_PostFinanceCheckout_Entity_Completion_Job::STATE_SENT);
 			$completion_job->save();
-			wc_transaction_query("commit");
+			WC_PostFinanceCheckout_Helper::instance()->commit_database_transaction();
 		}
 		catch (\PostFinanceCheckout\Sdk\ApiException $e) {
     		if ($e->getResponseObject() instanceof \PostFinanceCheckout\Sdk\Model\ClientError) {
     		    $completion_job->set_state(WC_PostFinanceCheckout_Entity_Completion_Job::STATE_DONE);
     		    $completion_job->save();
-    		    wc_transaction_query("commit");    		    
+    		    WC_PostFinanceCheckout_Helper::instance()->commit_database_transaction();
     		}
     		else{
     		    $completion_job->save();
-    		    wc_transaction_query("commit");
+    		    WC_PostFinanceCheckout_Helper::instance()->commit_database_transaction();
     		    WooCommerce_PostFinanceCheckout::instance()->log('Error sending completion. '.$e->getMessage(), WC_Log_Levels::INFO);
     		    throw $e;
     		}
 		}
 		catch (Exception $e) {
 			$completion_job->save();
-			wc_transaction_query("commit");
+			WC_PostFinanceCheckout_Helper::instance()->commit_database_transaction();
 			WooCommerce_PostFinanceCheckout::instance()->log('Error sending completion. '.$e->getMessage(), WC_Log_Levels::INFO);
 			throw $e;
 		}

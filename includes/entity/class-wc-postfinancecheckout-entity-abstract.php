@@ -152,7 +152,7 @@ abstract class WC_PostFinanceCheckout_Entity_Abstract {
 	}
 	
 	
-	protected function prepare_base_fields_for_storage($data_array, $type_array){
+	protected function prepare_base_fields_for_storage(&$data_array, &$type_array){
 	    $data_array['updated_at'] = current_time('mysql');
 	    $type_array[] = "%s";
 	    if($this->get_id() === null){

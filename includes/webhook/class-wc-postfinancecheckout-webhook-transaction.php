@@ -36,6 +36,7 @@ class WC_PostFinanceCheckout_Webhook_Transaction extends WC_PostFinanceCheckout_
 	}
 
 	protected function process_order_related_inner(WC_Order $order, $transaction){
+
 		/* @var \PostFinanceCheckout\Sdk\Model\Transaction $transaction */
 	    $transaction_info = WC_PostFinanceCheckout_Entity_Transaction_Info::load_by_order_id($order->get_id());
 		if ($transaction->getState() != $transaction_info->get_state()) {
@@ -74,10 +75,13 @@ class WC_PostFinanceCheckout_Webhook_Transaction extends WC_PostFinanceCheckout_
 	}
 
 	protected function confirm(\PostFinanceCheckout\Sdk\Model\Transaction $transaction, WC_Order $order){
-	    do_action('wc_postfinancecheckout_confirmed', $transaction , $order);
-		$status = apply_filters('wc_postfinancecheckout_confirmed_status', 'postf-redirected', $order);
-		$order->update_status($status);		
-		wc_maybe_reduce_stock_levels($order->get_id());
+	    if (!$order->get_meta("_postfinancecheckout_confirmed", true) && !$order->get_meta("_postfinancecheckout_authorized", true)){
+    	    do_action('wc_postfinancecheckout_confirmed', $transaction , $order);
+    		$order->add_meta_data("_postfinancecheckout_confirmed", "true", true);
+    		wc_maybe_reduce_stock_levels($order->get_id());
+    		$status = apply_filters('wc_postfinancecheckout_confirmed_status', 'postf-redirected', $order);
+    		$order->update_status($status);
+	   }
 	}
 
 	protected function authorize(\PostFinanceCheckout\Sdk\Model\Transaction $transaction, WC_Order $order){
@@ -96,29 +100,28 @@ class WC_PostFinanceCheckout_Webhook_Transaction extends WC_PostFinanceCheckout_
 		if (!$order->get_meta('_postfinancecheckout_manual_check', true)) {
 		    do_action('wc_postfinancecheckout_completed', $transaction , $order);
 			$status = apply_filters('wc_postfinancecheckout_completed_status', 'postf-waiting', $order);
-			$order->update_status($status);			
+			$order->update_status($status);	
 		}
 	}
 
 	protected function decline(\PostFinanceCheckout\Sdk\Model\Transaction $transaction, WC_Order $order){
 	    do_action('wc_postfinancecheckout_declined', $transaction , $order);
+	    wc_maybe_increase_stock_levels($order);
 		$status = apply_filters('wc_postfinancecheckout_decline_status', 'cancelled', $order);
 		$order->update_status($status);		
-		WC_PostFinanceCheckout_Helper::instance()->maybe_restock_items_for_order($order);
 	}
 
 	protected function failed(\PostFinanceCheckout\Sdk\Model\Transaction $transaction, WC_Order $order){
 	    do_action('wc_postfinancecheckout_failed', $transaction , $order);
+	    wc_maybe_increase_stock_levels($order);
 		$status = apply_filters('wc_postfinancecheckout_failed_status', 'failed', $order);
 		$order->update_status($status);
 		
-		WC_PostFinanceCheckout_Helper::instance()->maybe_restock_items_for_order($order);
 	}
 
 	protected function fulfill(\PostFinanceCheckout\Sdk\Model\Transaction $transaction, WC_Order $order){
 	    do_action('wc_postfinancecheckout_fulfill', $transaction , $order);
 		$order->payment_complete($transaction->getId());
-		
 		//Sets the status to procesing or complete depending on items
 	}
 

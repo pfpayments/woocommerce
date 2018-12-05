@@ -36,7 +36,9 @@ class WC_PostFinanceCheckout_Webhook_Handler {
 	 */
 	public static function process(){
 	    $webhook_service = WC_PostFinanceCheckout_Service_Webhook::instance();
-		
+	    
+	    //We set the status to 500, so if we encounter a state where the process crashes the webhook is marked as failed.
+	    header('HTTP/1.1 500 Internal Server Error');
 		$requestBody = trim(file_get_contents("php://input"));
 		set_error_handler(array(__CLASS__, 'handle_webhook_errors'));
 		try{
@@ -44,7 +46,6 @@ class WC_PostFinanceCheckout_Webhook_Handler {
 			$webhook_model = $webhook_service->get_webhook_entity_for_id($request->get_listener_entity_id());
 			if ($webhook_model === null) {
 			    WooCommerce_PostFinanceCheckout::instance()->log(sprintf('Could not retrieve webhook model for listener entity id: %s', $request->get_listener_entity_id()), WC_Log_Levels::ERROR);
-				status_header(500);
 				echo sprintf('Could not retrieve webhook model for listener entity id: %s', $request->get_listener_entity_id());
 				exit();
 				
@@ -52,10 +53,10 @@ class WC_PostFinanceCheckout_Webhook_Handler {
 			$webhook_handler_class_name = $webhook_model->get_handler_class_name();
 			$webhook_handler = $webhook_handler_class_name::instance();
 			$webhook_handler->process($request);
+			header('HTTP/1.1 200 OK');
 		}
 		catch(Exception $e){
 		    WooCommerce_PostFinanceCheckout::instance()->log($e->getMessage(), WC_Log_Levels::ERROR);
-			status_header(500);
 			echo sprintf($e->getMessage());
 			exit();
 		}

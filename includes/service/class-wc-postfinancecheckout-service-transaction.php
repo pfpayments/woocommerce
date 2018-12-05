@@ -299,7 +299,13 @@ class WC_PostFinanceCheckout_Service_Transaction extends WC_PostFinanceCheckout_
 	    $transaction = $this->get_transaction_from_session();
 	    		
 	    if (!isset(self::$possible_payment_method_cache[$transaction->getLinkedSpaceId().'-'.$transaction->getId()]) || self::$possible_payment_method_cache[$transaction->getLinkedSpaceId().'-'.$transaction->getId()] == null) {
-			$payment_methods = $this->get_transaction_service()->fetchPossiblePaymentMethods($transaction->getLinkedSpaceId(), $transaction->getId());
+	        try {
+			     $payment_methods = $this->get_transaction_service()->fetchPossiblePaymentMethods($transaction->getLinkedSpaceId(), $transaction->getId());
+	        } catch (\WhitelabelMachineName\Sdk\ApiException $e) {
+	            self::$possible_payment_method_cache[$transaction->getLinkedSpaceId().'-'.$transaction->getId()] = array();
+	            throw $e;
+	        }			
+			
     		$method_configuration_service = WC_PostFinanceCheckout_Service_Method_Configuration::instance();
 			foreach ($payment_methods as $payment_method) {
 				$method_configuration_service->update_data($payment_method);
@@ -403,9 +409,51 @@ class WC_PostFinanceCheckout_Service_Transaction extends WC_PostFinanceCheckout_
 		$address->setPostalState($order->get_billing_state());
 		$address->setPostCode($this->fix_length($order->get_billing_postcode(), 40));
 		$address->setStreet($this->fix_length(trim($order->get_billing_address_1() . "\n" . $order->get_billing_address_2()), 300));
-		$address->setEmailAddress($this->fix_length($this->get_order_email_address($order), 254));		
-		return $address;
+		$address->setEmailAddress($this->fix_length($this->get_order_email_address($order), 254));
+		
+		$date_of_birth_string = '';
+		$custom_billing_date_of_birth_meta_name = apply_filters('wc_postfinancecheckout_billing_date_of_birth_order_meta_name', '');
+		if(!empty($custom_billing_date_of_birth_meta_name)){
+		    $date_of_birth_string = $order->get_meta($custom_billing_date_of_birth_meta_name, true, 'edit');
+		}
+		else{
+		    $date_of_birth_string = $order->get_meta('billing_date_of_birth', true, 'edit');
+		    if(empty($date_of_birth_string)){
+		        $date_of_birth_string = $order->get_meta('_billing_date_of_birth', true, 'edit');
+		    }
+		}
+		if(!empty($date_of_birth_string)){
+		    $date_of_birth = WC_PostFinanceCheckout_Helper::instance()->try_to_parse_date($date_of_birth_string);
+		    if($date_of_birth !== false){
+		        $address->setDateOfBirth($date_of_birth);
+		    }
+		}
+		
+		$gender_string = "";
+		$custom_billing_gender_meta_name = apply_filters('wc_postfinancecheckout_billing_gender_order_meta_name', '');
+		if(!empty($custom_billing_gender_meta_name)){
+		    $gender_string = $order->get_meta($custom_billing_gender_meta_name, true, 'edit');
+		}
+		else{
+		    $gender_string = $order->get_meta('billing_gender', true, 'edit');
+		    if(empty($gender_string)){
+		        $gender_string = $order->get_meta('_billing_gender', true, 'edit');
+		    }
+		}
+		if(!empty($gender_string)){
+		    if(strtolower($gender_string) == 'm' || strtolower($gender_string) == "male"){
+		        $address->setGender(\PostFinanceCheckout\Sdk\Model\Gender::MALE);
+		    }
+		    elseif(strtolower($gender_string) == 'f' || strtolower($gender_string) == "female"){
+		        $address->setGender(\PostFinanceCheckout\Sdk\Model\Gender::FEMALE);
+		    }
+		}
+		
+		return apply_filters('wc_postfinancecheckout_modify_order_billing_address', $address, $order);
 	}
+	
+	
+	
 
 	/**
 	 * Returns the shipping address of the given order.
@@ -424,8 +472,48 @@ class WC_PostFinanceCheckout_Service_Transaction extends WC_PostFinanceCheckout_
 		$address->setPostCode($this->fix_length($order->get_shipping_postcode(), 40));
 		$address->setStreet($this->fix_length(trim($order->get_shipping_address_1() . "\n" . $order->get_shipping_address_2()), 300));
 		$address->setEmailAddress($this->fix_length($this->get_order_email_address($order), 254));
+			
 		
-		return $address;
+		$date_of_birth_string = '';
+		$custom_shipping_date_of_birth_meta_name = apply_filters('wc_postfinancecheckout_shipping_date_of_birth_order_meta_name', '');
+		if(!empty($custom_shipping_date_of_birth_meta_name)){
+		    $date_of_birth_string = $order->get_meta($custom_shipping_date_of_birth_meta_name, true, 'edit');
+		}
+		else{
+		    $date_of_birth_string = $order->get_meta('shipping_date_of_birth', true, 'edit');
+		    if(empty($date_of_birth_string)){
+		        $date_of_birth_string = $order->get_meta('_shipping_date_of_birth', true, 'edit');
+		    }
+		}
+		if(!empty($date_of_birth_string)){
+		    $date_of_birth = WC_PostFinanceCheckout_Helper::instance()->try_to_parse_date($date_of_birth_string);
+		    if($date_of_birth !== false){
+		        $address->setDateOfBirth($date_of_birth);
+		    }
+		}
+		
+		$gender_string = "";
+		$custom_shipping_gender_meta_name = apply_filters('wc_postfinancecheckout_shipping_gender_order_meta_name', '');
+		if(!empty($custom_shipping_gender_meta_name)){
+		    $gender_string = $order->get_meta($custom_shipping_gender_meta_name, true, 'edit');
+		}
+		else{
+		    $gender_string = $order->get_meta('shipping_gender', true, 'edit');
+		    if(empty($gender_string)){
+		        $gender_string = $order->get_meta('_shipping_gender', true, 'edit');
+		    }
+		}
+		if(!empty($gender_string)){
+		    if(strtolower($gender_string) == 'm' || strtolower($gender_string) == "male"){
+		        $address->setGender(\PostFinanceCheckout\Sdk\Model\Gender::MALE);
+		    }
+		    elseif(strtolower($gender_string) == 'f' || strtolower($gender_string) == "female"){
+		        $address->setGender(\PostFinanceCheckout\Sdk\Model\Gender::FEMALE);
+		    }
+		}
+				
+		return apply_filters('wc_postfinancecheckout_modify_order_shipping_address', $address, $order);
+		
 	}
 	
 	/**
@@ -464,13 +552,13 @@ class WC_PostFinanceCheckout_Service_Transaction extends WC_PostFinanceCheckout_
 	        if (!isset(self::$transaction_cache[$order->get_id()]) || self::$transaction_cache[$order->get_id()] == null) {
     	        $existing_transaction = WC_PostFinanceCheckout_Entity_Transaction_Info::load_by_order_id($order->get_id());
     	        if($existing_transaction->get_id() === null){
-    	            wc_transaction_query("start");
+    	            WC_PostFinanceCheckout_Helper::instance()->start_database_transaction();
     	            try{
     	                WC_PostFinanceCheckout_Helper::instance()->lock_by_transaction_id($existing_transaction->get_space_id(), $existing_transaction->get_transaction_id());
         	            $transaction = $this->create_transaction_by_order($order);
-        	            wc_transaction_query("commit");
+        	            WC_PostFinanceCheckout_Helper::instance()->commit_database_transaction();
     	            }catch(Exception $e){
-                        wc_transaction_query("rollback");
+    	                WC_PostFinanceCheckout_Helper::instance()->rollback_database_transaction();
                         throw $e;
     	            }
     	        }
@@ -652,7 +740,25 @@ class WC_PostFinanceCheckout_Service_Transaction extends WC_PostFinanceCheckout_
 		$address->setStreet($this->fix_length(trim($customer->get_billing_address_1() . "\n" . $customer->get_billing_address_2()), 300));
 		$address->setEmailAddress($this->fix_length($this->get_session_email_address(), 254));
 		
-		return $address;
+		$date_of_birth_string = $customer->get_meta("_whitelabelmachine128_billing_date_of_birth", true ,"edit");
+		if(!empty($date_of_birth_string)){
+		    $date_of_birth = WC_PostFinanceCheckout_Helper::instance()->try_to_parse_date($date_of_birth_string);
+		    if($date_of_birth !== false){
+		        $address->setDateOfBirth($date_of_birth);
+		    }
+		}
+				
+		$gender_string = $customer->get_meta("_whitelabelmachine128_billing_gender", true, 'edit');
+		if(!empty($gender_string)){
+		    if(strtolower($gender_string) == 'm' || strtolower($gender_string) == "male"){
+		        $address->setGender(\PostFinanceCheckout\Sdk\Model\Gender::MALE);
+		    }
+		    elseif(strtolower($gender_string) == 'f' || strtolower($gender_string) == "female"){
+		        $address->setGender(\PostFinanceCheckout\Sdk\Model\Gender::FEMALE);
+		    }
+		}	
+		
+		return apply_filters('wc_postfinancecheckout_modify_session_billing_address', $address);
 	}
 
 	/**
@@ -677,7 +783,25 @@ class WC_PostFinanceCheckout_Service_Transaction extends WC_PostFinanceCheckout_
 		$address->setStreet($this->fix_length(trim($customer->get_shipping_address_1() . "\n" . $customer->get_shipping_address_2()), 300));
 		$address->setEmailAddress($this->fix_length($this->get_session_email_address(), 254));
 		
-		return $address;
+		$date_of_birth_string = $customer->get_meta("_whitelabelmachine128_shipping_date_of_birth", true ,"edit");
+		if(!empty($date_of_birth_string)){
+		    $date_of_birth = WC_PostFinanceCheckout_Helper::instance()->try_to_parse_date($date_of_birth_string);
+		    if($date_of_birth !== false){
+		        $address->setDateOfBirth($date_of_birth);
+		    }
+		}
+		
+		$gender_string = $customer->get_meta("_whitelabelmachine128_shipping_gender", true, 'edit');
+		if(!empty($gender_string)){
+		    if(strtolower($gender_string) == 'm' || strtolower($gender_string) == "male"){
+		        $address->setGender(\PostFinanceCheckout\Sdk\Model\Gender::MALE);
+		    }
+		    elseif(strtolower($gender_string) == 'f' || strtolower($gender_string) == "female"){
+		        $address->setGender(\PostFinanceCheckout\Sdk\Model\Gender::FEMALE);
+		    }
+		}
+		
+		return apply_filters('wc_postfinancecheckout_modify_session_shipping_address', $address);
 	}
 
 	/**

@@ -352,8 +352,7 @@ class WC_PostFinanceCheckout_Gateway extends WC_Payment_Gateway {
 			$transaction_service->update_transaction_info($transaction, $order);
 			
 			$order->add_meta_data('_postfinancecheckout_linked_ids', array('space_id' =>  $transaction->getLinkedSpaceId(), 'transaction_id' => $transaction->getId()), false);
-			$order->delete_meta_data('_wc_postfinancecheckout_restocked');
-			
+			$order->delete_meta_data('_postfinancecheckout_confirmed');
 			$order->save();
 			
 			$result =array(
