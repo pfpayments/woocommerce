@@ -92,11 +92,15 @@
 
 * Tweakes - Integrated hooks to remove product attribute options
 
-= 1.1.14 - November 21, 2018 =
+= 1.1.14 - December 05, 2018 =
 
 * Fixes - Improved available payment method caching.
 * Fixes - Fixes Refund failure message not displayed.
 * Feature - Added ability to use custom 'Date Of Birth' or 'Gender' field in checkout.
+
+= 1.1.15 - December 10, 2018 =
+
+* Tweak - Improved email confirmation with Germanized Plugin
 
 = 1.1.2 - May 22, 2018 =
 
