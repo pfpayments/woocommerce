@@ -65,7 +65,7 @@ class WC_PostFinanceCheckout_Webhook_Transaction_Void extends WC_PostFinanceChec
 		$void_job->set_state(WC_PostFinanceCheckout_Entity_Void_Job::STATE_DONE);
 		
 		if ($void_job->get_restock()) {
-		    wc_maybe_increase_stock_levels($order);
+		    WC_PostFinanceCheckout_Helper::instance()->maybe_restock_items_for_order($order);
 		}
 		$void_job->save();
 	}
