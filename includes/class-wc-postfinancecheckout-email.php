@@ -61,8 +61,21 @@ class WC_PostFinanceCheckout_Email {
 			'after_resend_email' 
 		), 10, 2);
 		
+		add_filter('woocommerce_germanized_order_email_customer_confirmation_sent', array(
+		    __CLASS__,
+		    'germanized_send_order_confirmation'
+		), 10, 2);
+		
+		add_filter('woocommerce_germanized_order_email_admin_confirmation_sent', array(
+		    __CLASS__,
+		    'germanized_send_order_confirmation'
+		), 10, 2);
+		
+		
+		
 		add_filter( 'woocommerce_email_actions', array( __CLASS__, 'add_email_actions' ), 10, 1 );
-		add_filter( 'woocommerce_email_classes', array( __CLASS__, 'add_email_hooks' ), 10, 1 );
+		add_filter( 'woocommerce_email_classes', array( __CLASS__, 'add_email_classes' ), 100, 1 );
+		
 	}
 
 	public static function send_email_for_order($enabled, $order){
@@ -72,10 +85,13 @@ class WC_PostFinanceCheckout_Email {
 		if (isset($GLOBALS['_postfinancecheckout_resend_email']) && $GLOBALS['_postfinancecheckout_resend_email']) {
 			return $enabled;
 		}
-		$send = get_option(WooCommerce_PostFinanceCheckout::CK_SHOP_EMAIL, "yes");
-		if ($send != "yes") {
-			return false;
-		}
+		$gateway = wc_get_payment_gateway_by_order($order);
+		if ($gateway instanceof WC_PostFinanceCheckout_Gateway) {
+		    $send = get_option(WooCommerce_PostFinanceCheckout::CK_SHOP_EMAIL, "yes");
+		    if ($send != "yes") {
+		        return false;
+		    }
+		}		
 		return $enabled;
 	}
 
@@ -88,6 +104,7 @@ class WC_PostFinanceCheckout_Email {
 	}
 	
 	public static function add_email_actions($actions){
+	    
 		$to_add = array(
 			'woocommerce_order_status_postfinancecheckout-redirected_to_processing',
 			'woocommerce_order_status_postfinancecheckout-redirected_to_completed',
@@ -143,7 +160,38 @@ class WC_PostFinanceCheckout_Email {
 		return $actions;
 	}
 	
-	public static function add_email_hooks($emails){
+	
+	public static function check_germanized_pay_email_trigger($order_id, $order = false){
+	    if ( $order_id && ! is_a( $order, 'WC_Order' ) ) {
+	        $order = wc_get_order( $order_id );
+	    }
+	    $gateway = wc_get_payment_gateway_by_order($order);
+	    if ($gateway instanceof WC_PostFinanceCheckout_Gateway) {
+	        
+	        $send = get_option(WooCommerce_PostFinanceCheckout::CK_SHOP_EMAIL, "yes");
+	        if ($send != "yes") {
+	            return;
+	        }	   
+	        $mails = WC()->mailer()->get_emails();
+	        if(isset($mails['WC_GZD_Email_Customer_Paid_For_Order'])){
+	            $mails['WC_GZD_Email_Customer_Paid_For_Order']->trigger($order_id);
+	        }
+	    }	    
+	}
+	
+	public static function add_email_classes($emails){
+	    
+	    //Germanized has a special email flow.
+	    if(isset($emails['WC_GZD_Email_Customer_Paid_For_Order'])){
+	        add_action( 'woocommerce_order_status_postfinancecheckout-redirected_to_processing_notification', array( $emailObject, 'trigger' ), 10, 2 );
+	        add_action( 'woocommerce_order_status_postfinancecheckout-manual_to_processing_notification', array( $emailObject, 'trigger' ), 10, 2 );
+	        add_action( 'woocommerce_order_status_postfinancecheckout-waiting_to_processing_notification', array( $emailObject, 'trigger' ), 10, 2 );
+	        add_action( 'woocommerce_order_status_on-hold_to_processing_notification', array( __CLASS__, 'check_germanized_pay_email_trigger' ), 10, 2 );
+	    }	    
+	    if( function_exists('wc_gzd_send_instant_order_confirmation') && wc_gzd_send_instant_order_confirmation()){
+	        return $emails;
+	    }    
+    
 		foreach($emails as $key => $emailObject){
 			switch($key){
 				case 'WC_Email_New_Order':
@@ -164,6 +212,7 @@ class WC_PostFinanceCheckout_Email {
 					add_action( 'woocommerce_order_status_postfinancecheckout-redirected_to_on-hold_notification', array( $emailObject, 'trigger' ), 10, 2 );
 					break;
 					
+				
 				case 'WC_Email_Customer_Processing_Order':
 					add_action( 'woocommerce_order_status_postfinancecheckout-redirected_to_processing_notification', array( $emailObject, 'trigger' ), 10, 2 );
 					add_action( 'woocommerce_order_status_postfinancecheckout-manual_to_processing_notification', array( $emailObject, 'trigger' ), 10, 2 );
@@ -183,6 +232,21 @@ class WC_PostFinanceCheckout_Email {
 		}
 		
 		return $emails;
+	}
+	
+	public static function germanized_send_order_confirmation($email_sent, $order_id){
+	    $order = WC_Order_Factory::get_order($order_id);
+	    if (!($order instanceof WC_Order)) {
+	        return $email_sent;
+	    }
+	    $gateway = wc_get_payment_gateway_by_order($order);
+	    if ($gateway instanceof WC_PostFinanceCheckout_Gateway) {
+	        $send = get_option(WooCommerce_PostFinanceCheckout::CK_SHOP_EMAIL, "yes");
+	        if ($send != "yes") {
+	            return true;
+	        }
+	    }
+	    return $email_sent;
 	}
 }
 

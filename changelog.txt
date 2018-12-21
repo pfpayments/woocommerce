@@ -106,6 +106,10 @@
 
 * Fixes - Fixes issue with WooCommerce versions < 3.5
 
+= 1.1.17 - December 21, 2018 =
+
+* Tweak - Tweak email sending behaviour, when Germanized is active
+
 = 1.1.2 - May 22, 2018 =
 
 * Fix - Issue with refunds
