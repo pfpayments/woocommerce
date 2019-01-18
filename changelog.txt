@@ -6,27 +6,6 @@
 
 * Featue - Added document download buttons to order overview
 
-= 1.0.10 - January 24, 2018 =
-
-* Fix - First and last name not updated correctly during checkout
-* Dev - Updated to PostFinance Checkout SDK 1.1.2
-
-= 1.0.11 - January 30, 2018 =
-
-* Tweak - Only show payment method, if customer entered full address
-* Fix - Email language if WooCommerce Multilingual is installed 
-* Fix - Javascript validation error display
-
-= 1.0.12 - January 31, 2018 =
-
-* Fix - Javascript not always included during checkout
-* Fix - Issue with different browsers autofill feature
-
-= 1.0.13 - March 16, 2018 =
-
-* Tweak - Improved Styling
-* Tweak - Renamed private variables to avoid issue with other plugins
-
 = 1.0.2 - August 31, 2017 =
 
 * Fix - Javascript Issues with Firefox/IE
@@ -64,6 +43,27 @@
 * Fix - Payment Method Image not updating
 * Fix - Improved exception handling in checkout
 
+= 1.0.10 - January 24, 2018 =
+
+* Fix - First and last name not updated correctly during checkout
+* Dev - Updated to PostFinance Checkout SDK 1.1.2
+
+= 1.0.11 - January 30, 2018 =
+
+* Tweak - Only show payment method, if customer entered full address
+* Fix - Email language if WooCommerce Multilingual is installed 
+* Fix - Javascript validation error display
+
+= 1.0.12 - January 31, 2018 =
+
+* Fix - Javascript not always included during checkout
+* Fix - Issue with different browsers autofill feature
+
+= 1.0.13 - March 16, 2018 =
+
+* Tweak - Improved Styling
+* Tweak - Renamed private variables to avoid issue with other plugins
+
 = 1.1.0 - April 11, 2018 =
 
 * Fix - Order Pay process
@@ -74,41 +74,6 @@
 = 1.1.1 - April 20, 2018 =
 
 * Fix - Issue in Checkout Javascript
-
-= 1.1.10 - September 07, 2018 =
-
-* Tweak - Fall back to payment page, if iframe can not be initialized
-
-= 1.1.11 - September 20, 2018 =
-
-* Fixes - Improved handling of backend actions
-
-= 1.1.12 - November 13, 2018 =
-
-* Feature - Added option to send global product attributes to PostFinance Checkout
-* Tweak - Improved customer experience if the payment failes.
-
-= 1.1.13 - November 16, 2018 =
-
-* Tweakes - Integrated hooks to remove product attribute options
-
-= 1.1.14 - December 05, 2018 =
-
-* Fixes - Improved available payment method caching.
-* Fixes - Fixes Refund failure message not displayed.
-* Feature - Added ability to use custom 'Date Of Birth' or 'Gender' field in checkout.
-
-= 1.1.15 - December 10, 2018 =
-
-* Tweak - Improved email confirmation with Germanized Plugin
-
-= 1.1.16 - December 14, 2018 =
-
-* Fixes - Fixes issue with WooCommerce versions < 3.5
-
-= 1.1.17 - December 21, 2018 =
-
-* Tweak - Tweak email sending behaviour, when Germanized is active
 
 = 1.1.2 - May 22, 2018 =
 
@@ -148,4 +113,43 @@
 
 * Tweak - Settings descriptions
 * Doc - Improved documentation
+
+= 1.1.10 - September 07, 2018 =
+
+* Tweak - Fall back to payment page, if iframe can not be initialized
+
+= 1.1.11 - September 20, 2018 =
+
+* Fix - Improved handling of backend actions
+
+= 1.1.12 - November 13, 2018 =
+
+* Feature - Added option to send global product attributes to PostFinance Checkout
+* Tweak - Improved customer experience if the payment fails.
+
+= 1.1.13 - November 16, 2018 =
+
+* Tweak - Integrated hooks to remove product attribute options
+
+= 1.1.14 - December 05, 2018 =
+
+* Fix - Improved available payment method caching.
+* Fix - Fixes Refund failure message not displayed.
+* Feature - Added ability to use custom 'Date Of Birth' or 'Gender' field in checkout.
+
+= 1.1.15 - December 10, 2018 =
+
+* Tweak - Improved email confirmation with Germanized Plugin
+
+= 1.1.16 - December 14, 2018 =
+
+* Fix - Fixes issue with WooCommerce versions < 3.5
+
+= 1.1.17 - December 21, 2018 =
+
+* Tweak - Tweak email sending behaviour, when Germanized is active
+
+= 1.1.18 - January 18, 2018 =
+
+* Fix - Issue with browser navigation button during the checkout
 

@@ -236,9 +236,9 @@ class WC_PostFinanceCheckout_Gateway extends WC_Payment_Gateway {
 		if (!$is_available) {
 			return false;
 		}
-		//It is possbile this function is called in the wordpress admin section.
-		//There is not a cart, so all active methods are available
-		if(is_admin() ) {
+		//It is possbile this function is called in the wordpress admin section. There is not a cart, so all active methods are available
+		//If we are on the account page, the methods are also available.
+		if(is_admin() || is_account_page()) {
 		    return $this->get_payment_method_configuration()->get_state() ==  WC_PostFinanceCheckout_Entity_Method_Configuration::STATE_ACTIVE;
 		}
 		
@@ -246,24 +246,43 @@ class WC_PostFinanceCheckout_Gateway extends WC_Payment_Gateway {
 		if (isset($GLOBALS['_wc_postfinancecheckout_calculating']) && $GLOBALS['_wc_postfinancecheckout_calculating']) {
 			return true;
 		}
-	
-		try {
-		    $possible_methods = WC_PostFinanceCheckout_Service_Transaction::instance()->get_possible_payment_methods();
-			$possible = false;
-			foreach ($possible_methods as $possible_method) {
-				if ($possible_method->getId() == $this->get_payment_method_configuration()->get_configuration_id()) {
-					$possible = true;
-					break;
-				}
-			}
-			if (!$possible) {
-				return false;
-			}
+		
+		if(is_checkout_pay_page()){
+		    //We have to use the order and not the cart for this endpoint
+		    global $wp;
+		    $order = WC_Order_Factory::get_order($wp->query_vars['order-pay'] );
+		    if(!$order){
+		        return false;
+		    }
+		    try {
+		        $possible_methods = WC_PostFinanceCheckout_Service_Transaction::instance()->get_possible_payment_methods_for_order($order);
+		    }
+		    catch(Exception $e){
+		        WooCommerce_PostFinanceCheckout::instance()->log($e->getMessage(), WC_Log_Levels::DEBUG);
+		        return false;
+		    }
 		}
-		catch(Exception $e){
-		    WooCommerce_PostFinanceCheckout::instance()->log($e->getMessage(), WC_Log_Levels::DEBUG);
-			return false;
+		else{
+		    try {
+		        $possible_methods = WC_PostFinanceCheckout_Service_Transaction::instance()->get_possible_payment_methods_for_cart();
+		    }
+		    catch(Exception $e){
+		        WooCommerce_PostFinanceCheckout::instance()->log($e->getMessage(), WC_Log_Levels::DEBUG);
+		        return false;
+		    }
 		}
+		
+		$possible = false;
+		foreach ($possible_methods as $possible_method) {
+		    if ($possible_method == $this->get_payment_method_configuration()->get_configuration_id()) {
+		        $possible = true;
+		        break;
+		    }
+		}
+		if (!$possible) {
+		    return false;
+		}
+		
 		return true;
 	}
 
@@ -277,34 +296,59 @@ class WC_PostFinanceCheckout_Gateway extends WC_Payment_Gateway {
 	}
 
 	public function payment_fields(){
+	    
+	    parent::payment_fields();
+	    $transaction_service = WC_PostFinanceCheckout_Service_Transaction::instance();
 	    try{
-	        wp_enqueue_script('postfinancecheckout-remote-checkout-js', WC_PostFinanceCheckout_Service_Transaction::instance()->get_javascript_url(), array(
-	            'jquery'
-	        ), null, true);
-	        wp_enqueue_script('postfinancecheckout-checkout-js', WooCommerce_PostFinanceCheckout::instance()->plugin_url() . '/assets/js/frontend/checkout.js',
-	            array(
-	                'jquery',
-	                'postfinancecheckout-remote-checkout-js'
-	            ), null, true);
-	        $localize = array(
-	            'i18n_not_complete' => __('Please fill out all required fields.', 'woo-postfinancecheckout'),
-	        );
-	        wp_localize_script('postfinancecheckout-checkout-js', 'postfinancecheckout_js_params', $localize);
+	        if(is_checkout_pay_page()){
+	            global $wp;
+	            $order = WC_Order_Factory::get_order($wp->query_vars['order-pay'] );
+	            if(!$order){
+	                return false;
+	            }
+	            $transaction = $transaction_service->get_transaction_from_order($order);
+	        }
+	        else{
+	            $transaction = $transaction_service->get_transaction_from_session();
+	        }
+            if (!wp_script_is( 'postfinancecheckout-remote-checkout-js', 'enqueued' )) {
+                $ajax_url = $transaction_service->get_javascript_url_for_transaction($transaction);
+    	        wp_enqueue_script('postfinancecheckout-remote-checkout-js', $ajax_url, array(
+    	            'jquery'
+    	        ), null, true);
+    	        wp_enqueue_script('postfinancecheckout-checkout-js', WooCommerce_PostFinanceCheckout::instance()->plugin_url() . '/assets/js/frontend/checkout.js',
+    	            array(
+    	                'jquery',
+    	                'postfinancecheckout-remote-checkout-js'
+    	            ), null, true);
+    	        $localize = array(
+    	            'i18n_not_complete' => __('Please fill out all required fields.', 'woo-postfinancecheckout'),
+    	        );
+    	        wp_localize_script('postfinancecheckout-checkout-js', 'postfinancecheckout_js_params', $localize);
+    	    
+            }
+            $transaction_nonce = hash_hmac('sha256', $transaction->getLinkedSpaceId().'-'.$transaction->getId(), NONCE_KEY);
+            
+            ?>
+		
+            <div id="payment-form-<?php echo $this->id?>">
+            	<input type="hidden" id="postfinancecheckout-iframe-possible-<?php echo $this->id?>" name="postfinancecheckout-iframe-possible-<?php echo $this->id?>" value="false" />
+            </div>
+            <input type="hidden" id="postfinancecheckout-space-id-<?php echo $this->id?>" name="postfinancecheckout-space-id-<?php echo $this->id?>" value="<?php echo $transaction->getLinkedSpaceId(); ?>"  />
+        	<input type="hidden" id="postfinancecheckout-transaction-id-<?php echo $this->id?>" name="postfinancecheckout-transaction-id-<?php echo $this->id?>" value="<?php echo $transaction->getId(); ?>"  />
+        	<input type="hidden" id="postfinancecheckout-transaction-nonce-<?php echo $this->id?>" name="postfinancecheckout-transaction-nonce-<?php echo $this->id?>" value="<?php echo $transaction_nonce; ?>" />
+            <div id="postfinancecheckout-method-configuration-<?php echo $this->id?>"
+            	class="postfinancecheckout-method-configuration" style="display: none;"
+            	data-method-id="<?php echo $this->id; ?>"
+            	data-configuration-id="<?php echo $this->get_payment_method_configuration()->get_configuration_id(); ?>"
+            	data-container-id="payment-form-<?php echo $this->id?>" data-description-available="<?php var_export(!empty($this->get_description()));?>"></div>
+            <?php
+           
 	    }
 	    catch(Exception $e){
 	        WooCommerce_PostFinanceCheckout::instance()->log($e->getMessage(), WC_Log_Levels::DEBUG);
 	    }
-	    
-		parent::payment_fields();
-		?>
 		
-<div id="payment-form-<?php echo $this->id?>"><input type="hidden" id="postfinancecheckout-iframe-possible-<?php echo $this->id?>" name="postfinancecheckout-iframe-possible-<?php echo $this->id?>" value="false" /></div>
-<div id="postfinancecheckout-method-configuration-<?php echo $this->id?>"
-	class="postfinancecheckout-method-configuration" style="display: none;"
-	data-method-id="<?php echo $this->id; ?>"
-	data-configuration-id="<?php echo $this->get_payment_method_configuration()->get_configuration_id(); ?>"
-	data-container-id="payment-form-<?php echo $this->id?>" data-description-available="<?php var_export(!empty($this->get_description()));?>"></div>
-<?php
 	}
 
 	/**
@@ -322,48 +366,63 @@ class WC_PostFinanceCheckout_Gateway extends WC_Payment_Gateway {
 	 * @return array
 	 */
 	public function process_payment($order_id){
-	    $is_order_pay_endpoint = apply_filters('wc_postfinancecheckout_is_order_pay_endpoint', is_wc_endpoint_url( 'order-pay'), $order_id);
+	    
+	    $space_id = $_POST['postfinancecheckout-space-id-'.$this->id];
+	    $transaction_id = $_POST['postfinancecheckout-transaction-id-'.$this->id];
+	    $transaction_nonce = $_POST['postfinancecheckout-transaction-nonce-'.$this->id];
+	    
+	    $is_order_pay_endpoint = is_checkout_pay_page();
+	    
+	    if(hash_hmac('sha256', $space_id.'-'.$transaction_id, NONCE_KEY) != $transaction_nonce){
+	        WC()->session->set( 'postfinancecheckout_failure_message', __('The checkout timed out, please try again.', 'woo-postfinancecheckout') );
+	        WC()->session->set('reload_checkout', true);
+	        return array(
+	            'result' => 'failure'
+	        );
+	    }
+	    
+	    $existing = WC_PostFinanceCheckout_Entity_Transaction_Info::load_by_order_id($order_id);
+	    if($existing->get_id()){
+	        if($existing->get_space_id() != $space_id && $existing->get_transaction_id() != $transaction_id){
+	            WC()->session->set( 'postfinancecheckout_failure_message', __('There was an issue, while processing your order. Please try again or use another payment method.', 'woo-postfinancecheckout') );
+	            WC()->session->set('reload_checkout', true);
+	            return array(
+	                'result' => 'failure'
+	            );
+	        }
+	    }
+	    
+	    $order = wc_get_order($order_id);
+	    $no_iframe = isset($_POST['postfinancecheckout-iframe-possible-'.$this->id]) && $_POST['postfinancecheckout-iframe-possible-'.$this->id] == 'false';
+	    
 		try {
-		    if($is_order_pay_endpoint){
-			    $existing = WC_PostFinanceCheckout_Entity_Transaction_Info::load_by_order_id($order_id);
-			    $space_id = $existing->get_space_id();
-			    $transaction_id = $existing->get_transaction_id();
-			}
-			else{
-			    $session_handler = WC()->session;
-			    $space_id = $session_handler->get('postfinancecheckout_space_id');
-			    $transaction_id = $session_handler->get('postfinancecheckout_transaction_id');
-			    $existing = WC_PostFinanceCheckout_Entity_Transaction_Info::load_by_order_id($order_id);
-			    if($existing->get_id() > 0 && $existing->get_state() != \PostFinanceCheckout\Sdk\Model\TransactionState::PENDING){
-			        WC()->session->set( 'postfinancecheckout_failure_message', __('There was an issue, while processing your order. Please try again or use another payment method.', 'woo-postfinancecheckout') );
-			        $order = wc_get_order($order_id);
-			        $order->update_status( 'failed' );
-			        WC()->session->set('reload_checkout', true);
-			        return array(
-			            'result' => 'failure'
-			        );
-			    }
-			}
-						
-			$order = wc_get_order($order_id);
 			$transaction_service = WC_PostFinanceCheckout_Service_Transaction::instance();
+			$transaction = $transaction_service->get_transaction($space_id, $transaction_id);
 			
-			$transaction = $transaction_service->confirm_transaction($transaction_id, $space_id, $order);
-			$transaction_service->update_transaction_info($transaction, $order);
-			
-			$order->add_meta_data('_postfinancecheckout_linked_ids', array('space_id' =>  $transaction->getLinkedSpaceId(), 'transaction_id' => $transaction->getId()), false);
+			$order->add_meta_data('_postfinancecheckout_pay_for_order', $is_order_pay_endpoint, true);
+			$order->add_meta_data('_postfinancecheckout_linked_ids', array('space_id' =>  $space_id, 'transaction_id' => $transaction_id), false);
 			$order->delete_meta_data('_postfinancecheckout_confirmed');
 			$order->save();
+			
+			if($transaction->getState() == \PostFinanceCheckout\Sdk\Model\TransactionState::PENDING){
+			    $transaction = $transaction_service->confirm_transaction($transaction_id, $space_id, $order, $this->get_payment_method_configuration()->get_configuration_id());
+			    $transaction_service->update_transaction_info($transaction, $order);
+			}
+			
+			WC()->session->set( 'order_awaiting_payment', false );
+			WC_PostFinanceCheckout_Helper::instance()->destroy_current_cart_id();
+			WC()->session->set('postfinancecheckout_space_id', null);
+			WC()->session->set('postfinancecheckout_transaction_id', null);
+			
 			
 			$result =array(
 			    'result' => 'success',
 			    'postfinancecheckout' => 'true'
 			);
-			$no_iframe = isset($_POST['postfinancecheckout-iframe-possible-'.$this->id]) && $_POST['postfinancecheckout-iframe-possible-'.$this->id] == 'false';
 			if($no_iframe){
 			    $result = array(
 			        'result' => 'success',
-			        'redirect' => $transaction_service->get_payment_page_url($transaction->getLinkedSpaceId(), $transaction->getId()).'&paymentMethodConfigurationId='.$this->get_payment_method_configuration()->get_configuration_id()
+			        'redirect' => $transaction_service->get_payment_page_url($transaction->getLinkedSpaceId(), $transaction->getId())
 			    );
 	        }	
 			
@@ -375,7 +434,6 @@ class WC_PostFinanceCheckout_Gateway extends WC_Payment_Gateway {
 			    exit;
 			}
 			else{
-    			WC_PostFinanceCheckout_Helper::instance()->destroy_current_cart_id();
     			return $result;
 			}
 		}

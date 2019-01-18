@@ -2,8 +2,8 @@
 Contributors: customwebgmbh
 Tags: woocommerce PostFinance Checkout, woocommerce, PostFinance Checkout, payment, e-commerce, webshop, psp, invoice, packing slips, pdf, customer invoice, processing
 Requires at least: 4.7
-Tested up to: 5.0.2
-Stable tag: 1.1.17
+Tested up to: 5.0.3
+Stable tag: 1.1.18
 License: Apache 2
 License URI: http://www.apache.org/licenses/LICENSE-2.0
 
@@ -23,7 +23,7 @@ To use this extension, a PostFinance Checkout account is required. Sign up on [P
 
 == Documentation ==
 
-Additional documentation for this plugin is available [here](https://plugin-documentation.postfinance-checkout.ch/pfpayments/woocommerce/1.1.17/docs/en/documentation.html).
+Additional documentation for this plugin is available [here](https://plugin-documentation.postfinance-checkout.ch/pfpayments/woocommerce/1.1.18/docs/en/documentation.html).
 
 == Installation ==
 
@@ -52,6 +52,6 @@ Additional documentation for this plugin is available [here](https://plugin-docu
 == Changelog ==
 
  
-= 1.1.17 - December 21, 2018 =
+= 1.1.18 - January 18, 2018 =
 
-* Tweak - Tweak email sending behaviour, when Germanized is active
+* Fix - Issue with browser navigation button during the checkout

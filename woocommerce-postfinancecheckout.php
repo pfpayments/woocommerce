@@ -3,15 +3,15 @@
  * Plugin Name: WooCommerce PostFinance Checkout
  * Plugin URI: https://wordpress.org/plugins/woo-postfinancecheckout
  * Description: Process WooCommerce payments with PostFinance Checkout.
- * Version: 1.1.17
+ * Version: 1.1.18
  * License: Apache2
  * License URI: http://www.apache.org/licenses/LICENSE-2.0
  * Author: customweb GmbH
  * Author URI: https://www.customweb.com
  * Requires at least: 4.7
- * Tested up to: 5.0.0
+ * Tested up to: 5.0.3
  * WC requires at least: 3.0.0
- * WC tested up to: 3.5.2
+ * WC tested up to: 3.5.3
  *
  * Text Domain: woo-postfinancecheckout
  * Domain Path: /languages/
@@ -43,7 +43,7 @@ if (!class_exists('WooCommerce_PostFinanceCheckout')) {
 		 *
 		 * @var string
 		 */
-		private $version = '1.1.17';
+		private $version = '1.1.18';
 		
 		/**
 		 * The single instance of the class.
@@ -214,6 +214,11 @@ if (!class_exists('WooCommerce_PostFinanceCheckout')) {
 			));
 			add_action('woocommerce_before_checkout_form', array(
 			    $this,
+			    'register_checkout_error_msg'
+			), 5, 0);
+			
+			add_action('before_woocommerce_pay', array(
+			    $this,
 			    'show_checkout_error_msg'
 			), 5, 0);
 					
@@ -241,8 +246,16 @@ if (!class_exists('WooCommerce_PostFinanceCheckout')) {
 			    $this,
 			    'woocommerce_rest_prepare_product_attribute'
 			), 10, 3);
-
 			
+			add_filter('nocache_headers', array(
+			    $this,
+			    'add_cache_no_store'
+			), 10, 1);
+			
+			add_filter('woocommerce_valid_order_statuses_for_payment', array(
+			    $this,
+			    'valid_order_statuses_for_payment'
+			), 10, 2);
 		}
 
 		public function register_order_statuses(){
@@ -281,6 +294,12 @@ if (!class_exists('WooCommerce_PostFinanceCheckout')) {
 		    $order_statuses['wc-postf-manual'] = _x('Manual Decision', 'Order status', 'woocommerce');
 		    
 		    return $order_statuses;
+		}
+		
+		public function valid_order_statuses_for_payment($statuses, $order = null){
+		    $statuses[] = 'postf-redirected';
+		    
+		    return $statuses;
 		}
 
 		public function set_device_id_cookie(){
@@ -456,10 +475,10 @@ if (!class_exists('WooCommerce_PostFinanceCheckout')) {
 			}
 			
 			if(!empty($billing_date_of_birth)){
-			    WC()->customer->add_meta_data('_whitelabelmachine128_billing_date_of_birth', $billing_date_of_birth, true);
+			    WC()->customer->add_meta_data('_postfinancecheckout_billing_date_of_birth', $billing_date_of_birth, true);
 			}			
 			if(!empty($billing_gender)){
-			    WC()->customer->add_meta_data('_whitelabelmachine128_billing_gender', $billing_gender, true);
+			    WC()->customer->add_meta_data('_postfinancecheckout_billing_gender', $billing_gender, true);
 			}
 			
 			if ( ! empty( $post_data['ship_to_different_address'] ) && ! wc_ship_to_billing_address_only()) {
@@ -490,28 +509,33 @@ if (!class_exists('WooCommerce_PostFinanceCheckout')) {
 			    }
 			    
 			    if(!empty($shipping_date_of_birth)){
-			        WC()->customer->add_meta_data('_whitelabelmachine128_shipping_date_of_birth', $shipping_date_of_birth, true);
+			        WC()->customer->add_meta_data('_postfinancecheckout_shipping_date_of_birth', $shipping_date_of_birth, true);
 			    }
 			    if(!empty($shipping_gender)){
-			        WC()->customer->add_meta_data('_whitelabelmachine128_shipping_gender', $shipping_gender, true);
+			        WC()->customer->add_meta_data('_postfinancecheckout_shipping_gender', $shipping_gender, true);
 			    }
 			}
 			else{
 			    if(!empty($billing_date_of_birth)){
-			        WC()->customer->add_meta_data('_whitelabelmachine128_shipping_date_of_birth', $billing_date_of_birth, true);
+			        WC()->customer->add_meta_data('_postfinancecheckout_shipping_date_of_birth', $billing_date_of_birth, true);
 			    }
 			    if(!empty($billing_gender)){
-			        WC()->customer->add_meta_data('_whitelabelmachine128_shipping_gender', $billing_gender, true);
+			        WC()->customer->add_meta_data('_postfinancecheckout_shipping_gender', $billing_gender, true);
 			    }
 			}
 		}
 		
-		public function show_checkout_error_msg(){
+		public function register_checkout_error_msg(){
 		    $msg = WC()->session->get( 'postfinancecheckout_failure_message',  null );
 		    if(!empty($msg)){
 		        $this->add_notice((string) $msg, 'error');
 		        WC()->session->set('postfinancecheckout_failure_message',  null );
 		    }
+		}
+		
+		public function show_checkout_error_msg(){
+		    $this->register_checkout_error_msg();
+		    wc_print_notices();
 		}
 
 		/**
@@ -608,6 +632,15 @@ if (!class_exists('WooCommerce_PostFinanceCheckout')) {
 		        }
 		    }
 		}
+		
+		public function add_cache_no_store($headers){
+		    if(is_checkout() && isset($headers['Cache-Control']) && stripos($headers['Cache-Control'], 'no-store') === false){
+		        $headers['Cache-Control'] .= ', no-store ';		        
+		    }
+		
+		    return $headers;
+		}
+		
 		
 		public function woocommerce_rest_prepare_product_attribute($response, $item, $request){
 		    

@@ -91,15 +91,11 @@ class WC_PostFinanceCheckout_Service_Transaction extends WC_PostFinanceCheckout_
 		}
 	}
 
-	/**
-	 * Returns the URL to PostFinance Checkout's JavaScript library that is necessary to display the payment form.
-	 *
-	 * @return string
-	 */
-	public function get_javascript_url(){
-		$transaction = $this->get_transaction_from_session();
-		return $this->get_transaction_service()->buildJavaScriptUrl($transaction->getLinkedSpaceId(), $transaction->getId());
+	
+	public function get_javascript_url_for_transaction(\PostFinanceCheckout\Sdk\Model\Transaction $transaction){
+	    return $this->get_transaction_service()->buildJavaScriptUrl($transaction->getLinkedSpaceId(), $transaction->getId());
 	}
+	
 	
 	/**
 	 * Returns the URL to PostFinance Checkout's JavaScript library that is necessary to display the payment form.
@@ -292,28 +288,68 @@ class WC_PostFinanceCheckout_Service_Transaction extends WC_PostFinanceCheckout_
 	/**
 	 * Returns the payment methods that can be used with the current cart.
 	 *
-	 * @return \PostFinanceCheckout\Sdk\Model\PaymentMethodConfiguration[]
+	 * @return int[]
 	 */
-	public function get_possible_payment_methods(){
+	public function get_possible_payment_methods_for_cart(){
 	    
-	    $transaction = $this->get_transaction_from_session();
-	    		
-	    if (!isset(self::$possible_payment_method_cache[$transaction->getLinkedSpaceId().'-'.$transaction->getId()]) || self::$possible_payment_method_cache[$transaction->getLinkedSpaceId().'-'.$transaction->getId()] == null) {
+	    $current_cart_id = WC_PostFinanceCheckout_Helper::instance()->get_current_cart_id();
+	    if (!isset(self::$possible_payment_method_cache[$current_cart_id]) || self::$possible_payment_method_cache[$current_cart_id] == null) {
 	        try {
-			     $payment_methods = $this->get_transaction_service()->fetchPossiblePaymentMethods($transaction->getLinkedSpaceId(), $transaction->getId());
+	        
+    	        $transaction = $this->get_transaction_from_session();
+    	        if($transaction->getState() != \PostFinanceCheckout\Sdk\Model\TransactionState::PENDING){
+    	            self::$possible_payment_method_cache[$current_cart_id] =
+    	                $transaction->getAllowedPaymentMethodConfigurations();
+    	            return self::$possible_payment_method_cache[$current_cart_id];
+    	        }
+	            $payment_methods = $this->get_transaction_service()->fetchPossiblePaymentMethods($transaction->getLinkedSpaceId(), $transaction->getId());
+	            
+        		$method_configuration_service = WC_PostFinanceCheckout_Service_Method_Configuration::instance();
+        		$possible_methods = array();
+    			foreach ($payment_methods as $payment_method) {
+    				$method_configuration_service->update_data($payment_method);
+    				$possible_methods[] = $payment_method->getId();
+    			}
+    			self::$possible_payment_method_cache[$current_cart_id] = $possible_methods;
+                
 	        } catch (\WhitelabelMachineName\Sdk\ApiException $e) {
-	            self::$possible_payment_method_cache[$transaction->getLinkedSpaceId().'-'.$transaction->getId()] = array();
+	            self::$possible_payment_method_cache[$current_cart_id] = array();
 	            throw $e;
-	        }			
-			
-    		$method_configuration_service = WC_PostFinanceCheckout_Service_Method_Configuration::instance();
-			foreach ($payment_methods as $payment_method) {
-				$method_configuration_service->update_data($payment_method);
-			}
-			
-			self::$possible_payment_method_cache[$transaction->getLinkedSpaceId().'-'.$transaction->getId()] = $payment_methods;
+	        }
 		}
-		return self::$possible_payment_method_cache[$transaction->getLinkedSpaceId().'-'.$transaction->getId()];
+		return self::$possible_payment_method_cache[$current_cart_id];
+	}
+	
+	/**
+	 * Returns the payment methods that can be used with the current cart.
+	 *
+	 * @return int[]
+	 */
+	public function get_possible_payment_methods_for_order(WC_Order $order){
+	    
+	    if (!isset(self::$possible_payment_method_cache[$order->get_id()]) || self::$possible_payment_method_cache[$order->get_id()] == null) {
+	        try {
+    	        $transaction = $this->get_transaction_from_order($order);
+    	        if($transaction->getState() != \PostFinanceCheckout\Sdk\Model\TransactionState::PENDING){
+    	            self::$possible_payment_method_cache[$order->get_id()] = 
+    	                $transaction->getAllowedPaymentMethodConfigurations();
+    	            return self::$possible_payment_method_cache[$order->get_id()];
+    	        }
+	            $payment_methods = $this->get_transaction_service()->fetchPossiblePaymentMethods($transaction->getLinkedSpaceId(), $transaction->getId());        
+                $method_configuration_service = WC_PostFinanceCheckout_Service_Method_Configuration::instance();
+                $possible_methods = array();
+                foreach ($payment_methods as $payment_method) {
+                    $method_configuration_service->update_data($payment_method);
+                    $possible_methods[] = $payment_method->getId();
+                }
+                
+                self::$possible_payment_method_cache[$order->get_id()] = $possible_methods;
+	        } catch (\WhitelabelMachineName\Sdk\ApiException $e) {
+	            self::$possible_payment_method_cache[$order->get_id()] = array();
+	            throw $e;
+	        }
+	    }
+	    return self::$possible_payment_method_cache[$order->get_id()];
 	}
 
 	/**
@@ -324,7 +360,7 @@ class WC_PostFinanceCheckout_Service_Transaction extends WC_PostFinanceCheckout_
 	 * @param WC_Order $order
 	 * @return \PostFinanceCheckout\Sdk\Model\Transaction
 	 */
-	public function confirm_transaction($transaction_id, $space_id, WC_Order $order){
+	public function confirm_transaction($transaction_id, $space_id, WC_Order $order, $method_configuration_id){
 	    $last = new Exception('Unexpected Error');
 		for ($i = 0; $i < 5; $i++) {
 			try {
@@ -336,6 +372,7 @@ class WC_PostFinanceCheckout_Service_Transaction extends WC_PostFinanceCheckout_
 				$pending_transaction->setId($transaction->getId());
 				$pending_transaction->setVersion($transaction->getVersion());
 				$this->assemble_order_transaction_data($order, $pending_transaction);
+				$pending_transaction->setAllowedPaymentMethodConfigurations(array($method_configuration_id));
 				$pending_transaction = apply_filters('wc_postfinancecheckout_modify_confirm_transaction', $pending_transaction, $order);
 				return $this->get_transaction_service()->confirm($space_id, $pending_transaction);
 			}
@@ -541,42 +578,11 @@ class WC_PostFinanceCheckout_Service_Transaction extends WC_PostFinanceCheckout_
 	 *
 	 * @return \PostFinanceCheckout\Sdk\Model\Transaction
 	 */
-	protected function get_transaction_from_session(){
-	    if(is_wc_endpoint_url( 'order-pay' )){
-	        //We have to use the order and not the cart for this endpoint
-	        global $wp;
-	        $order = WC_Order_Factory::get_order($wp->query_vars['order-pay'] );
-	        if(!$order){
-	            throw new Exception("Invalid order provided");
-	        }
-	        if (!isset(self::$transaction_cache[$order->get_id()]) || self::$transaction_cache[$order->get_id()] == null) {
-    	        $existing_transaction = WC_PostFinanceCheckout_Entity_Transaction_Info::load_by_order_id($order->get_id());
-    	        if($existing_transaction->get_id() === null){
-    	            WC_PostFinanceCheckout_Helper::instance()->start_database_transaction();
-    	            try{
-    	                WC_PostFinanceCheckout_Helper::instance()->lock_by_transaction_id($existing_transaction->get_space_id(), $existing_transaction->get_transaction_id());
-        	            $transaction = $this->create_transaction_by_order($order);
-        	            WC_PostFinanceCheckout_Helper::instance()->commit_database_transaction();
-    	            }catch(Exception $e){
-    	                WC_PostFinanceCheckout_Helper::instance()->rollback_database_transaction();
-                        throw $e;
-    	            }
-    	        }
-    	        elseif($existing_transaction->get_state() == \PostFinanceCheckout\Sdk\Model\TransactionState::PENDING) {
-    	            $transaction = $this->load_and_update_transaction_for_order($order);
-    	        }
-    	        else{
-    	            throw new Exception('There is already a valid transaction associated with this order.');
-    	        }
-    	        self::$transaction_cache[$order->get_id()] = $transaction;
-	        }
-	        return self::$transaction_cache[$order->get_id()];
-        }
-	    
+	public function get_transaction_from_session(){
+
 	    $current_cart_id = WC_PostFinanceCheckout_Helper::instance()->get_current_cart_id();
 		if (!isset(self::$transaction_cache[$current_cart_id]) || self::$transaction_cache[$current_cart_id] == null) {
-			$session_handler = WC()->session;
-			$transaction_id = $session_handler->get('postfinancecheckout_transaction_id', null);
+			$transaction_id = WC()->session->get('postfinancecheckout_transaction_id', null);
 			if ($transaction_id === null) {
 				$transaction = $this->create_transaction_from_session();
 			}
@@ -588,6 +594,41 @@ class WC_PostFinanceCheckout_Service_Transaction extends WC_PostFinanceCheckout_
 		}
 		
 		return self::$transaction_cache[$current_cart_id];
+	}
+	
+	
+	/**
+	 * Returns the transaction for the given session. We work with sessions as the cart is also only stored in the session
+	 *
+	 * If no transaction exists, a new one is created.
+	 *
+	 * @return \PostFinanceCheckout\Sdk\Model\Transaction
+	 */
+	public function get_transaction_from_order(WC_Order $order){
+	   
+	        if (!isset(self::$transaction_cache[$order->get_id()]) || self::$transaction_cache[$order->get_id()] == null) {
+	            $existing_transaction = WC_PostFinanceCheckout_Entity_Transaction_Info::load_by_order_id($order->get_id());
+	            if($existing_transaction->get_id() === null){
+	                WC_PostFinanceCheckout_Helper::instance()->start_database_transaction();
+	                try{
+	                    WC_PostFinanceCheckout_Helper::instance()->lock_by_transaction_id($existing_transaction->get_space_id(), $existing_transaction->get_transaction_id());
+	                    $transaction = $this->create_transaction_by_order($order);
+	                    WC_PostFinanceCheckout_Helper::instance()->commit_database_transaction();
+	                }catch(Exception $e){
+	                    WC_PostFinanceCheckout_Helper::instance()->rollback_database_transaction();
+	                    throw $e;
+	                }
+	            }
+	            elseif($existing_transaction->get_state() == \PostFinanceCheckout\Sdk\Model\TransactionState::PENDING) {
+	                $transaction = $this->load_and_update_transaction_for_order($order, $existing_transaction);
+	            }
+	            else{
+	                $transaction = $this->get_transaction($existing_transaction->get_space_id(), $existing_transaction->get_transaction_id());
+	            }
+	            self::$transaction_cache[$order->get_id()] = $transaction;
+	        }
+	        return self::$transaction_cache[$order->get_id()];
+	   
 	}
 	
 	/**
@@ -640,15 +681,17 @@ class WC_PostFinanceCheckout_Service_Transaction extends WC_PostFinanceCheckout_
 		return $transaction;
 	}
 	
-	protected function load_and_update_transaction_for_order(WC_Order $order){
+	protected function load_and_update_transaction_for_order(WC_Order $order, WC_PostFinanceCheckout_Entity_Transaction_Info $existing_transaction){
 	    $last = new \PostFinanceCheckout\Sdk\VersioningException();
 	    for ($i = 0; $i < 5; $i++) {
 	        try {
-	            $existing_transaction = WC_PostFinanceCheckout_Entity_Transaction_Info::load_by_order_id($order->get_id());
 	            $space_id = $existing_transaction->get_space_id();
 	            $transaction = $this->get_transaction($space_id, $existing_transaction->get_transaction_id());
-	            if ($transaction->getState() != \PostFinanceCheckout\Sdk\Model\TransactionState::PENDING) {
+	            if($transaction->getState() == \PostFinanceCheckout\Sdk\Model\TransactionState::FAILED){
 	                return $this->create_transaction_by_order($order);
+	            }
+	            if ($transaction->getState() != \PostFinanceCheckout\Sdk\Model\TransactionState::PENDING) {
+	                return $transaction;
 	            }
 	            $pending_transaction = new \PostFinanceCheckout\Sdk\Model\TransactionPending();
 	            $pending_transaction->setId($transaction->getId());
@@ -740,7 +783,7 @@ class WC_PostFinanceCheckout_Service_Transaction extends WC_PostFinanceCheckout_
 		$address->setStreet($this->fix_length(trim($customer->get_billing_address_1() . "\n" . $customer->get_billing_address_2()), 300));
 		$address->setEmailAddress($this->fix_length($this->get_session_email_address(), 254));
 		
-		$date_of_birth_string = $customer->get_meta("_whitelabelmachine128_billing_date_of_birth", true ,"edit");
+		$date_of_birth_string = $customer->get_meta("_postfinancecheckout_billing_date_of_birth", true ,"edit");
 		if(!empty($date_of_birth_string)){
 		    $date_of_birth = WC_PostFinanceCheckout_Helper::instance()->try_to_parse_date($date_of_birth_string);
 		    if($date_of_birth !== false){
@@ -748,7 +791,7 @@ class WC_PostFinanceCheckout_Service_Transaction extends WC_PostFinanceCheckout_
 		    }
 		}
 				
-		$gender_string = $customer->get_meta("_whitelabelmachine128_billing_gender", true, 'edit');
+		$gender_string = $customer->get_meta("_postfinancecheckout_billing_gender", true, 'edit');
 		if(!empty($gender_string)){
 		    if(strtolower($gender_string) == 'm' || strtolower($gender_string) == "male"){
 		        $address->setGender(\PostFinanceCheckout\Sdk\Model\Gender::MALE);
@@ -783,7 +826,7 @@ class WC_PostFinanceCheckout_Service_Transaction extends WC_PostFinanceCheckout_
 		$address->setStreet($this->fix_length(trim($customer->get_shipping_address_1() . "\n" . $customer->get_shipping_address_2()), 300));
 		$address->setEmailAddress($this->fix_length($this->get_session_email_address(), 254));
 		
-		$date_of_birth_string = $customer->get_meta("_whitelabelmachine128_shipping_date_of_birth", true ,"edit");
+		$date_of_birth_string = $customer->get_meta("_postfinancecheckout_shipping_date_of_birth", true ,"edit");
 		if(!empty($date_of_birth_string)){
 		    $date_of_birth = WC_PostFinanceCheckout_Helper::instance()->try_to_parse_date($date_of_birth_string);
 		    if($date_of_birth !== false){
@@ -791,7 +834,7 @@ class WC_PostFinanceCheckout_Service_Transaction extends WC_PostFinanceCheckout_
 		    }
 		}
 		
-		$gender_string = $customer->get_meta("_whitelabelmachine128_shipping_gender", true, 'edit');
+		$gender_string = $customer->get_meta("_postfinancecheckout_shipping_gender", true, 'edit');
 		if(!empty($gender_string)){
 		    if(strtolower($gender_string) == 'm' || strtolower($gender_string) == "male"){
 		        $address->setGender(\PostFinanceCheckout\Sdk\Model\Gender::MALE);

@@ -90,6 +90,7 @@ class WC_PostFinanceCheckout_Webhook_Transaction extends WC_PostFinanceCheckout_
     		$status = apply_filters('wc_postfinancecheckout_authorized_status', 'on-hold', $order);
     		$order->add_meta_data("_postfinancecheckout_authorized", "true", true);
     		$order->update_status($status);
+    		wc_maybe_reduce_stock_levels($order->get_id());
     		if (isset(WC()->cart)) {
     			WC()->cart->empty_cart();
     		}
@@ -113,9 +114,11 @@ class WC_PostFinanceCheckout_Webhook_Transaction extends WC_PostFinanceCheckout_
 
 	protected function failed(\PostFinanceCheckout\Sdk\Model\Transaction $transaction, WC_Order $order){
 	    do_action('wc_postfinancecheckout_failed', $transaction , $order);
-		$status = apply_filters('wc_postfinancecheckout_failed_status', 'failed', $order);
-		$order->update_status($status);
-		WC_PostFinanceCheckout_Helper::instance()->maybe_restock_items_for_order($order);		
+	    if($order->get_status('edit') == 'pending' || $order->get_status('edit') == 'postf-redirected'){
+    		$status = apply_filters('wc_postfinancecheckout_failed_status', 'failed', $order);
+    		$order->update_status($status);
+    		WC_PostFinanceCheckout_Helper::instance()->maybe_restock_items_for_order($order);
+	    }
 	}
 
 	protected function fulfill(\PostFinanceCheckout\Sdk\Model\Transaction $transaction, WC_Order $order){
