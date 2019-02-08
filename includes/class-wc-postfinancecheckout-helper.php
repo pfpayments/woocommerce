@@ -332,13 +332,17 @@ class WC_PostFinanceCheckout_Helper
         if (strlen($languageString) >= 5) {
             // We assume it was a long ietf code, check if it exists
             $language = WC_PostFinanceCheckout_Provider_Language::instance()->find($languageString);
-            // Get first part of IETF and try to resolve as ISO
-            if (strpos($languageString, '-') !== false) {
-                $languageString = substr($languageString, 0, strpos($languageString, '-'));
+            if (!$language && strpos($languageString, '-') !== false) {
+                $languageParts = explode('-', $languageString);
+                array_pop($languageParts);
+                while (!$language && !empty($languageParts) ){
+                    $language = WC_PostFinanceCheckout_Provider_Language::instance()->find(implode('-', $languageParts));
+                    array_pop($languageParts);
+                }
             }
         }
         if (! $language) {
-            $language = WC_PostFinanceCheckout_Provider_Language::instance()->find_by_iso_code(strtolower($languageString));
+            $language = WC_PostFinanceCheckout_Provider_Language::instance()->find_by_iso_code(strtolower(substr($languageString, 0, strpos($languageString, '-'))));
         }
         // We did not find anything, so fall back
         if (! $language) {

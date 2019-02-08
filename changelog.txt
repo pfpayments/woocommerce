@@ -153,3 +153,7 @@
 
 * Fix - Issue with browser navigation button during the checkout
 
+= 1.1.19 - February 8, 2018 =
+
+* Fix - Improved language detection
+

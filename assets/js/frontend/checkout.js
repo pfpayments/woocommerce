@@ -259,6 +259,7 @@ jQuery(function($) {
 		    
 		    $('#'+container_id).replaceWith($('#'+tmp_container_id));
 		    $('#'+tmp_container_id).attr('id', container_id);
+		    		    
 		    this.payment_methods[method_id].container_id = container_id;
 		    
 		    if(this.checkout_form_identifier == '#order_review'){
