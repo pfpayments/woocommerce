@@ -149,11 +149,15 @@
 
 * Tweak - Tweak email sending behaviour, when Germanized is active
 
-= 1.1.18 - January 18, 2018 =
+= 1.1.18 - January 18, 2019 =
 
 * Fix - Issue with browser navigation button during the checkout
 
-= 1.1.19 - February 8, 2018 =
+= 1.1.19 - February 8, 2019 =
 
 * Fix - Improved language detection
+
+= 1.1.20 - February 11, 2019 =
+
+* Tweak - Only check available payment methods on checkout pages
 

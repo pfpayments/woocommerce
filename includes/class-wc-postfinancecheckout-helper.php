@@ -284,6 +284,9 @@ class WC_PostFinanceCheckout_Helper
     public function get_current_cart_id()
     {
         $session_handler = WC()->session;
+        if($session_handler === null){
+            throw new Exception("No session available.");
+        }        
         $current_cart_id = $session_handler->get('postfinancecheckout_current_cart_id', null);
         if ($current_cart_id === null) {
             $current_cart_id = WC_PostFinanceCheckout_Unique_Id::get_uuid();
