@@ -197,7 +197,9 @@ class WC_PostFinanceCheckout_Admin_Document {
 			}
 		}
 		catch (Exception $e) {
-		    wp_die(__('Could not fetch the document from PostFinance Checkout.' , 'woo-postfinancecheckout'));
+		    $message = $e->getMessage();
+		    $cleaned = preg_replace("/^\[[A-Fa-f\d\-]+\] /", "", $message);
+		    wp_die(__('Could not fetch the document from PostFinance Checkout.', 'woo-postfinancecheckout').' '.$cleaned);
 		}
 		if ($_GET['refer'] == 'edit') {
 			wp_redirect(add_query_arg(array(

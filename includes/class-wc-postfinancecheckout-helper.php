@@ -181,16 +181,10 @@ class WC_PostFinanceCheckout_Helper
     public function cleanup_line_items(array $line_items, $expected_sum, $currency)
     {
         $effective_sum = $this->round_amount($this->get_total_amount_including_tax($line_items), $currency);
-        $diff = $this->round_amount($expected_sum, $currency) - $effective_sum;
+        $rounded_expected_sum = $this->round_amount($expected_sum, $currency);
+        $diff = $rounded_expected_sum - $effective_sum;
         if ($diff != 0) {
-            $line_item = new \PostFinanceCheckout\Sdk\Model\LineItemCreate();
-            $line_item->setAmountIncludingTax($this->round_amount($diff, $currency));
-            $line_item->setName(__('Rounding Adjustment', 'woo-postfinancecheckout'));
-            $line_item->setQuantity(1);
-            $line_item->setSku('rounding-adjustment');
-            $line_item->setType($diff < 0 ? \PostFinanceCheckout\Sdk\Model\LineItemType::DISCOUNT : \PostFinanceCheckout\Sdk\Model\LineItemType::FEE);
-            $line_item->setUniqueId('rounding-adjustment');
-            $line_items[] = $line_item;
+            throw new WC_PostFinanceCheckout_Exception_Invalid_Transaction_Amount($effective_sum, $rounded_expected_sum);
         }
         return $this->ensure_unique_ids($line_items);
     }
@@ -326,35 +320,45 @@ class WC_PostFinanceCheckout_Helper
             "%d"
         ));
     }
-
-    public function get_cleaned_locale($useDefault = true)
+    
+    
+    public function get_cleaned_locale($use_default = true)
     {
-        $languageString = get_locale();
-        $languageString = str_replace('_', '-', $languageString);
+        $language_string = get_locale();
+        return $this->get_clean_locale_for_string($language_string, $use_default);
+    }
+    
+    
+    public function get_clean_locale_for_string($language_string, $use_default){
+        $language_string = str_replace('_', '-', $language_string);
         $language = false;
-        if (strlen($languageString) >= 5) {
+        if (strlen($language_string) >= 5) {
             // We assume it was a long ietf code, check if it exists
-            $language = WC_PostFinanceCheckout_Provider_Language::instance()->find($languageString);
-            if (!$language && strpos($languageString, '-') !== false) {
-                $languageParts = explode('-', $languageString);
-                array_pop($languageParts);
-                while (!$language && !empty($languageParts) ){
-                    $language = WC_PostFinanceCheckout_Provider_Language::instance()->find(implode('-', $languageParts));
-                    array_pop($languageParts);
+            $language = WC_PostFinanceCheckout_Provider_Language::instance()->find($language_string);
+            if (!$language && strpos($language_string, '-') !== false) {
+                $language_parts = explode('-', $language_string);
+                array_pop($language_parts);
+                while (!$language && !empty($language_parts) ){
+                    $language = WC_PostFinanceCheckout_Provider_Language::instance()->find(implode('-', $language_parts));
+                    array_pop($language_parts);
                 }
             }
         }
         if (! $language) {
-            $language = WC_PostFinanceCheckout_Provider_Language::instance()->find_by_iso_code(strtolower(substr($languageString, 0, strpos($languageString, '-'))));
+            if(strpos($language_string, '-') !==  false){
+                $language_string = strtolower(substr($language_string, 0, strpos($language_string, '-')));
+            }
+            $language = WC_PostFinanceCheckout_Provider_Language::instance()->find_by_iso_code($language_string);
         }
         // We did not find anything, so fall back
         if (! $language) {
-            if ($useDefault) {
+            if ($use_default) {
                 return 'en-US';
             }
             return null;
         }
         return $language->getIetfCode();
+        
     }
 
     /**

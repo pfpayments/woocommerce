@@ -2,8 +2,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: WooCommerce PostFinance Checkout\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2018-06-25 10:08+0000\n"
-"PO-Revision-Date: 2018-06-25 10:59+0000\n"
+"POT-Creation-Date: 2019-03-19 14:49+0100\n"
+"PO-Revision-Date: 2019-03-19 14:49+0100\n"
 "Last-Translator: Customweb GmbH <info@customweb.com>\n"
 "Language-Team: German\n"
 "Language: de_DE\n"
@@ -11,57 +11,57 @@ msgstr ""
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"X-Generator: Loco https://localise.biz/"
 
-#: includes/class-wc-postfinancecheckout-helper.php:47
+
+#: includes/class-wc-postfinancecheckout-helper.php:53
 msgid "The API access data is incomplete."
 msgstr "Die API-Zugangsdaten sind unvollständig."
 
-#: includes/class-wc-postfinancecheckout-helper.php:180
+#: includes/class-wc-postfinancecheckout-helper.php:188
 msgid "Rounding Adjustment"
 msgstr "Rundungskorrektur"
 
 #. 1: item name 2: old stock quantity 3: new stock quantity
-#: includes/class-wc-postfinancecheckout-helper.php:308
+#: includes/class-wc-postfinancecheckout-helper.php:445
 #: includes/webhook/class-wc-postfinancecheckout-webhook-transaction-completion.php:90
 #, php-format
 msgid "%1$s stock increased from %2$s to %3$s."
 msgstr "%1$s Lagerbestand erhöht von %2$s auf %3$s."
 
-#: includes/class-wc-postfinancecheckout-migration.php:93
+#: includes/class-wc-postfinancecheckout-migration.php:90
 #, php-format
 msgid "PHP %s+ is required. (You're running version %s)"
 msgstr "PHP %s+ wird benötigt. (Du verwendest Version %s)"
 
-#: includes/class-wc-postfinancecheckout-migration.php:96
+#: includes/class-wc-postfinancecheckout-migration.php:93
 #, php-format
 msgid "Wordpress %s+ is required. (You're running version %s)"
 msgstr "Wordpress %s+ wird benötigt. (Du verwendest Version %s)"
 
-#: includes/class-wc-postfinancecheckout-migration.php:101
+#: includes/class-wc-postfinancecheckout-migration.php:98
 #, php-format
 msgid "Woocommerce %s+ has to be active."
 msgstr "Woocommerce %s+ muss aktiviert sein."
 
-#: includes/class-wc-postfinancecheckout-migration.php:107
+#: includes/class-wc-postfinancecheckout-migration.php:104
 #, php-format
 msgid "Woocommerce %s+ is required. (You're running version %s)"
 msgstr "Woocommerce %s+ wird benötigt. (Du verwendest Version %s)"
 
-#: includes/class-wc-postfinancecheckout-migration.php:119
+#: includes/class-wc-postfinancecheckout-migration.php:116
 msgid "Could not activate plugin WooCommerce PostFinance Checkout."
 msgstr "Das Plugin WooCommerce PostFinance Checkout konnte nicht aktiviert werden."
 
-#: includes/class-wc-postfinancecheckout-migration.php:121
+#: includes/class-wc-postfinancecheckout-migration.php:118
 msgid "Please check the following requirements before activating:"
 msgstr ""
 "Bitte überprüfe die folgenden Anforderungen bevor das Modul aktiviert wird:"
 
-#: includes/class-wc-postfinancecheckout-migration.php:264
+#: includes/class-wc-postfinancecheckout-migration.php:260
 msgid "View Documentation"
 msgstr "Dokumentation ansehen."
 
-#: includes/class-wc-postfinancecheckout-migration.php:264
+#: includes/class-wc-postfinancecheckout-migration.php:260
 #: includes/admin/class-wc-postfinancecheckout-admin-settings-page.php:148
 msgid "Documentation"
 msgstr "Dokumentation"
@@ -120,11 +120,15 @@ msgstr "Zahlmethodenlogo anzeigen"
 msgid "Show the payment method's image on the checkout page."
 msgstr "Zeigt das Zahlmethodenlogo auf der Checkout Page."
 
-#: includes/class-wc-postfinancecheckout-gateway.php:290
+#: includes/class-wc-postfinancecheckout-gateway.php:321
 msgid "Please fill out all required fields."
 msgstr "Bitte füllen Sie alle Pflichtfelder aus."
 
-#: includes/class-wc-postfinancecheckout-gateway.php:338
+#: includes/class-wc-wallee-gateway.php:373
+msgid "The checkout timed out, please try again."
+msgstr "Die Sitzung ist abgelaufen, bitte versuchen Sie es erneut."
+
+#: includes/class-wc-postfinancecheckout-gateway.php:383
 msgid ""
 "There was an issue, while processing your order. Please try again or use "
 "another payment method."
@@ -132,7 +136,7 @@ msgstr ""
 "Es gab ein Problem beim Verarbeiten Ihrer Bestellung. Bitte versuchen Sie es "
 "erneut oder wählen Sie eine andere Zahlmethode."
 
-#: includes/class-wc-postfinancecheckout-gateway.php:418
+#: includes/class-wc-postfinancecheckout-gateway.php:471
 msgid "There was a problem creating the refund."
 msgstr "Es gab ein Problem bei der Erstellung der Rückerstattung."
 
@@ -150,7 +154,7 @@ msgstr "Lieferschein"
 msgid "postfinancecheckout Documents"
 msgstr "postfinancecheckout Dokumente"
 
-#: includes/admin/class-wc-postfinancecheckout-admin-document.php:200
+#: includes/admin/class-wc-postfinancecheckout-admin-document.php:202
 msgid "Could not fetch the document from PostFinance Checkout."
 msgstr "Das Dokument konnte nicht abgeholt werden."
 
@@ -167,7 +171,7 @@ msgstr "Aktualisieren"
 msgid "Void"
 msgstr "Annullierung"
 
-#: includes/admin/class-wc-postfinancecheckout-admin.php:137
+#: includes/admin/class-wc-postfinancecheckout-admin.php:138
 msgid "Completion"
 msgstr "Verbuchung"
 
@@ -201,12 +205,10 @@ msgstr "Übermittle das Attribute an PostFinance Checkout."
 
 #: includes/admin/class-wc-postfinancecheckout-admin.php:260
 #: includes/admin/class-wc-postfinancecheckout-admin.php:268
-msgid ""
-"Should this product attribute be sent to PostFinance Checkout as line item "
-"attribute?"
+msgid "Should this product attribute be sent to wallee as line item attribute?"
 msgstr ""
-"Soll dieses Produkt Attribute als Line Item Attribute an PostFinance Checkout "
-"gesendet werden."
+"Soll dieses Produkt Attribute als Line Item Attribute an wallee gesendet "
+"werden."
 
 #: includes/admin/class-wc-postfinancecheckout-admin-refund.php:60
 msgid "There is a refund in progress."
@@ -221,15 +223,15 @@ msgid "Please wait until the pending refund is processed."
 msgstr ""
 "Bitte warten Sie, bis die existierende Rückerstattung verarbeitet wurde."
 
-#: includes/admin/class-wc-postfinancecheckout-admin-refund.php:154
-#: includes/admin/class-wc-postfinancecheckout-admin-refund.php:161
+#: includes/admin/class-wc-postfinancecheckout-admin-refund.php:157
+#: includes/admin/class-wc-postfinancecheckout-admin-refund.php:164
 #, php-format
 msgid ""
 "There has been an error while sending the refund to the gateway. Error: %s"
 msgstr ""
 "Es gab einen Fehler bei der Übermittlung der Rückerstattung. Fehler : %s"
 
-#: includes/admin/class-wc-postfinancecheckout-admin-refund.php:181
+#: includes/admin/class-wc-postfinancecheckout-admin-refund.php:184
 #, php-format
 msgid "Error updating refund job with id %d: %s"
 msgstr "Fehler bei der Aktualisierung der Rückerstattung mit id %d: %s"
@@ -317,7 +319,7 @@ msgstr ""
 "Die Transaktion wird automatisch aktualisiert sobald das Resultat verfügbar "
 "ist."
 
-#: includes/admin/class-wc-postfinancecheckout-admin-order-void.php:187
+#: includes/admin/class-wc-postfinancecheckout-admin-order-void.php:186
 #, php-format
 msgid "Error updating void job with id %d: %s"
 msgstr "Fehler bei der Aktualisierung der Annullierung mit id %d: %s"
@@ -503,12 +505,12 @@ msgstr ""
 "Die Space View ID kontrolliert das Styling des Zahlungsformulars und der "
 "Zahlungsseite im Space."
 
-#: includes/webhook/class-wc-postfinancecheckout-webhook-delivery-indication.php:52
+#: includes/webhook/class-wc-postfinancecheckout-webhook-delivery-indication.php:53
 msgid "A manual decision about whether to accept the payment is required."
 msgstr ""
 "Eine manuelle Entscheidung über die Annahme der Zahlung ist erforderlich."
 
-#: includes/service/class-wc-postfinancecheckout-service-transaction.php:327
+#: includes/service/class-wc-postfinancecheckout-service-transaction.php:369
 msgid "The checkout expired, please try again."
 msgstr "Der Checkout ist abgelaufen, bitte versuchen Sie es erneut."
 
@@ -544,3 +546,15 @@ msgstr "WooCommerce PostFinance Checkout"
 #. Description of the plugin
 msgid "Process WooCommerce payments with PostFinance Checkout."
 msgstr "Verarbeiten Sie WooCommerce-Zahlungen mit PostFinance Checkout."
+
+#. URI of the plugin
+msgid "https://wordpress.org/plugins/woo-postfinancecheckout"
+msgstr "https://wordpress.org/plugins/woo-postfinancecheckout"
+
+#. Author of the plugin
+msgid "customweb GmbH"
+msgstr "customweb GmbH"
+
+#. Author URI of the plugin
+msgid "https://www.customweb.com"
+msgstr "https://www.customweb.com"	

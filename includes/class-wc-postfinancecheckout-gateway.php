@@ -239,11 +239,11 @@ class WC_PostFinanceCheckout_Gateway extends WC_Payment_Gateway {
 		//It is possbile this function is called in the wordpress admin section. There is not a cart, so all active methods are available.
 		//If it is not a checkout page the method is availalbe. Some plugins check this, on non checkout pages, without a cart available
 		//The active  gateways are  available during order total caluclation, as other plugins could need them.
-		if(is_admin() || !is_checkout() || (isset($GLOBALS['_wc_postfinancecheckout_calculating']) && $GLOBALS['_wc_postfinancecheckout_calculating'])) {
+		if(apply_filters('wc_postfinancecheckout_is_method_available', is_admin() || !is_checkout() || (isset($GLOBALS['_wc_postfinancecheckout_calculating']) && $GLOBALS['_wc_postfinancecheckout_calculating']), $this)) {
 		    return $this->get_payment_method_configuration()->get_state() ==  WC_PostFinanceCheckout_Entity_Method_Configuration::STATE_ACTIVE;
 		}
 		
-		if(is_checkout_pay_page()){
+		if(apply_filters('wc_postfinancecheckout_is_order_pay_endpoint', is_checkout_pay_page())){
 		    //We have to use the order and not the cart for this endpoint
 		    global $wp;
 		    $order = WC_Order_Factory::get_order($wp->query_vars['order-pay'] );
@@ -253,6 +253,10 @@ class WC_PostFinanceCheckout_Gateway extends WC_Payment_Gateway {
 		    try {
 		        $possible_methods = WC_PostFinanceCheckout_Service_Transaction::instance()->get_possible_payment_methods_for_order($order);
 		    }
+		    catch(WC_PostFinanceCheckout_Exception_Invalid_Transaction_Amount $e){
+		        WooCommerce_PostFinanceCheckout::instance()->log($e->getMessage()." Order Id: ".$order->get_id(), WC_Log_Levels::ERROR);
+		        return false;
+		    }
 		    catch(Exception $e){
 		        WooCommerce_PostFinanceCheckout::instance()->log($e->getMessage(), WC_Log_Levels::DEBUG);
 		        return false;
@@ -261,6 +265,10 @@ class WC_PostFinanceCheckout_Gateway extends WC_Payment_Gateway {
 		else{
 		    try {
 		        $possible_methods = WC_PostFinanceCheckout_Service_Transaction::instance()->get_possible_payment_methods_for_cart();
+		    }
+		    catch(WC_PostFinanceCheckout_Exception_Invalid_Transaction_Amount $e){
+		        WooCommerce_PostFinanceCheckout::instance()->log($e->getMessage(), WC_Log_Levels::ERROR);
+		        return false;
 		    }
 		    catch(Exception $e){
 		        WooCommerce_PostFinanceCheckout::instance()->log($e->getMessage(), WC_Log_Levels::DEBUG);
@@ -296,7 +304,7 @@ class WC_PostFinanceCheckout_Gateway extends WC_Payment_Gateway {
 	    parent::payment_fields();
 	    $transaction_service = WC_PostFinanceCheckout_Service_Transaction::instance();
 	    try{
-	        if(is_checkout_pay_page()){
+	        if(apply_filters('wc_postfinancecheckout_is_order_pay_endpoint', is_checkout_pay_page())){
 	            global $wp;
 	            $order = WC_Order_Factory::get_order($wp->query_vars['order-pay'] );
 	            if(!$order){
@@ -367,7 +375,7 @@ class WC_PostFinanceCheckout_Gateway extends WC_Payment_Gateway {
 	    $transaction_id = $_POST['postfinancecheckout-transaction-id-'.$this->id];
 	    $transaction_nonce = $_POST['postfinancecheckout-transaction-nonce-'.$this->id];
 	    
-	    $is_order_pay_endpoint = is_checkout_pay_page();
+	    $is_order_pay_endpoint = apply_filters('wc_postfinancecheckout_is_order_pay_endpoint', is_checkout_pay_page());
 	    
 	    if(hash_hmac('sha256', $space_id.'-'.$transaction_id, NONCE_KEY) != $transaction_nonce){
 	        WC()->session->set( 'postfinancecheckout_failure_message', __('The checkout timed out, please try again.', 'woo-postfinancecheckout') );
@@ -420,12 +428,10 @@ class WC_PostFinanceCheckout_Gateway extends WC_Payment_Gateway {
 			        'result' => 'success',
 			        'redirect' => $transaction_service->get_payment_page_url($transaction->getLinkedSpaceId(), $transaction->getId())
 			    );
+			    return $result;
 	        }	
 			
-			if($is_order_pay_endpoint){
-			    if($no_iframe){
-			        return $result;
-			    }		    
+	        if(apply_filters('wc_postfinancecheckout_gateway_result_send_json', $is_order_pay_endpoint, $order_id)){
 			    wp_send_json( $result );
 			    exit;
 			}
@@ -438,11 +444,11 @@ class WC_PostFinanceCheckout_Gateway extends WC_Payment_Gateway {
 			$cleaned = preg_replace("/^\[[A-Fa-f\d\-]+\] /", "", $message);
 			WC()->session->set( 'postfinancecheckout_failure_message', $cleaned);
 			$order->update_status( 'failed' );
-			if($is_order_pay_endpoint){
-			    $result =array(
-			        'result' => 'failure',
-			        'reload' => 'true'
-			    );
+			$result =array(
+			    'result' => 'failure',
+			    'reload' => 'true'
+			);
+			if(apply_filters('wc_postfinancecheckout_gateway_result_send_json', $is_order_pay_endpoint, $order_id)){
 			    wp_send_json( $result );
 			    exit;
 			}

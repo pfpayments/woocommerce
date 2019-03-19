@@ -54,7 +54,8 @@ class WC_PostFinanceCheckout_Return_Handler {
 				    \PostFinanceCheckout\Sdk\Model\TransactionState::FULFILL,
 				), 5);
 		$gateway = wc_get_payment_gateway_by_order($order);
-		wp_redirect($gateway->get_return_url($order));
+		$url = apply_filters('wc_postfinancecheckout_success_url', $gateway->get_return_url($order), $order);		
+		wp_redirect($url);
 		exit();
 	}
 

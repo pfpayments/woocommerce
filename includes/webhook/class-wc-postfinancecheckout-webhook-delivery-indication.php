@@ -49,8 +49,7 @@ class WC_PostFinanceCheckout_Webhook_Delivery_Indication extends WC_PostFinanceC
 
 	protected function review(WC_Order $order){
 		$status = apply_filters('wc_postfinancecheckout_manual_task_status', 'postf-manual', $order);
-		$order->update_status($status, __('A manual decision about whether to accept the payment is required.', 'woo-postfinancecheckout'));
 		$order->add_meta_data('_postfinancecheckout_manual_check', true);
-		$order->save();
+		$order->update_status($status, __('A manual decision about whether to accept the payment is required.', 'woo-postfinancecheckout'));
 	}
 }

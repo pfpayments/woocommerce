@@ -311,7 +311,9 @@ class WC_PostFinanceCheckout_Service_Transaction extends WC_PostFinanceCheckout_
     				$possible_methods[] = $payment_method->getId();
     			}
     			self::$possible_payment_method_cache[$current_cart_id] = $possible_methods;
-                
+	        } catch(WC_PostFinanceCheckout_Exception_Invalid_Transaction_Amount $e){
+	            self::$possible_payment_method_cache[$current_cart_id] = array();
+	            throw $e;
 	        } catch (\WhitelabelMachineName\Sdk\ApiException $e) {
 	            self::$possible_payment_method_cache[$current_cart_id] = array();
 	            throw $e;
@@ -344,6 +346,9 @@ class WC_PostFinanceCheckout_Service_Transaction extends WC_PostFinanceCheckout_
                 }
                 
                 self::$possible_payment_method_cache[$order->get_id()] = $possible_methods;
+	        } catch(WC_PostFinanceCheckout_Exception_Invalid_Transaction_Amount $e){
+	            self::$possible_payment_method_cache[$current_cart_id] = array();
+	            throw $e;
 	        } catch (\WhitelabelMachineName\Sdk\ApiException $e) {
 	            self::$possible_payment_method_cache[$order->get_id()] = array();
 	            throw $e;
@@ -395,7 +400,15 @@ class WC_PostFinanceCheckout_Service_Transaction extends WC_PostFinanceCheckout_
 		$transaction->setShippingAddress($this->get_order_shipping_address($order));
 		$transaction->setCustomerEmailAddress($this->get_order_email_address($order));
 		$transaction->setCustomerId($this->get_customer_id());
-		$transaction->setLanguage(WC_PostFinanceCheckout_Helper::instance()->get_cleaned_locale());
+		$language = null;
+        $language_string = $order->get_meta('wpml_language', true, 'edit');
+        if(!empty($language_string)){
+            $language = WC_PostFinanceCheckout_Helper::instance()->get_clean_locale_for_string($language_string, false);
+        }        
+        if(empty($language)){
+            $language = WC_PostFinanceCheckout_Helper::instance()->get_cleaned_locale();
+        }		
+        $transaction->setLanguage($language);
 		$transaction->setShippingMethod($this->fix_length($order->get_shipping_method(), 200));
 		$transaction->setMerchantReference($order->get_id());
 		$transaction->setInvoiceMerchantReference($this->fix_length($this->remove_non_ascii($order->get_order_number()), 100));

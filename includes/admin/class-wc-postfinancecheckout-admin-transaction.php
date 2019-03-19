@@ -204,7 +204,7 @@ class WC_PostFinanceCheckout_Admin_Transaction {
 			$labels_by_group_id = array();
 			foreach ($info->get_labels() as $descriptor_id => $value) {
 				$descriptor = $label_description_provider->find($descriptor_id);
-				if ($descriptor) {
+				if ($descriptor && $descriptor->getCategory() == \PostFinanceCheckout\Sdk\Model\LabelDescriptorCategory::HUMAN) {
 					$labels_by_group_id[$descriptor->getGroup()][] = array(
 						'descriptor' => $descriptor,
 						'value' => $value 

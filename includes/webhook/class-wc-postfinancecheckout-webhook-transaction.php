@@ -123,8 +123,9 @@ class WC_PostFinanceCheckout_Webhook_Transaction extends WC_PostFinanceCheckout_
 
 	protected function fulfill(\PostFinanceCheckout\Sdk\Model\Transaction $transaction, WC_Order $order){
 	    do_action('wc_postfinancecheckout_fulfill', $transaction , $order);
-		$order->payment_complete($transaction->getId());
-		//Sets the status to procesing or complete depending on items
+	    //Sets the status to procesing or complete depending on items
+	    $order->payment_complete($transaction->getId());
+		    
 	}
 
 	protected function voided(\PostFinanceCheckout\Sdk\Model\Transaction $transaction, WC_Order $order){
