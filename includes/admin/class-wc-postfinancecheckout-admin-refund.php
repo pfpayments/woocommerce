@@ -84,7 +84,6 @@ class WC_PostFinanceCheckout_Admin_Refund {
 	}
 
 	public static function execute_refund(WC_Order $order, WC_Order_Refund $refund){
-		global $wpdb;
 		$current_refund_job_id = null;
 		$transaction_info = null;
 		$refund_service = WC_PostFinanceCheckout_Service_Refund::instance();
@@ -118,7 +117,6 @@ class WC_PostFinanceCheckout_Admin_Refund {
 	}
 
 	protected static function send_refund($refund_job_id){
-		global $wpdb;
 		$refund_job = WC_PostFinanceCheckout_Entity_Refund_Job::load_by_id($refund_job_id);
 		WC_PostFinanceCheckout_Helper::instance()->start_database_transaction();
 		WC_PostFinanceCheckout_Helper::instance()->lock_by_transaction_id($refund_job->get_space_id(), $refund_job->get_transaction_id());

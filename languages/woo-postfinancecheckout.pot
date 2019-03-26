@@ -3,7 +3,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: WooCommerce PostFinance Checkout\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date:2019-03-19 14:49+0100\n"
+"POT-Creation-Date:2019-03-26 10:25+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE"
 "Language-Team: \n"
 "Language: \n"
@@ -17,12 +17,8 @@ msgstr ""
 msgid "The API access data is incomplete."
 msgstr ""
 
-#: includes/class-wc-postfinancecheckout-helper.php:188
-msgid "Rounding Adjustment"
-msgstr ""
-
 #. 1: item name 2: old stock quantity 3: new stock quantity
-#: includes/class-wc-postfinancecheckout-helper.php:445
+#: includes/class-wc-postfinancecheckout-helper.php:439
 #: includes/webhook/class-wc-postfinancecheckout-webhook-transaction-completion.php:90
 #, php-format
 msgid "%1$s stock increased from %2$s to %3$s."
@@ -119,21 +115,21 @@ msgstr ""
 msgid "Show the payment method's image on the checkout page."
 msgstr ""
 
-#: includes/class-wc-postfinancecheckout-gateway.php:321
+#: includes/class-wc-postfinancecheckout-gateway.php:329
 msgid "Please fill out all required fields."
 msgstr ""
 
-#: includes/class-wc-postfinancecheckout-gateway.php:373
+#: includes/class-wc-postfinancecheckout-gateway.php:381
 msgid "The checkout timed out, please try again."
 msgstr ""
 
-#: includes/class-wc-postfinancecheckout-gateway.php:383
+#: includes/class-wc-postfinancecheckout-gateway.php:391
 msgid ""
 "There was an issue, while processing your order. Please try again or use "
 "another payment method."
 msgstr ""
 
-#: includes/class-wc-postfinancecheckout-gateway.php:471
+#: includes/class-wc-postfinancecheckout-gateway.php:477
 msgid "There was a problem creating the refund."
 msgstr ""
 
@@ -205,22 +201,22 @@ msgstr ""
 msgid "There is a refund in progress."
 msgstr ""
 
-#: includes/admin/class-wc-postfinancecheckout-admin-refund.php:95
+#: includes/admin/class-wc-postfinancecheckout-admin-refund.php:94
 msgid "Could not load corresponding transaction"
 msgstr ""
 
-#: includes/admin/class-wc-postfinancecheckout-admin-refund.php:102
+#: includes/admin/class-wc-postfinancecheckout-admin-refund.php:101
 msgid "Please wait until the pending refund is processed."
 msgstr ""
 
-#: includes/admin/class-wc-postfinancecheckout-admin-refund.php:157
-#: includes/admin/class-wc-postfinancecheckout-admin-refund.php:164
+#: includes/admin/class-wc-postfinancecheckout-admin-refund.php:155
+#: includes/admin/class-wc-postfinancecheckout-admin-refund.php:162
 #, php-format
 msgid ""
 "There has been an error while sending the refund to the gateway. Error: %s"
 msgstr ""
 
-#: includes/admin/class-wc-postfinancecheckout-admin-refund.php:184
+#: includes/admin/class-wc-postfinancecheckout-admin-refund.php:182
 #, php-format
 msgid "Error updating refund job with id %d: %s"
 msgstr ""
@@ -476,7 +472,11 @@ msgstr ""
 msgid "A manual decision about whether to accept the payment is required."
 msgstr ""
 
-#: includes/service/class-wc-postfinancecheckout-service-transaction.php:369
+#: includes/service/class-wc-postfinancecheckout-service-refund.php:167
+msgid "Could not distribute the rounding difference."
+msgstr ""
+
+#: includes/service/class-wc-postfinancecheckout-service-transaction.php:374
 msgid "The checkout expired, please try again."
 msgstr ""
 

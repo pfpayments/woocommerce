@@ -80,8 +80,9 @@ class WC_PostFinanceCheckout_Service_Refund extends WC_PostFinanceCheckout_Servi
 		$helper = WC_PostFinanceCheckout_Helper::instance();
 		$reduction_amount = $helper->get_reduction_amount($base_line_items, $reductions);
 		$refund_total = $refund->get_total() * -1;
+		$currency = $refund->get_currency('edit');
 		
-		if (wc_format_decimal($reduction_amount) != wc_format_decimal($refund_total)) {
+		if ($this->round_amount($reduction_amount, $currency) != $this->round_amount($refund_total, $currency)) {
 			$fixed_reductions = array();
 			$base_amount = $helper->get_total_amount_including_tax($base_line_items);
 			$rate = $refund_total / $base_amount;
@@ -89,15 +90,86 @@ class WC_PostFinanceCheckout_Service_Refund extends WC_PostFinanceCheckout_Servi
 			    $reduction = new \PostFinanceCheckout\Sdk\Model\LineItemReductionCreate();
 				$reduction->setLineItemUniqueId($line_item->getUniqueId());
 				$reduction->setQuantityReduction(0);
-				$reduction->setUnitPriceReduction(round($line_item->getAmountIncludingTax() * $rate / $line_item->getQuantity(), 8));
+				$reduction->setUnitPriceReduction($this->round_amount($line_item->getAmountIncludingTax() * $rate / $line_item->getQuantity(), $currency));
 				$fixed_reductions[] = $reduction;
 			}
-			
-			return $fixed_reductions;
+    		$fixed_reduction_amount = $helper->get_reduction_amount($base_line_items, $fixed_reductions);
+			$rounding_difference = $refund_total - $fixed_reduction_amount;
+		
+			return $this->distribute_rounding_difference($fixed_reductions, 0, $rounding_difference, $base_line_items, $currency);
 		}
 		else {
 			return $reductions;
 		}
+	}
+	
+	/**
+	 *
+	 * @param \PostFinanceCheckout\Sdk\Model\LineItemReductionCreate[] $reductions
+	 * @param int $index
+	 * @param number $remainder
+	 * @param \PostFinanceCheckout\Sdk\Model\LineItem[] $baseLineItems
+	 * @param string $currencyCode
+	 * @throws Exception
+	 * @return \PostFinanceCheckout\Sdk\Model\LineItemReductionCreate[]
+	 */
+	private function distribute_rounding_difference(array $reductions, $index, $remainder, array $base_line_items,
+	    $currency_code) {
+	    $digits = $this->get_currency_fraction_digits($currency_code);
+	    
+	    $current_reduction = $reductions[$index];
+	    $delta = $remainder;
+	    $change = false;
+	    $positive = $delta > 0;
+	    $new_reduction = null;
+	    $applied_delta = null;
+	    if ($current_reduction->getUnitPriceReduction() != 0 && $current_reduction->getQuantityReduction() == 0) {
+	        $line_item = $this->get_line_item_by_unique_id($base_line_items, $current_reduction->getLineItemUniqueId());
+	        if ($line_item != null) {
+	            while ($delta != 0) {
+	                if ($current_reduction->getUnitPriceReduction() < 0) {
+	                    $new_reduction = $this->round_amount(
+	                        $current_reduction->getUnitPriceReduction() - ($delta / $line_item->getQuantity()),
+	                        $currency_code);
+	                } else {
+	                    $new_reduction = $this->round_amount(
+	                        $current_reduction->getUnitPriceReduction() + ($delta / $line_item->getQuantity()),
+	                        $currency_code);
+	                }
+	                $applied_delta = ($new_reduction - $current_reduction->getUnitPriceReduction()) * $line_item->getQuantity();
+	                if (round($applied_delta, $digits +1 ) <= round($delta, $digits + 1) &&
+	                    $this->compare_amounts($new_reduction, $line_item->getUnitPriceIncludingTax(), $currency_code) <= 0) {
+	                        
+	                        $change = true;
+	                        break;
+	                    }
+	                    
+                    $new_delta = round((abs($delta) - pow(0.1, $digits + 1)) * ($positive ? 1 : - 1), 10);
+                    if (($positive xor $new_delta > 0) && $delta != 0) {
+                        break;
+                    }
+                    $delta = $new_delta;
+	            }
+	        }
+	    }	    
+	    if ($change) {
+	        $current_reduction->setUnitPriceReduction($new_reduction);
+	        $new_remainder = $remainder - $applied_delta;
+	    } else {
+	        $new_remainder = $remainder;
+	    }
+	    
+	    if ($index + 1 < count($reductions) && $new_remainder != 0) {
+	        return $this->distribute_rounding_difference($reductions, $index + 1, $new_remainder, $base_line_items,
+	            $currency_code);
+	    } else {
+	        if ($new_remainder  > pow(0.1, $digits + 1)) {
+	            throw new Exception(__('Could not distribute the rounding difference.', 'woo-postfinancecheckout'));
+	        } else {
+	            
+	            return $reductions;
+	        }
+	    }
 	}
 
 	/**
@@ -109,6 +181,7 @@ class WC_PostFinanceCheckout_Service_Refund extends WC_PostFinanceCheckout_Servi
 	 */
 	protected function get_reductions(WC_Order $order, WC_Order_Refund $refund){
 		$reductions = array();
+		$currency =  $order->get_currency('edit');
 		foreach ($refund->get_items() as $item_id => $item) {
 			
 			$order_item = $order->get_item($item->get_meta('_refunded_item_id', true));
@@ -134,9 +207,9 @@ class WC_PostFinanceCheckout_Service_Refund extends WC_PostFinanceCheckout_Servi
 			$reduction->setLineItemUniqueId($unique_id);
 			
 			//The merchant did not refund complete items, we have to adapt the unit price
-			if (wc_format_decimal($order_unit_price) != wc_format_decimal($refund_unit_price)) {
+			if ($this->round_amount($order_unit_price, $currency) != $this->round_amount($refund_unit_price, $currency)) {
 				$reduction->setQuantityReduction(0);
-				$reduction->setUnitPriceReduction(round($refund_total / $order_quantity, 8));
+				$reduction->setUnitPriceReduction($this->round_amount($refund_total / $order_quantity, $currency));
 			}
 			else {
 				$reduction->setQuantityReduction($refund_quantity);
@@ -155,7 +228,7 @@ class WC_PostFinanceCheckout_Service_Refund extends WC_PostFinanceCheckout_Servi
 			$reduction = new \PostFinanceCheckout\Sdk\Model\LineItemReductionCreate();
 			$reduction->setLineItemUniqueId($unique_id);
 			$reduction->setQuantityReduction(0);
-			$reduction->setUnitPriceReduction($amount_including_tax * -1);
+			$reduction->setUnitPriceReduction($this->round_amount($amount_including_tax * -1, $currency));
 			$reductions[] = $reduction;
 		}
 		foreach ($refund->get_shipping_methods() as $shipping_id => $shipping) {
@@ -169,13 +242,34 @@ class WC_PostFinanceCheckout_Service_Refund extends WC_PostFinanceCheckout_Servi
 			$reduction = new \PostFinanceCheckout\Sdk\Model\LineItemReductionCreate();
 			$reduction->setLineItemUniqueId($unique_id);
 			$reduction->setQuantityReduction(0);
-			$reduction->setUnitPriceReduction($amount_including_tax * -1);
+			$reduction->setUnitPriceReduction($this->round_amount($amount_including_tax * -1, $currency));
 			$reductions[] = $reduction;
 		}
 		
 		return $reductions;
 	}
 
+	
+	/**
+	 *
+	 * @param number $amount1
+	 * @param number $amount2
+	 * @param string $currency_code
+	 * @return number
+	 */
+	private function compare_amounts($amount1, $amount2, $currency_code)
+	{
+	    $rounded_amount1 = $this->round_amount($amount1, $currency_code);
+	    $rounded_amount2 = $this->round_amount($amount2, $currency_code);
+	    if ($rounded_amount1 < $rounded_amount2) {
+	        return - 1;
+	    } elseif ($rounded_amount1 > $rounded_amount2) {
+	        return 1;
+	    } else {
+	        return 0;
+	    }
+	}
+	
 	/**
 	 * Sends the refund to the gateway.
 	 *
@@ -204,6 +298,21 @@ class WC_PostFinanceCheckout_Service_Refund extends WC_PostFinanceCheckout_Servi
 		else {
 			return $this->get_transaction_invoice($transaction)->getLineItems();
 		}
+	}
+	
+	/**
+	 *
+	 * @param \PostFinanceCheckout\Sdk\Model\LineItem[] $lineItems
+	 * @param string $uniqueId
+	 */
+	private function get_line_item_by_unique_id(array $line_items, $unique_id)
+	{
+	    foreach ($line_items as $line_item) {
+	        if ($line_item->getUniqueId() == $unique_id) {
+	            return $line_item;
+	        }
+	    }
+	    return null;
 	}
 
 	/**

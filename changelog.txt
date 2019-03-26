@@ -166,3 +166,7 @@
 * Tweak - Additional Actions/Filters to use with other plugins
 * Fix - Get transaction language from order
 
+= 1.2.1 - March 26, 2019 =
+
+* Fix - Item amounts for refunds
+
