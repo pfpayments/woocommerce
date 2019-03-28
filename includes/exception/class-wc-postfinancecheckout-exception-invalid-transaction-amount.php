@@ -24,16 +24,16 @@ class WC_PostFinanceCheckout_Exception_Invalid_Transaction_Amount extends Except
     
     public function __construct ($item_total, $order_total) {
         parent::__construct("The item total '".$item_total."' does not match the order total '".$order_total."'.");
-        $this->$item_total = $item_total;
-        $this->$order_total = $order_total;
+        $this->item_total = $item_total;
+        $this->order_total = $order_total;
     }
 
     public function get_item_total(){
-        return $this->$item_total;
+        return $this->item_total;
     }
     
     public function get_order_total(){
-        return $this->$order_total;
+        return $this->order_total;
     }
     
 }

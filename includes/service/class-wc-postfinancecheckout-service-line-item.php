@@ -32,6 +32,7 @@ class WC_PostFinanceCheckout_Service_Line_Item extends WC_PostFinanceCheckout_Se
 		$fees = $this->create_fee_lines_items_from_session($cart, $currency);
 		$shipping = $this->create_shipping_line_items_from_session($packages, $chosen_methods, $currency);
 		$combined = array_merge($items, $fees, $shipping);
+		
 		$all = WC_PostFinanceCheckout_Helper::instance()->cleanup_line_items($combined, $cart->total, $currency);
 		return $all;
 	}
@@ -201,8 +202,10 @@ class WC_PostFinanceCheckout_Service_Line_Item extends WC_PostFinanceCheckout_Se
 	 * @return \PostFinanceCheckout\Sdk\Model\LineItemCreate[]
 	 */
 	public function get_items_from_order(WC_Order $order){
-		$raw = $this->get_raw_items_from_order($order);
-		return WC_PostFinanceCheckout_Helper::instance()->cleanup_line_items($raw, $order->get_total(), $order->get_currency());
+		$raw = $this->get_raw_items_from_order($order);		
+		$items = apply_filters('wc_postfinancecheckout_modify_line_item_order', $raw , $order);		
+		$total = apply_filters('wc_postfinancecheckout_modify_total_to_check_order', $order->get_total(), $order);		
+		return WC_PostFinanceCheckout_Helper::instance()->cleanup_line_items($items, $total, $order->get_currency());
 	}
 	
 	public function get_raw_items_from_order(WC_Order $order){
@@ -496,7 +499,7 @@ class WC_PostFinanceCheckout_Service_Line_Item extends WC_PostFinanceCheckout_Se
 			), '', $sku);
 			$line_item->setSku($sku, 200);
 			
-			$line_item->setTaxes($this->get_taxes($tax_rates = WC_Tax::get_rates($fee->get_tax_class())));
+			$line_item->setTaxes($this->get_taxes(WC_Tax::get_rates($fee->get_tax_class())));
 			
 			if ($amount_including_tax < 0) {
 				//There are plugins which create fees with a negative values (used as discounts)

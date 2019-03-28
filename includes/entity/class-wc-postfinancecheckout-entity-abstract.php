@@ -98,6 +98,8 @@ abstract class WC_PostFinanceCheckout_Entity_Abstract {
 
 	public function save(){
 		global $wpdb;
+		$data_array = array();
+		$type_array = array();
 		
 		foreach ($this->get_field_definition() as $key => $type) {
 			$value = $this->get_value($key);
@@ -188,7 +190,7 @@ abstract class WC_PostFinanceCheckout_Entity_Abstract {
 
 	public function delete(){
 		global $wpdb;
-		$result = $wpdb->delete($wpdb->prefix . $this->get_table_name(), array(
+		$wpdb->delete($wpdb->prefix . $this->get_table_name(), array(
 			'id' => $this->get_id() 
 		), array(
 			"%d" 

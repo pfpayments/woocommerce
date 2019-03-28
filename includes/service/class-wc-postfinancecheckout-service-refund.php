@@ -80,7 +80,7 @@ class WC_PostFinanceCheckout_Service_Refund extends WC_PostFinanceCheckout_Servi
 		$helper = WC_PostFinanceCheckout_Helper::instance();
 		$reduction_amount = $helper->get_reduction_amount($base_line_items, $reductions);
 		$refund_total = $refund->get_total() * -1;
-		$currency = $refund->get_currency('edit');
+		$currency = $refund->get_currency();
 		
 		if ($this->round_amount($reduction_amount, $currency) != $this->round_amount($refund_total, $currency)) {
 			$fixed_reductions = array();
@@ -181,7 +181,7 @@ class WC_PostFinanceCheckout_Service_Refund extends WC_PostFinanceCheckout_Servi
 	 */
 	protected function get_reductions(WC_Order $order, WC_Order_Refund $refund){
 		$reductions = array();
-		$currency =  $order->get_currency('edit');
+		$currency =  $order->get_currency();
 		foreach ($refund->get_items() as $item_id => $item) {
 			
 			$order_item = $order->get_item($item->get_meta('_refunded_item_id', true));

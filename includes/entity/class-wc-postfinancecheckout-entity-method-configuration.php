@@ -73,7 +73,7 @@ class WC_PostFinanceCheckout_Entity_Method_Configuration extends WC_PostFinanceC
 		}
 		$replace = "";
 		foreach ($states as $value) {
-			$replace .= "%s, ";
+		    $replace .= sprintf("%s, ", $value);
 		}
 		$replace = rtrim($replace, ", ");
 		

@@ -132,8 +132,7 @@ class WC_PostFinanceCheckout_Migration {
 	 * @return string[]
 	 */
 	public static function wpmu_new_blog($blog_id, $user_id, $domain, $path, $site_id, $meta){
-		global $wpdb;
-		
+
 		if (is_plugin_active_for_network('woo-postfinancecheckout/woocommerce-postfinancecheckout.php')) {
 			switch_to_blog($blog_id);
 			self::migrate_db();
@@ -236,7 +235,7 @@ class WC_PostFinanceCheckout_Migration {
 			// Check the latest stable version and ignore trunk.
 			if ($version === $new_version && version_compare(WC_POSTFINANCECHECKOUT_VERSION, $version, '<')) {
 				$upgrade_notice .= '<div class="plugin_upgrade_notice">';
-				foreach ($notices as $index => $line) {
+				foreach ($notices as $line) {
 					$upgrade_notice .= wp_kses_post(preg_replace('~\[([^\]]*)\]\(([^\)]*)\)~', '<a href="${2}">${1}</a>', $line));
 				}
 				$upgrade_notice .= '</div> ';
@@ -257,7 +256,7 @@ class WC_PostFinanceCheckout_Migration {
 	public static function plugin_row_meta( $links, $file ) {
 	    if ( WC_POSTFINANCECHECKOUT_PLUGIN_BASENAME === $file ) {
 	        $row_meta = array(
-	            'docs' => '<a href="https://plugin-documentation.postfinance-checkout.ch/pfpayments/woocommerce/1.2.1/docs/en/documentation.html" aria-label="' . esc_attr__('View Documentation', 'woo-postfinancecheckout') . '">' . esc_html__('Documentation', 'woo-postfinancecheckout') . '</a>',
+	            'docs' => '<a href="https://plugin-documentation.postfinance-checkout.ch/pfpayments/woocommerce/1.2.2/docs/en/documentation.html" aria-label="' . esc_attr__('View Documentation', 'woo-postfinancecheckout') . '">' . esc_html__('Documentation', 'woo-postfinancecheckout') . '</a>',
 	        );
 	        
 	        return array_merge( $links, $row_meta );

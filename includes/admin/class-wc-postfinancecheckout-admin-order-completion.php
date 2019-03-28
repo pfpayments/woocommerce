@@ -57,8 +57,6 @@ class WC_PostFinanceCheckout_Admin_Order_Completion {
 	public static function execute_completion(){
 		ob_start();
 		
-		global $wpdb;
-		
 		check_ajax_referer('order-item', 'security');
 		
 		if (!current_user_can('edit_shop_orders')) {
@@ -66,7 +64,6 @@ class WC_PostFinanceCheckout_Admin_Order_Completion {
 		}
 		
 		$order_id = absint($_POST['order_id']);
-		$order = WC_Order_Factory::get_order($order_id);
 		$completion_amount = wc_format_decimal(sanitize_text_field($_POST['completion_amount']), wc_get_price_decimals());
 		$line_item_qtys = json_decode(sanitize_text_field(stripslashes($_POST['line_item_qtys'])), true);
 		$line_item_totals = json_decode(sanitize_text_field(stripslashes($_POST['line_item_totals'])), true);
@@ -187,7 +184,6 @@ class WC_PostFinanceCheckout_Admin_Order_Completion {
 	}
 
 	protected static function update_line_items($completion_job_id){
-		global $wpdb;
 		$completion_job = WC_PostFinanceCheckout_Entity_Completion_Job::load_by_id($completion_job_id);
 		WC_PostFinanceCheckout_Helper::instance()->start_database_transaction();
 		WC_PostFinanceCheckout_Helper::instance()->lock_by_transaction_id($completion_job->get_space_id(), $completion_job->get_transaction_id());
@@ -230,7 +226,6 @@ class WC_PostFinanceCheckout_Admin_Order_Completion {
 	}
 
 	protected static function send_completion($completion_job_id){
-		global $wpdb;
 		$completion_job = WC_PostFinanceCheckout_Entity_Completion_Job::load_by_id($completion_job_id);
 		WC_PostFinanceCheckout_Helper::instance()->start_database_transaction();
 		WC_PostFinanceCheckout_Helper::instance()->lock_by_transaction_id($completion_job->get_space_id(), $completion_job->get_transaction_id());

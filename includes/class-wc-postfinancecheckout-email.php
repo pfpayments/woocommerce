@@ -183,6 +183,7 @@ class WC_PostFinanceCheckout_Email {
 	    
 	    //Germanized has a special email flow.
 	    if(isset($emails['WC_GZD_Email_Customer_Paid_For_Order'])){
+	        $emailObject = $emails['WC_GZD_Email_Customer_Paid_For_Order'];
 	        add_action( 'woocommerce_order_status_postfinancecheckout-redirected_to_processing_notification', array( $emailObject, 'trigger' ), 10, 2 );
 	        add_action( 'woocommerce_order_status_postfinancecheckout-manual_to_processing_notification', array( $emailObject, 'trigger' ), 10, 2 );
 	        add_action( 'woocommerce_order_status_postfinancecheckout-waiting_to_processing_notification', array( $emailObject, 'trigger' ), 10, 2 );

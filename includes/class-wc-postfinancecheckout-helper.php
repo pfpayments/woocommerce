@@ -414,9 +414,9 @@ class WC_PostFinanceCheckout_Helper
         
         if(version_compare('3.5.0', WC_VERSION, '>' )){
             $data_store = WC_Data_Store::load( 'order' );
-            if ($data_store->get_stock_reduced( $order_id )) {
+            if ($data_store->get_stock_reduced( $order->get_id() )) {
                 $this->restock_items_for_order($order);
-                $data_store->set_stock_reduced( $order_id, false );
+                $data_store->set_stock_reduced( $order->get_id(), false );
             }
         }
         else{

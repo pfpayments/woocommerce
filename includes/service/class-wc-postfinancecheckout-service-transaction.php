@@ -347,7 +347,7 @@ class WC_PostFinanceCheckout_Service_Transaction extends WC_PostFinanceCheckout_
                 
                 self::$possible_payment_method_cache[$order->get_id()] = $possible_methods;
 	        } catch(WC_PostFinanceCheckout_Exception_Invalid_Transaction_Amount $e){
-	            self::$possible_payment_method_cache[$current_cart_id] = array();
+	            self::$possible_payment_method_cache[$order->get_id()] = array();
 	            throw $e;
 	        } catch (\WhitelabelMachineName\Sdk\ApiException $e) {
 	            self::$possible_payment_method_cache[$order->get_id()] = array();
@@ -914,7 +914,7 @@ class WC_PostFinanceCheckout_Service_Transaction extends WC_PostFinanceCheckout_
 		foreach ($packages as $i => $package) {
 			$chosen_method = isset(WC()->session->chosen_shipping_methods[$i]) ? WC()->session->chosen_shipping_methods[$i] : '';
 			if (empty($chosen_method)) {
-				$continue;
+				continue;
 			}
 			foreach ($package['rates'] as $rate) {
 				if ($rate->id == $chosen_method) {

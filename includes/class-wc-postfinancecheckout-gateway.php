@@ -471,8 +471,6 @@ class WC_PostFinanceCheckout_Gateway extends WC_Payment_Gateway {
 	 * @return boolean True or false based on success, or a WP_Error object.
 	 */
 	public function process_refund($order_id, $amount = null, $reason = ''){
-		global $wpdb;
-		
 		if (!isset($GLOBALS['postfinancecheckout_refund_id'])) {
 			return new WP_Error('postfinancecheckout_error', __('There was a problem creating the refund.', 'woo-postfinancecheckout'));
 		}

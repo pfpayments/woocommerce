@@ -35,8 +35,6 @@ class WC_PostFinanceCheckout_Admin_Document {
 		if (!($method instanceof WC_PostFinanceCheckout_Gateway)) {
 			return;
 		}
-		$helper = WC_PostFinanceCheckout_Helper::instance();
-		
 		$transaction_info = WC_PostFinanceCheckout_Entity_Transaction_Info::load_by_order_id($order->get_id());
 
 		if ($transaction_info->get_id() == null) {
@@ -105,15 +103,13 @@ class WC_PostFinanceCheckout_Admin_Document {
 	 * @param WP_Post $post
 	 */
 	public static function output($post){
-		global $post, $wpdb;
+		global $post;
 		
 		$order = WC_Order_Factory::get_order($post->ID);
 		$method = wc_get_payment_gateway_by_order($order);
 		if (!($method instanceof WC_PostFinanceCheckout_Gateway)) {
 			return;
 		}
-		$helper = WC_PostFinanceCheckout_Helper::instance();
-		
 		$transaction_info = WC_PostFinanceCheckout_Entity_Transaction_Info::load_by_order_id($order->get_id());
 		if ($transaction_info->get_id() == null) {
 			return;

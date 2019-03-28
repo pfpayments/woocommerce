@@ -54,7 +54,7 @@ class WC_PostFinanceCheckout_Admin_Transaction {
 	 * @param WP_Post $post
 	 */
 	public static function output($post){
-		global $post, $wpdb;
+		global $post;
 		
 		$order = WC_Order_Factory::get_order($post->ID);
 		$method = wc_get_payment_gateway_by_order($order);

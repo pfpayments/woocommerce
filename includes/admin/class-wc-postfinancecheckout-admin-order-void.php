@@ -55,8 +55,6 @@ class WC_PostFinanceCheckout_Admin_Order_Void {
 	public static function execute_void(){
 		ob_start();
 		
-		global $wpdb;
-		
 		check_ajax_referer('order-item', 'security');
 		
 		if (!current_user_can('edit_shop_orders')) {
@@ -64,7 +62,6 @@ class WC_PostFinanceCheckout_Admin_Order_Void {
 		}
 		
 		$order_id = absint($_POST['order_id']);
-		$order = WC_Order_Factory::get_order($order_id);
 		
 		$restock_void_items = 'true' === $_POST['restock_voided_items'];
 		$current_void_id = null;
@@ -125,7 +122,6 @@ class WC_PostFinanceCheckout_Admin_Order_Void {
 	}
 
 	protected static function send_void($void_job_id){
-		global $wpdb;
 		$void_job = WC_PostFinanceCheckout_Entity_Void_Job::load_by_id($void_job_id);
 		WC_PostFinanceCheckout_Helper::instance()->start_database_transaction();
 		WC_PostFinanceCheckout_Helper::instance()->lock_by_transaction_id($void_job->get_space_id(), $void_job->get_transaction_id());

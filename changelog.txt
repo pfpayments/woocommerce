@@ -170,3 +170,7 @@
 
 * Fix - Item amounts for refunds
 
+= 1.2.2 - March 28, 2019 =
+
+* Tweak - Added additional hooks for subscriptions
+
