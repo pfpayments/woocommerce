@@ -174,3 +174,7 @@
 
 * Tweak - Added additional hooks for subscriptions
 
+= 1.2.3 - March 29, 2019 =
+
+* Fix - Method not always showing
+
