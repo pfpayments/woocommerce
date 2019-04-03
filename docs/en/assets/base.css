@@ -253,6 +253,30 @@ table td[class*="col-"],table th[class*="col-"] {
   display: table-cell;
 }
 
+ol.glossary {
+    counter-reset: glossary-counter;
+    list-style: none;
+    padding-left: 40px;
+}
+
+ol.glossary li {
+    counter-increment: glossary-counter;
+    position: relative;
+}
+
+ol.glossary li::before {
+    content: counter(glossary-counter);
+    position: absolute;
+    background-color: #73EAA9;
+    color: #fff;
+    border-radius: 100px;
+    width: 24px;
+    left: -40px;
+    text-align: center;
+    font-weight: bold;
+    line-height: 24px;
+}
+
 .layout-wrapper {
   position: relative;
   width: 100%;

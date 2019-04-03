@@ -277,6 +277,10 @@ jQuery(function($) {
 		},
 		
 		process_submit : function(method_id){
+		    if (!this.is_supported_method(method_id)) {
+		    	return true;
+		    }
+			
 			var form = $(this.checkout_form_identifier);
 			var required_inputs = $(this.checkout_form_identifier ).find( '.address-field.validate-required:visible' );
 			var	has_full_address = true;

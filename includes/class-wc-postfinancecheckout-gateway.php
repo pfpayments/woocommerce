@@ -236,6 +236,13 @@ class WC_PostFinanceCheckout_Gateway extends WC_Payment_Gateway {
 		if (!$is_available) {
 			return false;
 		}
+		
+		//It's not possible to support the rounding on subtotal level and still get valid tax rates and amounts.
+		//Therefore the payment methods are disabled, if this option is active
+		if ( wc_tax_enabled() && 'yes' === get_option( 'woocommerce_tax_round_at_subtotal' )){
+		  return false;   
+		}
+		
 		//It is possbile this function is called in the wordpress admin section. There is not a cart, so all active methods are available.
 		//If it is not a checkout page the method is availalbe. Some plugins check this, on non checkout pages, without a cart available
 		//The active  gateways are  available during order total caluclation, as other plugins could need them.
@@ -404,6 +411,7 @@ class WC_PostFinanceCheckout_Gateway extends WC_Payment_Gateway {
 			$transaction = $transaction_service->get_transaction($space_id, $transaction_id);
 			
 			$order->add_meta_data('_postfinancecheckout_pay_for_order', $is_order_pay_endpoint, true);
+			$order->add_meta_data('_postfinancecheckout_gateway_id', $this->id, true);
 			$order->add_meta_data('_postfinancecheckout_linked_ids', array('space_id' =>  $space_id, 'transaction_id' => $transaction_id), false);
 			$order->delete_meta_data('_postfinancecheckout_confirmed');
 			$order->save();

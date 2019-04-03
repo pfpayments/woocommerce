@@ -495,6 +495,13 @@ msgstr[1] ""
 msgid "View"
 msgstr ""
 
+#: views/admin-notices/round-subtotal-warning.php:15
+msgid ""
+"The PostFinance Checkout payment method are not available, if the taxes are rounded at "
+"subtotal level. Please disable the 'Round tax at subtotal level, instead of "
+"rounding per line' in the tax settings to enable the PostFinance Checkout payment methods."
+msgstr ""
+
 #: views/admin-notices/migration-failed.php:15
 msgid "There was an issue executing the migration for WooCommerce PostFinance Checkout."
 msgstr ""

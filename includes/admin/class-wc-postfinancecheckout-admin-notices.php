@@ -20,6 +20,10 @@ class WC_PostFinanceCheckout_Admin_Notices {
 			__CLASS__,
 			'manual_tasks_notices' 
 		));
+		add_action('admin_notices', array(
+		    __CLASS__,
+		    'round_subtotal_notices'
+		));
 	}
 
 	public static function manual_tasks_notices(){
@@ -46,6 +50,15 @@ class WC_PostFinanceCheckout_Admin_Notices {
 		return $manual_task_url;
 	}
 
+	public static function round_subtotal_notices(){
+	    $screen = get_current_screen();
+	    if($screen->id == 'woocommerce_page_wc-settings'){
+    	    if ( wc_tax_enabled() && 'yes' === get_option( 'woocommerce_tax_round_at_subtotal' )){
+    	        require_once WC_POSTFINANCECHECKOUT_ABSPATH.'/views/admin-notices/round-subtotal-warning.php';
+    	    }
+	    }
+	}
+	
 	public static function migration_failed_notices(){
 	    require_once WC_POSTFINANCECHECKOUT_ABSPATH.'views/admin-notices/migration-failed.php';
 	}

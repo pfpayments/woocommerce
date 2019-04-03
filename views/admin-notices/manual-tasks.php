@@ -12,7 +12,7 @@ if (!defined('ABSPATH')) {
  */
 ?>
 
-<div class="error notice">
+<div class="error notice notice-error">
 	<p><?php
     	if($number_of_manual_tasks == 1){
     	    _e('There is a manual task that needs your attention.', 'woo-postfinancecheckout');

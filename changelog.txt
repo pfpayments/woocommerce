@@ -178,3 +178,8 @@
 
 * Fix - Method not always showing
 
+= 1.2.4 - April 03, 2019 =
+
+* Fix - Issue with checkout JS
+* Tweak - Show warning for tax rounding at subtotal level
+
