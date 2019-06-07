@@ -21,7 +21,7 @@
 		</a>
 	</li>
 	<li>
-		<a href="https://github.com/pfpayments/woocommerce/releases/tag/1.2.4/">
+		<a href="https://github.com/pfpayments/woocommerce/releases/tag/1.2.5/">
 			Source
 		</a>
 	</li>
@@ -48,7 +48,7 @@
 					<div class="olist arabic">
 <ol class="arabic">
 <li>
-<p>Install the extension directly from your Wordpress backend in Plugins &#8594; Add New. Search for PostFinance Checkout.</p>
+<p>Install the extension directly from your Wordpress backend by going to Plugins &#8594; Add New. There search for PostFinance Checkout.</p>
 </li>
 <li>
 <p>The plugin will now be visible under Plugins. You can install the plugin directly from here. Once it is installed, you will be able to open the configuration.</p>
@@ -61,7 +61,7 @@
 <div class="title">Note</div>
 </td>
 <td class="content">
-You will automatically be notified here once there are updates available for the plugin.
+You will be automatically notified once there are updates available for the plugin within WooCommerce.
 </td>
 </tr>
 </table>
@@ -133,26 +133,48 @@ Additional payment methods are directly added in PostFinance Checkout. This can 
 <p>If you want to change the payment method description, title, logo, etc you need to do this in the <a href="https://www.postfinance-checkout.ch/space/select?target=/payment/method-configuration/list" target="_blank">payment method configuration</a>. Changes will be synchronized automatically.</p>
 </div>					</div>
 </div>			</div>
-</div>	<div class="chapter" id="_state_graph">
+</div>	<div class="chapter" id="_woocommerce_order_status">
 	<div class="chapter-title">
 		<h1>
-			<span class="title-number">5</span>State graph					</h1>
+			<span class="title-number">5</span>WooCommerce Order Status					</h1>
 	</div>
 	<div class="chapter-body">
 					<div class="paragraph">
-<p>The Payment Process of PostFinance Checkout is <strong>completely standardized for every payment method</strong> you can process. This gives you the ability to simply add
+<p>The Payment Process of PostFinance Checkout is <strong>completely standardized</strong> for <strong>every payment method</strong>. This gives you the ability to simply add
 a payment method or processor without changes inside of your WooCommerce configuration. An overview about the states and the payment processes of PostFinance Checkout
 can be found in the <a href="https://www.postfinance-checkout.ch/en-us/doc/payment/transaction-process" target="_blank">Payment Documentation</a>.</p>
 </div><div class="paragraph">
-<p>Below you find a diagram that shows the state machine of WooCommerce for orders including additional information for the state transitions.</p>
+<p>Below you find a diagram that shows the state machine of the WooCommerce order including additional information for the state transitions.</p>
 </div><div class="imageblock">
 <div class="content">
-<img src="resource/state_graph.svg" alt="state graph"/>
+<img src="resource/woocommerce-order-status-graph.svg" alt="woocommerce order status graph"/>
 </div>
+</div><div class="olist glossary">
+<ol class="glossary">
+<li>
+<p>When the user is redirected to PostFinance Checkout to process the payment the order within WooCommerce is marked as <code>Redirected</code>. Along this the transaction within PostFinance Checkout is created resp. updated with the latest address, line items etc.</p>
+</li>
+<li>
+<p>When the transaction is marked as <code>authorized</code> in PostFinance Checkout the order within WooCommerce will be marked as <code>On hold</code>. The amount is only reserved at this point. The order is not yet ready to be fulfilled.</p>
+</li>
+<li>
+<p>When the transaction fails during the authorization process the WooCommerce order is marked as <code>Failed</code>.</p>
+</li>
+<li>
+<p>In case the delivery indication is <code>pending</code>, the order within WooCommerce will move into either <code>Waiting</code> or <code>Manual Decision</code>. <code>Waiting</code> means that the transaction is completed but the delivery indication is not yet decided. E.g. the money still needs to be cleared by the customer bank. The status will automatically update later on. <code>Manual Decision</code> means that in this case you have to review and decide the outcome of the delivery indication manually. See more details in <a href="#_on_hold_orders">On hold orders</a>.</p>
+</li>
+<li>
+<p>In case the decision about the fulfillment is negative, the order within WooCommerce will be marked as <code>canceled</code> which means you should not be fulfilled the order.</p>
+</li>
+<li>
+<p>If you decide to void an authorized transaction (in case for example the products ordered are no longer in stock), the order within WooCommerce will also be marked as <code>canceled</code>.</p>
+</li>
+<li>
+<p>When the transaction is marked in PostFinance Checkout as <code>fulfill</code> the order within WooCommerce will be be marked as <code>Processing</code> (for physical goods) or <code>Completed</code> (for virtual/downloadable products). This is when you can start the fulfillment process. Once this state has been reached the plugin does not change the status of the order anymore.</p>
+</li>
+</ol>
 </div><div class="paragraph">
-<p>Once the completion of a transaction is successful the order will switch into the <code>Fulfill</code> state in PostFinance Checkout and into <code>Processing</code> state in WooCommerce. This is when you can start the fulfillment process and switch the order into <code>Completed</code> state in WooCommerce.</p>
-</div><div class="paragraph">
-<p>For information about deferred completion, see <a href="#_complete_capture_an_order">Complete (capture) an order</a></p>
+<p>For information about deferred completion, see <a href="#_complete_capture_an_order">Complete (capture) an order</a>.</p>
 </div>					</div>
 </div>	<div class="chapter" id="_transaction_management">
 	<div class="chapter-title">
@@ -580,9 +602,9 @@ Search for the plugin WooCommerce PostFinance Checkout and click on <code>update
 			</a>
     </li>    		    	</ul>
     </li>					<li class="nav-level-1">
-	<a href="#_state_graph">
+	<a href="#_woocommerce_order_status">
 		<span class="item-number">5</span>
-		<span class="item-title">State graph</span>
+		<span class="item-title">WooCommerce Order Status</span>
 			</a>
     </li>					<li class="nav-level-1">
 	<a href="#_transaction_management">

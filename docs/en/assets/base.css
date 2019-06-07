@@ -70,27 +70,27 @@ h1 {
 h2 {
   font-size: 1.625rem;
   font-weight: 300;
-  margin-bottom: 1.875rem;
+  margin-bottom: 1.3rem;
 }
 
 h3 {
   font-size: 1.3rem;
   font-weight: 300;
-  margin-top: 1.875rem;
+  margin-top: 1.3rem;
 }
 
 h4 {
   font-size: 1.125rem;
   font-weight: 400;
   margin-top: 1.875rem;
-  margin-bottom: 1.875rem;
+  margin-bottom: 1.3rem;
 }
 
 h5 {
   font-size: 1rem;
   font-weight: bold;
   margin-top: 1.875rem;
-  margin-bottom: 1.875rem;
+  margin-bottom: 1.3rem;
 }
 
 p {
@@ -139,7 +139,7 @@ dfn {
 }
 
 b, strong {
-  font-weight: bolder;
+  font-weight: bold;
 }
 
 small {
@@ -189,7 +189,11 @@ a:not([href]):not([tabindex]):focus {
 
 pre, code, kbd, samp {
   font-family: monospace, monospace;
-  font-size: 1em;
+  font-size: 90%;
+  padding: 2px 4px 2px 4px;
+  color: #c7254e;
+  background-color: #f9f2f4;
+  border-radius: 4px;
 }
 
 pre {
@@ -448,12 +452,18 @@ ol.glossary li::before {
   margin-top: 0;
 }
 
+.chapter > .chapter-title h1 {
+  border-bottom: 2px solid #eeeeee;
+  margin-bottom: 1.5rem;
+  padding-bottom: 0.2em;
+}
+
 .chapter-title .title-number, .section-title .title-number {
   display: none;
 }
 
 .paragraph {
-  line-height: 2em;
+  line-height: 1.75em;
 }
 
 .paragraph + .paragraph {
@@ -550,14 +560,17 @@ ol.glossary li::before {
 
 .admonitionblock.important {
   background: #fce1e1;
+  border-left: 5px solid #ff6060;
 }
 
 .admonitionblock.note, .admonitionblock.tip {
   background: #e0f2fc;
+  border-left: 5px solid #88d5ff;
 }
 
 .admonitionblock.caution, .admonitionblock.warning {
   background: #fdf3d8;
+  border-left: 5px solid #f1c654;
 }
 
 table.tableblock {

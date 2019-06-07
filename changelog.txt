@@ -183,3 +183,8 @@
 * Fix - Issue with checkout JS
 * Tweak - Show warning for tax rounding at subtotal level
 
+= 1.2.5 - June 07, 2019 =
+
+* Docs - Improved state graph and documentation
+* Dev - Updated supported WooCommerce versions
+
