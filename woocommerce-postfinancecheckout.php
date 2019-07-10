@@ -3,15 +3,15 @@
  * Plugin Name: WooCommerce PostFinance Checkout
  * Plugin URI: https://wordpress.org/plugins/woo-postfinancecheckout
  * Description: Process WooCommerce payments with PostFinance Checkout.
- * Version: 1.2.5
+ * Version: 1.2.6
  * License: Apache2
  * License URI: http://www.apache.org/licenses/LICENSE-2.0
  * Author: customweb GmbH
  * Author URI: https://www.customweb.com
  * Requires at least: 4.7
- * Tested up to: 5.2.1
+ * Tested up to: 5.2.2
  * WC requires at least: 3.0.0
- * WC tested up to: 3.6.4
+ * WC tested up to: 3.6.5
  *
  * Text Domain: woo-postfinancecheckout
  * Domain Path: /languages/
@@ -43,7 +43,7 @@ if (!class_exists('WooCommerce_PostFinanceCheckout')) {
 		 *
 		 * @var string
 		 */
-		private $version = '1.2.5';
+		private $version = '1.2.6';
 		
 		/**
 		 * The single instance of the class.

@@ -512,6 +512,9 @@ class WC_PostFinanceCheckout_Service_Transaction extends WC_PostFinanceCheckout_
 	 * @return \PostFinanceCheckout\Sdk\Model\AddressCreate
 	 */
 	protected function get_order_shipping_address(WC_order $order){
+	    if(empty($order->get_shipping_city()) && empty($order->get_shipping_country()) && empty($order->get_shipping_postcode())){
+	        return $this->get_order_billing_address($order);
+	    }
 	    $address = new \PostFinanceCheckout\Sdk\Model\AddressCreate();
 		$address->setCity($this->fix_length($order->get_shipping_city(), 100));
 		$address->setCountry($order->get_shipping_country());
@@ -596,7 +599,9 @@ class WC_PostFinanceCheckout_Service_Transaction extends WC_PostFinanceCheckout_
 	    $current_cart_id = WC_PostFinanceCheckout_Helper::instance()->get_current_cart_id();
 		if (!isset(self::$transaction_cache[$current_cart_id]) || self::$transaction_cache[$current_cart_id] == null) {
 			$transaction_id = WC()->session->get('postfinancecheckout_transaction_id', null);
-			if ($transaction_id === null) {
+			$space_id = WC()->session->get('postfinancecheckout_space_id', null);
+			$configured_space_id = get_option(WooCommerce_PostFinanceCheckout::CK_SPACE_ID);
+			if ($transaction_id === null || $space_id == null || $space_id != $configured_space_id) {
 				$transaction = $this->create_transaction_from_session();
 			}
 			else {
@@ -607,8 +612,7 @@ class WC_PostFinanceCheckout_Service_Transaction extends WC_PostFinanceCheckout_
 		}
 		
 		return self::$transaction_cache[$current_cart_id];
-	}
-	
+	}	
 	
 	/**
 	 * Returns the transaction for the given session. We work with sessions as the cart is also only stored in the session
@@ -621,10 +625,10 @@ class WC_PostFinanceCheckout_Service_Transaction extends WC_PostFinanceCheckout_
 	   
 	        if (!isset(self::$transaction_cache[$order->get_id()]) || self::$transaction_cache[$order->get_id()] == null) {
 	            $existing_transaction = WC_PostFinanceCheckout_Entity_Transaction_Info::load_by_order_id($order->get_id());
-	            if($existing_transaction->get_id() === null){
+	            $configured_space_id = get_option(WooCommerce_PostFinanceCheckout::CK_SPACE_ID);
+	            if($existing_transaction->get_id() === null || $existing_transaction->get_space_id() === null || $existing_transaction->get_space_id() != $configured_space_id){
 	                WC_PostFinanceCheckout_Helper::instance()->start_database_transaction();
 	                try{
-	                    WC_PostFinanceCheckout_Helper::instance()->lock_by_transaction_id($existing_transaction->get_space_id(), $existing_transaction->get_transaction_id());
 	                    $transaction = $this->create_transaction_by_order($order);
 	                    WC_PostFinanceCheckout_Helper::instance()->commit_database_transaction();
 	                }catch(Exception $e){
@@ -735,7 +739,7 @@ class WC_PostFinanceCheckout_Service_Transaction extends WC_PostFinanceCheckout_
 				$space_id = $session_handler->get('postfinancecheckout_space_id');
 				$transaction_id = $session_handler->get('postfinancecheckout_transaction_id');
 				$transaction = $this->get_transaction($space_id, $transaction_id);
-				if ($transaction->getState() != \PostFinanceCheckout\Sdk\Model\TransactionState::PENDING) {
+				if ($transaction->getState() != \PostFinanceCheckout\Sdk\Model\TransactionState::PENDING || (!empty($transaction->getCustomerId()) && $transaction->getCustomerId() != $this->get_customer_id())) {
 					return $this->create_transaction_from_session();
 				}
 				$pending_transaction = new \PostFinanceCheckout\Sdk\Model\TransactionPending();

@@ -188,3 +188,8 @@
 * Docs - Improved state graph and documentation
 * Dev - Updated supported WooCommerce versions
 
+= 1.2.6 - July 09, 2019 =
+
+* Fix - Issue with shipping address
+* Fix - Issue with payment method not showing
+
