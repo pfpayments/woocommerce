@@ -5,7 +5,7 @@ if (!defined('ABSPATH')) {
 /**
  * PostFinance Checkout WooCommerce
  *
- * This WooCommerce plugin enables to process payments with PostFinance Checkout (https://www.postfinance.ch).
+ * This WooCommerce plugin enables to process payments with PostFinance Checkout (https://www.postfinance.ch/checkout).
  *
  * @author customweb GmbH (http://www.customweb.com/)
  * @license http://www.apache.org/licenses/LICENSE-2.0 Apache Software License (ASL 2.0)
@@ -163,9 +163,8 @@ class WC_PostFinanceCheckout_Admin_Order_Void {
 	}
 
 	public static function update_for_order(WC_Order $order){
-	    $data = WC_PostFinanceCheckout_Helper::instance()->get_transaction_id_map_for_order($order);
-	
-		$void_job = WC_PostFinanceCheckout_Entity_Void_Job::load_running_void_for_transaction($data['space_id'], $data['transaction_id']);
+	    $transaction_info = WC_PostFinanceCheckout_Entity_Transaction_Info::load_by_order_id($order->get_id());
+	    $void_job = WC_PostFinanceCheckout_Entity_Void_Job::load_running_void_for_transaction($transaction_info->get_space_id(), $transaction_info->get_transaction_id());
 		
 		if ($void_job->get_state() == WC_PostFinanceCheckout_Entity_Void_Job::STATE_CREATED) {
 			self::send_void($void_job->get_id());

@@ -193,3 +193,8 @@
 * Fix - Issue with shipping address
 * Fix - Issue with payment method not showing
 
+= 1.2.7 - July 17, 2019 =
+
+* Fix - Issue with refunds
+* Tweak - Only load backend javascript on order page
+

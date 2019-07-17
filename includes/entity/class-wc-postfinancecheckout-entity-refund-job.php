@@ -5,7 +5,7 @@ if (!defined('ABSPATH')) {
 /**
  * PostFinance Checkout WooCommerce
  *
- * This WooCommerce plugin enables to process payments with PostFinance Checkout (https://www.postfinance.ch).
+ * This WooCommerce plugin enables to process payments with PostFinance Checkout (https://www.postfinance.ch/checkout).
  *
  * @author customweb GmbH (http://www.customweb.com/)
  * @license http://www.apache.org/licenses/LICENSE-2.0 Apache Software License (ASL 2.0)
@@ -106,7 +106,6 @@ class WC_PostFinanceCheckout_Entity_Refund_Job extends WC_PostFinanceCheckout_En
 
 	public static function load_refunds_for_order($order_id){
 		global $wpdb;
-		//Returns empty array
 		$db_results = $wpdb->get_results(
 				$wpdb->prepare("SELECT * FROM " . $wpdb->prefix . self::get_table_name() . " WHERE order_id = %d", $order_id), ARRAY_A);
 		$result = array();
@@ -120,8 +119,6 @@ class WC_PostFinanceCheckout_Entity_Refund_Job extends WC_PostFinanceCheckout_En
 
 	public static function load_not_sent_job_ids(){
 		global $wpdb;
-		//Returns empty array
-		
 		$time = new DateTime();
 		$time->sub(new DateInterval('PT10M'));
 		$db_results = $wpdb->get_results(

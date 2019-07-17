@@ -6,7 +6,7 @@ if (!defined('ABSPATH')) {
 /**
  * PostFinance Checkout WooCommerce
  *
- * This WooCommerce plugin enables to process payments with PostFinance Checkout (https://www.postfinance.ch).
+ * This WooCommerce plugin enables to process payments with PostFinance Checkout (https://www.postfinance.ch/checkout).
  *
  * @author customweb GmbH (http://www.customweb.com/)
  * @license http://www.apache.org/licenses/LICENSE-2.0 Apache Software License (ASL 2.0)
@@ -412,7 +412,6 @@ class WC_PostFinanceCheckout_Gateway extends WC_Payment_Gateway {
 			
 			$order->add_meta_data('_postfinancecheckout_pay_for_order', $is_order_pay_endpoint, true);
 			$order->add_meta_data('_postfinancecheckout_gateway_id', $this->id, true);
-			$order->add_meta_data('_postfinancecheckout_linked_ids', array('space_id' =>  $space_id, 'transaction_id' => $transaction_id), false);
 			$order->delete_meta_data('_postfinancecheckout_confirmed');
 			$order->save();
 			

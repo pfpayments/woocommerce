@@ -5,7 +5,7 @@ if (!defined('ABSPATH')) {
 /**
  * PostFinance Checkout WooCommerce
  *
- * This WooCommerce plugin enables to process payments with PostFinance Checkout (https://www.postfinance.ch).
+ * This WooCommerce plugin enables to process payments with PostFinance Checkout (https://www.postfinance.ch/checkout).
  *
  * @author customweb GmbH (http://www.customweb.com/)
  * @license http://www.apache.org/licenses/LICENSE-2.0 Apache Software License (ASL 2.0)
@@ -159,23 +159,27 @@ class WC_PostFinanceCheckout_Admin {
 	public function loaded(){
 		add_action('admin_enqueue_scripts', array(
 			$this,
-			'enque_script_and_css' 
+			'enque_script_and_css'
 		));
 	}
 
 	public function enque_script_and_css(){
-	    wp_enqueue_style('woo-postfinancecheckout-admin-styles', WooCommerce_PostFinanceCheckout::instance()->plugin_url() . '/assets/css/admin.css');
-	    wp_enqueue_script('postfinancecheckout-admin-js', WooCommerce_PostFinanceCheckout::instance()->plugin_url() . '/assets/js/admin/management.js', 
-				array(
-					'jquery',
-					'wc-admin-meta-boxes' 
-				), null, false);
-		
-		$localize = array(
-			'i18n_do_void' => __('Are you sure you wish to process this void? This action cannot be undone.', 'woo-postfinancecheckout'),
-			'i18n_do_completion' => __('Are you sure you wish to process this completion? This action cannot be undone.', 'woo-postfinancecheckout') 
-		);
-		wp_localize_script('postfinancecheckout-admin-js', 'postfinancecheckout_admin_js_params', $localize);
+	    $screen    = get_current_screen();
+	    $post_type = $screen ? $screen->post_type : '';
+	    if($post_type == 'shop_order'){
+    	    wp_enqueue_style('woo-postfinancecheckout-admin-styles', WooCommerce_PostFinanceCheckout::instance()->plugin_url() . '/assets/css/admin.css');
+    	    wp_enqueue_script('postfinancecheckout-admin-js', WooCommerce_PostFinanceCheckout::instance()->plugin_url() . '/assets/js/admin/management.js', 
+    				array(
+    					'jquery',
+    					'wc-admin-meta-boxes' 
+    				), null, false);
+    		
+    		$localize = array(
+    			'i18n_do_void' => __('Are you sure you wish to process this void? This action cannot be undone.', 'woo-postfinancecheckout'),
+    			'i18n_do_completion' => __('Are you sure you wish to process this completion? This action cannot be undone.', 'woo-postfinancecheckout') 
+    		);
+    		wp_localize_script('postfinancecheckout-admin-js', 'postfinancecheckout_admin_js_params', $localize);
+	    }
 	}
 
 	public function hide_order_unique_id_meta($arr){
@@ -242,11 +246,9 @@ class WC_PostFinanceCheckout_Admin {
 	
 		
 	
-	public function display_attribute_options_edit(){
-	    
+	public function display_attribute_options_edit(){	    
 	    $edit = absint( $_GET['edit'] );
-	    $checked = false;
-	    
+	    $checked = false;	    
 	    $attribute_options = WC_PostFinanceCheckout_Entity_Attribute_Options::load_by_attribute_id($edit);
 	    if($attribute_options->get_id() > 0 && $attribute_options->get_send()){
 	        $checked = true;

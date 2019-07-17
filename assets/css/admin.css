@@ -1,7 +1,7 @@
 /**
  * PostFinance Checkout WooCommerce
  *
- * This WooCommerce plugin enables to process payments with PostFinance Checkout (https://www.postfinance.ch).
+ * This WooCommerce plugin enables to process payments with PostFinance Checkout (https://www.postfinance.ch/checkout).
  *
  * @author customweb GmbH (http://www.customweb.com/)
  * @license http://www.apache.org/licenses/LICENSE-2.0 Apache Software License (ASL 2.0)

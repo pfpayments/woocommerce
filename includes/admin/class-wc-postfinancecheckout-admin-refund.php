@@ -5,7 +5,7 @@ if (!defined('ABSPATH')) {
 /**
  * PostFinance Checkout WooCommerce
  *
- * This WooCommerce plugin enables to process payments with PostFinance Checkout (https://www.postfinance.ch).
+ * This WooCommerce plugin enables to process payments with PostFinance Checkout (https://www.postfinance.ch/checkout).
  *
  * @author customweb GmbH (http://www.customweb.com/)
  * @license http://www.apache.org/licenses/LICENSE-2.0 Apache Software License (ASL 2.0)
@@ -164,8 +164,9 @@ class WC_PostFinanceCheckout_Admin_Refund {
 	}
 
 	public static function update_for_order(WC_Order $order){
-	    $data = WC_PostFinanceCheckout_Helper::instance()->get_transaction_id_map_for_order($order);
-		$refund_job = WC_PostFinanceCheckout_Entity_Refund_Job::load_running_refund_for_transaction($data['space_id'], $data['transaction_id']);
+	    
+	    $transaction_info = WC_PostFinanceCheckout_Entity_Transaction_Info::load_by_order_id($order->get_id());
+	    $refund_job = WC_PostFinanceCheckout_Entity_Refund_Job::load_running_refund_for_transaction($transaction_info->get_space_id(), $transaction_info->get_transaction_id());
 		
 		if ($refund_job->get_state() == WC_PostFinanceCheckout_Entity_Refund_Job::STATE_CREATED) {
 			self::send_refund($refund_job->get_id());
@@ -194,12 +195,12 @@ class WC_PostFinanceCheckout_Admin_Refund {
 	 * @return WC_PostFinanceCheckout_Entity_Refund_Job
 	 */
 	private static function create_refund_job(WC_Order $order, WC_Order_Refund $refund, \PostFinanceCheckout\Sdk\Model\RefundCreate $refund_create){
-	    $data = WC_PostFinanceCheckout_Helper::instance()->get_transaction_id_map_for_order($order);
+	    $transaction_info = WC_PostFinanceCheckout_Entity_Transaction_Info::load_by_order_id($order->get_id());
 	    $refund_job = new WC_PostFinanceCheckout_Entity_Refund_Job();
 	    $refund_job->set_state(WC_PostFinanceCheckout_Entity_Refund_Job::STATE_CREATED);
 		$refund_job->set_wc_refund_id($refund->get_id());
 		$refund_job->set_order_id($order->get_id());
-		$refund_job->set_space_id($data['space_id']);
+		$refund_job->set_space_id($transaction_info->get_space_id());
 		$refund_job->set_transaction_id($refund_create->getTransaction());
 		$refund_job->set_external_id($refund_create->getExternalId());
 		$refund_job->set_refund($refund_create);

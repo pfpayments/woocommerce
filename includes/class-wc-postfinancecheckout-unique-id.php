@@ -5,7 +5,7 @@ if (!defined('ABSPATH')) {
 /**
  * PostFinance Checkout WooCommerce
  *
- * This WooCommerce plugin enables to process payments with PostFinance Checkout (https://www.postfinance.ch).
+ * This WooCommerce plugin enables to process payments with PostFinance Checkout (https://www.postfinance.ch/checkout).
  *
  * @author customweb GmbH (http://www.customweb.com/)
  * @license http://www.apache.org/licenses/LICENSE-2.0 Apache Software License (ASL 2.0)
@@ -19,14 +19,6 @@ class WC_PostFinanceCheckout_Unique_Id {
 	 * Register item id functions hooks
 	 */
 	public static function init(){
-		add_filter('woocommerce_add_cart_item', array(
-			__CLASS__,
-			'add_unqiue_id_to_cart_item' 
-		), 10, 1);
-		add_filter('woocommerce_package_rates', array(
-			__CLASS__,
-			'add_unqiue_id_to_shipping_item' 
-		), 10, 1);
 		add_filter('woocommerce_checkout_create_order_line_item', array(
 			__CLASS__,
 			'copy_unqiue_id_to_order_item' 
@@ -49,40 +41,13 @@ class WC_PostFinanceCheckout_Unique_Id {
 		return vsprintf('%s%s-%s-%s-%s-%s%s%s', str_split(bin2hex($data), 4));
 	}
 
-	public static function add_unqiue_id_to_cart_item($data){
-		if (!isset($data['_postfinancecheckout_unique_line_item_id'])) {
-			$data['_postfinancecheckout_unique_line_item_id'] = self::get_uuid();
-		}
-		return $data;
-	}
-
 	public static function copy_unqiue_id_to_order_item(WC_Order_Item_Product $item, $cart_item_key, $values, WC_Order $order = null){
-		//We do not the cart_item_key as it is deprecated
-		$unique_id = self::get_uuid();
-		
-		//If we do not have this value, the item was in the cart before the plugin was activated,
-		//this ensures the item has a unqiue id;
-		if (isset($values['_postfinancecheckout_unique_line_item_id'])) {
-			$unique_id = $values['_postfinancecheckout_unique_line_item_id'];
-		}
-		$item->add_meta_data('_postfinancecheckout_unique_line_item_id', $unique_id, true);
+		//We do not use the cart_item_key as it is deprecated
+		$item->add_meta_data('_postfinancecheckout_unique_line_item_id', self::get_uuid(), true);
 		return $item;
 	}
-
-	public static function add_unqiue_id_to_shipping_item($rates){
-		foreach ($rates as $rate) {
-			$rate->add_meta_data('_postfinancecheckout_unique_line_item_id', self::get_uuid(), true);
-		}
-		return $rates;
-	}
-
 	public static function copy_unqiue_id_to_order_shipping(WC_Order_Item_Shipping $item, $package_key, $package, WC_Order $order = null){
-		
-		//If we do not have this value, the shipping rate was computed before the plugin was activated,
-		//this ensures the item has a unqiue id;
-		if (!$item->meta_exists('_postfinancecheckout_unique_line_item_id')) {
-			$item->add_meta_data('_postfinancecheckout_unique_line_item_id', self::get_uuid(), true);
-		}
+		$item->add_meta_data('_postfinancecheckout_unique_line_item_id', self::get_uuid(), true);
 		return $item;
 	}
 
