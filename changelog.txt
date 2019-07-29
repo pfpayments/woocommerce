@@ -198,3 +198,7 @@
 * Fix - Issue with refunds
 * Tweak - Only load backend javascript on order page
 
+= 1.2.8 - July 29, 2019 =
+
+* Fix - Issues with email not being sent
+
