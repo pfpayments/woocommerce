@@ -456,7 +456,9 @@ class WC_PostFinanceCheckout_Service_Transaction extends WC_PostFinanceCheckout_
 		$address->setGivenName($this->fix_length($order->get_billing_first_name(), 100));
 		$address->setOrganizationName($this->fix_length($order->get_billing_company(), 100));
 		$address->setPhoneNumber($order->get_billing_phone());
-		$address->setPostalState($order->get_billing_state());
+		if(!empty($order->get_billing_state())){
+		    $address->setPostalState($order->get_billing_country().'-'.$order->get_billing_state());
+		}
 		$address->setPostCode($this->fix_length($order->get_billing_postcode(), 40));
 		$address->setStreet($this->fix_length(trim($order->get_billing_address_1() . "\n" . $order->get_billing_address_2()), 300));
 		$address->setEmailAddress($this->fix_length($this->get_order_email_address($order), 254));
@@ -521,7 +523,9 @@ class WC_PostFinanceCheckout_Service_Transaction extends WC_PostFinanceCheckout_
 		$address->setFamilyName($this->fix_length($order->get_shipping_last_name(), 100));
 		$address->setGivenName($this->fix_length($order->get_shipping_first_name(), 100));
 		$address->setOrganizationName($this->fix_length($order->get_shipping_company(), 100));
-		$address->setPostalState($order->get_shipping_state());
+		if(!empty($order->get_shipping_state())){
+		    $address->setPostalState($order->get_shipping_city().'-'.$order->get_shipping_state());
+		}
 		$address->setPostCode($this->fix_length($order->get_shipping_postcode(), 40));
 		$address->setStreet($this->fix_length(trim($order->get_shipping_address_1() . "\n" . $order->get_shipping_address_2()), 300));
 		$address->setEmailAddress($this->fix_length($this->get_order_email_address($order), 254));
@@ -795,7 +799,9 @@ class WC_PostFinanceCheckout_Service_Transaction extends WC_PostFinanceCheckout_
 		$address->setGivenName($this->fix_length($customer->get_billing_first_name(), 100));
 		$address->setOrganizationName($this->fix_length($customer->get_billing_company(), 100));
 		$address->setPhoneNumber($customer->get_billing_phone());
-		$address->setPostalState($customer->get_billing_state());
+		if(!empty($customer->get_billing_state())){
+		    $address->setPostalState($customer->get_billing_country().'-'.$customer->get_billing_state());
+		}
 		$address->setPostCode($this->fix_length($customer->get_billing_postcode(), 40));
 		$address->setStreet($this->fix_length(trim($customer->get_billing_address_1() . "\n" . $customer->get_billing_address_2()), 300));
 		$address->setEmailAddress($this->fix_length($this->get_session_email_address(), 254));
@@ -838,7 +844,9 @@ class WC_PostFinanceCheckout_Service_Transaction extends WC_PostFinanceCheckout_
 		$address->setFamilyName($this->fix_length($customer->get_shipping_last_name(), 100));
 		$address->setGivenName($this->fix_length($customer->get_shipping_first_name(), 100));
 		$address->setOrganizationName($this->fix_length($customer->get_shipping_company(), 100));
-		$address->setPostalState($customer->get_shipping_state());
+		if(!empty($customer->get_shipping_state())){
+		    $address->setPostalState($customer->get_shipping_country().'-'.$customer->get_shipping_state());
+		}
 		$address->setPostCode($this->fix_length($customer->get_shipping_postcode(), 40));
 		$address->setStreet($this->fix_length(trim($customer->get_shipping_address_1() . "\n" . $customer->get_shipping_address_2()), 300));
 		$address->setEmailAddress($this->fix_length($this->get_session_email_address(), 254));

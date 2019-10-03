@@ -202,3 +202,7 @@
 
 * Fix - Issues with email not being sent
 
+= 1.2.9 - October 3, 2019 =
+
+* Fix - Issues with postal state not transmitted correctly
+
