@@ -206,3 +206,7 @@
 
 * Fix - Issues with postal state not transmitted correctly
 
+= 1.2.10 - October 16, 2019 =
+
+* Tweaks - Improved compatibility with other plugins
+
