@@ -45,7 +45,7 @@ class WC_PostFinanceCheckout_Entity_Token_Info extends WC_PostFinanceCheckout_En
 	}
 
 	protected static function get_table_name(){
-		return 'woocommerce_postfinancecheckout_transaction_info';
+		return 'woocommerce_postfinancecheckout_token_info';
 	}
 
 	public static function load_by_token($space_id, $token_id){

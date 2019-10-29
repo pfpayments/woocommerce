@@ -210,3 +210,7 @@
 
 * Tweaks - Improved compatibility with other plugins
 
+= 1.2.11 - October 29, 2019 =
+
+* Fix - Fixes issue with token webhook
+
