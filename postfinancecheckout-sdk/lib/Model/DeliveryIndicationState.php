@@ -1,10 +1,8 @@
 <?php
 /**
- * PostFinance Checkout SDK
+ *  SDK
  *
- * This library allows to interact with the PostFinance Checkout payment service.
- * PostFinance Checkout SDK: 1.0.0
- * 
+ * This library allows to interact with the  payment service.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -19,9 +17,9 @@
  * limitations under the License.
  */
 
+
 namespace PostFinanceCheckout\Sdk\Model;
-
-
+use \PostFinanceCheckout\Sdk\ObjectSerializer;
 
 /**
  * DeliveryIndicationState model
@@ -32,14 +30,29 @@ namespace PostFinanceCheckout\Sdk\Model;
  * @author      customweb GmbH
  * @license     http://www.apache.org/licenses/LICENSE-2.0 Apache License v2
  */
-class DeliveryIndicationState implements IEnum {
-
-	const PENDING = 'PENDING';
-	const NOT_SUITABLE = 'NOT_SUITABLE';
-	const MANUAL_CHECK_REQUIRED = 'MANUAL_CHECK_REQUIRED';
-	const SUITABLE = 'SUITABLE';
-	
-
-	
-
+class DeliveryIndicationState
+{
+    /**
+     * Possible values of this enum
+     */
+    const PENDING = 'PENDING';
+    const NOT_SUITABLE = 'NOT_SUITABLE';
+    const MANUAL_CHECK_REQUIRED = 'MANUAL_CHECK_REQUIRED';
+    const SUITABLE = 'SUITABLE';
+    
+    /**
+     * Gets allowable values of the enum
+     * @return string[]
+     */
+    public static function getAllowableEnumValues()
+    {
+        return [
+            self::PENDING,
+            self::NOT_SUITABLE,
+            self::MANUAL_CHECK_REQUIRED,
+            self::SUITABLE,
+        ];
+    }
 }
+
+

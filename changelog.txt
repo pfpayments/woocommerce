@@ -214,3 +214,7 @@
 
 * Fix - Fixes issue with token webhook
 
+= 1.2.11 - October 29, 2019 =
+
+* Fix - Update used PHP SDK.
+

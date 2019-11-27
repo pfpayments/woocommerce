@@ -1,10 +1,8 @@
 <?php
 /**
- * PostFinance Checkout SDK
+ *  SDK
  *
- * This library allows to interact with the PostFinance Checkout payment service.
- * PostFinance Checkout SDK: 1.0.0
- * 
+ * This library allows to interact with the  payment service.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -19,12 +17,12 @@
  * limitations under the License.
  */
 
+
 namespace PostFinanceCheckout\Sdk\Model;
-
-
+use \PostFinanceCheckout\Sdk\ObjectSerializer;
 
 /**
- * TokenizationnMode model
+ * TokenizationMode model
  *
  * @category    Class
  * @description The tokenization mode controls how the tokenization of payment information is applied on the transaction.
@@ -32,14 +30,29 @@ namespace PostFinanceCheckout\Sdk\Model;
  * @author      customweb GmbH
  * @license     http://www.apache.org/licenses/LICENSE-2.0 Apache License v2
  */
-class TokenizationnMode implements IEnum {
-
-	const FORCE_UPDATE = 'FORCE_UPDATE';
-	const FORCE_CREATION = 'FORCE_CREATION';
-	const FORCE_CREATION_WITH_ONE_CLICK_PAYMENT = 'FORCE_CREATION_WITH_ONE_CLICK_PAYMENT';
-	const ALLOW_ONE_CLICK_PAYMENT = 'ALLOW_ONE_CLICK_PAYMENT';
-	
-
-	
-
+class TokenizationMode
+{
+    /**
+     * Possible values of this enum
+     */
+    const FORCE_UPDATE = 'FORCE_UPDATE';
+    const FORCE_CREATION = 'FORCE_CREATION';
+    const FORCE_CREATION_WITH_ONE_CLICK_PAYMENT = 'FORCE_CREATION_WITH_ONE_CLICK_PAYMENT';
+    const ALLOW_ONE_CLICK_PAYMENT = 'ALLOW_ONE_CLICK_PAYMENT';
+    
+    /**
+     * Gets allowable values of the enum
+     * @return string[]
+     */
+    public static function getAllowableEnumValues()
+    {
+        return [
+            self::FORCE_UPDATE,
+            self::FORCE_CREATION,
+            self::FORCE_CREATION_WITH_ONE_CLICK_PAYMENT,
+            self::ALLOW_ONE_CLICK_PAYMENT,
+        ];
+    }
 }
+
+

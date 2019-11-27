@@ -1,10 +1,8 @@
 <?php
 /**
- * PostFinance Checkout SDK
+ *  SDK
  *
- * This library allows to interact with the PostFinance Checkout payment service.
- * PostFinance Checkout SDK: 1.0.0
- * 
+ * This library allows to interact with the  payment service.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -18,6 +16,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 
 namespace PostFinanceCheckout\Sdk;
 
@@ -54,7 +53,7 @@ final class ValidationException extends Exception {
 	 * @param string $property	the name of the invalid property
 	 * @param object $model		the instance of the validated model
 	 */
-	public function __construct($message = "", $property = null, $model = null) {
+	public function __construct($message = '', $property = null, $model = null) {
 		parent::__construct($message);
 		$this->property = $property;
 	}

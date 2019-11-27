@@ -106,15 +106,15 @@ class WC_PostFinanceCheckout_Email {
 	public static function add_email_actions($actions){
 	    
 		$to_add = array(
-			'woocommerce_order_status_postf-redirected_to_processing',
-			'woocommerce_order_status_postf-redirected_to_completed',
-			'woocommerce_order_status_postf-redirected_to_on-hold',
-			'woocommerce_order_status_postf-redirected_to_postfinancecheckout-waiting',
-			'woocommerce_order_status_postf-redirected_to_postfinancecheckout-manual',
-			'woocommerce_order_status_postf-manual_to_cancelled',
-			'woocommerce_order_status_postf-waiting_to_cancelled',
-			'woocommerce_order_status_postf-manual_to_processing',
-			'woocommerce_order_status_postf-waiting_to_processing'
+			'woocommerce_order_status_postfi-redirected_to_processing',
+			'woocommerce_order_status_postfi-redirected_to_completed',
+			'woocommerce_order_status_postfi-redirected_to_on-hold',
+			'woocommerce_order_status_postfi-redirected_to_postfinancecheckout-waiting',
+			'woocommerce_order_status_postfi-redirected_to_postfinancecheckout-manual',
+			'woocommerce_order_status_postfi-manual_to_cancelled',
+			'woocommerce_order_status_postfi-waiting_to_cancelled',
+			'woocommerce_order_status_postfi-manual_to_processing',
+			'woocommerce_order_status_postfi-waiting_to_processing'
 		);
 		
 		if(class_exists('woocommerce_wpml')){
@@ -122,18 +122,18 @@ class WC_PostFinanceCheckout_Email {
 		    if($woocommerce_wpml != null){
     			//Add hooks for WPML, for email translations
     			$notifications_all =  array(
-    				'woocommerce_order_status_postf-redirected_to_processing_notification',
-    				'woocommerce_order_status_postf-redirected_to_completed_notification',
-    				'woocommerce_order_status_postf-redirected_to_on-hold_notification',
-    				'woocommerce_order_status_postf-redirected_to_postfinancecheckout-waiting_notification',
-    				'woocommerce_order_status_postf-redirected_to_postfinancecheckout-manual_notification',
+    				'woocommerce_order_status_postfi-redirected_to_processing_notification',
+    				'woocommerce_order_status_postfi-redirected_to_completed_notification',
+    				'woocommerce_order_status_postfi-redirected_to_on-hold_notification',
+    				'woocommerce_order_status_postfi-redirected_to_postfinancecheckout-waiting_notification',
+    				'woocommerce_order_status_postfi-redirected_to_postfinancecheckout-manual_notification',
     			);
     			$notifications_customer = array(
-    				'woocommerce_order_status_postf-manual_to_processing_notification',
-    				'woocommerce_order_status_postf-waiting_to_processing_notification',
+    				'woocommerce_order_status_postfi-manual_to_processing_notification',
+    				'woocommerce_order_status_postfi-waiting_to_processing_notification',
     				'woocommerce_order_status_on-hold_to_processing_notification',
-    				'woocommerce_order_status_postf-manual_to_cancelled_notification',
-    				'woocommerce_order_status_postf-waiting_to_cancelled_notifcation'
+    				'woocommerce_order_status_postfi-manual_to_cancelled_notification',
+    				'woocommerce_order_status_postfi-waiting_to_cancelled_notifcation'
     			);
 		
     			$wpmlInstance = $woocommerce_wpml;
@@ -184,9 +184,9 @@ class WC_PostFinanceCheckout_Email {
 	    //Germanized has a special email flow.
 	    if(isset($emails['WC_GZD_Email_Customer_Paid_For_Order'])){
 	        $emailObject = $emails['WC_GZD_Email_Customer_Paid_For_Order'];
-	        add_action( 'woocommerce_order_status_postf-redirected_to_processing_notification', array( $emailObject, 'trigger' ), 10, 2 );
-	        add_action( 'woocommerce_order_status_postf-manual_to_processing_notification', array( $emailObject, 'trigger' ), 10, 2 );
-	        add_action( 'woocommerce_order_status_postf-waiting_to_processing_notification', array( $emailObject, 'trigger' ), 10, 2 );
+	        add_action( 'woocommerce_order_status_postfi-redirected_to_processing_notification', array( $emailObject, 'trigger' ), 10, 2 );
+	        add_action( 'woocommerce_order_status_postfi-manual_to_processing_notification', array( $emailObject, 'trigger' ), 10, 2 );
+	        add_action( 'woocommerce_order_status_postfi-waiting_to_processing_notification', array( $emailObject, 'trigger' ), 10, 2 );
 	        add_action( 'woocommerce_order_status_on-hold_to_processing_notification', array( __CLASS__, 'check_germanized_pay_email_trigger' ), 10, 2 );
 	    }	    
 	    if( function_exists('wc_gzd_send_instant_order_confirmation') && wc_gzd_send_instant_order_confirmation()){
@@ -196,28 +196,28 @@ class WC_PostFinanceCheckout_Email {
 		foreach($emails as $key => $emailObject){
 			switch($key){
 				case 'WC_Email_New_Order':
-					add_action( 'woocommerce_order_status_postf-redirected_to_processing_notification', array( $emailObject, 'trigger' ), 10, 2 );
-					add_action( 'woocommerce_order_status_postf-redirected_to_completed_notification', array( $emailObject, 'trigger' ), 10, 2 );
-					add_action( 'woocommerce_order_status_postf-redirected_to_on-hold_notification', array( $emailObject, 'trigger' ), 10, 2 );
-					add_action( 'woocommerce_order_status_postf-redirected_to_postfinancecheckout-waiting_notification', array( $emailObject, 'trigger' ), 10, 2 );
-					add_action( 'woocommerce_order_status_postf-redirected_to_postfinancecheckout-manual_notification', array( $emailObject, 'trigger' ), 10, 2 );
+					add_action( 'woocommerce_order_status_postfi-redirected_to_processing_notification', array( $emailObject, 'trigger' ), 10, 2 );
+					add_action( 'woocommerce_order_status_postfi-redirected_to_completed_notification', array( $emailObject, 'trigger' ), 10, 2 );
+					add_action( 'woocommerce_order_status_postfi-redirected_to_on-hold_notification', array( $emailObject, 'trigger' ), 10, 2 );
+					add_action( 'woocommerce_order_status_postfi-redirected_to_postfinancecheckout-waiting_notification', array( $emailObject, 'trigger' ), 10, 2 );
+					add_action( 'woocommerce_order_status_postfi-redirected_to_postfinancecheckout-manual_notification', array( $emailObject, 'trigger' ), 10, 2 );
 					
 					break;
 					
 				case 'WC_Email_Cancelled_Order':
-					add_action( 'woocommerce_order_status_postf-manual_to_cancelled_notification', array( $emailObject, 'trigger' ), 10, 2 );
-					add_action( 'woocommerce_order_status_postf-waiting_to_cancelled_notification', array( $emailObject, 'trigger' ), 10, 2 );
+					add_action( 'woocommerce_order_status_postfi-manual_to_cancelled_notification', array( $emailObject, 'trigger' ), 10, 2 );
+					add_action( 'woocommerce_order_status_postfi-waiting_to_cancelled_notification', array( $emailObject, 'trigger' ), 10, 2 );
 					break;
 					
 				case 'WC_Email_Customer_On_Hold_Order':
-					add_action( 'woocommerce_order_status_postf-redirected_to_on-hold_notification', array( $emailObject, 'trigger' ), 10, 2 );
+					add_action( 'woocommerce_order_status_postfi-redirected_to_on-hold_notification', array( $emailObject, 'trigger' ), 10, 2 );
 					break;
 					
 				
 				case 'WC_Email_Customer_Processing_Order':
-					add_action( 'woocommerce_order_status_postf-redirected_to_processing_notification', array( $emailObject, 'trigger' ), 10, 2 );
-					add_action( 'woocommerce_order_status_postf-manual_to_processing_notification', array( $emailObject, 'trigger' ), 10, 2 );
-					add_action( 'woocommerce_order_status_postf-waiting_to_processing_notification', array( $emailObject, 'trigger' ), 10, 2 );
+					add_action( 'woocommerce_order_status_postfi-redirected_to_processing_notification', array( $emailObject, 'trigger' ), 10, 2 );
+					add_action( 'woocommerce_order_status_postfi-manual_to_processing_notification', array( $emailObject, 'trigger' ), 10, 2 );
+					add_action( 'woocommerce_order_status_postfi-waiting_to_processing_notification', array( $emailObject, 'trigger' ), 10, 2 );
 					break;
 					
 				case 'WC_Email_Customer_Completed_Order':

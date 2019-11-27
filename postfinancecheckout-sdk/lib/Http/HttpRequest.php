@@ -1,10 +1,8 @@
 <?php
 /**
- * PostFinance Checkout SDK
+ *  SDK
  *
- * This library allows to interact with the PostFinance Checkout payment service.
- * PostFinance Checkout SDK: 1.0.0
- * 
+ * This library allows to interact with the  payment service.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -18,6 +16,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 
 namespace PostFinanceCheckout\Sdk\Http;
 
@@ -137,7 +136,7 @@ final class HttpRequest {
 	 *
 	 * @var array
 	 */
-	private $headers = array();
+	private $headers = [];
 
 	/**
 	 * The query part of the request as string.
@@ -250,7 +249,7 @@ final class HttpRequest {
 	 * @return string[]
 	 */
 	public function getHeaders() {
-		$headers = array();
+		$headers = [];
 		foreach ($this->headers as $name => $values) {
 			foreach ($values as $value) {
 				$headers[] = strtolower($name) . ': ' . $value;
@@ -351,7 +350,7 @@ final class HttpRequest {
 	 */
 	public function getBody() {
 		if ($this->body && isset($this->headers[self::HEADER_KEY_CONTENT_TYPE]) && $this->headers[self::HEADER_KEY_CONTENT_TYPE] == 'application/x-www-form-urlencoded') {
-			return http_build_query($this->body);
+			return http_build_query($this->body, '', '&');
 		} elseif ((is_object($this->body) || is_array($this->body)) &&
 			(!isset($this->headers[self::HEADER_KEY_CONTENT_TYPE]) || $this->headers[self::HEADER_KEY_CONTENT_TYPE] != 'multipart/form-data')) {
 			return json_encode($this->serializer->sanitizeForSerialization($this->body));

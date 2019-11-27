@@ -21,8 +21,7 @@ class WC_PostFinanceCheckout_Helper
 
     private $api_client;
 
-    private function __construct()
-    {}
+    private function __construct(){}
 
     /**
      *
@@ -35,7 +34,21 @@ class WC_PostFinanceCheckout_Helper
         }
         return self::$instance;
     }
-
+    
+    public function delete_provider_transients(){
+    	$transients = array(
+    		'wc_postfinancecheckout_currencies',
+    		'wc_postfinancecheckout_label_description_groups',
+    		'wc_postfinancecheckout_label_descriptions',
+    		'wc_postfinancecheckout_languages',
+    		'wc_postfinancecheckout_payment_connectors',
+    		'wc_postfinancecheckout_payment_methods'
+    	);
+    	foreach ($transients as $transient) {
+    		delete_transient($transient);
+    	}
+    }
+    
     /**
      *
      * @throws Exception

@@ -1,10 +1,8 @@
 <?php
 /**
- * PostFinance Checkout SDK
+ *  SDK
  *
- * This library allows to interact with the PostFinance Checkout payment service.
- * PostFinance Checkout SDK: 1.0.0
- * 
+ * This library allows to interact with the  payment service.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -19,9 +17,9 @@
  * limitations under the License.
  */
 
-namespace PostFinanceCheckout\Sdk\Model;
 
-use PostFinanceCheckout\Sdk\ValidationException;
+namespace PostFinanceCheckout\Sdk\Model;
+use \PostFinanceCheckout\Sdk\ObjectSerializer;
 
 /**
  * DeliveryIndication model
@@ -32,400 +30,583 @@ use PostFinanceCheckout\Sdk\ValidationException;
  * @author      customweb GmbH
  * @license     http://www.apache.org/licenses/LICENSE-2.0 Apache License v2
  */
-class DeliveryIndication extends TransactionAwareEntity  {
+class DeliveryIndication extends TransactionAwareEntity 
+{
+    const DISCRIMINATOR = null;
 
-	/**
-	 * The original name of the model.
-	 *
-	 * @var string
-	 */
-	private static $swaggerModelName = 'DeliveryIndication';
+    /**
+      * The original name of the model.
+      *
+      * @var string
+      */
+    protected static $swaggerModelName = 'DeliveryIndication';
 
-	/**
-	 * An array of property to type mappings. Used for (de)serialization.
-	 *
-	 * @var string[]
-	 */
-	private static $swaggerTypes = array(
-		'automaticDecisionReason' => '\PostFinanceCheckout\Sdk\Model\DeliveryIndicationDecisionReason',
-		'automaticallyDecidedOn' => '\DateTime',
-		'createdOn' => '\DateTime',
-		'manualDecisionTimeoutOn' => '\DateTime',
-		'manuallyDecidedBy' => 'int',
-		'manuallyDecidedOn' => '\DateTime',
-		'plannedPurgeDate' => '\DateTime',
-		'state' => '\PostFinanceCheckout\Sdk\Model\DeliveryIndicationState',
-		'timeoutOn' => '\DateTime',
-		'transaction' => '\PostFinanceCheckout\Sdk\Model\Transaction'	);
+    /**
+      * Array of property to type mappings. Used for (de)serialization
+      *
+      * @var string[]
+      */
+    protected static $swaggerTypes = [
+        'automatic_decision_reason' => '\PostFinanceCheckout\Sdk\Model\DeliveryIndicationDecisionReason',
+        'automatically_decided_on' => '\DateTime',
+        'completion' => 'int',
+        'created_on' => '\DateTime',
+        'manual_decision_timeout_on' => '\DateTime',
+        'manually_decided_by' => 'int',
+        'manually_decided_on' => '\DateTime',
+        'planned_purge_date' => '\DateTime',
+        'state' => '\PostFinanceCheckout\Sdk\Model\DeliveryIndicationState',
+        'timeout_on' => '\DateTime',
+        'transaction' => '\PostFinanceCheckout\Sdk\Model\Transaction'
+    ];
 
-	/**
-	 * Returns an array of property to type mappings.
-	 *
-	 * @return string[]
-	 */
-	public static function swaggerTypes() {
-		return self::$swaggerTypes + parent::swaggerTypes();
-	}
+    /**
+      * Array of property to format mappings. Used for (de)serialization
+      *
+      * @var string[]
+      */
+    protected static $swaggerFormats = [
+        'automatic_decision_reason' => null,
+        'automatically_decided_on' => 'date-time',
+        'completion' => 'int64',
+        'created_on' => 'date-time',
+        'manual_decision_timeout_on' => 'date-time',
+        'manually_decided_by' => 'int64',
+        'manually_decided_on' => 'date-time',
+        'planned_purge_date' => 'date-time',
+        'state' => null,
+        'timeout_on' => 'date-time',
+        'transaction' => null
+    ];
 
-	
+    /**
+     * Array of attributes where the key is the local name,
+     * and the value is the original name
+     *
+     * @var string[]
+     */
+    protected static $attributeMap = [
+        'automatic_decision_reason' => 'automaticDecisionReason',
+        'automatically_decided_on' => 'automaticallyDecidedOn',
+        'completion' => 'completion',
+        'created_on' => 'createdOn',
+        'manual_decision_timeout_on' => 'manualDecisionTimeoutOn',
+        'manually_decided_by' => 'manuallyDecidedBy',
+        'manually_decided_on' => 'manuallyDecidedOn',
+        'planned_purge_date' => 'plannedPurgeDate',
+        'state' => 'state',
+        'timeout_on' => 'timeoutOn',
+        'transaction' => 'transaction'
+    ];
 
-	/**
-	 * 
-	 *
-	 * @var \PostFinanceCheckout\Sdk\Model\DeliveryIndicationDecisionReason
-	 */
-	private $automaticDecisionReason;
+    /**
+     * Array of attributes to setter functions (for deserialization of responses)
+     *
+     * @var string[]
+     */
+    protected static $setters = [
+        'automatic_decision_reason' => 'setAutomaticDecisionReason',
+        'automatically_decided_on' => 'setAutomaticallyDecidedOn',
+        'completion' => 'setCompletion',
+        'created_on' => 'setCreatedOn',
+        'manual_decision_timeout_on' => 'setManualDecisionTimeoutOn',
+        'manually_decided_by' => 'setManuallyDecidedBy',
+        'manually_decided_on' => 'setManuallyDecidedOn',
+        'planned_purge_date' => 'setPlannedPurgeDate',
+        'state' => 'setState',
+        'timeout_on' => 'setTimeoutOn',
+        'transaction' => 'setTransaction'
+    ];
 
-	/**
-	 * 
-	 *
-	 * @var \DateTime
-	 */
-	private $automaticallyDecidedOn;
+    /**
+     * Array of attributes to getter functions (for serialization of requests)
+     *
+     * @var string[]
+     */
+    protected static $getters = [
+        'automatic_decision_reason' => 'getAutomaticDecisionReason',
+        'automatically_decided_on' => 'getAutomaticallyDecidedOn',
+        'completion' => 'getCompletion',
+        'created_on' => 'getCreatedOn',
+        'manual_decision_timeout_on' => 'getManualDecisionTimeoutOn',
+        'manually_decided_by' => 'getManuallyDecidedBy',
+        'manually_decided_on' => 'getManuallyDecidedOn',
+        'planned_purge_date' => 'getPlannedPurgeDate',
+        'state' => 'getState',
+        'timeout_on' => 'getTimeoutOn',
+        'transaction' => 'getTransaction'
+    ];
 
-	/**
-	 * The created on date indicates the date on which the entity was stored into the database.
-	 *
-	 * @var \DateTime
-	 */
-	private $createdOn;
-
-	/**
-	 * 
-	 *
-	 * @var \DateTime
-	 */
-	private $manualDecisionTimeoutOn;
-
-	/**
-	 * 
-	 *
-	 * @var int
-	 */
-	private $manuallyDecidedBy;
-
-	/**
-	 * 
-	 *
-	 * @var \DateTime
-	 */
-	private $manuallyDecidedOn;
-
-	/**
-	 * The planned purge date indicates when the entity is permanently removed. When the date is null the entity is not planned to be removed.
-	 *
-	 * @var \DateTime
-	 */
-	private $plannedPurgeDate;
-
-	/**
-	 * 
-	 *
-	 * @var \PostFinanceCheckout\Sdk\Model\DeliveryIndicationState
-	 */
-	private $state;
-
-	/**
-	 * 
-	 *
-	 * @var \DateTime
-	 */
-	private $timeoutOn;
-
-	/**
-	 * 
-	 *
-	 * @var \PostFinanceCheckout\Sdk\Model\Transaction
-	 */
-	private $transaction;
-
-
-	/**
-	 * Constructor.
-	 *
-	 * @param mixed[] $data an associated array of property values initializing the model
-	 */
-	public function __construct(array $data = null) {
-		parent::__construct($data);
-
-		if (isset($data['automaticDecisionReason'])) {
-			$this->setAutomaticDecisionReason($data['automaticDecisionReason']);
-		}
-		if (isset($data['state'])) {
-			$this->setState($data['state']);
-		}
-		if (isset($data['transaction'])) {
-			$this->setTransaction($data['transaction']);
-		}
-	}
+    
 
 
-	/**
-	 * Returns automaticDecisionReason.
-	 *
-	 * 
-	 *
-	 * @return \PostFinanceCheckout\Sdk\Model\DeliveryIndicationDecisionReason
-	 */
-	public function getAutomaticDecisionReason() {
-		return $this->automaticDecisionReason;
-	}
+    /**
+     * Constructor
+     *
+     * @param mixed[] $data Associated array of property values
+     *                      initializing the model
+     */
+    public function __construct(array $data = null)
+    {
+        parent::__construct($data);
 
-	/**
-	 * Sets automaticDecisionReason.
-	 *
-	 * @param \PostFinanceCheckout\Sdk\Model\DeliveryIndicationDecisionReason $automaticDecisionReason
-	 * @return DeliveryIndication
-	 */
-	public function setAutomaticDecisionReason($automaticDecisionReason) {
-		$this->automaticDecisionReason = $automaticDecisionReason;
+        
+        $this->container['automatic_decision_reason'] = isset($data['automatic_decision_reason']) ? $data['automatic_decision_reason'] : null;
+        
+        $this->container['automatically_decided_on'] = isset($data['automatically_decided_on']) ? $data['automatically_decided_on'] : null;
+        
+        $this->container['completion'] = isset($data['completion']) ? $data['completion'] : null;
+        
+        $this->container['created_on'] = isset($data['created_on']) ? $data['created_on'] : null;
+        
+        $this->container['manual_decision_timeout_on'] = isset($data['manual_decision_timeout_on']) ? $data['manual_decision_timeout_on'] : null;
+        
+        $this->container['manually_decided_by'] = isset($data['manually_decided_by']) ? $data['manually_decided_by'] : null;
+        
+        $this->container['manually_decided_on'] = isset($data['manually_decided_on']) ? $data['manually_decided_on'] : null;
+        
+        $this->container['planned_purge_date'] = isset($data['planned_purge_date']) ? $data['planned_purge_date'] : null;
+        
+        $this->container['state'] = isset($data['state']) ? $data['state'] : null;
+        
+        $this->container['timeout_on'] = isset($data['timeout_on']) ? $data['timeout_on'] : null;
+        
+        $this->container['transaction'] = isset($data['transaction']) ? $data['transaction'] : null;
+        
+    }
 
-		return $this;
-	}
+    /**
+     * Show all the invalid properties with reasons.
+     *
+     * @return array invalid properties with reasons
+     */
+    public function listInvalidProperties()
+    {
+        $invalidProperties = parent::listInvalidProperties();
 
-	/**
-	 * Returns automaticallyDecidedOn.
-	 *
-	 * 
-	 *
-	 * @return \DateTime
-	 */
-	public function getAutomaticallyDecidedOn() {
-		return $this->automaticallyDecidedOn;
-	}
+        return $invalidProperties;
+    }
 
-	/**
-	 * Sets automaticallyDecidedOn.
-	 *
-	 * @param \DateTime $automaticallyDecidedOn
-	 * @return DeliveryIndication
-	 */
-	protected function setAutomaticallyDecidedOn($automaticallyDecidedOn) {
-		$this->automaticallyDecidedOn = $automaticallyDecidedOn;
+    /**
+     * Array of property to type mappings. Used for (de)serialization
+     *
+     * @return array
+     */
+    public static function swaggerTypes()
+    {
+        return self::$swaggerTypes + parent::swaggerTypes();
+    }
 
-		return $this;
-	}
+    /**
+     * Array of property to format mappings. Used for (de)serialization
+     *
+     * @return array
+     */
+    public static function swaggerFormats()
+    {
+        return self::$swaggerFormats + parent::swaggerFormats();
+    }
 
-	/**
-	 * Returns createdOn.
-	 *
-	 * The created on date indicates the date on which the entity was stored into the database.
-	 *
-	 * @return \DateTime
-	 */
-	public function getCreatedOn() {
-		return $this->createdOn;
-	}
 
-	/**
-	 * Sets createdOn.
-	 *
-	 * @param \DateTime $createdOn
-	 * @return DeliveryIndication
-	 */
-	protected function setCreatedOn($createdOn) {
-		$this->createdOn = $createdOn;
+    /**
+     * Array of attributes where the key is the local name,
+     * and the value is the original name
+     *
+     * @return array
+     */
+    public static function attributeMap()
+    {
+        return parent::attributeMap() + self::$attributeMap;
+    }
 
-		return $this;
-	}
+    /**
+     * Array of attributes to setter functions (for deserialization of responses)
+     *
+     * @return array
+     */
+    public static function setters()
+    {
+        return parent::setters() + self::$setters;
+    }
 
-	/**
-	 * Returns manualDecisionTimeoutOn.
-	 *
-	 * 
-	 *
-	 * @return \DateTime
-	 */
-	public function getManualDecisionTimeoutOn() {
-		return $this->manualDecisionTimeoutOn;
-	}
+    /**
+     * Array of attributes to getter functions (for serialization of requests)
+     *
+     * @return array
+     */
+    public static function getters()
+    {
+        return parent::getters() + self::$getters;
+    }
 
-	/**
-	 * Sets manualDecisionTimeoutOn.
-	 *
-	 * @param \DateTime $manualDecisionTimeoutOn
-	 * @return DeliveryIndication
-	 */
-	protected function setManualDecisionTimeoutOn($manualDecisionTimeoutOn) {
-		$this->manualDecisionTimeoutOn = $manualDecisionTimeoutOn;
+    /**
+     * The original name of the model.
+     *
+     * @return string
+     */
+    public function getModelName()
+    {
+        return self::$swaggerModelName;
+    }
 
-		return $this;
-	}
+    
 
-	/**
-	 * Returns manuallyDecidedBy.
-	 *
-	 * 
-	 *
-	 * @return int
-	 */
-	public function getManuallyDecidedBy() {
-		return $this->manuallyDecidedBy;
-	}
+    /**
+     * Validate all the properties in the model
+     * return true if all passed
+     *
+     * @return bool True if all properties are valid
+     */
+    public function valid()
+    {
+        return count($this->listInvalidProperties()) === 0;
+    }
 
-	/**
-	 * Sets manuallyDecidedBy.
-	 *
-	 * @param int $manuallyDecidedBy
-	 * @return DeliveryIndication
-	 */
-	protected function setManuallyDecidedBy($manuallyDecidedBy) {
-		$this->manuallyDecidedBy = $manuallyDecidedBy;
+    
 
-		return $this;
-	}
+    /**
+     * Gets automatic_decision_reason
+     *
+     * @return \PostFinanceCheckout\Sdk\Model\DeliveryIndicationDecisionReason
+     */
+    public function getAutomaticDecisionReason()
+    {
+        return $this->container['automatic_decision_reason'];
+    }
 
-	/**
-	 * Returns manuallyDecidedOn.
-	 *
-	 * 
-	 *
-	 * @return \DateTime
-	 */
-	public function getManuallyDecidedOn() {
-		return $this->manuallyDecidedOn;
-	}
+    /**
+     * Sets automatic_decision_reason
+     *
+     * @param \PostFinanceCheckout\Sdk\Model\DeliveryIndicationDecisionReason $automatic_decision_reason 
+     *
+     * @return $this
+     */
+    public function setAutomaticDecisionReason($automatic_decision_reason)
+    {
+        $this->container['automatic_decision_reason'] = $automatic_decision_reason;
 
-	/**
-	 * Sets manuallyDecidedOn.
-	 *
-	 * @param \DateTime $manuallyDecidedOn
-	 * @return DeliveryIndication
-	 */
-	protected function setManuallyDecidedOn($manuallyDecidedOn) {
-		$this->manuallyDecidedOn = $manuallyDecidedOn;
+        return $this;
+    }
+    
 
-		return $this;
-	}
+    /**
+     * Gets automatically_decided_on
+     *
+     * @return \DateTime
+     */
+    public function getAutomaticallyDecidedOn()
+    {
+        return $this->container['automatically_decided_on'];
+    }
 
-	/**
-	 * Returns plannedPurgeDate.
-	 *
-	 * The planned purge date indicates when the entity is permanently removed. When the date is null the entity is not planned to be removed.
-	 *
-	 * @return \DateTime
-	 */
-	public function getPlannedPurgeDate() {
-		return $this->plannedPurgeDate;
-	}
+    /**
+     * Sets automatically_decided_on
+     *
+     * @param \DateTime $automatically_decided_on 
+     *
+     * @return $this
+     */
+    public function setAutomaticallyDecidedOn($automatically_decided_on)
+    {
+        $this->container['automatically_decided_on'] = $automatically_decided_on;
 
-	/**
-	 * Sets plannedPurgeDate.
-	 *
-	 * @param \DateTime $plannedPurgeDate
-	 * @return DeliveryIndication
-	 */
-	protected function setPlannedPurgeDate($plannedPurgeDate) {
-		$this->plannedPurgeDate = $plannedPurgeDate;
+        return $this;
+    }
+    
 
-		return $this;
-	}
+    /**
+     * Gets completion
+     *
+     * @return int
+     */
+    public function getCompletion()
+    {
+        return $this->container['completion'];
+    }
 
-	/**
-	 * Returns state.
-	 *
-	 * 
-	 *
-	 * @return \PostFinanceCheckout\Sdk\Model\DeliveryIndicationState
-	 */
-	public function getState() {
-		return $this->state;
-	}
+    /**
+     * Sets completion
+     *
+     * @param int $completion 
+     *
+     * @return $this
+     */
+    public function setCompletion($completion)
+    {
+        $this->container['completion'] = $completion;
 
-	/**
-	 * Sets state.
-	 *
-	 * @param \PostFinanceCheckout\Sdk\Model\DeliveryIndicationState $state
-	 * @return DeliveryIndication
-	 */
-	public function setState($state) {
-		$this->state = $state;
+        return $this;
+    }
+    
 
-		return $this;
-	}
+    /**
+     * Gets created_on
+     *
+     * @return \DateTime
+     */
+    public function getCreatedOn()
+    {
+        return $this->container['created_on'];
+    }
 
-	/**
-	 * Returns timeoutOn.
-	 *
-	 * 
-	 *
-	 * @return \DateTime
-	 */
-	public function getTimeoutOn() {
-		return $this->timeoutOn;
-	}
+    /**
+     * Sets created_on
+     *
+     * @param \DateTime $created_on The created on date indicates the date on which the entity was stored into the database.
+     *
+     * @return $this
+     */
+    public function setCreatedOn($created_on)
+    {
+        $this->container['created_on'] = $created_on;
 
-	/**
-	 * Sets timeoutOn.
-	 *
-	 * @param \DateTime $timeoutOn
-	 * @return DeliveryIndication
-	 */
-	protected function setTimeoutOn($timeoutOn) {
-		$this->timeoutOn = $timeoutOn;
+        return $this;
+    }
+    
 
-		return $this;
-	}
+    /**
+     * Gets manual_decision_timeout_on
+     *
+     * @return \DateTime
+     */
+    public function getManualDecisionTimeoutOn()
+    {
+        return $this->container['manual_decision_timeout_on'];
+    }
 
-	/**
-	 * Returns transaction.
-	 *
-	 * 
-	 *
-	 * @return \PostFinanceCheckout\Sdk\Model\Transaction
-	 */
-	public function getTransaction() {
-		return $this->transaction;
-	}
+    /**
+     * Sets manual_decision_timeout_on
+     *
+     * @param \DateTime $manual_decision_timeout_on 
+     *
+     * @return $this
+     */
+    public function setManualDecisionTimeoutOn($manual_decision_timeout_on)
+    {
+        $this->container['manual_decision_timeout_on'] = $manual_decision_timeout_on;
 
-	/**
-	 * Sets transaction.
-	 *
-	 * @param \PostFinanceCheckout\Sdk\Model\Transaction $transaction
-	 * @return DeliveryIndication
-	 */
-	public function setTransaction($transaction) {
-		$this->transaction = $transaction;
+        return $this;
+    }
+    
 
-		return $this;
-	}
+    /**
+     * Gets manually_decided_by
+     *
+     * @return int
+     */
+    public function getManuallyDecidedBy()
+    {
+        return $this->container['manually_decided_by'];
+    }
 
-	/**
-	 * Validates the model's properties and throws a ValidationException if the validation fails.
-	 *
-	 * @throws ValidationException
-	 */
-	public function validate() {
-		parent::validate();
+    /**
+     * Sets manually_decided_by
+     *
+     * @param int $manually_decided_by 
+     *
+     * @return $this
+     */
+    public function setManuallyDecidedBy($manually_decided_by)
+    {
+        $this->container['manually_decided_by'] = $manually_decided_by;
 
-	}
+        return $this;
+    }
+    
 
-	/**
-	 * Returns true if all the properties in the model are valid.
-	 *
-	 * @return boolean
-	 */
-	public function isValid() {
-		try {
-			$this->validate();
-			return true;
-		} catch (ValidationException $e) {
-			return false;
-		}
-	}
+    /**
+     * Gets manually_decided_on
+     *
+     * @return \DateTime
+     */
+    public function getManuallyDecidedOn()
+    {
+        return $this->container['manually_decided_on'];
+    }
 
-	/**
-	 * Returns the string presentation of the object.
-	 *
-	 * @return string
-	 */
-	public function __toString() {
-		if (defined('JSON_PRETTY_PRINT')) { // use JSON pretty print
-			return json_encode(\PostFinanceCheckout\Sdk\ObjectSerializer::sanitizeForSerialization($this), JSON_PRETTY_PRINT);
-		}
+    /**
+     * Sets manually_decided_on
+     *
+     * @param \DateTime $manually_decided_on 
+     *
+     * @return $this
+     */
+    public function setManuallyDecidedOn($manually_decided_on)
+    {
+        $this->container['manually_decided_on'] = $manually_decided_on;
 
-		return json_encode(\PostFinanceCheckout\Sdk\ObjectSerializer::sanitizeForSerialization($this));
-	}
+        return $this;
+    }
+    
 
+    /**
+     * Gets planned_purge_date
+     *
+     * @return \DateTime
+     */
+    public function getPlannedPurgeDate()
+    {
+        return $this->container['planned_purge_date'];
+    }
+
+    /**
+     * Sets planned_purge_date
+     *
+     * @param \DateTime $planned_purge_date The planned purge date indicates when the entity is permanently removed. When the date is null the entity is not planned to be removed.
+     *
+     * @return $this
+     */
+    public function setPlannedPurgeDate($planned_purge_date)
+    {
+        $this->container['planned_purge_date'] = $planned_purge_date;
+
+        return $this;
+    }
+    
+
+    /**
+     * Gets state
+     *
+     * @return \PostFinanceCheckout\Sdk\Model\DeliveryIndicationState
+     */
+    public function getState()
+    {
+        return $this->container['state'];
+    }
+
+    /**
+     * Sets state
+     *
+     * @param \PostFinanceCheckout\Sdk\Model\DeliveryIndicationState $state 
+     *
+     * @return $this
+     */
+    public function setState($state)
+    {
+        $this->container['state'] = $state;
+
+        return $this;
+    }
+    
+
+    /**
+     * Gets timeout_on
+     *
+     * @return \DateTime
+     */
+    public function getTimeoutOn()
+    {
+        return $this->container['timeout_on'];
+    }
+
+    /**
+     * Sets timeout_on
+     *
+     * @param \DateTime $timeout_on 
+     *
+     * @return $this
+     */
+    public function setTimeoutOn($timeout_on)
+    {
+        $this->container['timeout_on'] = $timeout_on;
+
+        return $this;
+    }
+    
+
+    /**
+     * Gets transaction
+     *
+     * @return \PostFinanceCheckout\Sdk\Model\Transaction
+     */
+    public function getTransaction()
+    {
+        return $this->container['transaction'];
+    }
+
+    /**
+     * Sets transaction
+     *
+     * @param \PostFinanceCheckout\Sdk\Model\Transaction $transaction 
+     *
+     * @return $this
+     */
+    public function setTransaction($transaction)
+    {
+        $this->container['transaction'] = $transaction;
+
+        return $this;
+    }
+    
+    /**
+     * Returns true if offset exists. False otherwise.
+     *
+     * @param integer $offset Offset
+     *
+     * @return boolean
+     */
+    public function offsetExists($offset)
+    {
+        return isset($this->container[$offset]);
+    }
+
+    /**
+     * Gets offset.
+     *
+     * @param integer $offset Offset
+     *
+     * @return mixed
+     */
+    public function offsetGet($offset)
+    {
+        return isset($this->container[$offset]) ? $this->container[$offset] : null;
+    }
+
+    /**
+     * Sets value based on offset.
+     *
+     * @param integer $offset Offset
+     * @param mixed   $value  Value to be set
+     *
+     * @return void
+     */
+    public function offsetSet($offset, $value)
+    {
+        if (is_null($offset)) {
+            $this->container[] = $value;
+        } else {
+            $this->container[$offset] = $value;
+        }
+    }
+
+    /**
+     * Unsets offset.
+     *
+     * @param integer $offset Offset
+     *
+     * @return void
+     */
+    public function offsetUnset($offset)
+    {
+        unset($this->container[$offset]);
+    }
+
+    /**
+     * Gets the string presentation of the object
+     *
+     * @return string
+     */
+    public function __toString()
+    {
+        if (defined('JSON_PRETTY_PRINT')) { // use JSON pretty print
+            return json_encode(
+                ObjectSerializer::sanitizeForSerialization($this),
+                JSON_PRETTY_PRINT
+            );
+        }
+
+        return json_encode(ObjectSerializer::sanitizeForSerialization($this));
+    }
 }
+
 

@@ -1,10 +1,8 @@
 <?php
 /**
- * PostFinance Checkout SDK
+ *  SDK
  *
- * This library allows to interact with the PostFinance Checkout payment service.
- * PostFinance Checkout SDK: 1.0.0
- * 
+ * This library allows to interact with the  payment service.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -18,6 +16,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 
 namespace PostFinanceCheckout\Sdk\Http;
 
@@ -43,7 +42,7 @@ final class HttpResponse {
 	 *
 	 * @var array
 	 */
-	private $headers = array();
+	private $headers = [];
 
 	 /**
 	 * The HTTP body.
@@ -104,7 +103,7 @@ final class HttpResponse {
 	*/
 	private function parseHttpHeaders($rawHeaders) {
 		// ref/credit: http://php.net/manual/en/function.http-parse-headers.php#112986
-		$headers = array();
+		$headers = [];
 		$key = '';
 
 		foreach (explode("\n", $rawHeaders) as $h) {
@@ -116,7 +115,7 @@ final class HttpResponse {
 				} elseif (is_array($headers[$h[0]])) {
 					$headers[$h[0]] = array_merge($headers[$h[0]], array(trim($h[1])));
 				} else {
-					$headers[$h[0]] = array_merge(array($headers[$h[0]]), array(trim($h[1])));
+					$headers[$h[0]] = array_merge([$headers[$h[0]]], [trim($h[1])]);
 				}
 
 				$key = $h[0];

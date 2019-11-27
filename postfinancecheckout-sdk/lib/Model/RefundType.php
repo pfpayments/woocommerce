@@ -1,10 +1,8 @@
 <?php
 /**
- * PostFinance Checkout SDK
+ *  SDK
  *
- * This library allows to interact with the PostFinance Checkout payment service.
- * PostFinance Checkout SDK: 1.0.0
- * 
+ * This library allows to interact with the  payment service.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -19,9 +17,9 @@
  * limitations under the License.
  */
 
+
 namespace PostFinanceCheckout\Sdk\Model;
-
-
+use \PostFinanceCheckout\Sdk\ObjectSerializer;
 
 /**
  * RefundType model
@@ -32,14 +30,29 @@ namespace PostFinanceCheckout\Sdk\Model;
  * @author      customweb GmbH
  * @license     http://www.apache.org/licenses/LICENSE-2.0 Apache License v2
  */
-class RefundType implements IEnum {
-
-	const CUSTOMER_INITIATED_AUTOMATIC = 'CUSTOMER_INITIATED_AUTOMATIC';
-	const CUSTOMER_INITIATED_MANUAL = 'CUSTOMER_INITIATED_MANUAL';
-	const MERCHANT_INITIATED_ONLINE = 'MERCHANT_INITIATED_ONLINE';
-	const MERCHANT_INITIATED_OFFLINE = 'MERCHANT_INITIATED_OFFLINE';
-	
-
-	
-
+class RefundType
+{
+    /**
+     * Possible values of this enum
+     */
+    const CUSTOMER_INITIATED_AUTOMATIC = 'CUSTOMER_INITIATED_AUTOMATIC';
+    const CUSTOMER_INITIATED_MANUAL = 'CUSTOMER_INITIATED_MANUAL';
+    const MERCHANT_INITIATED_ONLINE = 'MERCHANT_INITIATED_ONLINE';
+    const MERCHANT_INITIATED_OFFLINE = 'MERCHANT_INITIATED_OFFLINE';
+    
+    /**
+     * Gets allowable values of the enum
+     * @return string[]
+     */
+    public static function getAllowableEnumValues()
+    {
+        return [
+            self::CUSTOMER_INITIATED_AUTOMATIC,
+            self::CUSTOMER_INITIATED_MANUAL,
+            self::MERCHANT_INITIATED_ONLINE,
+            self::MERCHANT_INITIATED_OFFLINE,
+        ];
+    }
 }
+
+

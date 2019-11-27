@@ -37,12 +37,25 @@ class WC_PostFinanceCheckout_Service_Transaction extends WC_PostFinanceCheckout_
 	private $transaction_service;
 	
 	/**
+	 * The transaction iframe service.
+	 *
+	 * @var \PostFinanceCheckout\Sdk\Service\TransactionIframeService
+	 */
+	private $transaction_iframe_service;
+	/**
+	 * The transaction payment page service.
+	 *
+	 * @var \PostFinanceCheckout\Sdk\Service\TransactionPaymentPageService
+	 */
+	private $transaction_payment_page_service;
+	
+	/**
 	 * The charge attempt API service.
 	 * 
 	 * @var \PostFinanceCheckout\Sdk\Service\ChargeAttemptService
 	 */
 	private $charge_attempt_service;
-
+	
 	/**
 	 * Returns the transaction API service.
 	 *
@@ -50,11 +63,35 @@ class WC_PostFinanceCheckout_Service_Transaction extends WC_PostFinanceCheckout_
 	 */
 	protected function get_transaction_service(){
 		if ($this->transaction_service === null) {
-		    $this->transaction_service = new \PostFinanceCheckout\Sdk\Service\TransactionService(WC_PostFinanceCheckout_Helper::instance()->get_api_client());
+			$this->transaction_service = new \PostFinanceCheckout\Sdk\Service\TransactionService(WC_PostFinanceCheckout_Helper::instance()->get_api_client());
 		}
 		return $this->transaction_service;
 	}
-
+	
+	/**
+	 * Returns the transaction iframe service.
+	 *
+	 * @return \PostFinanceCheckout\Sdk\Service\TransactionIframeService
+	 */
+	protected function get_transaction_iframe_service(){
+		if ($this->transaction_iframe_service === null) {
+			$this->transaction_iframe_service = new \PostFinanceCheckout\Sdk\Service\TransactionIframeService(WC_PostFinanceCheckout_Helper::instance()->get_api_client());
+		}
+		return $this->transaction_iframe_service;
+	}
+	
+	/**
+	 * Returns the transaction payment page service.
+	 *
+	 * @return \PostFinanceCheckout\Sdk\Service\TransactionPaymentPageService
+	 */
+	protected function get_transaction_payment_page_service(){
+		if ($this->transaction_payment_page_service === null) {
+			$this->transaction_payment_page_service = new \PostFinanceCheckout\Sdk\Service\TransactionPaymentPageService(WC_PostFinanceCheckout_Helper::instance()->get_api_client());
+		}
+		return $this->transaction_payment_page_service;
+	}
+	
 	/**
 	 * Returns the charge attempt API service.
 	 *
@@ -93,7 +130,7 @@ class WC_PostFinanceCheckout_Service_Transaction extends WC_PostFinanceCheckout_
 
 	
 	public function get_javascript_url_for_transaction(\PostFinanceCheckout\Sdk\Model\Transaction $transaction){
-	    return $this->get_transaction_service()->buildJavaScriptUrl($transaction->getLinkedSpaceId(), $transaction->getId());
+	    return $this->get_transaction_iframe_service()->javascriptUrl($transaction->getLinkedSpaceId(), $transaction->getId());
 	}
 	
 	
@@ -103,7 +140,7 @@ class WC_PostFinanceCheckout_Service_Transaction extends WC_PostFinanceCheckout_
 	 * @return string
 	 */
 	public function get_payment_page_url($space_id, $transaction_id){
-	    return $this->get_transaction_service()->buildPaymentPageUrl($space_id, $transaction_id);
+	    return $this->get_transaction_payment_page_service()->paymentPageUrl($space_id, $transaction_id);
 	}
 
 	/**
@@ -314,7 +351,7 @@ class WC_PostFinanceCheckout_Service_Transaction extends WC_PostFinanceCheckout_
 	        } catch(WC_PostFinanceCheckout_Exception_Invalid_Transaction_Amount $e){
 	            self::$possible_payment_method_cache[$current_cart_id] = array();
 	            throw $e;
-	        } catch (\WhitelabelMachineName\Sdk\ApiException $e) {
+	        } catch (\PostFinanceCheckout\Sdk\ApiException $e) {
 	            self::$possible_payment_method_cache[$current_cart_id] = array();
 	            throw $e;
 	        }
@@ -349,7 +386,7 @@ class WC_PostFinanceCheckout_Service_Transaction extends WC_PostFinanceCheckout_
 	        } catch(WC_PostFinanceCheckout_Exception_Invalid_Transaction_Amount $e){
 	            self::$possible_payment_method_cache[$order->get_id()] = array();
 	            throw $e;
-	        } catch (\WhitelabelMachineName\Sdk\ApiException $e) {
+	        } catch (\PostFinanceCheckout\Sdk\ApiException $e) {
 	            self::$possible_payment_method_cache[$order->get_id()] = array();
 	            throw $e;
 	        }

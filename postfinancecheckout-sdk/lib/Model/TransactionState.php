@@ -1,10 +1,8 @@
 <?php
 /**
- * PostFinance Checkout SDK
+ *  SDK
  *
- * This library allows to interact with the PostFinance Checkout payment service.
- * PostFinance Checkout SDK: 1.0.0
- * 
+ * This library allows to interact with the  payment service.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -19,9 +17,9 @@
  * limitations under the License.
  */
 
+
 namespace PostFinanceCheckout\Sdk\Model;
-
-
+use \PostFinanceCheckout\Sdk\ObjectSerializer;
 
 /**
  * TransactionState model
@@ -32,20 +30,41 @@ namespace PostFinanceCheckout\Sdk\Model;
  * @author      customweb GmbH
  * @license     http://www.apache.org/licenses/LICENSE-2.0 Apache License v2
  */
-class TransactionState implements IEnum {
-
-	const CREATE = 'CREATE';
-	const PENDING = 'PENDING';
-	const CONFIRMED = 'CONFIRMED';
-	const PROCESSING = 'PROCESSING';
-	const FAILED = 'FAILED';
-	const AUTHORIZED = 'AUTHORIZED';
-	const VOIDED = 'VOIDED';
-	const COMPLETED = 'COMPLETED';
-	const FULFILL = 'FULFILL';
-	const DECLINE = 'DECLINE';
-	
-
-	
-
+class TransactionState
+{
+    /**
+     * Possible values of this enum
+     */
+    const CREATE = 'CREATE';
+    const PENDING = 'PENDING';
+    const CONFIRMED = 'CONFIRMED';
+    const PROCESSING = 'PROCESSING';
+    const FAILED = 'FAILED';
+    const AUTHORIZED = 'AUTHORIZED';
+    const VOIDED = 'VOIDED';
+    const COMPLETED = 'COMPLETED';
+    const FULFILL = 'FULFILL';
+    const DECLINE = 'DECLINE';
+    
+    /**
+     * Gets allowable values of the enum
+     * @return string[]
+     */
+    public static function getAllowableEnumValues()
+    {
+        return [
+            self::CREATE,
+            self::PENDING,
+            self::CONFIRMED,
+            self::PROCESSING,
+            self::FAILED,
+            self::AUTHORIZED,
+            self::VOIDED,
+            self::COMPLETED,
+            self::FULFILL,
+            self::DECLINE,
+        ];
+    }
 }
+
+

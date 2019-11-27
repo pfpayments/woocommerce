@@ -108,26 +108,10 @@ class WC_PostFinanceCheckout_Admin_Settings_Page extends WC_Settings_Page {
 		        WC_Admin_Settings::add_error($error);
 		        
 		    }			
-			$this->delete_provider_transients();
+		    WC_PostFinanceCheckout_Helper::instance()->delete_provider_transients();
 		}
 		
 	}
-	
-
-	private function delete_provider_transients(){
-		$transients = array(
-			'wc_postfinancecheckout_currencies',
-			'wc_postfinancecheckout_label_description_groups',
-			'wc_postfinancecheckout_label_descriptions',
-			'wc_postfinancecheckout_languages',
-			'wc_postfinancecheckout_payment_connectors',
-			'wc_postfinancecheckout_payment_methods' 
-		);
-		foreach ($transients as $transient) {
-			delete_transient($transient);
-		}
-	}
-	
 	
 	public function output_links($value){
 	    foreach($value['links'] as $url => $text){
@@ -145,7 +129,7 @@ class WC_PostFinanceCheckout_Admin_Settings_Page extends WC_Settings_Page {
 		$settings = array(
 		    array(
 		        'links' => array(
-		            'https://plugin-documentation.postfinance-checkout.ch/pfpayments/woocommerce/1.2.11/docs/en/documentation.html' => __('Documentation', 'woo-postfinancecheckout'),
+		            'https://plugin-documentation.postfinance-checkout.ch/pfpayments/woocommerce/1.2.12/docs/en/documentation.html' => __('Documentation', 'woo-postfinancecheckout'),
 		            'https://www.postfinance-checkout.ch/user/signup' => __('Sign Up', 'woo-postfinancecheckout')
 		        ),
 		        'type' => 'postfinancecheckout_links',

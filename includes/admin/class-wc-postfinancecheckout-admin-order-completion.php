@@ -93,7 +93,7 @@ class WC_PostFinanceCheckout_Admin_Order_Completion {
 				$line_items[$item_id]['completion_tax'] = array_filter(array_map('wc_format_decimal', $tax_totals));
 			}
 			
-			foreach($line_items as $item_id => $ignore){
+			foreach(array_keys($line_items) as $item_id){
 				if(isset($line_items[$item_id]['qty']) && $line_items[$item_id]['qty'] == 0 && $line_items[$item_id]['completion_total'] == 0){
 					unset($line_items[$item_id]);
 				}

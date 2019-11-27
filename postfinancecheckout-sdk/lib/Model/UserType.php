@@ -1,10 +1,8 @@
 <?php
 /**
- * PostFinance Checkout SDK
+ *  SDK
  *
- * This library allows to interact with the PostFinance Checkout payment service.
- * PostFinance Checkout SDK: 1.0.0
- * 
+ * This library allows to interact with the  payment service.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -19,9 +17,9 @@
  * limitations under the License.
  */
 
+
 namespace PostFinanceCheckout\Sdk\Model;
-
-
+use \PostFinanceCheckout\Sdk\ObjectSerializer;
 
 /**
  * UserType model
@@ -32,15 +30,31 @@ namespace PostFinanceCheckout\Sdk\Model;
  * @author      customweb GmbH
  * @license     http://www.apache.org/licenses/LICENSE-2.0 Apache License v2
  */
-class UserType implements IEnum {
-
-	const HUMAN_USER = 'HUMAN_USER';
-	const SINGLE_SIGNON_USER = 'SINGLE_SIGNON_USER';
-	const APPLICATION_USER = 'APPLICATION_USER';
-	const ANONYMOUS_USER = 'ANONYMOUS_USER';
-	const SERVER_USER = 'SERVER_USER';
-	
-
-	
-
+class UserType
+{
+    /**
+     * Possible values of this enum
+     */
+    const HUMAN_USER = 'HUMAN_USER';
+    const SINGLE_SIGNON_USER = 'SINGLE_SIGNON_USER';
+    const APPLICATION_USER = 'APPLICATION_USER';
+    const ANONYMOUS_USER = 'ANONYMOUS_USER';
+    const SERVER_USER = 'SERVER_USER';
+    
+    /**
+     * Gets allowable values of the enum
+     * @return string[]
+     */
+    public static function getAllowableEnumValues()
+    {
+        return [
+            self::HUMAN_USER,
+            self::SINGLE_SIGNON_USER,
+            self::APPLICATION_USER,
+            self::ANONYMOUS_USER,
+            self::SERVER_USER,
+        ];
+    }
 }
+
+

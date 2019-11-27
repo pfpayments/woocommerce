@@ -3,15 +3,15 @@
  * Plugin Name: WooCommerce PostFinance Checkout
  * Plugin URI: https://wordpress.org/plugins/woo-postfinancecheckout
  * Description: Process WooCommerce payments with PostFinance Checkout.
- * Version: 1.2.11
+ * Version: 1.2.12
  * License: Apache2
  * License URI: http://www.apache.org/licenses/LICENSE-2.0
  * Author: customweb GmbH
  * Author URI: https://www.customweb.com
  * Requires at least: 4.7
- * Tested up to: 5.2.4
+ * Tested up to: 5.3.0
  * WC requires at least: 3.0.0
- * WC tested up to: 3.7.1
+ * WC tested up to: 3.8.0
  *
  * Text Domain: woo-postfinancecheckout
  * Domain Path: /languages/
@@ -43,7 +43,7 @@ if (!class_exists('WooCommerce_PostFinanceCheckout')) {
 		 *
 		 * @var string
 		 */
-		private $version = '1.2.11';
+		private $version = '1.2.12';
 		
 		/**
 		 * The single instance of the class.
@@ -259,7 +259,7 @@ if (!class_exists('WooCommerce_PostFinanceCheckout')) {
 		}
 
 		public function register_order_statuses(){
-			register_post_status('wc-postf-redirected',
+			register_post_status('wc-postfi-redirected',
 					array(
 						'label' => 'Processing',
 						'public' => true,
@@ -268,7 +268,7 @@ if (!class_exists('WooCommerce_PostFinanceCheckout')) {
 						'show_in_admin_status_list' => true,
 						'label_count' => _n_noop('PostFinance Checkout Processing <span class="count">(%s)</span>', 'PostFinance Checkout Processing <span class="count">(%s)</span>') 
 					));
-			register_post_status('wc-postf-waiting',
+			register_post_status('wc-postfi-waiting',
 					array(
 						'label' => 'Waiting',
 						'public' => true,
@@ -277,7 +277,7 @@ if (!class_exists('WooCommerce_PostFinanceCheckout')) {
 						'show_in_admin_status_list' => true,
 						'label_count' => _n_noop('Waiting <span class="count">(%s)</span>', 'Waiting <span class="count">(%s)</span>') 
 					));
-			register_post_status('wc-postf-manual',
+			register_post_status('wc-postfi-manual',
 					array(
 						'label' => 'Manual Decision',
 						'public' => true,
@@ -289,15 +289,15 @@ if (!class_exists('WooCommerce_PostFinanceCheckout')) {
 		}
 		
 		public function add_order_statuses($order_statuses){
-		    $order_statuses['wc-postf-redirected'] = _x('Redirected', 'Order status', 'woocommerce');
-		    $order_statuses['wc-postf-waiting'] = _x('Waiting', 'Order status', 'woocommerce');
-		    $order_statuses['wc-postf-manual'] = _x('Manual Decision', 'Order status', 'woocommerce');
+		    $order_statuses['wc-postfi-redirected'] = _x('Redirected', 'Order status', 'woocommerce');
+		    $order_statuses['wc-postfi-waiting'] = _x('Waiting', 'Order status', 'woocommerce');
+		    $order_statuses['wc-postfi-manual'] = _x('Manual Decision', 'Order status', 'woocommerce');
 		    
 		    return $order_statuses;
 		}
 		
 		public function valid_order_statuses_for_payment($statuses, $order = null){
-		    $statuses[] = 'postf-redirected';
+		    $statuses[] = 'postfi-redirected';
 		    
 		    return $statuses;
 		}
@@ -348,9 +348,9 @@ if (!class_exists('WooCommerce_PostFinanceCheckout')) {
 		}
 
 		public function valid_order_status_for_completion($statuses, WC_Order $order = null){
-			$statuses[] = 'postf-waiting';
-			$statuses[] = 'postf-manual';
-			$statuses[] = 'postf-redirected';
+			$statuses[] = 'postfi-waiting';
+			$statuses[] = 'postfi-manual';
+			$statuses[] = 'postfi-redirected';
 			
 			return $statuses;
 		}

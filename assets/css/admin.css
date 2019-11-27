@@ -20,8 +20,8 @@
 }
 
 /* Status Icons */
-.widefat .column-order_status mark.postf-redirected::after, .widefat .column-order_status mark.postf-waiting::after,
-	.widefat .column-order_status mark.postf-manual::after {
+.widefat .column-order_status mark.postfi-redirected::after, .widefat .column-order_status mark.postfi-waiting::after,
+	.widefat .column-order_status mark.postfi-manual::after {
 	font-family: woocommerce-wallee;
 	speak: none;
 	font-weight: 400;
@@ -39,7 +39,7 @@
 	border-radius: 100%;
 }
 
-.widefat .column-order_status mark.postf-redirected:after {
+.widefat .column-order_status mark.postfi-redirected:after {
 	content: "\e800";
 	background-color: #ffba00;
 	color: #ffffff;
@@ -47,7 +47,7 @@
 	font-size: 75%;
 }
 
-.widefat .column-order_status mark.postf-waiting:after {
+.widefat .column-order_status mark.postfi-waiting:after {
 	content: "\f252";
 	background-color: #baba00;
 	color: #ffffff;
@@ -55,7 +55,7 @@
 	font-size: 65%;
 }
 
-.widefat .column-order_status mark.postf-manual:after {
+.widefat .column-order_status mark.postfi-manual:after {
 	content: "\e801";
 	background-color: #ff2000;
 	color: #ffffff;
@@ -63,16 +63,16 @@
 	font-size: 75%;
 }
 
-.order-status.status-postf-redirected{
+.order-status.status-postfi-redirected{
 	
 }
 
-.order-status.status-postf-waiting{
+.order-status.status-postfi-waiting{
 	background-color: #f8e8a7;
 	color: #94790c;
 }
 
-.order-status.status-postf-manual{
+.order-status.status-postfi-manual{
 	background-color: #f8bfa7;
 	color: #94340c;
 	

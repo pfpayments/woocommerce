@@ -46,7 +46,7 @@ class WC_PostFinanceCheckout_Service_Line_Item extends WC_PostFinanceCheckout_Se
 	 */
 	protected function create_product_line_items_from_session(WC_Cart $cart, $currency){
 		$items = array();
-		foreach ($cart->get_cart() as $cart_item_key => $values) {
+		foreach ($cart->get_cart() as $values) {
 			/**
 			 * @var WC_Product $product
 			 */
@@ -109,7 +109,7 @@ class WC_PostFinanceCheckout_Service_Line_Item extends WC_PostFinanceCheckout_Se
 	 */
 	protected function create_fee_lines_items_from_session(WC_Cart $cart, $currency){
 		$fees = array();
-		foreach ($cart->get_fees() as $fee_key => $fee) {
+		foreach ($cart->get_fees() as $fee) {
 		    $line_item = new \PostFinanceCheckout\Sdk\Model\LineItemCreate();
 			
 			$amount_including_tax = $fee->amount + $fee->tax;
@@ -253,7 +253,7 @@ class WC_PostFinanceCheckout_Service_Line_Item extends WC_PostFinanceCheckout_Se
 			// Only for product variation
 			if($product->is_type('variation')){
 			    $variation_attributes = $product->get_variation_attributes();
-			    foreach($variation_attributes as $attribute_key => $ignore){
+			    foreach(array_keys($variation_attributes) as $attribute_key){
 			        $taxonomy = str_replace('attribute_', '', $attribute_key );
 		            $attribute_key_cleaned = $this->clean_attribute_key($taxonomy);
 			        if(isset($attributes[$attribute_key_cleaned])){
@@ -425,7 +425,7 @@ class WC_PostFinanceCheckout_Service_Line_Item extends WC_PostFinanceCheckout_Se
 			// Only for product variation
 			if($product->is_type('variation')){
 			    $variation_attributes = $product->get_variation_attributes();
-			    foreach($variation_attributes as $attribute_key => $ignore){
+			    foreach(array_keys($variation_attributes) as $attribute_key){
 			        $taxonomy = str_replace('attribute_', '', $attribute_key );
 			        $attribute_key_cleaned = $this->clean_attribute_key($taxonomy);
 			        if(isset($attributes[$attribute_key_cleaned])){
@@ -570,7 +570,7 @@ class WC_PostFinanceCheckout_Service_Line_Item extends WC_PostFinanceCheckout_Se
 	protected function get_taxes(array $rates_or_ids){
 		$tax_rates = array();
 		
-		foreach ($rates_or_ids as $rate_id => $rate_info) {
+		foreach (array_keys($rates_or_ids) as $rate_id) {
 		    $tax = new \PostFinanceCheckout\Sdk\Model\TaxCreate();
 			$tax->setTitle(WC_Tax::get_rate_label($rate_id));
 			$percent = WC_Tax::get_rate_percent($rate_id);

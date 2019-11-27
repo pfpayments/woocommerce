@@ -1,10 +1,8 @@
 <?php
 /**
- * PostFinance Checkout SDK
+ *  SDK
  *
- * This library allows to interact with the PostFinance Checkout payment service.
- * PostFinance Checkout SDK: 1.0.0
- * 
+ * This library allows to interact with the  payment service.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -19,9 +17,9 @@
  * limitations under the License.
  */
 
+
 namespace PostFinanceCheckout\Sdk\Model;
-
-
+use \PostFinanceCheckout\Sdk\ObjectSerializer;
 
 /**
  * ResourceState model
@@ -32,13 +30,27 @@ namespace PostFinanceCheckout\Sdk\Model;
  * @author      customweb GmbH
  * @license     http://www.apache.org/licenses/LICENSE-2.0 Apache License v2
  */
-class ResourceState implements IEnum {
-
-	const ACTIVE = 'ACTIVE';
-	const DELETING = 'DELETING';
-	const DELETED = 'DELETED';
-	
-
-	
-
+class ResourceState
+{
+    /**
+     * Possible values of this enum
+     */
+    const ACTIVE = 'ACTIVE';
+    const DELETING = 'DELETING';
+    const DELETED = 'DELETED';
+    
+    /**
+     * Gets allowable values of the enum
+     * @return string[]
+     */
+    public static function getAllowableEnumValues()
+    {
+        return [
+            self::ACTIVE,
+            self::DELETING,
+            self::DELETED,
+        ];
+    }
 }
+
+

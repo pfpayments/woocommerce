@@ -184,7 +184,7 @@ class WC_PostFinanceCheckout_Service_Refund extends WC_PostFinanceCheckout_Servi
 	protected function get_reductions(WC_Order $order, WC_Order_Refund $refund){
 		$reductions = array();
 		$currency =  $order->get_currency();
-		foreach ($refund->get_items() as $item_id => $item) {
+		foreach ($refund->get_items() as $item) {
 			
 			$order_item = $order->get_item($item->get_meta('_refunded_item_id', true));
 			
@@ -219,7 +219,7 @@ class WC_PostFinanceCheckout_Service_Refund extends WC_PostFinanceCheckout_Servi
 			}
 			$reductions[] = $reduction;
 		}
-		foreach ($refund->get_fees() as $fee_id => $fee) {
+		foreach ($refund->get_fees() as $fee) {
 			
 			$order_fee = $order->get_item($fee->get_meta('_refunded_item_id', true));
 			$unique_id = $order_fee->get_meta('_postfinancecheckout_unique_line_item_id', true);
@@ -233,7 +233,7 @@ class WC_PostFinanceCheckout_Service_Refund extends WC_PostFinanceCheckout_Servi
 			$reduction->setUnitPriceReduction($this->round_amount($amount_including_tax * -1, $currency));
 			$reductions[] = $reduction;
 		}
-		foreach ($refund->get_shipping_methods() as $shipping_id => $shipping) {
+		foreach ($refund->get_shipping_methods() as $shipping) {
 			
 			$order_shipping = $order->get_item($shipping->get_meta('_refunded_item_id', true));
 			$unique_id = $order_shipping->get_meta('_postfinancecheckout_unique_line_item_id', true);

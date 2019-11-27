@@ -1,10 +1,8 @@
 <?php
 /**
- * PostFinance Checkout SDK
+ *  SDK
  *
- * This library allows to interact with the PostFinance Checkout payment service.
- * PostFinance Checkout SDK: 1.0.0
- * 
+ * This library allows to interact with the  payment service.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -19,9 +17,11 @@
  * limitations under the License.
  */
 
+
 namespace PostFinanceCheckout\Sdk\Model;
 
-use PostFinanceCheckout\Sdk\ValidationException;
+use \ArrayAccess;
+use \PostFinanceCheckout\Sdk\ObjectSerializer;
 
 /**
  * RefundCreate model
@@ -32,260 +32,436 @@ use PostFinanceCheckout\Sdk\ValidationException;
  * @author      customweb GmbH
  * @license     http://www.apache.org/licenses/LICENSE-2.0 Apache License v2
  */
-class RefundCreate  {
+class RefundCreate implements ModelInterface, ArrayAccess
+{
+    const DISCRIMINATOR = null;
 
-	/**
-	 * The original name of the model.
-	 *
-	 * @var string
-	 */
-	private static $swaggerModelName = 'Refund.Create';
+    /**
+      * The original name of the model.
+      *
+      * @var string
+      */
+    protected static $swaggerModelName = 'Refund.Create';
 
-	/**
-	 * An array of property to type mappings. Used for (de)serialization.
-	 *
-	 * @var string[]
-	 */
-	private static $swaggerTypes = array(
-		'externalId' => 'string',
-		'merchantReference' => 'string',
-		'reductions' => '\PostFinanceCheckout\Sdk\Model\LineItemReductionCreate[]',
-		'transaction' => 'int',
-		'type' => '\PostFinanceCheckout\Sdk\Model\RefundType'	);
+    /**
+      * Array of property to type mappings. Used for (de)serialization
+      *
+      * @var string[]
+      */
+    protected static $swaggerTypes = [
+        'completion' => 'int',
+        'external_id' => 'string',
+        'merchant_reference' => 'string',
+        'reductions' => '\PostFinanceCheckout\Sdk\Model\LineItemReductionCreate[]',
+        'transaction' => 'int',
+        'type' => '\PostFinanceCheckout\Sdk\Model\RefundType'
+    ];
 
-	/**
-	 * Returns an array of property to type mappings.
-	 *
-	 * @return string[]
-	 */
-	public static function swaggerTypes() {
-		return self::$swaggerTypes;
-	}
+    /**
+      * Array of property to format mappings. Used for (de)serialization
+      *
+      * @var string[]
+      */
+    protected static $swaggerFormats = [
+        'completion' => 'int64',
+        'external_id' => null,
+        'merchant_reference' => null,
+        'reductions' => null,
+        'transaction' => 'int64',
+        'type' => null
+    ];
 
-	
+    /**
+     * Array of attributes where the key is the local name,
+     * and the value is the original name
+     *
+     * @var string[]
+     */
+    protected static $attributeMap = [
+        'completion' => 'completion',
+        'external_id' => 'externalId',
+        'merchant_reference' => 'merchantReference',
+        'reductions' => 'reductions',
+        'transaction' => 'transaction',
+        'type' => 'type'
+    ];
 
-	/**
-	 * The external id helps to identify duplicate calls to the refund service. As such the external ID has to be unique per transaction.
-	 *
-	 * @var string
-	 */
-	private $externalId;
+    /**
+     * Array of attributes to setter functions (for deserialization of responses)
+     *
+     * @var string[]
+     */
+    protected static $setters = [
+        'completion' => 'setCompletion',
+        'external_id' => 'setExternalId',
+        'merchant_reference' => 'setMerchantReference',
+        'reductions' => 'setReductions',
+        'transaction' => 'setTransaction',
+        'type' => 'setType'
+    ];
 
-	/**
-	 * 
-	 *
-	 * @var string
-	 */
-	private $merchantReference;
+    /**
+     * Array of attributes to getter functions (for serialization of requests)
+     *
+     * @var string[]
+     */
+    protected static $getters = [
+        'completion' => 'getCompletion',
+        'external_id' => 'getExternalId',
+        'merchant_reference' => 'getMerchantReference',
+        'reductions' => 'getReductions',
+        'transaction' => 'getTransaction',
+        'type' => 'getType'
+    ];
 
-	/**
-	 * 
-	 *
-	 * @var \PostFinanceCheckout\Sdk\Model\LineItemReductionCreate[]
-	 */
-	private $reductions;
+    
 
-	/**
-	 * 
-	 *
-	 * @var int
-	 */
-	private $transaction;
+    /**
+     * Associative array for storing property values
+     *
+     * @var mixed[]
+     */
+    protected $container = [];
 
-	/**
-	 * 
-	 *
-	 * @var \PostFinanceCheckout\Sdk\Model\RefundType
-	 */
-	private $type;
+    /**
+     * Constructor
+     *
+     * @param mixed[] $data Associated array of property values
+     *                      initializing the model
+     */
+    public function __construct(array $data = null)
+    {
+        
+        $this->container['completion'] = isset($data['completion']) ? $data['completion'] : null;
+        
+        $this->container['external_id'] = isset($data['external_id']) ? $data['external_id'] : null;
+        
+        $this->container['merchant_reference'] = isset($data['merchant_reference']) ? $data['merchant_reference'] : null;
+        
+        $this->container['reductions'] = isset($data['reductions']) ? $data['reductions'] : null;
+        
+        $this->container['transaction'] = isset($data['transaction']) ? $data['transaction'] : null;
+        
+        $this->container['type'] = isset($data['type']) ? $data['type'] : null;
+        
+    }
+
+    /**
+     * Show all the invalid properties with reasons.
+     *
+     * @return array invalid properties with reasons
+     */
+    public function listInvalidProperties()
+    {
+        $invalidProperties = [];
+
+        if ($this->container['external_id'] === null) {
+            $invalidProperties[] = "'external_id' can't be null";
+        }
+        if ($this->container['reductions'] === null) {
+            $invalidProperties[] = "'reductions' can't be null";
+        }
+        if ($this->container['type'] === null) {
+            $invalidProperties[] = "'type' can't be null";
+        }
+        return $invalidProperties;
+    }
+
+    /**
+     * Array of property to type mappings. Used for (de)serialization
+     *
+     * @return array
+     */
+    public static function swaggerTypes()
+    {
+        return self::$swaggerTypes;
+    }
+
+    /**
+     * Array of property to format mappings. Used for (de)serialization
+     *
+     * @return array
+     */
+    public static function swaggerFormats()
+    {
+        return self::$swaggerFormats;
+    }
 
 
-	/**
-	 * Constructor.
-	 *
-	 * @param mixed[] $data an associated array of property values initializing the model
-	 */
-	public function __construct(array $data = null) {
-		if (isset($data['externalId'])) {
-			$this->setExternalId($data['externalId']);
-		}
-		if (isset($data['merchantReference'])) {
-			$this->setMerchantReference($data['merchantReference']);
-		}
-		if (isset($data['reductions'])) {
-			$this->setReductions($data['reductions']);
-		}
-		if (isset($data['transaction'])) {
-			$this->setTransaction($data['transaction']);
-		}
-		if (isset($data['type'])) {
-			$this->setType($data['type']);
-		}
-	}
+    /**
+     * Array of attributes where the key is the local name,
+     * and the value is the original name
+     *
+     * @return array
+     */
+    public static function attributeMap()
+    {
+        return self::$attributeMap;
+    }
 
+    /**
+     * Array of attributes to setter functions (for deserialization of responses)
+     *
+     * @return array
+     */
+    public static function setters()
+    {
+        return self::$setters;
+    }
 
-	/**
-	 * Returns externalId.
-	 *
-	 * The external id helps to identify duplicate calls to the refund service. As such the external ID has to be unique per transaction.
-	 *
-	 * @return string
-	 */
-	public function getExternalId() {
-		return $this->externalId;
-	}
+    /**
+     * Array of attributes to getter functions (for serialization of requests)
+     *
+     * @return array
+     */
+    public static function getters()
+    {
+        return self::$getters;
+    }
 
-	/**
-	 * Sets externalId.
-	 *
-	 * @param string $externalId
-	 * @return RefundCreate
-	 */
-	public function setExternalId($externalId) {
-		$this->externalId = $externalId;
+    /**
+     * The original name of the model.
+     *
+     * @return string
+     */
+    public function getModelName()
+    {
+        return self::$swaggerModelName;
+    }
 
-		return $this;
-	}
+    
 
-	/**
-	 * Returns merchantReference.
-	 *
-	 * 
-	 *
-	 * @return string
-	 */
-	public function getMerchantReference() {
-		return $this->merchantReference;
-	}
+    /**
+     * Validate all the properties in the model
+     * return true if all passed
+     *
+     * @return bool True if all properties are valid
+     */
+    public function valid()
+    {
+        return count($this->listInvalidProperties()) === 0;
+    }
 
-	/**
-	 * Sets merchantReference.
-	 *
-	 * @param string $merchantReference
-	 * @return RefundCreate
-	 */
-	public function setMerchantReference($merchantReference) {
-		$this->merchantReference = $merchantReference;
+    
 
-		return $this;
-	}
+    /**
+     * Gets completion
+     *
+     * @return int
+     */
+    public function getCompletion()
+    {
+        return $this->container['completion'];
+    }
 
-	/**
-	 * Returns reductions.
-	 *
-	 * 
-	 *
-	 * @return \PostFinanceCheckout\Sdk\Model\LineItemReductionCreate[]
-	 */
-	public function getReductions() {
-		return $this->reductions;
-	}
+    /**
+     * Sets completion
+     *
+     * @param int $completion 
+     *
+     * @return $this
+     */
+    public function setCompletion($completion)
+    {
+        $this->container['completion'] = $completion;
 
-	/**
-	 * Sets reductions.
-	 *
-	 * @param \PostFinanceCheckout\Sdk\Model\LineItemReductionCreate[] $reductions
-	 * @return RefundCreate
-	 */
-	public function setReductions($reductions) {
-		$this->reductions = $reductions;
+        return $this;
+    }
+    
 
-		return $this;
-	}
+    /**
+     * Gets external_id
+     *
+     * @return string
+     */
+    public function getExternalId()
+    {
+        return $this->container['external_id'];
+    }
 
-	/**
-	 * Returns transaction.
-	 *
-	 * 
-	 *
-	 * @return int
-	 */
-	public function getTransaction() {
-		return $this->transaction;
-	}
+    /**
+     * Sets external_id
+     *
+     * @param string $external_id The external id helps to identify duplicate calls to the refund service. As such the external ID has to be unique per transaction.
+     *
+     * @return $this
+     */
+    public function setExternalId($external_id)
+    {
+        $this->container['external_id'] = $external_id;
 
-	/**
-	 * Sets transaction.
-	 *
-	 * @param int $transaction
-	 * @return RefundCreate
-	 */
-	public function setTransaction($transaction) {
-		$this->transaction = $transaction;
+        return $this;
+    }
+    
 
-		return $this;
-	}
+    /**
+     * Gets merchant_reference
+     *
+     * @return string
+     */
+    public function getMerchantReference()
+    {
+        return $this->container['merchant_reference'];
+    }
 
-	/**
-	 * Returns type.
-	 *
-	 * 
-	 *
-	 * @return \PostFinanceCheckout\Sdk\Model\RefundType
-	 */
-	public function getType() {
-		return $this->type;
-	}
+    /**
+     * Sets merchant_reference
+     *
+     * @param string $merchant_reference 
+     *
+     * @return $this
+     */
+    public function setMerchantReference($merchant_reference)
+    {
+        $this->container['merchant_reference'] = $merchant_reference;
 
-	/**
-	 * Sets type.
-	 *
-	 * @param \PostFinanceCheckout\Sdk\Model\RefundType $type
-	 * @return RefundCreate
-	 */
-	public function setType($type) {
-		$this->type = $type;
+        return $this;
+    }
+    
 
-		return $this;
-	}
+    /**
+     * Gets reductions
+     *
+     * @return \PostFinanceCheckout\Sdk\Model\LineItemReductionCreate[]
+     */
+    public function getReductions()
+    {
+        return $this->container['reductions'];
+    }
 
-	/**
-	 * Validates the model's properties and throws a ValidationException if the validation fails.
-	 *
-	 * @throws ValidationException
-	 */
-	public function validate() {
+    /**
+     * Sets reductions
+     *
+     * @param \PostFinanceCheckout\Sdk\Model\LineItemReductionCreate[] $reductions 
+     *
+     * @return $this
+     */
+    public function setReductions($reductions)
+    {
+        $this->container['reductions'] = $reductions;
 
-		if ($this->getExternalId() === null) {
-			throw new ValidationException("'externalId' can't be null", 'externalId', $this);
-		}
-		if ($this->getReductions() === null) {
-			throw new ValidationException("'reductions' can't be null", 'reductions', $this);
-		}
-		if ($this->getTransaction() === null) {
-			throw new ValidationException("'transaction' can't be null", 'transaction', $this);
-		}
-		if ($this->getType() === null) {
-			throw new ValidationException("'type' can't be null", 'type', $this);
-		}
-	}
+        return $this;
+    }
+    
 
-	/**
-	 * Returns true if all the properties in the model are valid.
-	 *
-	 * @return boolean
-	 */
-	public function isValid() {
-		try {
-			$this->validate();
-			return true;
-		} catch (ValidationException $e) {
-			return false;
-		}
-	}
+    /**
+     * Gets transaction
+     *
+     * @return int
+     */
+    public function getTransaction()
+    {
+        return $this->container['transaction'];
+    }
 
-	/**
-	 * Returns the string presentation of the object.
-	 *
-	 * @return string
-	 */
-	public function __toString() {
-		if (defined('JSON_PRETTY_PRINT')) { // use JSON pretty print
-			return json_encode(\PostFinanceCheckout\Sdk\ObjectSerializer::sanitizeForSerialization($this), JSON_PRETTY_PRINT);
-		}
+    /**
+     * Sets transaction
+     *
+     * @param int $transaction 
+     *
+     * @return $this
+     */
+    public function setTransaction($transaction)
+    {
+        $this->container['transaction'] = $transaction;
 
-		return json_encode(\PostFinanceCheckout\Sdk\ObjectSerializer::sanitizeForSerialization($this));
-	}
+        return $this;
+    }
+    
 
+    /**
+     * Gets type
+     *
+     * @return \PostFinanceCheckout\Sdk\Model\RefundType
+     */
+    public function getType()
+    {
+        return $this->container['type'];
+    }
+
+    /**
+     * Sets type
+     *
+     * @param \PostFinanceCheckout\Sdk\Model\RefundType $type 
+     *
+     * @return $this
+     */
+    public function setType($type)
+    {
+        $this->container['type'] = $type;
+
+        return $this;
+    }
+    
+    /**
+     * Returns true if offset exists. False otherwise.
+     *
+     * @param integer $offset Offset
+     *
+     * @return boolean
+     */
+    public function offsetExists($offset)
+    {
+        return isset($this->container[$offset]);
+    }
+
+    /**
+     * Gets offset.
+     *
+     * @param integer $offset Offset
+     *
+     * @return mixed
+     */
+    public function offsetGet($offset)
+    {
+        return isset($this->container[$offset]) ? $this->container[$offset] : null;
+    }
+
+    /**
+     * Sets value based on offset.
+     *
+     * @param integer $offset Offset
+     * @param mixed   $value  Value to be set
+     *
+     * @return void
+     */
+    public function offsetSet($offset, $value)
+    {
+        if (is_null($offset)) {
+            $this->container[] = $value;
+        } else {
+            $this->container[$offset] = $value;
+        }
+    }
+
+    /**
+     * Unsets offset.
+     *
+     * @param integer $offset Offset
+     *
+     * @return void
+     */
+    public function offsetUnset($offset)
+    {
+        unset($this->container[$offset]);
+    }
+
+    /**
+     * Gets the string presentation of the object
+     *
+     * @return string
+     */
+    public function __toString()
+    {
+        if (defined('JSON_PRETTY_PRINT')) { // use JSON pretty print
+            return json_encode(
+                ObjectSerializer::sanitizeForSerialization($this),
+                JSON_PRETTY_PRINT
+            );
+        }
+
+        return json_encode(ObjectSerializer::sanitizeForSerialization($this));
+    }
 }
+
 

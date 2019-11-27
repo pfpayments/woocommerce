@@ -78,7 +78,7 @@ class WC_PostFinanceCheckout_Webhook_Transaction extends WC_PostFinanceCheckout_
 	    if (!$order->get_meta("_postfinancecheckout_confirmed", true) && !$order->get_meta("_postfinancecheckout_authorized", true)){
     	    do_action('wc_postfinancecheckout_confirmed', $transaction , $order);
     		$order->add_meta_data("_postfinancecheckout_confirmed", "true", true);
-    		$status = apply_filters('wc_postfinancecheckout_confirmed_status', 'postf-redirected', $order);
+    		$status = apply_filters('wc_postfinancecheckout_confirmed_status', 'postfi-redirected', $order);
     		$order->update_status($status);
     		wc_maybe_reduce_stock_levels($order->get_id());
 	   }
@@ -100,7 +100,7 @@ class WC_PostFinanceCheckout_Webhook_Transaction extends WC_PostFinanceCheckout_
 	protected function waiting(\PostFinanceCheckout\Sdk\Model\Transaction $transaction, WC_Order $order){
 		if (!$order->get_meta('_postfinancecheckout_manual_check', true)) {
 		    do_action('wc_postfinancecheckout_completed', $transaction , $order);
-			$status = apply_filters('wc_postfinancecheckout_completed_status', 'postf-waiting', $order);
+			$status = apply_filters('wc_postfinancecheckout_completed_status', 'postfi-waiting', $order);
 			$order->update_status($status);	
 		}
 	}
@@ -114,7 +114,7 @@ class WC_PostFinanceCheckout_Webhook_Transaction extends WC_PostFinanceCheckout_
 
 	protected function failed(\PostFinanceCheckout\Sdk\Model\Transaction $transaction, WC_Order $order){
 	    do_action('wc_postfinancecheckout_failed', $transaction , $order);
-	    if($order->get_status('edit') == 'pending' || $order->get_status('edit') == 'postf-redirected'){
+	    if($order->get_status('edit') == 'pending' || $order->get_status('edit') == 'postfi-redirected'){
     		$status = apply_filters('wc_postfinancecheckout_failed_status', 'failed', $order);
     		$order->update_status($status);
     		WC_PostFinanceCheckout_Helper::instance()->maybe_restock_items_for_order($order);
