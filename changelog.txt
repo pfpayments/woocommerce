@@ -223,3 +223,8 @@
 * Fix - Document download
 * Dev - Update used PHP SDK
 
+= 1.2.14 - December 5, 2019 =
+
+* Fix - Document download
+* Dev - Update used PHP SDK
+
