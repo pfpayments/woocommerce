@@ -232,3 +232,7 @@
 
 * Fix - Discount display
 
+= 1.2.16 - December 19, 2019 =
+
+* Fix - Discount display
+

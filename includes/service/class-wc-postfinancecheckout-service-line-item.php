@@ -220,14 +220,13 @@ class WC_PostFinanceCheckout_Service_Line_Item extends WC_PostFinanceCheckout_Se
 			 */
 			
 		    $line_item = new \PostFinanceCheckout\Sdk\Model\LineItemCreate();
-			
-			$amount_including_tax = $item->get_total() + $item->get_total_tax();
-			
-			$line_item->setAmountIncludingTax($this->round_amount($amount_including_tax, $currency));
-			$quantity = 1;
-			if ($item->get_quantity() != 0) {
-				$quantity = $item->get_quantity();
-			}
+            $amount_including_tax = $item->get_subtotal() + $item->get_subtotal_tax();
+            $discount_including_tax = $item->get_total() + $item->get_total_tax();
+
+            $line_item->setAmountIncludingTax($this->round_amount($discount_including_tax, $currency));
+            $line_item->setDiscountIncludingTax($this->round_amount($amount_including_tax-$discount_including_tax, $currency));
+            $quantity = empty($item->get_quantity())? 1: $item->get_quantity();
+
 			$line_item->setQuantity($quantity);
 			
 			$product = $item->get_product();
