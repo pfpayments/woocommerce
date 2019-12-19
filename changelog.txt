@@ -228,3 +228,7 @@
 * Fix - Document download
 * Dev - Update used PHP SDK
 
+= 1.2.15 - December 19, 2019 =
+
+* Fix - Discount display
+

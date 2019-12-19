@@ -18,8 +18,9 @@ class WC_PostFinanceCheckout_Service_Line_Item extends WC_PostFinanceCheckout_Se
 	/**
 	 * Returns the line items from the given cart
 	 *
-	 * @return \PostFinanceCheckout\Sdk\Model\LineItemCreate[]
-	 */
+     * @return \PostFinanceCheckout\Sdk\Model\LineItemCreate[]
+     * @throws WC_PostFinanceCheckout_Exception_Invalid_Transaction_Amount
+     */
 	public function get_items_from_session(){
 		$currency = get_woocommerce_currency();
 		$cart = WC()->cart;
@@ -52,16 +53,15 @@ class WC_PostFinanceCheckout_Service_Line_Item extends WC_PostFinanceCheckout_Se
 			 */
 			$product = $values['data'];
 			$line_item = new \PostFinanceCheckout\Sdk\Model\LineItemCreate();
-			
-			$amount_including_tax = $values['line_total'] + $values['line_tax'];
-			
-			$line_item->setAmountIncludingTax($this->round_amount($amount_including_tax, $currency));
+            $amount_including_tax = $values['line_subtotal'] + $values['line_subtotal_tax'];
+            $discount_including_tax = $values['line_total'] + $values['line_tax'];
+
+            $line_item->setAmountIncludingTax($this->round_amount($discount_including_tax, $currency));
+            $line_item->setDiscountIncludingTax($this->round_amount($amount_including_tax - $discount_including_tax, $currency));
 			$line_item->setName($product->get_name());
 			
-			$quantity = 1;
-			if ($values['quantity'] != 0) {
-				$quantity = $values['quantity'];
-			}
+			$quantity = empty($values['quantity'])? 1 : $values['quantity'];
+
 			$line_item->setQuantity($quantity);
 			$line_item->setShippingRequired(!$product->get_virtual());
 			
@@ -76,7 +76,6 @@ class WC_PostFinanceCheckout_Service_Line_Item extends WC_PostFinanceCheckout_Se
 			$line_item->setSku($sku, 200);
 			
 			$line_item->setTaxes($this->get_taxes(WC_Tax::get_rates($product->get_tax_class())));
-			
 			$line_item->setType(\PostFinanceCheckout\Sdk\Model\LineItemType::PRODUCT);
 			$line_item->setUniqueId(WC_PostFinanceCheckout_Unique_Id::get_uuid());
 			
@@ -187,8 +186,10 @@ class WC_PostFinanceCheckout_Service_Line_Item extends WC_PostFinanceCheckout_Se
 	/**
 	 * Returns the line items from the given cart
 	 *
-	 * @return \PostFinanceCheckout\Sdk\Model\LineItemCreate[]
-	 */
+     * @param WC_Order $order
+     * @return \PostFinanceCheckout\Sdk\Model\LineItemCreate[]
+     * @throws WC_PostFinanceCheckout_Exception_Invalid_Transaction_Amount
+     */
 	public function get_items_from_order(WC_Order $order){
 		$raw = $this->get_raw_items_from_order($order);		
 		$items = apply_filters('wc_postfinancecheckout_modify_line_item_order', $raw , $order);		
@@ -558,7 +559,7 @@ class WC_PostFinanceCheckout_Service_Line_Item extends WC_PostFinanceCheckout_Se
 	/**
 	 * Cleans the given line item for it to meet the API's requirements.
 	 *
-	 * @param \PostFinanceCheckout\Sdk\Model\LineItemCreate $lineItem
+	 * @param \PostFinanceCheckout\Sdk\Model\LineItemCreate $line_item
 	 * @return \PostFinanceCheckout\Sdk\Model\LineItemCreate
 	 */
 	protected function clean_line_item(\PostFinanceCheckout\Sdk\Model\LineItemCreate $line_item){
@@ -571,12 +572,10 @@ class WC_PostFinanceCheckout_Service_Line_Item extends WC_PostFinanceCheckout_Se
 		$tax_rates = array();
 		
 		foreach (array_keys($rates_or_ids) as $rate_id) {
-		    $tax = new \PostFinanceCheckout\Sdk\Model\TaxCreate();
-			$tax->setTitle(WC_Tax::get_rate_label($rate_id));
-			$percent = WC_Tax::get_rate_percent($rate_id);
-			$number = rtrim($percent, '%');
-			$tax->setRate($number);
-			$tax_rates[] = $tax;
+            $tax_rates[] = new \PostFinanceCheckout\Sdk\Model\TaxCreate(array(
+                'title' => WC_Tax::get_rate_label($rate_id),
+                'rate' => rtrim(WC_Tax::get_rate_percent($rate_id), '%')
+            ));
 		}
 		
 		return $tax_rates;
