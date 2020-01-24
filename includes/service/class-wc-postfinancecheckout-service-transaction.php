@@ -42,7 +42,15 @@ class WC_PostFinanceCheckout_Service_Transaction extends WC_PostFinanceCheckout_
 	 * @var \PostFinanceCheckout\Sdk\Service\TransactionIframeService
 	 */
 	private $transaction_iframe_service;
-	/**
+
+    /**
+     * The transaction lightbox API service.
+     *
+     * @var \PostFinanceCheckout\Sdk\Service\TransactionLightboxService
+     */
+    private $transaction_lightbox_service;
+
+    /**
 	 * The transaction payment page service.
 	 *
 	 * @var \PostFinanceCheckout\Sdk\Service\TransactionPaymentPageService
@@ -60,9 +68,10 @@ class WC_PostFinanceCheckout_Service_Transaction extends WC_PostFinanceCheckout_
 	 * Returns the transaction API service.
 	 *
 	 * @return \PostFinanceCheckout\Sdk\Service\TransactionService
+     * @throws Exception
 	 */
 	protected function get_transaction_service(){
-		if ($this->transaction_service === null) {
+		if (is_null($this->transaction_service)) {
 			$this->transaction_service = new \PostFinanceCheckout\Sdk\Service\TransactionService(WC_PostFinanceCheckout_Helper::instance()->get_api_client());
 		}
 		return $this->transaction_service;
@@ -72,21 +81,36 @@ class WC_PostFinanceCheckout_Service_Transaction extends WC_PostFinanceCheckout_
 	 * Returns the transaction iframe service.
 	 *
 	 * @return \PostFinanceCheckout\Sdk\Service\TransactionIframeService
+     * @throws Exception
 	 */
 	protected function get_transaction_iframe_service(){
-		if ($this->transaction_iframe_service === null) {
+		if (is_null($this->transaction_iframe_service)) {
 			$this->transaction_iframe_service = new \PostFinanceCheckout\Sdk\Service\TransactionIframeService(WC_PostFinanceCheckout_Helper::instance()->get_api_client());
 		}
 		return $this->transaction_iframe_service;
 	}
+
+    /**
+     * Returns the transaction lightbox service.
+     *
+     * @return \PostFinanceCheckout\Sdk\Service\TransactionLightboxService
+     * @throws Exception
+     */
+    protected function get_transaction_lightbox_service(){
+        if (is_null($this->transaction_lightbox_service)) {
+            $this->transaction_lightbox_service = new \PostFinanceCheckout\Sdk\Service\TransactionLightboxService(WC_PostFinanceCheckout_Helper::instance()->get_api_client());
+        }
+        return $this->transaction_lightbox_service;
+    }
 	
 	/**
 	 * Returns the transaction payment page service.
 	 *
 	 * @return \PostFinanceCheckout\Sdk\Service\TransactionPaymentPageService
+     * @throws Exception
 	 */
 	protected function get_transaction_payment_page_service(){
-		if ($this->transaction_payment_page_service === null) {
+		if (is_null($this->transaction_payment_page_service)) {
 			$this->transaction_payment_page_service = new \PostFinanceCheckout\Sdk\Service\TransactionPaymentPageService(WC_PostFinanceCheckout_Helper::instance()->get_api_client());
 		}
 		return $this->transaction_payment_page_service;
@@ -96,9 +120,10 @@ class WC_PostFinanceCheckout_Service_Transaction extends WC_PostFinanceCheckout_
 	 * Returns the charge attempt API service.
 	 *
 	 * @return \PostFinanceCheckout\Sdk\Service\ChargeAttemptService
+     * @throws Exception
 	 */
 	protected function get_charge_attempt_service(){
-		if ($this->charge_attempt_service === null) {
+		if (is_null($this->charge_attempt_service)) {
 		    $this->charge_attempt_service = new \PostFinanceCheckout\Sdk\Service\ChargeAttemptService(WC_PostFinanceCheckout_Helper::instance()->get_api_client());
 		}
 		return $this->charge_attempt_service;
@@ -107,11 +132,11 @@ class WC_PostFinanceCheckout_Service_Transaction extends WC_PostFinanceCheckout_
 	/**
 	 * Wait for the transaction to be in one of the given states.
 	 *
-	 * @param WC_Order $order
-	 * @param array $states
-	 * @param int $maxWaitTime
-	 * @return boolean
-	 */
+     * @param WC_Order $order
+     * @param array    $states
+     * @param int      $max_wait_time
+     * @return bool
+     */
 	public function wait_for_transaction_state(WC_Order $order, array $states, $max_wait_time = 10){
 		$start_time = microtime(true);
 		while (true) {
@@ -128,17 +153,37 @@ class WC_PostFinanceCheckout_Service_Transaction extends WC_PostFinanceCheckout_
 		}
 	}
 
-	
+    /**
+     * Get IFrame JavaScript URL
+     *
+     * @param \PostFinanceCheckout\Sdk\Model\Transaction $transaction
+     * @return mixed
+     * @throws Exception
+     */
 	public function get_javascript_url_for_transaction(\PostFinanceCheckout\Sdk\Model\Transaction $transaction){
 	    return $this->get_transaction_iframe_service()->javascriptUrl($transaction->getLinkedSpaceId(), $transaction->getId());
 	}
+
+    /**
+     * Get Lightbox JavaScript URL
+     *
+     * @param \PostFinanceCheckout\Sdk\Model\Transaction $transaction
+     * @return mixed
+     * @throws Exception
+     */
+    public function get_lightbox_url_for_transaction(\PostFinanceCheckout\Sdk\Model\Transaction $transaction){
+        return $this->get_transaction_lightbox_service()->javascriptUrl($transaction->getLinkedSpaceId(), $transaction->getId());
+    }
 	
 	
 	/**
 	 * Returns the URL to PostFinance Checkout's JavaScript library that is necessary to display the payment form.
 	 *
-	 * @return string
-	 */
+     * @param int $space_id
+     * @param int $transaction_id
+     * @return string
+     * @throws Exception
+     */
 	public function get_payment_page_url($space_id, $transaction_id){
 	    return $this->get_transaction_payment_page_service()->paymentPageUrl($space_id, $transaction_id);
 	}
@@ -146,10 +191,11 @@ class WC_PostFinanceCheckout_Service_Transaction extends WC_PostFinanceCheckout_
 	/**
 	 * Returns the transaction with the given id.
 	 *
-	 * @param int $space_id
-	 * @param int $transaction_id
-	 * @return \PostFinanceCheckout\Sdk\Model\Transaction
-	 */
+     * @param int $space_id
+     * @param int $transaction_id
+     * @return \PostFinanceCheckout\Sdk\Model\Transaction
+     * @throws Exception
+     */
 	public function get_transaction($space_id, $transaction_id){
 		return $this->get_transaction_service()->read($space_id, $transaction_id);
 	}
@@ -157,20 +203,20 @@ class WC_PostFinanceCheckout_Service_Transaction extends WC_PostFinanceCheckout_
 	/**
 	 * Returns the last failed charge attempt of the transaction.
 	 *
-	 * @param int $space_id
-	 * @param int $transaction_id
-	 * @return \PostFinanceCheckout\Sdk\Model\ChargeAttempt
-	 */
+     * @param int $space_id
+     * @param int $transaction_id
+     * @return \PostFinanceCheckout\Sdk\Model\ChargeAttempt
+     * @throws Exception
+     */
 	public function get_failed_charge_attempt($space_id, $transaction_id){
 		$charge_attempt_service = $this->get_charge_attempt_service();
 		$query = new \PostFinanceCheckout\Sdk\Model\EntityQuery();
 		$filter = new \PostFinanceCheckout\Sdk\Model\EntityQueryFilter();
 		$filter->setType(\PostFinanceCheckout\Sdk\Model\EntityQueryFilterType::_AND);
-		$filter->setChildren(
-				array(
-					$this->create_entity_filter('charge.transaction.id', $transaction_id),
-				    $this->create_entity_filter('state', \PostFinanceCheckout\Sdk\Model\ChargeAttemptState::FAILED) 
-				));
+		$filter->setChildren(array(
+		    $this->create_entity_filter('charge.transaction.id', $transaction_id),
+            $this->create_entity_filter('state', \PostFinanceCheckout\Sdk\Model\ChargeAttemptState::FAILED)
+        ));
 		$query->setFilter($filter);
 		$query->setOrderBys(array(
 			$this->create_entity_order_by('failedOn') 
@@ -188,11 +234,12 @@ class WC_PostFinanceCheckout_Service_Transaction extends WC_PostFinanceCheckout_
 	/**
 	 * Updates the line items of the given transaction.
 	 *
-	 * @param int $space_id
-	 * @param int $transaction_id
-	 * @param \PostFinanceCheckout\Sdk\Model\LineItem[] $line_items
-	 * @return \PostFinanceCheckout\Sdk\Model\TransactionLineItemVersion
-	 */
+     * @param int $space_id
+     * @param int $transaction_id
+     * @param \PostFinanceCheckout\Sdk\Model\LineItem[] $line_items
+     * @return \PostFinanceCheckout\Sdk\Model\TransactionLineItemVersion
+     * @throws Exception
+     */
 	public function update_line_items($space_id, $transaction_id, $line_items){
 	    $update_request = new \PostFinanceCheckout\Sdk\Model\TransactionLineItemUpdateRequest();
 		$update_request->setTransactionId($transaction_id);
@@ -203,10 +250,11 @@ class WC_PostFinanceCheckout_Service_Transaction extends WC_PostFinanceCheckout_
 	/**
 	 * Stores the transaction data in the database.
 	 *
-	 * @param \PostFinanceCheckout\Sdk\Model\Transaction $transaction
-	 * @param WC_Order $order
-	 * @return WC_PostFinanceCheckout_Entity_Transaction_Info
-	 */
+     * @param \PostFinanceCheckout\Sdk\Model\Transaction $transaction
+     * @param WC_Order                                     $order
+     * @return WC_PostFinanceCheckout_Entity_Transaction_Info
+     * @throws Exception
+     */
 	public function update_transaction_info(\PostFinanceCheckout\Sdk\Model\Transaction $transaction, WC_Order $order){
 	    $info = WC_PostFinanceCheckout_Entity_Transaction_Info::load_by_transaction($transaction->getLinkedSpaceId(), $transaction->getId());
 		$info->set_transaction_id($transaction->getId());
@@ -257,9 +305,10 @@ class WC_PostFinanceCheckout_Service_Transaction extends WC_PostFinanceCheckout_
 	/**
 	 * Returns an array of the transaction's labels.
 	 *
-	 * @param \PostFinanceCheckout\Sdk\Model\Transaction $transaction
-	 * @return string[]
-	 */
+     * @param \PostFinanceCheckout\Sdk\Model\Transaction $transaction
+     * @return string[]
+     * @throws Exception
+     */
 	protected function get_transaction_labels(\PostFinanceCheckout\Sdk\Model\Transaction $transaction){
 		$charge_attempt = $this->get_charge_attempt($transaction);
 		if ($charge_attempt != null) {
@@ -277,9 +326,10 @@ class WC_PostFinanceCheckout_Service_Transaction extends WC_PostFinanceCheckout_
 	/**
 	 * Returns the successful charge attempt of the transaction.
 	 *
-	 * @param \PostFinanceCheckout\Sdk\Model\Transaction $transaction
-	 * @return \PostFinanceCheckout\Sdk\Model\ChargeAttempt
-	 */
+     * @param \PostFinanceCheckout\Sdk\Model\Transaction $transaction
+     * @return \PostFinanceCheckout\Sdk\Model\ChargeAttempt
+     * @throws Exception
+     */
 	protected function get_charge_attempt(\PostFinanceCheckout\Sdk\Model\Transaction $transaction){
 		$charge_attempt_service = $this->get_charge_attempt_service();
 		$query = new \PostFinanceCheckout\Sdk\Model\EntityQuery();
@@ -325,8 +375,9 @@ class WC_PostFinanceCheckout_Service_Transaction extends WC_PostFinanceCheckout_
 	/**
 	 * Returns the payment methods that can be used with the current cart.
 	 *
-	 * @return int[]
-	 */
+     * @return \PostFinanceCheckout\Sdk\Model\PaymentMethodConfiguration
+     * @throws WC_PostFinanceCheckout_Exception_Invalid_Transaction_Amount
+     */
 	public function get_possible_payment_methods_for_cart(){
 	    
 	    $current_cart_id = WC_PostFinanceCheckout_Helper::instance()->get_current_cart_id();
@@ -362,8 +413,10 @@ class WC_PostFinanceCheckout_Service_Transaction extends WC_PostFinanceCheckout_
 	/**
 	 * Returns the payment methods that can be used with the current cart.
 	 *
-	 * @return int[]
-	 */
+     * @param WC_Order $order
+     * @return \PostFinanceCheckout\Sdk\Model\PaymentMethodConfiguration
+     * @throws WC_PostFinanceCheckout_Exception_Invalid_Transaction_Amount
+     */
 	public function get_possible_payment_methods_for_order(WC_Order $order){
 	    
 	    if (!isset(self::$possible_payment_method_cache[$order->get_id()]) || self::$possible_payment_method_cache[$order->get_id()] == null) {
@@ -397,11 +450,13 @@ class WC_PostFinanceCheckout_Service_Transaction extends WC_PostFinanceCheckout_
 	/**
 	 * Update the transaction with the given order's data.
 	 *
-	 * @param int $transaction_id
-	 * @param int $space_id
-	 * @param WC_Order $order
-	 * @return \PostFinanceCheckout\Sdk\Model\Transaction
-	 */
+     * @param int      $transaction_id
+     * @param int      $space_id
+     * @param WC_Order $order
+     * @param int      $method_configuration_id
+     * @return \PostFinanceCheckout\Sdk\Model\Transaction
+     * @throws Exception
+     */
 	public function confirm_transaction($transaction_id, $space_id, WC_Order $order, $method_configuration_id){
 	    $last = new Exception('Unexpected Error');
 		for ($i = 0; $i < 5; $i++) {
@@ -428,9 +483,9 @@ class WC_PostFinanceCheckout_Service_Transaction extends WC_PostFinanceCheckout_
 	/**
 	 * Assemble the transaction data for the given order and invoice.
 	 *
-	 * @param WC_order $order
-	 * @param \PostFinanceCheckout\Sdk\Model\TransactionPending $transaction
-	 */
+     * @param WC_Order                                                    $order
+     * @param \PostFinanceCheckout\Sdk\Model\AbstractTransactionPending $transaction
+     */
 	protected function assemble_order_transaction_data(WC_Order $order, \PostFinanceCheckout\Sdk\Model\AbstractTransactionPending $transaction){
 		$transaction->setCurrency($order->get_currency());
 		$transaction->setBillingAddress($this->get_order_billing_address($order));
@@ -474,7 +529,14 @@ class WC_PostFinanceCheckout_Service_Transaction extends WC_PostFinanceCheckout_
 	                'utm_nooverride' => '1'
 	            ), home_url('/')));
 	}
-	
+
+    /**
+     * Set order line items
+     *
+     * @param WC_Order                                                    $order
+     * @param \PostFinanceCheckout\Sdk\Model\AbstractTransactionPending $transaction
+     * @throws WC_PostFinanceCheckout_Exception_Invalid_Transaction_Amount
+     */
 	protected function set_order_line_items(WC_Order $order, \PostFinanceCheckout\Sdk\Model\AbstractTransactionPending $transaction){
 	    $transaction->setLineItems(WC_PostFinanceCheckout_Service_Line_Item::instance()->get_items_from_order($order));
 	}
@@ -633,8 +695,9 @@ class WC_PostFinanceCheckout_Service_Transaction extends WC_PostFinanceCheckout_
 	 *
 	 * If no transaction exists, a new one is created.
 	 *
-	 * @return \PostFinanceCheckout\Sdk\Model\Transaction
-	 */
+     * @return \PostFinanceCheckout\Sdk\Model\Transaction
+     * @throws Exception
+     */
 	public function get_transaction_from_session(){
 
 	    $current_cart_id = WC_PostFinanceCheckout_Helper::instance()->get_current_cart_id();
@@ -660,8 +723,10 @@ class WC_PostFinanceCheckout_Service_Transaction extends WC_PostFinanceCheckout_
 	 *
 	 * If no transaction exists, a new one is created.
 	 *
-	 * @return \PostFinanceCheckout\Sdk\Model\Transaction
-	 */
+     * @param WC_Order $order
+     * @return \PostFinanceCheckout\Sdk\Model\Transaction
+     * @throws Exception
+     */
 	public function get_transaction_from_order(WC_Order $order){
 	   
 	        if (!isset(self::$transaction_cache[$order->get_id()]) || self::$transaction_cache[$order->get_id()] == null) {
@@ -692,9 +757,10 @@ class WC_PostFinanceCheckout_Service_Transaction extends WC_PostFinanceCheckout_
 	/**
 	 * Creates a transaction for the given order.
 	 *
-	 * @param WC_Order $order
-	 * @return \PostFinanceCheckout\Sdk\Model\TransactionCreate
-	 */
+     * @param WC_Order $order
+     * @return \PostFinanceCheckout\Sdk\Model\TransactionCreate
+     * @throws Exception
+     */
 	protected function create_transaction_by_order(WC_Order $order){
 	    $space_id = get_option(WooCommerce_PostFinanceCheckout::CK_SPACE_ID);
 	    $create_transaction = new \PostFinanceCheckout\Sdk\Model\TransactionCreate();
@@ -718,7 +784,8 @@ class WC_PostFinanceCheckout_Service_Transaction extends WC_PostFinanceCheckout_
 	 * Creates a transaction for the given quote.
 	 *
 	 * @return \PostFinanceCheckout\Sdk\Model\TransactionCreate
-	 */
+     * @throws Exception
+     */
 	protected function create_transaction_from_session(){
 	       
 	    $space_id = get_option(WooCommerce_PostFinanceCheckout::CK_SPACE_ID);
@@ -770,8 +837,9 @@ class WC_PostFinanceCheckout_Service_Transaction extends WC_PostFinanceCheckout_
 	 *
 	 * If the transaction is not in pending state, a new one is created.
 	 *
-	 * @return \PostFinanceCheckout\Sdk\Model\TransactionPending
-	 */
+     * @return \PostFinanceCheckout\Sdk\Model\TransactionCreate
+     * @throws Exception
+     */
 	protected function load_and_update_transaction_from_session(){
 	    $last = new \PostFinanceCheckout\Sdk\VersioningException();
 		for ($i = 0; $i < 5; $i++) {
@@ -800,8 +868,8 @@ class WC_PostFinanceCheckout_Service_Transaction extends WC_PostFinanceCheckout_
 	/**
 	 * Assemble the transaction data for the given quote.
 	 *
-	 * @param \PostFinanceCheckout\Sdk\Model\TransactionPending $transaction
-	 */
+     * @param \PostFinanceCheckout\Sdk\Model\AbstractTransactionPending $transaction
+     */
 	protected function assemble_session_transaction_data(\PostFinanceCheckout\Sdk\Model\AbstractTransactionPending $transaction){
 		$transaction->setCurrency(get_woocommerce_currency());
 		$transaction->setBillingAddress($this->get_session_billing_address());
@@ -821,8 +889,8 @@ class WC_PostFinanceCheckout_Service_Transaction extends WC_PostFinanceCheckout_
 	/**
 	 * Returns the billing address of the current session.
 	 *
-	 * @return \PostFinanceCheckout\Sdk\Model\AddressCreate
-	 */
+     * @return \PostFinanceCheckout\Sdk\Model\AddressCreate|null
+     */
 	protected function get_session_billing_address(){
 		$customer = WC()->customer;
 		if ($customer == null) {
@@ -942,7 +1010,9 @@ class WC_PostFinanceCheckout_Service_Transaction extends WC_PostFinanceCheckout_
 
 	/**
 	 * Returns the current customer id or null if guest
-	 */
+     *
+     * @return int|null
+     */
 	protected function get_customer_id(){
 		if (!is_user_logged_in()) {
 			return null;
@@ -975,6 +1045,11 @@ class WC_PostFinanceCheckout_Service_Transaction extends WC_PostFinanceCheckout_
 		return implode(", ", $names);
 	}
 
+    /**
+     * Store transaction id
+     *
+     * @param \PostFinanceCheckout\Sdk\Model\Transaction $transaction
+     */
 	protected function store_transaction_ids_in_session(\PostFinanceCheckout\Sdk\Model\Transaction $transaction){
 		$session_handler = WC()->session;
 		$session_handler->set('postfinancecheckout_transaction_id', $transaction->getId());

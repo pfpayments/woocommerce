@@ -129,7 +129,7 @@ class WC_PostFinanceCheckout_Admin_Settings_Page extends WC_Settings_Page {
 		$settings = array(
 		    array(
 		        'links' => array(
-		            'https://plugin-documentation.postfinance-checkout.ch/pfpayments/woocommerce/1.2.16/docs/en/documentation.html' => __('Documentation', 'woo-postfinancecheckout'),
+		            'https://plugin-documentation.postfinance-checkout.ch/pfpayments/woocommerce/1.3.0/docs/en/documentation.html' => __('Documentation', 'woo-postfinancecheckout'),
 		            'https://www.postfinance-checkout.ch/user/signup' => __('Sign Up', 'woo-postfinancecheckout')
 		        ),
 		        'type' => 'postfinancecheckout_links',
@@ -239,7 +239,31 @@ class WC_PostFinanceCheckout_Admin_Settings_Page extends WC_Settings_Page {
 		    array(
 		        'type' => 'sectionend',
 		        'id' => 'space_view_options'
-		    ) 
+		    ),
+
+            array(
+                'title' => __('Integration Options', 'woo-postfinancecheckout'),
+                'type' => 'title',
+                'id' => 'integration_options'
+            ),
+
+            array(
+                'type' => 'sectionend',
+                'id' => 'integration_options'
+            ),
+
+            array(
+                'title' => __('Integration', 'woo-postfinancecheckout'),
+                'desc_tip' => __('The Integration allows to payment integration used on the checkout page', 'woo-postfinancecheckout'),
+                'id' => WooCommerce_PostFinanceCheckout::CK_INTEGRATION,
+                'type' => 'select',
+                'css' => 'min-width:300px;',
+                'default' => WC_PostFinanceCheckout_Integration::IFRAME,
+                'options' => array(
+                    WC_PostFinanceCheckout_Integration::IFRAME => __(WC_PostFinanceCheckout_Integration::IFRAME, 'woo-postfinancecheckout'),
+                    WC_PostFinanceCheckout_Integration::LIGHTBOX  => __(WC_PostFinanceCheckout_Integration::LIGHTBOX, 'woo-postfinancecheckout'),
+                ),
+            ),
 		
 		);
 		

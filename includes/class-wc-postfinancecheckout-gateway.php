@@ -323,7 +323,12 @@ class WC_PostFinanceCheckout_Gateway extends WC_Payment_Gateway {
 	            $transaction = $transaction_service->get_transaction_from_session();
 	        }
             if (!wp_script_is( 'postfinancecheckout-remote-checkout-js', 'enqueued' )) {
-                $ajax_url = $transaction_service->get_javascript_url_for_transaction($transaction);
+                $ajax_url = '';
+                if(get_option(WooCommerce_PostFinanceCheckout::CK_INTEGRATION) == WC_PostFinanceCheckout_Integration::LIGHTBOX){
+                    $ajax_url = $transaction_service->get_lightbox_url_for_transaction($transaction);
+                } else {
+                    $ajax_url = $transaction_service->get_javascript_url_for_transaction($transaction);
+                }
     	        wp_enqueue_script('postfinancecheckout-remote-checkout-js', $ajax_url, array(
     	            'jquery'
     	        ), null, true);
@@ -334,8 +339,10 @@ class WC_PostFinanceCheckout_Gateway extends WC_Payment_Gateway {
     	            ), null, true);
     	        $localize = array(
     	            'i18n_not_complete' => __('Please fill out all required fields.', 'woo-postfinancecheckout'),
+                    'integration' => get_option(WooCommerce_PostFinanceCheckout::CK_INTEGRATION),
     	        );
     	        wp_localize_script('postfinancecheckout-checkout-js', 'postfinancecheckout_js_params', $localize);
+                wp_add_inline_script('postfinancecheckout-checkout-js', 'window.onload = function () {  wc_postfinancecheckout_checkout.init(); };');
     	    
             }
             $transaction_nonce = hash_hmac('sha256', $transaction->getLinkedSpaceId().'-'.$transaction->getId(), NONCE_KEY);

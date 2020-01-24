@@ -395,10 +395,8 @@ class WC_PostFinanceCheckout_Service_Line_Item extends WC_PostFinanceCheckout_Se
 			$amount_including_tax = $backend_items[$item_id]['completion_total'] + $tax;
 			
 			$line_item->setAmountIncludingTax($this->round_amount($amount_including_tax, $currency));
-			$quantity = 1;
-			if ($backend_items[$item_id]['qty'] != 0) {
-				$quantity = $backend_items[$item_id]['qty'];
-			}
+			$quantity = empty($backend_items[$item_id]['qty'])? 1 : $backend_items[$item_id]['qty'];
+
 			$line_item->setQuantity($quantity);
 			
 			$product = $item->get_product();
