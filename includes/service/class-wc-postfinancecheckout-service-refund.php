@@ -28,6 +28,7 @@ class WC_PostFinanceCheckout_Service_Refund extends WC_PostFinanceCheckout_Servi
 	 * @param int $space_id
 	 * @param string $external_id
 	 * @return \PostFinanceCheckout\Sdk\Model\Refund
+     * @throws Exception
 	 */
 	public function get_refund_by_external_id($space_id, $external_id){
 	    $query = new \PostFinanceCheckout\Sdk\Model\EntityQuery();
@@ -48,6 +49,7 @@ class WC_PostFinanceCheckout_Service_Refund extends WC_PostFinanceCheckout_Servi
 	 * @param WC_Order $order
 	 * @param WC_Order_Refund $refund
 	 * @return \PostFinanceCheckout\Sdk\Model\RefundCreate
+     * @throws Exception
 	 */
 	public function create(WC_Order $order, WC_Order_Refund $refund){
 	    
@@ -75,6 +77,7 @@ class WC_PostFinanceCheckout_Service_Refund extends WC_PostFinanceCheckout_Servi
 	 * @param \PostFinanceCheckout\Sdk\Model\Transaction $transaction
 	 * @param \PostFinanceCheckout\Sdk\Model\LineItemReductionCreate[] $reductions
 	 * @return \PostFinanceCheckout\Sdk\Model\LineItemReductionCreate[]
+     * @throws Exception
 	 */
 	protected function fix_reductions(WC_Order_Refund $refund, \PostFinanceCheckout\Sdk\Model\Transaction $transaction, array $reductions){
 		$base_line_items = $this->get_base_line_items($transaction);
@@ -110,8 +113,8 @@ class WC_PostFinanceCheckout_Service_Refund extends WC_PostFinanceCheckout_Servi
 	 * @param \PostFinanceCheckout\Sdk\Model\LineItemReductionCreate[] $reductions
 	 * @param int $index
 	 * @param number $remainder
-	 * @param \PostFinanceCheckout\Sdk\Model\LineItem[] $baseLineItems
-	 * @param string $currencyCode
+	 * @param \PostFinanceCheckout\Sdk\Model\LineItem[] $base_line_items
+	 * @param string $currency_code
 	 * @throws Exception
 	 * @return \PostFinanceCheckout\Sdk\Model\LineItemReductionCreate[]
 	 */
@@ -278,6 +281,7 @@ class WC_PostFinanceCheckout_Service_Refund extends WC_PostFinanceCheckout_Servi
 	 * @param int $spaceId
 	 * @param \PostFinanceCheckout\Sdk\Model\RefundCreate $refund
 	 * @return \PostFinanceCheckout\Sdk\Model\Refund
+     * @throws Exception
 	 */
 	public function refund($spaceId, \PostFinanceCheckout\Sdk\Model\RefundCreate $refund){
 		return $this->get_refund_service()->refund($spaceId, $refund);
@@ -291,6 +295,7 @@ class WC_PostFinanceCheckout_Service_Refund extends WC_PostFinanceCheckout_Servi
 	 * @param \PostFinanceCheckout\Sdk\Model\Transaction $transaction
 	 * @param \PostFinanceCheckout\Sdk\Model\Refund $refund
 	 * @return \PostFinanceCheckout\Sdk\Model\LineItem[]
+     * @throws Exception
 	 */
 	protected function get_base_line_items(\PostFinanceCheckout\Sdk\Model\Transaction $transaction, \PostFinanceCheckout\Sdk\Model\Refund $refund = null){
 		$last_successful_refund = $this->get_last_successful_refund($transaction, $refund);
@@ -304,8 +309,9 @@ class WC_PostFinanceCheckout_Service_Refund extends WC_PostFinanceCheckout_Servi
 	
 	/**
 	 *
-	 * @param \PostFinanceCheckout\Sdk\Model\LineItem[] $lineItems
+	 * @param \PostFinanceCheckout\Sdk\Model\LineItem[] $line_items
 	 * @param string $uniqueId
+     * @return \PostFinanceCheckout\Sdk\Model\LineItem
 	 */
 	private function get_line_item_by_unique_id(array $line_items, $unique_id)
 	{
@@ -355,6 +361,7 @@ class WC_PostFinanceCheckout_Service_Refund extends WC_PostFinanceCheckout_Servi
 	 * @param \PostFinanceCheckout\Sdk\Model\Transaction $transaction
 	 * @param \PostFinanceCheckout\Sdk\Model\Refund $refund
 	 * @return \PostFinanceCheckout\Sdk\Model\Refund
+     * @throws Exception
 	 */
 	protected function get_last_successful_refund(\PostFinanceCheckout\Sdk\Model\Transaction $transaction, \PostFinanceCheckout\Sdk\Model\Refund $refund = null){
 	    $query = new \PostFinanceCheckout\Sdk\Model\EntityQuery();
@@ -390,8 +397,9 @@ class WC_PostFinanceCheckout_Service_Refund extends WC_PostFinanceCheckout_Servi
 	/**
 	 * Returns the refund API service.
 	 *
-	 * @return \PostFinanceCheckout\Sdk\Service\RefundService
-	 */
+     * @return \PostFinanceCheckout\Sdk\Service\RefundService
+     * @throws Exception
+     */
 	protected function get_refund_service(){
 		if ($this->refund_service == null) {
 		    $this->refund_service = new \PostFinanceCheckout\Sdk\Service\RefundService(WC_PostFinanceCheckout_Helper::instance()->get_api_client());

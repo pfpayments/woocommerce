@@ -129,7 +129,7 @@ class WC_PostFinanceCheckout_Admin_Settings_Page extends WC_Settings_Page {
 		$settings = array(
 		    array(
 		        'links' => array(
-		            'https://plugin-documentation.postfinance-checkout.ch/pfpayments/woocommerce/1.3.0/docs/en/documentation.html' => __('Documentation', 'woo-postfinancecheckout'),
+		            'https://plugin-documentation.postfinance-checkout.ch/pfpayments/woocommerce/1.3.1/docs/en/documentation.html' => __('Documentation', 'woo-postfinancecheckout'),
 		            'https://www.postfinance-checkout.ch/user/signup' => __('Sign Up', 'woo-postfinancecheckout')
 		        ),
 		        'type' => 'postfinancecheckout_links',
@@ -247,10 +247,6 @@ class WC_PostFinanceCheckout_Admin_Settings_Page extends WC_Settings_Page {
                 'id' => 'integration_options'
             ),
 
-            array(
-                'type' => 'sectionend',
-                'id' => 'integration_options'
-            ),
 
             array(
                 'title' => __('Integration', 'woo-postfinancecheckout'),
@@ -264,8 +260,34 @@ class WC_PostFinanceCheckout_Admin_Settings_Page extends WC_Settings_Page {
                     WC_PostFinanceCheckout_Integration::LIGHTBOX  => __(WC_PostFinanceCheckout_Integration::LIGHTBOX, 'woo-postfinancecheckout'),
                 ),
             ),
-		
-		);
+
+            array(
+                'type' => 'sectionend',
+                'id' => 'integration_options'
+            ),
+
+            array(
+                'title' => __('Line Items Options', 'woo-postfinancecheckout'),
+                'type' => 'title',
+                'id' => 'line_items_options'
+            ),
+
+            array(
+                'title' => __('Enforce Consistency', 'woo-postfinancecheckout'),
+                'desc' => __("Require that transaction line items total match order total.", 'woo-postfinancecheckout'),
+                'id' => WooCommerce_PostFinanceCheckout::CK_ENFORCE_CONSISTENCY,
+                'type' => 'checkbox',
+                'default' => 'yes',
+                'css' => 'min-width:300px;'
+            ),
+
+            array(
+                'type' => 'sectionend',
+                'id' => 'line_items_options'
+            ),
+
+
+        );
 		
 		return apply_filters('wc_postfinancecheckout_settings', $settings);
 	}

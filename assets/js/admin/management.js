@@ -192,7 +192,7 @@ jQuery(function($) {
 				var initial_tax = $(this).data(
 					'postfinancecheckout-initial-tax');
 				var current_tax = 0;
-				if (initial_amount != 0) {
+				if (initial_amount !== 0) {
 				    current_tax = initial_tax * current_amount
 					    / initial_amount;
 				}
@@ -405,13 +405,12 @@ jQuery(function($) {
 	    });
 
 	    var data = {
-		action : 'woocommerce_postfinancecheckout_update_order',
-		order_id : woocommerce_admin_meta_boxes.post_id,
-		security : woocommerce_admin_meta_boxes.order_item_nonce
+			action : 'woocommerce_postfinancecheckout_update_order',
+			order_id : woocommerce_admin_meta_boxes.post_id,
+			security : woocommerce_admin_meta_boxes.order_item_nonce
 	    };
 
-	    $.post(woocommerce_admin_meta_boxes.ajax_url, data, function(
-		    response) {
+	    $.post(woocommerce_admin_meta_boxes.ajax_url, data, function(response) {
 
 		if (true === response.success) {
 		    window.location.href = window.location.href;

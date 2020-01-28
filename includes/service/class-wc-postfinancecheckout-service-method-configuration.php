@@ -18,8 +18,9 @@ class WC_PostFinanceCheckout_Service_Method_Configuration extends WC_PostFinance
 	/**
 	 * Updates the data of the payment method configuration.
 	 *
-	 * @param \PostFinanceCheckout\Sdk\Model\PaymentMethodConfiguration $configuration
-	 */
+     * @param \PostFinanceCheckout\Sdk\Model\PaymentMethodConfiguration $configuration
+     * @throws Exception
+     */
     public function update_data(\PostFinanceCheckout\Sdk\Model\PaymentMethodConfiguration $configuration){
 		/* @var WC_PostFinanceCheckout_Entity_Method_Configuration $entity */
         $entity = WC_PostFinanceCheckout_Entity_Method_Configuration::load_by_configuration($configuration->getLinkedSpaceId(), $configuration->getId());

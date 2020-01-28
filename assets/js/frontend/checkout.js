@@ -1,5 +1,5 @@
 'use strict';
-/* global jQuery document window */
+/* global jQuery document window postfinancecheckout_js_params */
 /**
  * PostFinance Checkout WooCommerce
  *
@@ -67,7 +67,7 @@ jQuery(function ($) {
                     current += $(this).attr('name') + "=" + $(this).val() + "&";
                 });
                 if(complete){
-                    old = this.form_data;
+                    var old = this.form_data;
                     this.form_data = current;
                     if (current !== old && !this.update_sent){
                         $required_inputs.filter('.input-text').first().trigger('keydown');
@@ -229,8 +229,7 @@ jQuery(function ($) {
         },
     
         get_selected_payment_method : function() {
-            return $(this.checkout_form_identifier).find(
-                'input[name="payment_method"]:checked').val();
+            return $(this.checkout_form_identifier).find('input[name="payment_method"]:checked').val();
         },
     
         register_method : function(method_id, configuration_id, container_id) {
@@ -242,8 +241,7 @@ jQuery(function ($) {
                 return undefined;
             }
     
-            if (typeof this.payment_methods[method_id] != 'undefined'
-                && $('#' + container_id).find("iframe").length > 0) {
+            if (typeof this.payment_methods[method_id] != 'undefined' && $('#' + container_id).find("iframe").length > 0) {
                 return undefined;
             }
             var self = this;
@@ -267,32 +265,29 @@ jQuery(function ($) {
                 button_active :  true,
                 height : 0
             };
-            this.payment_methods[method_id].handler
-                .setValidationCallback(function(validation_result) {
+            this.payment_methods[method_id].handler.setValidationCallback(function(validation_result) {
                 self.process_validation(method_id, validation_result);
-                });
-            this.payment_methods[method_id].handler
-                .setHeightChangeCallback(function(height) {
+            });
+            this.payment_methods[method_id].handler.setHeightChangeCallback(function(height) {
                 self.payment_methods[method_id].height = height;
-                self.handle_description_for_empty_iframe(method_id)
-                });
+                self.handle_description_for_empty_iframe(method_id);
+            });
             
             this.payment_methods[method_id].handler.setInitializeCallback(function(){
                 $(self.checkout_form_identifier).unblock();
             });
             
             this.payment_methods[method_id].handler.setEnableSubmitCallback(function(){
-                self.payment_methods[method_id].button_active=true;
+                self.payment_methods[method_id].button_active = true;
                 self.handle_place_order_button_status(method_id);
             });
             
             this.payment_methods[method_id].handler.setDisableSubmitCallback(function(){
-                self.payment_methods[method_id].button_active=false;
+                self.payment_methods[method_id].button_active = false;
                 self.handle_place_order_button_status(method_id);
             });
     
-            this.payment_methods[method_id].handler
-                .create(self.payment_methods[method_id].container_id);
+            this.payment_methods[method_id].handler.create(self.payment_methods[method_id].container_id);
             
             $('#'+container_id).replaceWith($('#'+tmp_container_id));
             $('#'+tmp_container_id).attr('id', container_id);
@@ -301,15 +296,19 @@ jQuery(function ($) {
             
             if(this.checkout_form_identifier === '#order_review'){
                 $(this.checkout_form_identifier).off('submit.postfinancecheckout').on(
-                    'submit.postfinancecheckout', function(){
+                    'submit.postfinancecheckout',
+                    function(){
                         var method_id = self.get_selected_payment_method();
                         return self.process_submit(method_id);
-                    });
+                    }
+                );
             }
             else{
                  var form = $(this.checkout_form_identifier);
-                form.off('checkout_place_order_' + method_id + '.postfinancecheckout').on(
-                    'checkout_place_order_' + method_id + '.postfinancecheckout', function(){return self.process_submit(method_id);});
+                form.off('checkout_place_order_' + method_id + '.postfinancecheckout')
+                    .on('checkout_place_order_' + method_id + '.postfinancecheckout', function(){
+                        return self.process_submit(method_id);
+                    });
             }
         },
         
@@ -381,8 +380,7 @@ jQuery(function ($) {
             if (typeof data.postfinancecheckout == 'undefined') {
                 return false;
             }
-            this.payment_methods[this.get_selected_payment_method()].handler
-                .submit();
+            this.payment_methods[this.get_selected_payment_method()].handler.submit();
             return true;
         },
     

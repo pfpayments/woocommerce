@@ -210,6 +210,7 @@ class WC_PostFinanceCheckout_Service_Line_Item extends WC_PostFinanceCheckout_Se
 	 *
 	 * @param WC_Order $order
 	 * @return \PostFinanceCheckout\Sdk\Model\LineItemCreate[]
+     * @throws Exception
 	 */
 	protected function create_product_line_items_from_order(WC_Order $order){
 		$items = array();
@@ -371,9 +372,11 @@ class WC_PostFinanceCheckout_Service_Line_Item extends WC_PostFinanceCheckout_Se
 	/**
 	 * Creates the line items for the products
 	 *
-	 * @param WC_Order $order
-	 * @return \PostFinanceCheckout\Sdk\Model\LineItemCreate[]
-	 */
+     * @param array    $backend_items
+     * @param WC_Order $order
+     * @return \PostFinanceCheckout\Sdk\Model\LineItemCreate[]
+     * @throws Exception
+     */
 	protected function create_product_line_items_from_backend(array $backend_items, WC_Order $order){
 		$items = array();
 		$currency = $order->get_currency();

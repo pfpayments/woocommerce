@@ -18,8 +18,9 @@ abstract class WC_PostFinanceCheckout_Webhook_Order_Related_Abstract extends WC_
 	/**
 	 * Processes the received order related webhook request.
 	 *
-	 * @param WC_PostFinanceCheckout_Webhook_Request $request
-	 */
+     * @param WC_PostFinanceCheckout_Webhook_Request $request
+     * @throws Exception
+     */
     public function process(WC_PostFinanceCheckout_Webhook_Request $request){
 
         WC_PostFinanceCheckout_Helper::instance()->start_database_transaction();

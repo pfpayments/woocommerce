@@ -87,8 +87,7 @@ class WC_PostFinanceCheckout_Helper
     /**
      * Returns the translation in the given language.
      *
-     * @param
-     *            array($language => $transaltion) $translated_string
+     * @param array($language => $translation) $translated_string
      * @param string $language
      * @return string
      */
@@ -109,6 +108,7 @@ class WC_PostFinanceCheckout_Helper
                 return $translated_string[$primary_language->getIetfCode()];
             }
         } catch (Exception $e) {}
+
         if (isset($translated_string['en-US'])) {
             return $translated_string['en-US'];
         }
@@ -119,10 +119,11 @@ class WC_PostFinanceCheckout_Helper
     /**
      * Returns the URL to a resource on PostFinanceCheckout in the given context (space, space view, language).
      *
+     * @param string $base
      * @param string $path
      * @param string $language
-     * @param int $spaceId
-     * @param int $spaceViewId
+     * @param int $space_id
+     * @param int $space_view_id
      * @return string
      */
     public function get_resource_url($base, $path, $language = null, $space_id = null, $space_view_id = null)
@@ -154,7 +155,7 @@ class WC_PostFinanceCheckout_Helper
      * Returns the fraction digits of the given currency.
      *
      * @param string $currency_code
-     * @return number
+     * @return int
      */
     public function get_currency_fraction_digits($currency_code)
     {
@@ -190,16 +191,33 @@ class WC_PostFinanceCheckout_Helper
      * @param float $expected_sum
      * @param string $currency
      * @return \PostFinanceCheckout\Sdk\Model\LineItemCreate[]
+     * @throws WC_PostFinanceCheckout_Exception_Invalid_Transaction_Amount
      */
     public function cleanup_line_items(array $line_items, $expected_sum, $currency)
     {
         $effective_sum = $this->round_amount($this->get_total_amount_including_tax($line_items), $currency);
         $rounded_expected_sum = $this->round_amount($expected_sum, $currency);
-        $diff = $rounded_expected_sum - $effective_sum;
-        if ($diff != 0) {
-            throw new WC_PostFinanceCheckout_Exception_Invalid_Transaction_Amount($effective_sum, $rounded_expected_sum);
+        $inconsistent_amount = $rounded_expected_sum - $effective_sum;
+        if ($inconsistent_amount != 0) {
+            $enforce_consistency = get_option(WooCommerce_PostFinanceCheckout::CK_ENFORCE_CONSISTENCY);
+            switch ($enforce_consistency){
+                case 'no':
+                    $line_item = new \PostFinanceCheckout\Sdk\Model\LineItemCreate();
+                    $line_item->setAmountIncludingTax($this->round_amount($inconsistent_amount, $currency));
+                    $line_item->setName(__('Adjustment', 'woo-postfinancecheckout'));
+                    $line_item->setQuantity(1);
+                    $line_item->setSku('adjustment');
+                    $line_item->setUniqueId('adjustment');
+                    $line_item->setShippingRequired(false);
+                    $line_item->setType($enforce_consistency > 0 ? \PostFinanceCheckout\Sdk\Model\LineItemType::FEE : \PostFinanceCheckout\Sdk\Model\LineItemType::DISCOUNT);
+                    $line_items[] = $line_item;
+                    break;
+                default:
+                    throw new WC_PostFinanceCheckout_Exception_Invalid_Transaction_Amount($effective_sum, $rounded_expected_sum);
+            }
         }
-        return $this->ensure_unique_ids($line_items);
+        $data = $this->ensure_unique_ids($line_items);
+        return $data;
     }
 
     /**
@@ -207,6 +225,7 @@ class WC_PostFinanceCheckout_Helper
      *
      * @param \PostFinanceCheckout\Sdk\Model\LineItemCreate[] $line_items
      * @return \PostFinanceCheckout\Sdk\Model\LineItemCreate[]
+     * @throws Exception
      */
     public function ensure_unique_ids(array $line_items)
     {
@@ -236,7 +255,7 @@ class WC_PostFinanceCheckout_Helper
     /**
      * Returns the amount of the line item's reductions.
      *
-     * @param \PostFinanceCheckout\Sdk\Model\LineItem[] $lineItems
+     * @param \PostFinanceCheckout\Sdk\Model\LineItem[] $line_items
      * @param \PostFinanceCheckout\Sdk\Model\LineItemReduction[] $reductions
      * @return float
      */
@@ -285,7 +304,8 @@ class WC_PostFinanceCheckout_Helper
     /**
      * Create a lock to prevent concurrency.
      *
-     * @param int $lockType
+     * @param int $space_id
+     * @param int $transaction_id
      */
     public function lock_by_transaction_id($space_id, $transaction_id)
     {
