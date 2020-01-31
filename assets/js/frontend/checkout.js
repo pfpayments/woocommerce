@@ -179,7 +179,7 @@ jQuery(function ($) {
                         && self.is_supported_method(self.get_selected_payment_method())) {
                         var original_success = options.success;
                         options.success = function(data, textStatus, jqXHR) {
-
+                            $(window).unbind("beforeunload");
                             // handle lightbox integration
                             if(postfinancecheckout_js_params.integration && postfinancecheckout_js_params.integration === self.integrations.LIGHTBOX ) {
                                 var selected_payment_method = $('input[name="payment_method"]:checked').val();
@@ -359,10 +359,9 @@ jQuery(function ($) {
                                 self.validated = false;
                                 if (typeof result.postfinancecheckout == 'undefined') {
                                     window.location.reload();
-                                    return undefined;
+                                    return true;
                                 }
-                                self.payment_methods[self.get_selected_payment_method()].handler
-                                    .submit();
+                                self.payment_methods[self.get_selected_payment_method()].handler.submit();
                                 return true;            
                             },
                             error: function( jqXHR, textStatus, errorThrown ) {
@@ -388,7 +387,7 @@ jQuery(function ($) {
             if (validation_result.success) {
                 this.validated = true;
                 $(this.checkout_form_identifier).submit();
-                return undefined;
+                return true;
             } else {
                 var form = $(this.checkout_form_identifier);
                 form.unblock();

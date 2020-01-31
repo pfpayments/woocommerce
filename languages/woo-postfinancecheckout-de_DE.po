@@ -2,16 +2,16 @@ msgid ""
 msgstr ""
 "Project-Id-Version: WooCommerce PostFinance Checkout\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2019-03-28 10:11+0100\n"
-"PO-Revision-Date: 2019-03-28 10:11+0100\n"
+"POT-Creation-Date: 2020-01-31 06:50+0100\n"
+"PO-Revision-Date: 2020-01-31 06:58+0100\n"
 "Last-Translator: Customweb GmbH <info@customweb.com>\n"
 "Language-Team: German\n"
 "Language: de_DE\n"
-"Plural-Forms: nplurals=2; plural=n != 1;\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-
+"Plural-Forms: nplurals=2; plural=n != 1;\n"
+"X-Generator: Poedit 1.8.7.1\n"
 
 #: includes/class-wc-postfinancecheckout-helper.php:53
 msgid "The API access data is incomplete."
@@ -120,7 +120,7 @@ msgstr "Zeigt das Zahlmethodenlogo auf der Checkout Page."
 msgid "Please fill out all required fields."
 msgstr "Bitte füllen Sie alle Pflichtfelder aus."
 
-#: includes/class-wc-wallee-gateway.php:381
+#: includes/class-wc-postfinancecheckout-gateway.php:381
 msgid "The checkout timed out, please try again."
 msgstr "Die Sitzung ist abgelaufen, bitte versuchen Sie es erneut."
 
@@ -198,13 +198,6 @@ msgstr "Einstellungen"
 #: includes/admin/class-wc-postfinancecheckout-admin.php:267
 msgid "Send attribute to PostFinance Checkout."
 msgstr "Übermittle das Attribute an PostFinance Checkout."
-
-#: includes/admin/class-wc-postfinancecheckout-admin.php:260
-#: includes/admin/class-wc-postfinancecheckout-admin.php:268
-msgid "Should this product attribute be sent to wallee as line item attribute?"
-msgstr ""
-"Soll dieses Produkt Attribute als Line Item Attribute an wallee gesendet "
-"werden."
 
 #: includes/admin/class-wc-postfinancecheckout-admin-refund.php:60
 msgid "There is a refund in progress."
@@ -531,25 +524,29 @@ msgstr "Ansicht"
 
 #: views/admin-notices/round-subtotal-warning.php:15
 msgid ""
-"The PostFinance Checkout payment method are not available, if the taxes are rounded at "
-"subtotal level. Please disable the 'Round tax at subtotal level, instead of "
-"rounding per line' option in the tax settings to enable the PostFinance Checkout payment methods."
+"The PostFinance Checkout payment method are not available, if the taxes are "
+"rounded at subtotal level. Please disable the 'Round tax at subtotal level, "
+"instead of rounding per line' in the tax settings to enable the "
+"PostFinance Checkout payment methods."
 msgstr ""
-"Die PostFinance Checkout Zahlungsmethoden sind nicht verfügbar, falls die Steuern "
-"auf der Ebene der Zwischensumme anstatt pro Position gerundet wird. "
-"Bitte deaktivieren Sie die 'Steuern auf der Ebene der Zwischensumme "
-"runden, statt pro Position zu runden' Option in den Mehrwertsteuer Kofiguration "
-"um die PostFinance Checkout Zahlungsmethoden zu ativieren."
+"Die PostFinance Checkout Zahlungsmethoden sind nicht verfügbar, wenn die Steuern "
+"auf Subtotal Ebene gerundet werden. Bitte deaktivieren Sie die Option 'Round "
+"tax at subtotal level, instead of rounding per line'  in den Einstellungen "
+"der Steuern um die PostFinance Checkout Zahlungsmethoden zu nutzen. "
 
 #: views/admin-notices/migration-failed.php:15
-msgid "There was an issue executing the migration for WooCommerce PostFinance Checkout."
+msgid ""
+"There was an issue executing the migration for WooCommerce PostFinance Checkout."
 msgstr ""
-"Es gab ein Problem bei der Ausführung der Migration für WooCommerce PostFinance Checkout."
+"Es gab ein Problem bei der Ausführung der Migration für WooCommerce "
+"PostFinance Checkout."
 
 #: views/admin-notices/plugin-deactivated.php:14
-msgid "WooCommerce PostFinance Checkout deactivated because it depends on WooCommerce."
+msgid ""
+"WooCommerce PostFinance Checkout deactivated because it depends on WooCommerce."
 msgstr ""
-"WooCommerce PostFinance Checkout wurde deaktiviert, weil es von WooCommerce abhängig ist."
+"WooCommerce PostFinance Checkout wurde deaktiviert, weil es von WooCommerce "
+"abhängig ist."
 
 #. Name of the plugin
 msgid "WooCommerce PostFinance Checkout"
@@ -569,4 +566,126 @@ msgstr "customweb GmbH"
 
 #. Author URI of the plugin
 msgid "https://www.customweb.com"
-msgstr "https://www.customweb.com"	
+msgstr "https://www.customweb.com"
+
+#: includes/admin/class-wc-postfinancecheckout-admin-settings-page.php:277
+msgid ""
+"Require that the transaction line items total is matching the order total."
+msgstr "Erzwingen, dass die Summe aller Artikel dem Bestelltotal entspricht."
+
+#: includes/admin/class-wc-postfinancecheckout-admin-settings-page.php:276
+msgid "Enforce Consistency"
+msgstr "Konsistenz erzwingen"
+
+#: includes/admin/class-wc-postfinancecheckout-admin-settings-page.php:270
+msgid "Line Items Options"
+msgstr "Artikelpositionen"
+
+#: includes/class-wc-postfinancecheckout-helper.php:207
+msgid "Adjustment"
+msgstr "Anpassung"
+
+#: includes/admin/class-wc-postfinancecheckout-admin-settings-page.php:253
+msgid ""
+"The integration type controls how the payment form is integrated into the "
+"WooCommerce checkout. The Lightbox integration type offers better "
+"performance but with a less compelling checkout experience."
+msgstr ""
+"Der Integrationstyp steuert, wie das Zahlungsformular in den WooCommerce "
+"Checkout integriert wird. Die Lightbox Integration bietet eine bessere "
+"Performance, dafür ist die Integration nicht gleich ansprechend."
+
+#: includes/admin/class-wc-postfinancecheckout-admin-settings-page.php:252
+msgid "Integration Type"
+msgstr "Integrationstyp"
+
+#: includes/admin/class-wc-postfinancecheckout-admin-settings-page.php:245
+msgid "Integration Options"
+msgstr "Integrationsoptionen"
+
+#: views/admin-notices/round-subtotal-warning.php:15
+msgid ""
+"The PostFinance Checkout payment methods are not available, if the taxes are "
+"rounded at subtotal level. Please disable the 'Round tax at subtotal level, "
+"instead of rounding per line' in the tax settings to enable the "
+"PostFinance Checkout payment methods."
+msgstr ""
+"Die PostFinance Checkout Zahlungsmethoden sind nicht verfügbar, wenn die Steuern "
+"auf Subtotal Ebene gerundet werden. Bitte deaktivieren Sie die Option 'Round "
+"tax at subtotal level, instead of rounding per line'  in den Einstellungen "
+"der Steuern um die PostFinance Checkout Zahlungsmethoden zu nutzen. "
+
+#: woocommerce-postfinancecheckout.php:296
+msgctxt "Order status"
+msgid "Manual Decision"
+msgstr "Manuelle Entscheidung"
+
+#: woocommerce-postfinancecheckout.php:295
+msgctxt "Order status"
+msgid "Waiting"
+msgstr "Warten"
+
+#: woocommerce-postfinancecheckout.php:294
+msgctxt "Order status"
+msgid "Redirected"
+msgstr "Weitergeleitet"
+
+#: woocommerce-postfinancecheckout.php:289
+msgid "Manual Decision <span class=\"count\">(%s)</span>"
+msgid_plural "Manual Decision <span class=\"count\">(%s)</span>"
+msgstr[0] "Manuelle Entscheidung <span class=\"count\">(%s)</span>"
+msgstr[1] "Manuelle Entscheidungen <span class=\"count\">(%s)</span>"
+
+#: woocommerce-postfinancecheckout.php:280
+msgid "Waiting <span class=\"count\">(%s)</span>"
+msgid_plural "Waiting <span class=\"count\">(%s)</span>"
+msgstr[0] "Wartend <span class=\"count\">(%s)</span>"
+msgstr[1] "Wartend <span class=\"count\">(%s)</span>"
+
+#: woocommerce-postfinancecheckout.php:271
+msgid "PostFinance Checkout Processing <span class=\"count\">(%s)</span>"
+msgid_plural "PostFinance Checkout Processing <span class=\"count\">(%s)</span>"
+msgstr[0] "PostFinance Checkout Verarbeitend <span class=\"count\">(%s)</span>"
+msgstr[1] "PostFinance Checkout Verarbeitend <span class=\"count\">(%s)</span>"
+
+#: includes/class-wc-postfinancecheckout-cron.php:31
+msgid "Every Five Minutes"
+msgstr "Alle fünf Minuten"
+
+#: includes/class-wc-postfinancecheckout-gateway.php:149
+msgid "Description"
+msgstr "Beschreibung"
+
+#: includes/class-wc-postfinancecheckout-gateway.php:143
+msgid "Title"
+msgstr "Title"
+
+#: includes/class-wc-postfinancecheckout-gateway.php:137
+msgid "Enable/Disable"
+msgstr "Aktivieren/Deaktivieren"
+
+#: includes/class-wc-postfinancecheckout-migration.php:113
+msgid ""
+"Install the PHP cUrl extension or ensure the 'stream_socket_client' function "
+"is available."
+msgstr ""
+"Installieren Sie entweder die cURL PHP Extension oder stellen Sie sicher, "
+"dass die PHP Funktion 'stream_socket_client' zur Verfügung steht."
+
+#: includes/admin/class-wc-postfinancecheckout-admin.php:262
+#: includes/admin/class-wc-postfinancecheckout-admin.php:270
+msgid ""
+"Should this product attribute be sent to PostFinance Checkout as line item "
+"attribute?"
+msgstr ""
+"Soll dieses Produkt Attribute als Line Item Attribute an wallee gesendet "
+"werden."
+
+#: includes/admin/class-wc-postfinancecheckout-admin-document.php:93
+msgid "PostFinance Checkout Documents"
+msgstr "PostFinance Checkout Dokumente"
+
+#: includes/admin/class-wc-postfinancecheckout-admin-transaction.php:43
+msgid "PostFinance Checkout Transaction"
+msgstr "PostFinance Checkout Transaction"
+

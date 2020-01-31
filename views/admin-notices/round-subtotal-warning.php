@@ -12,5 +12,5 @@ if (!defined('ABSPATH')) {
  */
 ?>
 <div class="error notice notice-error">
-	<p><?php _e( 'The PostFinance Checkout payment method are not available, if the taxes are rounded at subtotal level. Please disable the \'Round tax at subtotal level, instead of rounding per line\' in the tax settings to enable the PostFinance Checkout payment methods.', 'woo-postfinancecheckout' ); ?></p>
+	<p><?php _e( 'The PostFinance Checkout payment methods are not available, if the taxes are rounded at subtotal level. Please disable the \'Round tax at subtotal level, instead of rounding per line\' in the tax settings to enable the PostFinance Checkout payment methods.', 'woo-postfinancecheckout' ); ?></p>
 </div>

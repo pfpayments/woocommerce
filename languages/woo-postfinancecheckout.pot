@@ -192,11 +192,6 @@ msgstr ""
 msgid "Send attribute to PostFinance Checkout."
 msgstr ""
 
-#: includes/admin/class-wc-postfinancecheckout-admin.php:260
-#: includes/admin/class-wc-postfinancecheckout-admin.php:268
-msgid "Should this product attribute be sent to wallee as line item attribute?"
-msgstr ""
-
 #: includes/admin/class-wc-postfinancecheckout-admin-refund.php:60
 msgid "There is a refund in progress."
 msgstr ""
@@ -529,3 +524,106 @@ msgstr ""
 #. Author URI of the plugin
 msgid "https://www.customweb.com"
 msgstr ""	
+
+
+#: includes/admin/class-wc-postfinancecheckout-admin-settings-page.php:277
+msgid "Require that the transaction line items total is matching the order total."
+msgstr ""
+
+#: includes/admin/class-wc-postfinancecheckout-admin-settings-page.php:276
+msgid "Enforce Consistency"
+msgstr ""
+
+#: includes/admin/class-wc-postfinancecheckout-admin-settings-page.php:270
+msgid "Line Items Options"
+msgstr ""
+
+#: includes/class-wc-postfinancecheckout-helper.php:207
+msgid "Adjustment"
+msgstr ""
+
+#: includes/admin/class-wc-postfinancecheckout-admin-settings-page.php:253
+msgid "The integration type controls how the payment form is integrated into the WooCommerce checkout. The Lightbox integration type offers better performance but with a less compelling checkout experience."
+msgstr ""
+
+#: includes/admin/class-wc-postfinancecheckout-admin-settings-page.php:252
+msgid "Integration Type"
+msgstr ""
+
+#: includes/admin/class-wc-postfinancecheckout-admin-settings-page.php:245
+msgid "Integration Options"
+msgstr ""
+
+#: views/admin-notices/round-subtotal-warning.php:15
+msgid "The PostFinance Checkout payment methods are not available, if the taxes are rounded at subtotal level. Please disable the 'Round tax at subtotal level, instead of rounding per line' in the tax settings to enable the PostFinance Checkout payment methods."
+msgstr ""
+
+#: woocommerce-postfinancecheckout.php:296
+msgctxt "Order status"
+msgid "Manual Decision"
+msgstr ""
+
+#: woocommerce-postfinancecheckout.php:295
+msgctxt "Order status"
+msgid "Waiting"
+msgstr ""
+
+#: woocommerce-postfinancecheckout.php:294
+msgctxt "Order status"
+msgid "Redirected"
+msgstr ""
+
+#: woocommerce-postfinancecheckout.php:289
+msgid "Manual Decision <span class=\"count\">(%s)</span>"
+msgid_plural "Manual Decision <span class=\"count\">(%s)</span>"
+msgstr[0] ""
+msgstr[1] ""
+
+#: woocommerce-postfinancecheckout.php:280
+msgid "Waiting <span class=\"count\">(%s)</span>"
+msgid_plural "Waiting <span class=\"count\">(%s)</span>"
+msgstr[0] ""
+msgstr[1] ""
+
+#: woocommerce-postfinancecheckout.php:271
+msgid "PostFinance Checkout Processing <span class=\"count\">(%s)</span>"
+msgid_plural "PostFinance Checkout Processing <span class=\"count\">(%s)</span>"
+msgstr[0] ""
+msgstr[1] ""
+
+#: includes/class-wc-postfinancecheckout-cron.php:31
+msgid "Every Five Minutes"
+msgstr ""
+
+#: includes/class-wc-postfinancecheckout-gateway.php:149
+msgid "Description"
+msgstr ""
+
+#: includes/class-wc-postfinancecheckout-gateway.php:143
+msgid "Title"
+msgstr ""
+
+#: includes/class-wc-postfinancecheckout-gateway.php:137
+msgid "Enable/Disable"
+msgstr ""
+
+#: includes/class-wc-postfinancecheckout-migration.php:113
+msgid "Install the PHP cUrl extension or ensure the 'stream_socket_client' function is available."
+msgstr ""
+
+#: includes/admin/class-wc-postfinancecheckout-admin.php:262
+#: includes/admin/class-wc-postfinancecheckout-admin.php:270
+msgid "Should this product attribute be sent to PostFinance Checkout as line item attribute?"
+msgstr ""
+
+#: includes/admin/class-wc-postfinancecheckout-admin-document.php:93
+msgid "PostFinance Checkout Documents"
+msgstr ""
+
+#: includes/admin/class-wc-postfinancecheckout-admin-transaction.php:43
+msgid "PostFinance Checkout Transaction"
+msgstr ""
+
+
+
+
