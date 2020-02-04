@@ -244,7 +244,11 @@
 
 * Feature - Enforce Line Item consistency
 
-= 1.3.1 - January 27, 2020 =
+= 1.3.2 - January 27, 2020 =
 
 * Buxfix - Fix reload
+
+= 1.3.3 - February 04, 2020 =
+
+* Update Translations
 
