@@ -20,7 +20,7 @@ class WC_PostFinanceCheckout_Download_Helper {
 	 */
 	public static function download_invoice($order_id){
 	    $transaction_info = WC_PostFinanceCheckout_Entity_Transaction_Info::load_by_order_id($order_id);
-		if ($transaction_info->get_id() != null && in_array($transaction_info->get_state(), 
+		if (!is_null($transaction_info->get_id()) && in_array($transaction_info->get_state(),
 				array(
 				    \PostFinanceCheckout\Sdk\Model\TransactionState::COMPLETED,
 				    \PostFinanceCheckout\Sdk\Model\TransactionState::FULFILL,
@@ -38,7 +38,7 @@ class WC_PostFinanceCheckout_Download_Helper {
 	 */
 	public static function download_packing_slip($order_id){
 	    $transaction_info = WC_PostFinanceCheckout_Entity_Transaction_Info::load_by_order_id($order_id);
-	    if ($transaction_info->get_id() != null && $transaction_info->get_state() == \PostFinanceCheckout\Sdk\Model\TransactionState::FULFILL) {
+	    if (!is_null($transaction_info->get_id()) && $transaction_info->get_state() == \PostFinanceCheckout\Sdk\Model\TransactionState::FULFILL) {
 			
 	        $service = new \PostFinanceCheckout\Sdk\Service\TransactionService(WC_PostFinanceCheckout_Helper::instance()->get_api_client());
 			$document = $service->getPackingSlip($transaction_info->get_space_id(), $transaction_info->get_transaction_id());

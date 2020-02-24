@@ -119,7 +119,7 @@ class WC_PostFinanceCheckout_Email {
 		
 		if(class_exists('woocommerce_wpml')){
 		    global $woocommerce_wpml;
-		    if($woocommerce_wpml != null){
+		    if(!is_null($woocommerce_wpml)){
     			//Add hooks for WPML, for email translations
     			$notifications_all =  array(
     				'woocommerce_order_status_postfi-redirected_to_processing_notification',

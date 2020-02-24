@@ -223,7 +223,7 @@ class WC_PostFinanceCheckout_Service_Transaction extends WC_PostFinanceCheckout_
 		));
 		$query->setNumberOfEntities(1);
 		$result = $charge_attempt_service->search($space_id, $query);
-		if ($result != null && !empty($result)) {
+		if (!empty($result)) {
 			return current($result);
 		}
 		else {
@@ -272,9 +272,9 @@ class WC_PostFinanceCheckout_Service_Transaction extends WC_PostFinanceCheckout_
 		$info->set_language($transaction->getLanguage());
 		$info->set_currency($transaction->getCurrency());
 		$info->set_connector_id(
-				$transaction->getPaymentConnectorConfiguration() != null ? $transaction->getPaymentConnectorConfiguration()->getConnector() : null);
+				!is_null($transaction->getPaymentConnectorConfiguration()) ? $transaction->getPaymentConnectorConfiguration()->getConnector() : null);
 		$info->set_payment_method_id(
-				$transaction->getPaymentConnectorConfiguration() != null && $transaction->getPaymentConnectorConfiguration()->getPaymentMethodConfiguration() !=
+				!is_null($transaction->getPaymentConnectorConfiguration()) && $transaction->getPaymentConnectorConfiguration()->getPaymentMethodConfiguration() !=
 						 null ? $transaction->getPaymentConnectorConfiguration()->getPaymentMethodConfiguration()->getPaymentMethod() : null);
 		$info->set_image($this->get_resource_path($this->get_payment_method_image($transaction, $order)));
 		$info->set_image_base($this->get_resource_base($this->get_payment_method_image($transaction, $order)));
@@ -282,14 +282,14 @@ class WC_PostFinanceCheckout_Service_Transaction extends WC_PostFinanceCheckout_
 		if ($transaction->getState() == \PostFinanceCheckout\Sdk\Model\TransactionState::FAILED ||
 		    $transaction->getState() == \PostFinanceCheckout\Sdk\Model\TransactionState::DECLINE) {
 			$failed_charge_attempt = $this->get_failed_charge_attempt($transaction->getLinkedSpaceId(), $transaction->getId());
-			if ($failed_charge_attempt != null) {
-			    if( $failed_charge_attempt->getFailureReason() != null) {
+			if (!is_null($failed_charge_attempt)) {
+			    if(!is_null($failed_charge_attempt->getFailureReason())) {
 			      $info->set_failure_reason($failed_charge_attempt->getFailureReason()->getDescription());
 			    }
                 $info->set_user_failure_message($failed_charge_attempt->getUserFailureMessage());
 			}
-			if($info->get_failure_reason() == null){
-			    if($transaction->getFailureReason() != null){
+			if(is_null($info->get_failure_reason())){
+			    if(!is_null($transaction->getFailureReason())){
 			        $info->set_failure_reason($transaction->getFailureReason()->getDescription());
 			    }
 			}
@@ -311,7 +311,7 @@ class WC_PostFinanceCheckout_Service_Transaction extends WC_PostFinanceCheckout_
      */
 	protected function get_transaction_labels(\PostFinanceCheckout\Sdk\Model\Transaction $transaction){
 		$charge_attempt = $this->get_charge_attempt($transaction);
-		if ($charge_attempt != null) {
+		if (!is_null($charge_attempt)) {
 			$labels = array();
 			foreach ($charge_attempt->getLabels() as $label) {
 				$labels[$label->getDescriptor()->getId()] = $label->getContentAsString();
@@ -343,7 +343,7 @@ class WC_PostFinanceCheckout_Service_Transaction extends WC_PostFinanceCheckout_
 		$query->setFilter($filter);
 		$query->setNumberOfEntities(1);
 		$result = $charge_attempt_service->search($transaction->getLinkedSpaceId(), $query);
-		if ($result != null && !empty($result)) {
+		if (!empty($result)) {
 			return current($result);
 		}
 		else {
@@ -359,14 +359,14 @@ class WC_PostFinanceCheckout_Service_Transaction extends WC_PostFinanceCheckout_
 	 * @return string
 	 */
 	protected function get_payment_method_image(\PostFinanceCheckout\Sdk\Model\Transaction $transaction, WC_order $order){
-		if ($transaction->getPaymentConnectorConfiguration() == null) {
+		if (is_null($transaction->getPaymentConnectorConfiguration())) {
 			$method_instance = wc_get_payment_gateway_by_order($order);
 			if ($method_instance != false && ($method_instance instanceof WC_PostFinanceCheckout_Gateway)) {
 			    return WC_PostFinanceCheckout_Helper::instance()->get_resource_url($method_instance->get_payment_method_configuration()->get_image_base(), $method_instance->get_payment_method_configuration()->get_image());
 			}
 			return null;
 		}
-		if ($transaction->getPaymentConnectorConfiguration()->getPaymentMethodConfiguration() != null) {
+		if (!is_null($transaction->getPaymentConnectorConfiguration()->getPaymentMethodConfiguration())) {
 			return $transaction->getPaymentConnectorConfiguration()->getPaymentMethodConfiguration()->getResolvedImageUrl();
 		}
 		return null;
@@ -381,7 +381,7 @@ class WC_PostFinanceCheckout_Service_Transaction extends WC_PostFinanceCheckout_
 	public function get_possible_payment_methods_for_cart(){
 	    
 	    $current_cart_id = WC_PostFinanceCheckout_Helper::instance()->get_current_cart_id();
-	    if (!isset(self::$possible_payment_method_cache[$current_cart_id]) || self::$possible_payment_method_cache[$current_cart_id] == null) {
+	    if (!isset(self::$possible_payment_method_cache[$current_cart_id]) || is_null(self::$possible_payment_method_cache[$current_cart_id])) {
 	        try {
 	        
     	        $transaction = $this->get_transaction_from_session();
@@ -419,7 +419,7 @@ class WC_PostFinanceCheckout_Service_Transaction extends WC_PostFinanceCheckout_
      */
 	public function get_possible_payment_methods_for_order(WC_Order $order){
 	    
-	    if (!isset(self::$possible_payment_method_cache[$order->get_id()]) || self::$possible_payment_method_cache[$order->get_id()] == null) {
+	    if (!isset(self::$possible_payment_method_cache[$order->get_id()]) || is_null(self::$possible_payment_method_cache[$order->get_id()])) {
 	        try {
     	        $transaction = $this->get_transaction_from_order($order);
     	        if($transaction->getState() != \PostFinanceCheckout\Sdk\Model\TransactionState::PENDING){
@@ -458,7 +458,7 @@ class WC_PostFinanceCheckout_Service_Transaction extends WC_PostFinanceCheckout_
      * @throws Exception
      */
 	public function confirm_transaction($transaction_id, $space_id, WC_Order $order, $method_configuration_id){
-	    $last = new Exception('Unexpected Error');
+	    $last = new Exception(__FUNCTION__);
 		for ($i = 0; $i < 5; $i++) {
 			try {
 				$transaction = $this->get_transaction_service()->read($space_id, $transaction_id);
@@ -473,7 +473,8 @@ class WC_PostFinanceCheckout_Service_Transaction extends WC_PostFinanceCheckout_
 				$pending_transaction = apply_filters('wc_postfinancecheckout_modify_confirm_transaction', $pending_transaction, $order);
 				return $this->get_transaction_service()->confirm($space_id, $pending_transaction);
 			}
-			catch (\PostFinanceCheckout\Sdk\VersioningException $e) {
+			catch (\Exception $e) {
+                WooCommerce_PostFinanceCheckout::instance()->log(__CLASS__ . " : ". __FUNCTION__ . " : " . __LINE__ . " : " . $e->getMessage() , WC_Log_Levels::ERROR);
 				$last = $e;
 			}
 		}
@@ -485,6 +486,7 @@ class WC_PostFinanceCheckout_Service_Transaction extends WC_PostFinanceCheckout_
 	 *
      * @param WC_Order                                                    $order
      * @param \PostFinanceCheckout\Sdk\Model\AbstractTransactionPending $transaction
+     * @throws WC_PostFinanceCheckout_Exception_Invalid_Transaction_Amount
      */
 	protected function assemble_order_transaction_data(WC_Order $order, \PostFinanceCheckout\Sdk\Model\AbstractTransactionPending $transaction){
 		$transaction->setCurrency($order->get_currency());
@@ -507,7 +509,11 @@ class WC_PostFinanceCheckout_Service_Transaction extends WC_PostFinanceCheckout_
 		$this->set_order_line_items($order, $transaction);
         $this->set_order_return_urls($order, $transaction);
 	}
-	
+
+    /**
+     * @param WC_Order                                                    $order
+     * @param \PostFinanceCheckout\Sdk\Model\AbstractTransactionPending $transaction
+     */
 	protected function set_order_return_urls(WC_Order $order, \PostFinanceCheckout\Sdk\Model\AbstractTransactionPending $transaction){
 	    $transaction->setSuccessUrl(
 	        add_query_arg(
@@ -592,10 +598,10 @@ class WC_PostFinanceCheckout_Service_Transaction extends WC_PostFinanceCheckout_
 		    }
 		}
 		if(!empty($gender_string)){
-		    if(strtolower($gender_string) == 'm' || strtolower($gender_string) == "male"){
+		    if(strtolower($gender_string) == 'm' || strtolower($gender_string) == 'male'){
 		        $address->setGender(\PostFinanceCheckout\Sdk\Model\Gender::MALE);
 		    }
-		    elseif(strtolower($gender_string) == 'f' || strtolower($gender_string) == "female"){
+		    elseif(strtolower($gender_string) == 'f' || strtolower($gender_string) == 'female'){
 		        $address->setGender(\PostFinanceCheckout\Sdk\Model\Gender::FEMALE);
 		    }
 		}
@@ -648,7 +654,7 @@ class WC_PostFinanceCheckout_Service_Transaction extends WC_PostFinanceCheckout_
 		    }
 		}
 		
-		$gender_string = "";
+		$gender_string = '';
 		$custom_shipping_gender_meta_name = apply_filters('wc_postfinancecheckout_shipping_gender_order_meta_name', '');
 		if(!empty($custom_shipping_gender_meta_name)){
 		    $gender_string = $order->get_meta($custom_shipping_gender_meta_name, true, 'edit');
@@ -660,10 +666,10 @@ class WC_PostFinanceCheckout_Service_Transaction extends WC_PostFinanceCheckout_
 		    }
 		}
 		if(!empty($gender_string)){
-		    if(strtolower($gender_string) == 'm' || strtolower($gender_string) == "male"){
+		    if(strtolower($gender_string) == 'm' || strtolower($gender_string) == 'male'){
 		        $address->setGender(\PostFinanceCheckout\Sdk\Model\Gender::MALE);
 		    }
-		    elseif(strtolower($gender_string) == 'f' || strtolower($gender_string) == "female"){
+		    elseif(strtolower($gender_string) == 'f' || strtolower($gender_string) == 'female'){
 		        $address->setGender(\PostFinanceCheckout\Sdk\Model\Gender::FEMALE);
 		    }
 		}
@@ -673,7 +679,7 @@ class WC_PostFinanceCheckout_Service_Transaction extends WC_PostFinanceCheckout_
 	}
 	
 	/**
-	 * Returns the current scustomer's email address.
+	 * Returns the current customer's email address.
 	 *
 	 * @param WC_Order $order
 	 * @return string
@@ -729,10 +735,10 @@ class WC_PostFinanceCheckout_Service_Transaction extends WC_PostFinanceCheckout_
      */
 	public function get_transaction_from_order(WC_Order $order){
 	   
-	        if (!isset(self::$transaction_cache[$order->get_id()]) || self::$transaction_cache[$order->get_id()] == null) {
+	        if (!isset(self::$transaction_cache[$order->get_id()]) || is_null(self::$transaction_cache[$order->get_id()])) {
 	            $existing_transaction = WC_PostFinanceCheckout_Entity_Transaction_Info::load_by_order_id($order->get_id());
 	            $configured_space_id = get_option(WooCommerce_PostFinanceCheckout::CK_SPACE_ID);
-	            if($existing_transaction->get_id() === null || $existing_transaction->get_space_id() === null || $existing_transaction->get_space_id() != $configured_space_id){
+	            if(is_null($existing_transaction->get_id()) || is_null($existing_transaction->get_space_id()) || $existing_transaction->get_space_id() != $configured_space_id){
 	                WC_PostFinanceCheckout_Helper::instance()->start_database_transaction();
 	                try{
 	                    $transaction = $this->create_transaction_by_order($order);
@@ -805,9 +811,15 @@ class WC_PostFinanceCheckout_Service_Transaction extends WC_PostFinanceCheckout_
 		$this->store_transaction_ids_in_session($transaction);
 		return $transaction;
 	}
-	
+
+    /**
+     * @param WC_Order                                         $order
+     * @param WC_PostFinanceCheckout_Entity_Transaction_Info $existing_transaction
+     * @return \PostFinanceCheckout\Sdk\Model\Transaction|\PostFinanceCheckout\Sdk\Model\TransactionCreate
+     * @throws Exception
+     */
 	protected function load_and_update_transaction_for_order(WC_Order $order, WC_PostFinanceCheckout_Entity_Transaction_Info $existing_transaction){
-	    $last = new \PostFinanceCheckout\Sdk\VersioningException();
+	    $last = new \Exception(__FUNCTION__);
 	    for ($i = 0; $i < 5; $i++) {
 	        try {
 	            $space_id = $existing_transaction->get_space_id();
@@ -825,7 +837,8 @@ class WC_PostFinanceCheckout_Service_Transaction extends WC_PostFinanceCheckout_
 	            $pending_transaction = apply_filters('wc_postfinancecheckout_modify_order_pending_transaction', $pending_transaction, $order);
 	            return $this->get_transaction_service()->update($space_id, $pending_transaction);
 	        }
-	        catch (\PostFinanceCheckout\Sdk\VersioningException $e) {
+	        catch (\Exception $e) {
+                WooCommerce_PostFinanceCheckout::instance()->log(__CLASS__ . " : ". __FUNCTION__ . " : " . __LINE__ . " : " . $e->getMessage() , WC_Log_Levels::ERROR);
 	            $last = $e;
 	        }
 	    }
@@ -841,7 +854,7 @@ class WC_PostFinanceCheckout_Service_Transaction extends WC_PostFinanceCheckout_
      * @throws Exception
      */
 	protected function load_and_update_transaction_from_session(){
-	    $last = new \PostFinanceCheckout\Sdk\VersioningException();
+	    $last = new \Exception(__FUNCTION__);
 		for ($i = 0; $i < 5; $i++) {
 			try {
 				$session_handler = WC()->session;
@@ -858,7 +871,8 @@ class WC_PostFinanceCheckout_Service_Transaction extends WC_PostFinanceCheckout_
 				$pending_transaction = apply_filters('wc_postfinancecheckout_modify_session_pending_transaction', $pending_transaction);
 				return $this->get_transaction_service()->update($space_id, $pending_transaction);
 			}
-			catch (\PostFinanceCheckout\Sdk\VersioningException $e) {
+			catch (\Exception $e) {
+                WooCommerce_PostFinanceCheckout::instance()->log(__CLASS__ . " : ". __FUNCTION__ . " : " . __LINE__ . " : " . $e->getMessage() , WC_Log_Levels::ERROR);
 				$last = $e;
 			}
 		}
@@ -893,7 +907,7 @@ class WC_PostFinanceCheckout_Service_Transaction extends WC_PostFinanceCheckout_
      */
 	protected function get_session_billing_address(){
 		$customer = WC()->customer;
-		if ($customer == null) {
+		if (is_null($customer)) {
 			return null;
 		}
 		
@@ -939,7 +953,7 @@ class WC_PostFinanceCheckout_Service_Transaction extends WC_PostFinanceCheckout_
 	 */
 	protected function get_session_shipping_address(){
 		$customer = WC()->customer;
-		if ($customer == null) {
+		if (is_null($customer)) {
 			return null;
 		}
 		
@@ -986,25 +1000,26 @@ class WC_PostFinanceCheckout_Service_Transaction extends WC_PostFinanceCheckout_
 		
 		//if we are in update_order_review, the entered email is in the post_data string,
 		//as WooCommerce does not update the email on the customer
-		$post_data = array();
 		if (isset($_POST['post_data'])) {
+            $post_data = array();
 			parse_str($_POST['post_data'], $post_data);
-		}
-		if (!empty($post_data['billing_email'])) {
-			return $post_data['billing_email'];
+            if (!empty($post_data['billing_email'])  && is_email($post_data['billing_email']) ) {
+                return $post_data['billing_email'];
+            }
 		}
 		
 		$customer = WC()->customer;
-		if ($customer != null) {
-			$email = $customer->get_billing_email();
-			if (!empty($email)) {
-				return $email;
+		if (!is_null($customer )) {
+			if (!empty($customer->get_billing_email())) {
+				return $customer->get_billing_email();
 			}
 		}
+
 		if (is_user_logged_in()) {
 			$user = wp_get_current_user();
 			return $user->get('user_email');
 		}
+
 		return null;
 	}
 

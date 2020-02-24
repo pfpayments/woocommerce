@@ -73,7 +73,7 @@ class WC_PostFinanceCheckout_Gateway extends WC_Payment_Gateway {
 	 * @return WC_PostFinanceCheckout_Entity_Method_Configuration
 	 */
 	public function get_payment_method_configuration(){
-		if ($this->pfc_payment_method_configuration === null) {
+		if (is_null($this->pfc_payment_method_configuration)) {
 		    $this->pfc_payment_method_configuration = WC_PostFinanceCheckout_Entity_Method_Configuration::load_by_id(
 					$this->pfc_payment_method_configuration_id);
 		}
@@ -88,7 +88,7 @@ class WC_PostFinanceCheckout_Gateway extends WC_Payment_Gateway {
 	public function get_title(){
 		$title = $this->title;
 		$translated = WC_PostFinanceCheckout_Helper::instance()->translate($this->pfc_translated_title);
-		if ($translated !== null) {
+		if (!is_null($translated)) {
 			$title = $translated;
 		}
 		return apply_filters('woocommerce_gateway_title', $title, $this->id);
@@ -100,10 +100,10 @@ class WC_PostFinanceCheckout_Gateway extends WC_Payment_Gateway {
 	 * @return string
 	 */
 	public function get_description(){
-		$description = "";
+		$description = '';
 		if ($this->pfc_show_description == 'yes') {
 		    $translated = WC_PostFinanceCheckout_Helper::instance()->translate($this->pfc_translated_description);
-			if ($translated !== null) {
+			if (!is_null($translated)) {
 				$description = $translated;
 			}
 		}

@@ -33,7 +33,7 @@ class WC_PostFinanceCheckout_Customer_Document {
 			return;
 		}
 		$transaction_info = WC_PostFinanceCheckout_Entity_Transaction_Info::load_by_order_id($order->get_id());
-		if ($transaction_info->get_id() == null) {
+		if (is_null($transaction_info->get_id())) {
 			return;
 		}
 		$packing = false;

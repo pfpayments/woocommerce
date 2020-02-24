@@ -20,6 +20,7 @@ jQuery(function ($) {
         form_data : '',
         form_data_timer : null,
         checkout_form_identifier : 'form.checkout',
+        checkout_payment_area: '.woocommerce-checkout-payment, .woocommerce-checkout-review-order-table',
 
         init : function() {
             // Payment methods
@@ -66,6 +67,11 @@ jQuery(function ($) {
                     }
                     current += $(this).attr('name') + "=" + $(this).val() + "&";
                 });
+                // no updates on invalid fields
+                if($(self.checkout_form_identifier + ' .woocommerce-invalid').length) {
+                    complete = false;
+                    return false;
+                }
                 if(complete){
                     var old = this.form_data;
                     this.form_data = current;
@@ -172,49 +178,52 @@ jQuery(function ($) {
          */
         register_ajax_prefilter : function() {
             var self = this;
-            $.ajaxPrefilter(
-                "json",
-                function(options, originalOptions, jqXHR) {
-                    if (options.url === wc_checkout_params.checkout_url
-                        && self.is_supported_method(self.get_selected_payment_method())) {
-                        var original_success = options.success;
-                        options.success = function(data, textStatus, jqXHR) {
-                            $(window).unbind("beforeunload");
-                            // handle lightbox integration
-                            if(postfinancecheckout_js_params.integration && postfinancecheckout_js_params.integration === self.integrations.LIGHTBOX ) {
-                                var selected_payment_method = $('input[name="payment_method"]:checked').val();
-                                var paymentMethodConfigurationId = $("#postfinancecheckout-method-configuration-" + selected_payment_method).data('configuration-id');
-                                window.LightboxCheckoutHandler.startPayment(paymentMethodConfigurationId, function () {
-                                    alert('An error occurred during the initialization of the payment lightbox.');
-                                });
+
+            $.ajaxPrefilter("json", function(options, originalOptions, jqXHR) {
+                if (options.url === wc_checkout_params.checkout_url && self.is_supported_method(self.get_selected_payment_method())) {
+                    var original_success = options.success;
+                    options.success = function(data, textStatus, jqXHR) {
+                        $(window).unbind("beforeunload");
+                        // handle lightbox integration
+                        if(postfinancecheckout_js_params.integration && postfinancecheckout_js_params.integration === self.integrations.LIGHTBOX ) {
+                            var selected_payment_method = $('input[name="payment_method"]:checked').val();
+                            var paymentMethodConfigurationId = $("#postfinancecheckout-method-configuration-" + selected_payment_method).data('configuration-id');
+                            window.LightboxCheckoutHandler.startPayment(paymentMethodConfigurationId, function () {
+                                alert('An error occurred during the initialization of the payment lightbox.');
+                            });
+                            return false;
+
+                        }
+
+                        if (self.process_order_created(data, textStatus, jqXHR)) {
                                 return false;
+                        }
+                        if (typeof original_success == 'function') {
+                            original_success(data, textStatus,jqXHR);
+                        } else if (typeof original_success != "undefined" && original_success.constructor === Array) {
+                            original_success.forEach(function(original_function) {
+                                if (typeof original_function == 'function') {
+                                    original_function(data, textStatus, jqXHR);
+                                }
+                            });
+                        }
+                    };
+                }
+            });
 
-                            }
-
-                            if (self.process_order_created(data, textStatus, jqXHR)) {
-                                return undefined;
-                            }
-                            if (typeof original_success == 'function') {
-                                original_success(data, textStatus,jqXHR);
-                            } else if (typeof original_success != "undefined"
-                                    && original_success.constructor === Array) {
-                                        original_success.forEach(function(original_function) {
-                                        if (typeof original_function == 'function') {
-                                            original_function(data, textStatus, jqXHR);
-                                        }
-                                    });
-                            }
-                        };
-                    }
-               });
-            $.ajaxPrefilter(
-                function(options, originalOptions, jqXHR) {
+            $.ajaxPrefilter(function(options, originalOptions, jqXHR) {
                 var target = wc_checkout_params.wc_ajax_url.toString().replace( '%%endpoint%%', 'update_order_review' );
                 if (options.url === target){
-
+                    // no updates on invalid fields
+                    if($(self.checkout_form_identifier + ' .woocommerce-invalid').length) {
+                        jqXHR.abort();
+                        $(self.checkout_payment_area).unblock();
+                        self.update_sent = false;
+                        return false;
+                    }
                     if(postfinancecheckout_js_params.integration && postfinancecheckout_js_params.integration === self.integrations.LIGHTBOX ) {
                         jqXHR.abort();
-                        $(".woocommerce-checkout-payment, .woocommerce-checkout-review-order-table").unblock();
+                        $(self.checkout_payment_area).unblock();
                         self.update_sent = false;
                         return false;
                     }
