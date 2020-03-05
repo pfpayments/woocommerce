@@ -184,16 +184,6 @@ jQuery(function ($) {
                     var original_success = options.success;
                     options.success = function(data, textStatus, jqXHR) {
                         $(window).unbind("beforeunload");
-                        // handle lightbox integration
-                        if(postfinancecheckout_js_params.integration && postfinancecheckout_js_params.integration === self.integrations.LIGHTBOX ) {
-                            var selected_payment_method = $('input[name="payment_method"]:checked').val();
-                            var paymentMethodConfigurationId = $("#postfinancecheckout-method-configuration-" + selected_payment_method).data('configuration-id');
-                            window.LightboxCheckoutHandler.startPayment(paymentMethodConfigurationId, function () {
-                                alert('An error occurred during the initialization of the payment lightbox.');
-                            });
-                            return false;
-
-                        }
 
                         if (self.process_order_created(data, textStatus, jqXHR)) {
                                 return false;
@@ -384,12 +374,43 @@ jQuery(function ($) {
         },
     
         process_order_created : function(data, textStatus, jqXHR) {
-            this.validated = false;
-            if (typeof data.postfinancecheckout == 'undefined') {
-                return false;
+            var self = this;
+            // handle lightbox integration
+            if(postfinancecheckout_js_params.integration && postfinancecheckout_js_params.integration === self.integrations.LIGHTBOX ) {
+                var required_inputs = $(self.checkout_form_identifier).find('.validate-required:visible');
+                var has_full_address = true;
+                if (required_inputs.length) {
+                    required_inputs.each(function () {
+                        if (!$(this).find('input, select').val()) {
+                            has_full_address = false;
+                            return false;
+                        }
+
+                        if ($(this).find('input[type=checkbox]').length && !$(this).find('input[type=checkbox]').is(':checked')) {
+                            has_full_address = false;
+                            return false;
+                        }
+                    });
+                }
+                if (!has_full_address) {
+                    $(self.checkout_form_identifier).trigger('validate');
+                    self.submit_error(postfinancecheckout_js_params.i18n_not_complete);
+                    return false;
+                }
+                var selected_payment_method = $('input[name=payment_method]:checked').val();
+                var paymentMethodConfigurationId = $('#wallee-method-configuration-' + selected_payment_method).data('configuration-id');
+                window.LightboxCheckoutHandler.startPayment(paymentMethodConfigurationId, function () {
+                    alert('An error occurred during the initialization of the payment lightbox.');
+                });
+                return true;
+            } else {
+                this.validated = false;
+                if (typeof data.postfinancecheckout == 'undefined') {
+                    return false;
+                }
+                this.payment_methods[this.get_selected_payment_method()].handler.submit();
+                return true;
             }
-            this.payment_methods[this.get_selected_payment_method()].handler.submit();
-            return true;
         },
     
         process_validation : function(method_id, validation_result) {
