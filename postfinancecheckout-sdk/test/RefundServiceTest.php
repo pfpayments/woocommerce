@@ -26,8 +26,14 @@ use PostFinanceCheckout\Sdk\Http\HttpClientFactory;
 use PostFinanceCheckout\Sdk\Model\AddressCreate;
 use PostFinanceCheckout\Sdk\Model\LineItemCreate;
 use PostFinanceCheckout\Sdk\Model\LineItemType;
+use PostFinanceCheckout\Sdk\Model\RefundCreate;
+use PostFinanceCheckout\Sdk\Model\RefundState;
+use PostFinanceCheckout\Sdk\Model\RefundType;
+use PostFinanceCheckout\Sdk\Model\TransactionCompletionState;
 use PostFinanceCheckout\Sdk\Model\TransactionCreate;
-use PostFinanceCheckout\Sdk\Service\TransactionPaymentPageService;
+use PostFinanceCheckout\Sdk\Model\TransactionState;
+use PostFinanceCheckout\Sdk\Service\RefundService;
+use PostFinanceCheckout\Sdk\Service\TransactionCompletionService;
 use PostFinanceCheckout\Sdk\Service\TransactionService;
 
 /**
@@ -38,9 +44,8 @@ use PostFinanceCheckout\Sdk\Service\TransactionService;
  * @author   customweb GmbH
  * @license  http://www.apache.org/licenses/LICENSE-2.0 Apache License v2
  */
-class TransactionPaymentPageServiceTest extends TestCase
+class RefundServiceTest extends TestCase
 {
-
     /**
      * @var PostFinanceCheckout\Sdk\ApiClient
      */
@@ -50,9 +55,10 @@ class TransactionPaymentPageServiceTest extends TestCase
      * @var PostFinanceCheckout\Sdk\Model\TransactionCreate
      */
     private $transactionBag;
-    
-    private $transactionPaymentPageService;
+
+    private $transactionCompletionService;
     private $transactionService;
+    private $refundService;
 
     /**
      * @var int
@@ -76,8 +82,12 @@ class TransactionPaymentPageServiceTest extends TestCase
     {
         parent::setUp();
 
-        if (is_null($this->transactionPaymentPageService)) {
-            $this->transactionPaymentPageService = new TransactionPaymentPageService($this->getApiClient());
+        if (is_null($this->transactionCompletionService)) {
+            $this->transactionCompletionService = new TransactionCompletionService($this->getApiClient());
+        }
+
+        if (is_null($this->refundService)) {
+            $this->refundService = new RefundService($this->getApiClient());
         }
 
         if (is_null($this->transactionService)) {
@@ -153,12 +163,128 @@ class TransactionPaymentPageServiceTest extends TestCase
     }
 
     /**
-     * Test the cURL HTTP client.
+     * Test case for count
+     *
+     * Count.
+     * @todo
+     *
      */
-    public function testPaymentPageUrl()
+    public function testCount()
     {
-        $transaction    = $this->transactionService->create($this->spaceId, $this->getTransactionBag());
-        $paymentPageUrl = $this->transactionPaymentPageService->paymentPageUrl($this->spaceId, $transaction->getId());
-        $this->assertEquals(0, strpos($paymentPageUrl, 'http'));
+    }
+
+    /**
+     * Test case for fail
+     *
+     * fail.
+     * @todo
+     *
+     */
+    public function testFail()
+    {
+    }
+
+    /**
+     * Test case for getRefundDocument
+     *
+     * getRefundDocument.
+     * @todo
+     *
+     */
+    public function testGetRefundDocument()
+    {
+    }
+
+    /**
+     * Test case for getRefundDocumentWithTargetMediaType
+     *
+     * getRefundDocumentWithTargetMediaType.
+     * @todo
+     *
+     *
+     */
+    public function testGetRefundDocumentWithTargetMediaType()
+    {
+    }
+
+    /**
+     * Test case for read
+     *
+     * Read.
+     * @todo
+     *
+     */
+    public function testRead()
+    {
+    }
+
+    /**
+     * Test case for refund
+     *
+     * create.
+     * @todo
+     */
+    public function testRefund()
+    {
+        $transaction = $this->transactionService->create($this->spaceId, $this->transactionBag);
+        $transaction = $this->transactionService->processWithoutUserInteraction($this->spaceId, $transaction->getId());
+        echo $transaction->getId() . PHP_EOL;
+        for ($i = 1; $i <= 5; $i++) {
+            echo $transaction->getState() . PHP_EOL;
+            if (in_array($transaction->getState(), [TransactionState::FULFILL, TransactionState::FAILED])) {
+                break;
+            }
+            sleep($i * 30);
+            $transaction = $this->transactionService->read($this->spaceId, $transaction->getId());
+        }
+        if (in_array($transaction->getState(), [TransactionState::FULFILL])) {
+            $transactionCompletion = $this->transactionCompletionService->completeOffline($this->spaceId, $transaction->getId());
+            $this->assertEquals($transactionCompletion->getState(), TransactionCompletionState::SUCCESSFUL);
+            $transaction = $this->transactionService->read($this->spaceId, $transactionCompletion->getLinkedTransaction());  // fetch the latest transaction data
+            $refundBag   = $this->getRefundBag($transaction);
+            /**
+             * \PostFinanceCheckout\Sdk\Model\Refund $refund
+             */
+            $refund = $this->refundService->refund($this->spaceId, $refundBag);
+            $this->assertEquals($refund->getState(), RefundState::SUCCESSFUL);
+        }
+    }
+
+    /**
+     *
+     * @param \PostFinanceCheckout\Sdk\Model\Transaction $transaction
+     * @return RefundCreate
+     */
+    private function getRefundBag($transaction)
+    {
+        $refund = new RefundCreate();
+        $refund->setAmount($transaction->getAuthorizationAmount());
+        $refund->setTransaction($transaction->getId());
+        $refund->setMerchantReference($transaction->getMerchantReference());
+        $refund->setExternalId($transaction->getId());
+        $refund->setType(RefundType::MERCHANT_INITIATED_ONLINE);
+        return $refund;
+    }
+
+    /**
+     * Test case for search
+     *
+     * Search.
+     * @todo
+     *
+     */
+    public function testSearch()
+    {
+    }
+
+    /**
+     * Test case for succeed
+     *
+     * succeed.
+     * @todo
+     *
+     */
+    public function testSucceed()
+    {
     }
 }

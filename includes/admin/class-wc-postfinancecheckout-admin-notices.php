@@ -53,9 +53,13 @@ class WC_PostFinanceCheckout_Admin_Notices {
 	public static function round_subtotal_notices(){
 	    $screen = get_current_screen();
 	    if($screen->id == 'woocommerce_page_wc-settings'){
-    	    if ( wc_tax_enabled() && 'yes' === get_option( 'woocommerce_tax_round_at_subtotal' )){
-    	        require_once WC_POSTFINANCECHECKOUT_ABSPATH.'/views/admin-notices/round-subtotal-warning.php';
-    	    }
+            if ( wc_tax_enabled() && ('yes' === get_option( 'woocommerce_tax_round_at_subtotal' ))){
+                if('yes' === get_option( WooCommerce_PostFinanceCheckout::CK_ENFORCE_CONSISTENCY )) {
+                    $errorMessage = __("'WooCommerce > Settings > PostFinanceCheckout > Enforce Consistency' and 'WooCommerce > Settings > Tax > Rounding' are both enabled. Please disable at least one of them.", 'woo-postfinancecheckout');
+                    WooCommerce_PostFinanceCheckout::instance()->log($errorMessage, WC_Log_Levels::ERROR);
+                    require_once WC_POSTFINANCECHECKOUT_ABSPATH.'/views/admin-notices/round-subtotal-warning.php';
+                }
+            }
 	    }
 	}
 	

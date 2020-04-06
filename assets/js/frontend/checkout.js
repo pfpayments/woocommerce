@@ -35,7 +35,9 @@ jQuery(function ($) {
                 'button#place_order',
                 { self : this },
                 function (event) {
-                    return false;
+                    if(postfinancecheckout_js_params.integration === window.wc_postfinancecheckout_checkout.integrations.LIGHTBOX ) {
+                        return false;
+                    }
                 }
             );
     

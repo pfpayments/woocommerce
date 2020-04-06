@@ -624,6 +624,8 @@ msgstr ""
 msgid "PostFinance Checkout Transaction"
 msgstr ""
 
-
-
-
+#: includes/class-wc-postfinancecheckout-gateway.php:143
+#: includes/admin/class-wc-postfinancecheckout-admin-notices.php:104
+#: includes/admin/class-wc-postfinancecheckout-admin-settings-page.php:104
+msgid "'WooCommerce > Settings > PostFinanceCheckout > Enforce Consistency' and 'WooCommerce > Settings > Tax > Rounding' are both enabled. Please disable at least one of them."
+msgstr ""

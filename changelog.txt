@@ -264,3 +264,7 @@
 
 * Fix input validation on lightbox integration
 
+= 1.3.7 - April 05, 2020 =
+
+* Update logging
+

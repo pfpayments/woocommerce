@@ -81,7 +81,7 @@ class WC_PostFinanceCheckout_Helper
      */
     public function get_base_gateway_url()
     {
-        return get_option('wc_postfinancecheckout_base_gateway_url', 'https://www.postfinance-checkout.ch/');
+        return get_option('wc_postfinancecheckout_base_gateway_url', 'https://checkout.postfinance.ch/');
     }
 
     /**

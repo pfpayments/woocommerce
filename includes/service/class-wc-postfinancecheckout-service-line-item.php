@@ -18,9 +18,9 @@ class WC_PostFinanceCheckout_Service_Line_Item extends WC_PostFinanceCheckout_Se
 	/**
 	 * Returns the line items from the given cart
 	 *
-     * @return \PostFinanceCheckout\Sdk\Model\LineItemCreate[]
-     * @throws WC_PostFinanceCheckout_Exception_Invalid_Transaction_Amount
-     */
+	 * @return \PostFinanceCheckout\Sdk\Model\LineItemCreate[]
+	 * @throws WC_PostFinanceCheckout_Exception_Invalid_Transaction_Amount
+	 */
 	public function get_items_from_session(){
 		$currency = get_woocommerce_currency();
 		$cart = WC()->cart;
@@ -53,11 +53,11 @@ class WC_PostFinanceCheckout_Service_Line_Item extends WC_PostFinanceCheckout_Se
 			 */
 			$product = $values['data'];
 			$line_item = new \PostFinanceCheckout\Sdk\Model\LineItemCreate();
-            $amount_including_tax = $values['line_subtotal'] + $values['line_subtotal_tax'];
-            $discount_including_tax = $values['line_total'] + $values['line_tax'];
+			$amount_including_tax = $values['line_subtotal'] + $values['line_subtotal_tax'];
+			$discount_including_tax = $values['line_total'] + $values['line_tax'];
 
-            $line_item->setAmountIncludingTax($this->round_amount($discount_including_tax, $currency));
-            $line_item->setDiscountIncludingTax($this->round_amount($amount_including_tax - $discount_including_tax, $currency));
+			$line_item->setAmountIncludingTax($this->round_amount($discount_including_tax, $currency));
+			$line_item->setDiscountIncludingTax($this->round_amount($amount_including_tax - $discount_including_tax, $currency));
 			$line_item->setName($product->get_name());
 			
 			$quantity = empty($values['quantity'])? 1 : $values['quantity'];
@@ -81,14 +81,14 @@ class WC_PostFinanceCheckout_Service_Line_Item extends WC_PostFinanceCheckout_Se
 			
 			$attributes = $this->get_base_attributes($product->get_id());
 			foreach ($values['variation'] as $key => $value){
-			    if(strpos($key, 'attribute_') === 0){
-			        $taxonomy = substr($key, 10);
-			        $attribute_key_cleaned = $this->clean_attribute_key($taxonomy);
-			        if(isset($attributes[$attribute_key_cleaned])){
-			            $term = get_term_by('slug', $value, $taxonomy, 'display');
-			            $attributes[$attribute_key_cleaned]->setValue($this->fix_length($term->name, 512));
-			        }
-			    }
+				if(strpos($key, 'attribute_') === 0){
+					$taxonomy = substr($key, 10);
+					$attribute_key_cleaned = $this->clean_attribute_key($taxonomy);
+					if(isset($attributes[$attribute_key_cleaned])){
+						$term = get_term_by('slug', $value, $taxonomy, 'display');
+						$attributes[$attribute_key_cleaned]->setValue($this->fix_length($term->name, 512));
+					}
+				}
 			}
 			if(!empty($attributes)){
 			  $line_item->setAttributes($attributes);
@@ -109,7 +109,7 @@ class WC_PostFinanceCheckout_Service_Line_Item extends WC_PostFinanceCheckout_Se
 	protected function create_fee_lines_items_from_session(WC_Cart $cart, $currency){
 		$fees = array();
 		foreach ($cart->get_fees() as $fee) {
-		    $line_item = new \PostFinanceCheckout\Sdk\Model\LineItemCreate();
+			$line_item = new \PostFinanceCheckout\Sdk\Model\LineItemCreate();
 			
 			$amount_including_tax = $fee->amount + $fee->tax;
 			
@@ -129,11 +129,11 @@ class WC_PostFinanceCheckout_Service_Line_Item extends WC_PostFinanceCheckout_Se
 			
 			if ($amount_including_tax < 0) {
 				//There are plugins which create fees with a negative values (used as discounts)
-			    $line_item->setType(\PostFinanceCheckout\Sdk\Model\LineItemType::DISCOUNT);
+				$line_item->setType(\PostFinanceCheckout\Sdk\Model\LineItemType::DISCOUNT);
 				$line_item->setUniqueId('discount-' . $fee->id);
 			}
 			else {
-			    $line_item->setType(\PostFinanceCheckout\Sdk\Model\LineItemType::FEE);
+				$line_item->setType(\PostFinanceCheckout\Sdk\Model\LineItemType::FEE);
 				$line_item->setUniqueId('fee-' . $fee->id);
 			}
 			$fees[] = apply_filters('wc_postfinancecheckout_modify_line_item_fee_session', $this->clean_line_item($line_item), $fee);
@@ -186,10 +186,10 @@ class WC_PostFinanceCheckout_Service_Line_Item extends WC_PostFinanceCheckout_Se
 	/**
 	 * Returns the line items from the given cart
 	 *
-     * @param WC_Order $order
-     * @return \PostFinanceCheckout\Sdk\Model\LineItemCreate[]
-     * @throws WC_PostFinanceCheckout_Exception_Invalid_Transaction_Amount
-     */
+	 * @param WC_Order $order
+	 * @return \PostFinanceCheckout\Sdk\Model\LineItemCreate[]
+	 * @throws WC_PostFinanceCheckout_Exception_Invalid_Transaction_Amount
+	 */
 	public function get_items_from_order(WC_Order $order){
 		$raw = $this->get_raw_items_from_order($order);		
 		$items = apply_filters('wc_postfinancecheckout_modify_line_item_order', $raw , $order);		
@@ -198,11 +198,11 @@ class WC_PostFinanceCheckout_Service_Line_Item extends WC_PostFinanceCheckout_Se
 	}
 	
 	public function get_raw_items_from_order(WC_Order $order){
-	    $items = $this->create_product_line_items_from_order($order);
-	    $fees = $this->create_fee_lines_items_from_order($order);
-	    $shipping = $this->create_shipping_line_items_from_order($order);
-	    $combined = array_merge($items, $fees, $shipping);
-	    return $combined;
+		$items = $this->create_product_line_items_from_order($order);
+		$fees = $this->create_fee_lines_items_from_order($order);
+		$shipping = $this->create_shipping_line_items_from_order($order);
+		$combined = array_merge($items, $fees, $shipping);
+		return $combined;
 	}
 
 	/**
@@ -210,7 +210,7 @@ class WC_PostFinanceCheckout_Service_Line_Item extends WC_PostFinanceCheckout_Se
 	 *
 	 * @param WC_Order $order
 	 * @return \PostFinanceCheckout\Sdk\Model\LineItemCreate[]
-     * @throws Exception
+	 * @throws Exception
 	 */
 	protected function create_product_line_items_from_order(WC_Order $order){
 		$items = array();
@@ -220,24 +220,32 @@ class WC_PostFinanceCheckout_Service_Line_Item extends WC_PostFinanceCheckout_Se
 			 * @var WC_Order_Item_Product $item
 			 */
 			
-		    $line_item = new \PostFinanceCheckout\Sdk\Model\LineItemCreate();
-            $amount_including_tax = $item->get_subtotal() + $item->get_subtotal_tax();
-            $discount_including_tax = $item->get_total() + $item->get_total_tax();
+			$line_item = new \PostFinanceCheckout\Sdk\Model\LineItemCreate();
+			$amount_including_tax = $item->get_subtotal() + $item->get_subtotal_tax();
+			$discount_including_tax = $item->get_total() + $item->get_total_tax();
 
-            $line_item->setAmountIncludingTax($this->round_amount($discount_including_tax, $currency));
-            $line_item->setDiscountIncludingTax($this->round_amount($amount_including_tax-$discount_including_tax, $currency));
-            $quantity = empty($item->get_quantity())? 1: $item->get_quantity();
+			$line_item->setAmountIncludingTax($this->round_amount($discount_including_tax, $currency));
+			$line_item->setDiscountIncludingTax($this->round_amount($amount_including_tax-$discount_including_tax, $currency));
+			$quantity = empty($item->get_quantity())? 1: $item->get_quantity();
 
 			$line_item->setQuantity($quantity);
 			
 			$product = $item->get_product();
-			$line_item->setName($product->get_name());
-			$line_item->setShippingRequired(!$product->get_virtual());
-			
-			$sku = $product->get_sku();
-			if (empty($sku)) {
-				$sku = $product->get_name();
+			$sku = null;
+			if (is_bool($product)) {
+				$line_item->setName($item->get_name());
+				$line_item->setShippingRequired(true);
+				$sku = $item->get_name();
 			}
+			else {
+				$line_item->setName($product->get_name());
+				$line_item->setShippingRequired(!$product->get_virtual()); 
+				$sku = $product->get_sku();
+				if (empty($sku)) {
+                    $sku = $product->get_name();
+			    }
+			}
+			
 			$sku = str_replace(array(
 				"\n",
 				"\r" 
@@ -249,22 +257,24 @@ class WC_PostFinanceCheckout_Service_Line_Item extends WC_PostFinanceCheckout_Se
 			$line_item->setType(\PostFinanceCheckout\Sdk\Model\LineItemType::PRODUCT);
 			$line_item->setUniqueId($item->get_meta('_postfinancecheckout_unique_line_item_id', true));
 			
-			$attributes = $this->get_base_attributes($product->get_id());
-			
-			// Only for product variation
-			if($product->is_type('variation')){
-			    $variation_attributes = $product->get_variation_attributes();
-			    foreach(array_keys($variation_attributes) as $attribute_key){
-			        $taxonomy = str_replace('attribute_', '', $attribute_key );
-		            $attribute_key_cleaned = $this->clean_attribute_key($taxonomy);
-			        if(isset($attributes[$attribute_key_cleaned])){
-			            $term = get_term_by('slug', wc_get_order_item_meta($item->get_id(), $taxonomy, true), $taxonomy, 'display');
-			            $attributes[$attribute_key_cleaned]->setValue($this->fix_length($term->name, 512));
-			        }
-			    }
-			}						
-			if(!empty($attributes)){
-			    $line_item->setAttributes($attributes);
+			if (!is_bool($product)) {
+    			$attributes = $this->get_base_attributes($product->get_id());
+    			
+    			// Only for product variation
+    			if($product->is_type('variation')){
+    				$variation_attributes = $product->get_variation_attributes();
+    				foreach(array_keys($variation_attributes) as $attribute_key){
+    					$taxonomy = str_replace('attribute_', '', $attribute_key );
+    					$attribute_key_cleaned = $this->clean_attribute_key($taxonomy);
+    					if(isset($attributes[$attribute_key_cleaned])){
+    						$term = get_term_by('slug', wc_get_order_item_meta($item->get_id(), $taxonomy, true), $taxonomy, 'display');
+    						$attributes[$attribute_key_cleaned]->setValue($this->fix_length($term->name, 512));
+    					}
+    				}
+    			}						
+    			if(!empty($attributes)){
+    				$line_item->setAttributes($attributes);
+    			}
 			}
 			
 			$items[] = apply_filters('wc_postfinancecheckout_modify_line_item_product_order', $this->clean_line_item($line_item), $item);
@@ -287,7 +297,7 @@ class WC_PostFinanceCheckout_Service_Line_Item extends WC_PostFinanceCheckout_Se
 			 * @var WC_Order_Item_Fee $fee
 			 */
 			
-		    $line_item = new \PostFinanceCheckout\Sdk\Model\LineItemCreate();
+			$line_item = new \PostFinanceCheckout\Sdk\Model\LineItemCreate();
 			
 			$amount_including_tax = $fee->get_total() + $fee->get_total_tax();
 			
@@ -307,10 +317,10 @@ class WC_PostFinanceCheckout_Service_Line_Item extends WC_PostFinanceCheckout_Se
 			
 			if ($amount_including_tax < 0) {
 				//There are plugins which create fees with a negative values (used as discounts)
-			    $line_item->setType(\PostFinanceCheckout\Sdk\Model\LineItemType::DISCOUNT);
+				$line_item->setType(\PostFinanceCheckout\Sdk\Model\LineItemType::DISCOUNT);
 			}
 			else {
-			    $line_item->setType(\PostFinanceCheckout\Sdk\Model\LineItemType::FEE);
+				$line_item->setType(\PostFinanceCheckout\Sdk\Model\LineItemType::FEE);
 			}
 			
 			$line_item->setUniqueId($fee->get_meta('_postfinancecheckout_unique_line_item_id', true));
@@ -335,7 +345,7 @@ class WC_PostFinanceCheckout_Service_Line_Item extends WC_PostFinanceCheckout_Se
 			 * @var WC_Order_Item_Shipping $shipping
 			 */
 			
-		    $line_item = new \PostFinanceCheckout\Sdk\Model\LineItemCreate();
+			$line_item = new \PostFinanceCheckout\Sdk\Model\LineItemCreate();
 			
 			$amount_including_tax = $shipping->get_total() + $shipping->get_total_tax();
 			
@@ -372,11 +382,11 @@ class WC_PostFinanceCheckout_Service_Line_Item extends WC_PostFinanceCheckout_Se
 	/**
 	 * Creates the line items for the products
 	 *
-     * @param array    $backend_items
-     * @param WC_Order $order
-     * @return \PostFinanceCheckout\Sdk\Model\LineItemCreate[]
-     * @throws Exception
-     */
+	 * @param array	$backend_items
+	 * @param WC_Order $order
+	 * @return \PostFinanceCheckout\Sdk\Model\LineItemCreate[]
+	 * @throws Exception
+	 */
 	protected function create_product_line_items_from_backend(array $backend_items, WC_Order $order){
 		$items = array();
 		$currency = $order->get_currency();
@@ -425,18 +435,18 @@ class WC_PostFinanceCheckout_Service_Line_Item extends WC_PostFinanceCheckout_Se
 			
 			// Only for product variation
 			if($product->is_type('variation')){
-			    $variation_attributes = $product->get_variation_attributes();
-			    foreach(array_keys($variation_attributes) as $attribute_key){
-			        $taxonomy = str_replace('attribute_', '', $attribute_key );
-			        $attribute_key_cleaned = $this->clean_attribute_key($taxonomy);
-			        if(isset($attributes[$attribute_key_cleaned])){
-			            $term = get_term_by('slug', wc_get_order_item_meta($item->get_id(), $taxonomy, true), $taxonomy, 'display');
-			            $attributes[$attribute_key_cleaned]->setValue($this->fix_length($term->name, 512));
-			        }
-			    }
+				$variation_attributes = $product->get_variation_attributes();
+				foreach(array_keys($variation_attributes) as $attribute_key){
+					$taxonomy = str_replace('attribute_', '', $attribute_key );
+					$attribute_key_cleaned = $this->clean_attribute_key($taxonomy);
+					if(isset($attributes[$attribute_key_cleaned])){
+						$term = get_term_by('slug', wc_get_order_item_meta($item->get_id(), $taxonomy, true), $taxonomy, 'display');
+						$attributes[$attribute_key_cleaned]->setValue($this->fix_length($term->name, 512));
+					}
+				}
 			}
 			if(!empty($attributes)){
-			    $line_item->setAttributes($attributes);
+				$line_item->setAttributes($attributes);
 			}
 			
 			$items[] = apply_filters('wc_postfinancecheckout_modify_line_item_product_backend', $this->clean_line_item($line_item), $item);
@@ -492,10 +502,10 @@ class WC_PostFinanceCheckout_Service_Line_Item extends WC_PostFinanceCheckout_Se
 			
 			if ($amount_including_tax < 0) {
 				//There are plugins which create fees with a negative values (used as discounts)
-			    $line_item->setType(\PostFinanceCheckout\Sdk\Model\LineItemType::DISCOUNT);
+				$line_item->setType(\PostFinanceCheckout\Sdk\Model\LineItemType::DISCOUNT);
 			}
 			else {
-			    $line_item->setType(\PostFinanceCheckout\Sdk\Model\LineItemType::FEE);
+				$line_item->setType(\PostFinanceCheckout\Sdk\Model\LineItemType::FEE);
 			}
 			
 			$line_item->setUniqueId($fee->get_meta('_postfinancecheckout_unique_line_item_id', true));
@@ -572,60 +582,60 @@ class WC_PostFinanceCheckout_Service_Line_Item extends WC_PostFinanceCheckout_Se
 		$tax_rates = array();
 		
 		foreach (array_keys($rates_or_ids) as $rate_id) {
-            $tax_rates[] = new \PostFinanceCheckout\Sdk\Model\TaxCreate(array(
-                'title' => WC_Tax::get_rate_label($rate_id),
-                'rate' => rtrim(WC_Tax::get_rate_percent($rate_id), '%')
-            ));
+			$tax_rates[] = new \PostFinanceCheckout\Sdk\Model\TaxCreate(array(
+				'title' => WC_Tax::get_rate_label($rate_id),
+				'rate' => rtrim(WC_Tax::get_rate_percent($rate_id), '%')
+			));
 		}
 		
 		return $tax_rates;
 	}
 	
 	private function get_base_attributes($product_id){
-	    
-	    $products_to_check = array($product_id);
-	    $current_product = wc_get_product($product_id);
-	    
-	    /**
-	     * @var WC_Product $product
-	     */
-	    while($current_product && $current_product->get_parent_id('edit') != 0){
-	        $products_to_check[] = $current_product->get_parent_id('edit');
-	        $current_product = wc_get_product($current_product->get_parent_id('edit'));
-	    }
-	    $products_to_check = array_reverse($products_to_check);
-	    $attributes = array();
-	    
-	    foreach($products_to_check as $id){
-	        $product = wc_get_product($id);
+		
+		$products_to_check = array($product_id);
+		$current_product = wc_get_product($product_id);
+		
+		/**
+		 * @var WC_Product $product
+		 */
+		while($current_product && $current_product->get_parent_id('edit') != 0){
+			$products_to_check[] = $current_product->get_parent_id('edit');
+			$current_product = wc_get_product($current_product->get_parent_id('edit'));
+		}
+		$products_to_check = array_reverse($products_to_check);
+		$attributes = array();
+		
+		foreach($products_to_check as $id){
+			$product = wc_get_product($id);
 
-	        $product_attributes = $product->get_attributes('edit');
-	        
-	        foreach($product_attributes as $key => $object){
-	            if(is_a($object, 'WC_Product_Attribute')){
-	                if($object->is_taxonomy()){
-	                    $attribute_options = WC_PostFinanceCheckout_Entity_Attribute_Options::load_by_attribute_id($object->get_id());
-	                    if($attribute_options->get_send()){
-    	                    $attribute = new \PostFinanceCheckout\Sdk\Model\LineItemAttributeCreate();
-    	                    $attribute->setLabel($this->fix_length(wc_attribute_label($key, $product), 512));
-    	                    $terms = $object->get_terms();
-    	                    $value = array();
-    	                    if($terms != null){
-    	                        foreach($terms as $term){
-    	                            $value[] = get_term_field('name', $term); 
-    	                        }
-    	                    }
-    	                    $attribute->setValue($this->fix_length(implode('|',$value), 512));
-    	                    $attributes[$this->clean_attribute_key($key)] = $attribute;
-	                    }
-	                }
-	            }
-	        }	        
-	    }
-	    return $attributes;
+			$product_attributes = $product->get_attributes('edit');
+			
+			foreach($product_attributes as $key => $object){
+				if(is_a($object, 'WC_Product_Attribute')){
+					if($object->is_taxonomy()){
+						$attribute_options = WC_PostFinanceCheckout_Entity_Attribute_Options::load_by_attribute_id($object->get_id());
+						if($attribute_options->get_send()){
+							$attribute = new \PostFinanceCheckout\Sdk\Model\LineItemAttributeCreate();
+							$attribute->setLabel($this->fix_length(wc_attribute_label($key, $product), 512));
+							$terms = $object->get_terms();
+							$value = array();
+							if($terms != null){
+								foreach($terms as $term){
+									$value[] = get_term_field('name', $term); 
+								}
+							}
+							$attribute->setValue($this->fix_length(implode('|',$value), 512));
+							$attributes[$this->clean_attribute_key($key)] = $attribute;
+						}
+					}
+				}
+			}			
+		}
+		return $attributes;
 	}
 	
 	private function clean_attribute_key($key){
-	    return preg_replace("/[^a-z0-9_]+/i", "_", $key);
+		return preg_replace("/[^a-z0-9_]+/i", "_", $key);
 	}
 }
