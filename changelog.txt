@@ -272,3 +272,8 @@
 
 * Update logging
 
+= 1.3.9 - April 09, 2020 =
+
+* Update SDK
+* Update Readme
+
