@@ -455,7 +455,7 @@ msgid "Send Order Email"
 msgstr "Bestellungsbestätigung versenden"
 
 #: includes/admin/class-wc-postfinancecheckout-admin-settings-page.php:201
-msgid "Send the Woocommerce's order email."
+msgid "Send the order email of WooCommerce."
 msgstr "Versenden Sie Emails von WooCommerce."
 
 #: includes/admin/class-wc-postfinancecheckout-admin-settings-page.php:214
@@ -467,7 +467,7 @@ msgid "Invoice Download"
 msgstr "Rechnung herunterladen"
 
 #: includes/admin/class-wc-postfinancecheckout-admin-settings-page.php:221
-msgid "Allow customer's to download the invoice."
+msgid "Allow customers to download the invoice."
 msgstr "Erlauben Sie dem Kunden, die Rechnung herunterzuladen."
 
 #: includes/admin/class-wc-postfinancecheckout-admin-settings-page.php:228
@@ -475,7 +475,7 @@ msgid "Packing Slip Download"
 msgstr "Lieferschein herunterladen"
 
 #: includes/admin/class-wc-postfinancecheckout-admin-settings-page.php:229
-msgid "Allow customer's to download the packing slip."
+msgid "Allow customers to download the packing slip."
 msgstr "Erlauben Sie dem Kunden, den Lieferschein herunterzuladen."
 
 #: includes/admin/class-wc-postfinancecheckout-admin-settings-page.php:242

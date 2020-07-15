@@ -138,7 +138,7 @@ class WC_PostFinanceCheckout_Admin_Settings_Page extends WC_Settings_Page {
 		$settings = array(
 		    array(
 		        'links' => array(
-		            'https://plugin-documentation.postfinance-checkout.ch/pfpayments/woocommerce/1.3.9/docs/en/documentation.html' => __('Documentation', 'woo-postfinancecheckout'),
+		            'https://plugin-documentation.postfinance-checkout.ch/pfpayments/woocommerce/1.3.10/docs/en/documentation.html' => __('Documentation', 'woo-postfinancecheckout'),
 		            'https://checkout.postfinance.ch/user/signup' => __('Sign Up', 'woo-postfinancecheckout')
 		        ),
 		        'type' => 'postfinancecheckout_links',
@@ -191,7 +191,7 @@ class WC_PostFinanceCheckout_Admin_Settings_Page extends WC_Settings_Page {
 			
 			array(
 				'title' => __('Send Order Email', 'woo-postfinancecheckout'),
-				'desc' => __("Send the Woocommerce's order email.", 'woo-postfinancecheckout'),
+				'desc' => __("Send the order email of WooCommerce.", 'woo-postfinancecheckout'),
 			    'id' => WooCommerce_PostFinanceCheckout::CK_SHOP_EMAIL,
 				'type' => 'checkbox',
 				'default' => 'yes',
@@ -211,7 +211,7 @@ class WC_PostFinanceCheckout_Admin_Settings_Page extends WC_Settings_Page {
 			
 			array(
 				'title' => __('Invoice Download', 'woo-postfinancecheckout'),
-				'desc' => __("Allow customer's to download the invoice.", 'woo-postfinancecheckout'),
+				'desc' => __("Allow customers to download the invoice.", 'woo-postfinancecheckout'),
 			    'id' => WooCommerce_PostFinanceCheckout::CK_CUSTOMER_INVOICE,
 				'type' => 'checkbox',
 				'default' => 'yes',
@@ -219,7 +219,7 @@ class WC_PostFinanceCheckout_Admin_Settings_Page extends WC_Settings_Page {
 			),
 			array(
 				'title' => __('Packing Slip Download', 'woo-postfinancecheckout'),
-				'desc' => __("Allow customer's to download the packing slip.", 'woo-postfinancecheckout'),
+				'desc' => __("Allow customers to download the packing slip.", 'woo-postfinancecheckout'),
 			    'id' => WooCommerce_PostFinanceCheckout::CK_CUSTOMER_PACKING,
 				'type' => 'checkbox',
 				'default' => 'yes',

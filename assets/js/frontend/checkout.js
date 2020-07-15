@@ -186,9 +186,10 @@ jQuery(function ($) {
                     var original_success = options.success;
                     options.success = function(data, textStatus, jqXHR) {
                         $(window).unbind("beforeunload");
-
-                        if (self.process_order_created(data, textStatus, jqXHR)) {
-                                return false;
+                        if ('success' === data.result) {
+	                        if (self.process_order_created(data, textStatus, jqXHR)) {
+	                        	return false;
+	                        }
                         }
                         if (typeof original_success == 'function') {
                             original_success(data, textStatus,jqXHR);

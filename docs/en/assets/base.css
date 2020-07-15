@@ -545,6 +545,7 @@ ol.glossary li::before {
 }
 
 .listingblock pre code {
+  display: block;
   padding: 20px;
 }
 
