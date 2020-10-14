@@ -518,11 +518,11 @@ msgid "https://wordpress.org/plugins/woo-postfinancecheckout"
 msgstr ""
 
 #. Author of the plugin
-msgid "customweb GmbH"
+msgid "wallee GmbH"
 msgstr ""
 
 #. Author URI of the plugin
-msgid "https://www.customweb.com"
+msgid "https://www.wallee.com"
 msgstr ""	
 
 

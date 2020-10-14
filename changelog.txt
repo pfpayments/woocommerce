@@ -281,3 +281,7 @@
 
 * Improve error handling during order creation.
 
+= 1.3.11 - October 14, 2020 =
+
+* Update author to wallee AG.
+

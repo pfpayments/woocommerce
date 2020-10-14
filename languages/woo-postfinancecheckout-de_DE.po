@@ -4,7 +4,7 @@ msgstr ""
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-01-31 06:50+0100\n"
 "PO-Revision-Date: 2020-01-31 06:58+0100\n"
-"Last-Translator: Customweb GmbH <info@customweb.com>\n"
+"Last-Translator: Wallee AG <info@wallee.com>\n"
 "Language-Team: German\n"
 "Language: de_DE\n"
 "MIME-Version: 1.0\n"
@@ -561,12 +561,12 @@ msgid "https://wordpress.org/plugins/woo-postfinancecheckout"
 msgstr "https://wordpress.org/plugins/woo-postfinancecheckout"
 
 #. Author of the plugin
-msgid "customweb GmbH"
-msgstr "customweb GmbH"
+msgid "wallee AG"
+msgstr "wallee AG"
 
 #. Author URI of the plugin
-msgid "https://www.customweb.com"
-msgstr "https://www.customweb.com"
+msgid "https://www.wallee.com"
+msgstr "https://www.wallee.com"
 
 #: includes/admin/class-wc-postfinancecheckout-admin-settings-page.php:277
 msgid ""
