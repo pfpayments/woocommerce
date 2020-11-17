@@ -1,8 +1,8 @@
 <?php
 /**
- *  SDK
+ * PostFinance Checkout SDK
  *
- * This library allows to interact with the  payment service.
+ * This library allows to interact with the PostFinance Checkout payment service.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -52,6 +52,7 @@ class PaymentConnectorConfiguration implements ModelInterface, ArrayAccess
         'applicable_for_transaction_processing' => 'bool',
         'conditions' => 'int[]',
         'connector' => 'int',
+        'enabled_sales_channels' => '\PostFinanceCheckout\Sdk\Model\SalesChannel[]',
         'enabled_space_views' => 'int[]',
         'id' => 'int',
         'linked_space_id' => 'int',
@@ -73,6 +74,7 @@ class PaymentConnectorConfiguration implements ModelInterface, ArrayAccess
         'applicable_for_transaction_processing' => null,
         'conditions' => 'int64',
         'connector' => 'int64',
+        'enabled_sales_channels' => null,
         'enabled_space_views' => 'int64',
         'id' => 'int64',
         'linked_space_id' => 'int64',
@@ -95,6 +97,7 @@ class PaymentConnectorConfiguration implements ModelInterface, ArrayAccess
         'applicable_for_transaction_processing' => 'applicableForTransactionProcessing',
         'conditions' => 'conditions',
         'connector' => 'connector',
+        'enabled_sales_channels' => 'enabledSalesChannels',
         'enabled_space_views' => 'enabledSpaceViews',
         'id' => 'id',
         'linked_space_id' => 'linkedSpaceId',
@@ -116,6 +119,7 @@ class PaymentConnectorConfiguration implements ModelInterface, ArrayAccess
         'applicable_for_transaction_processing' => 'setApplicableForTransactionProcessing',
         'conditions' => 'setConditions',
         'connector' => 'setConnector',
+        'enabled_sales_channels' => 'setEnabledSalesChannels',
         'enabled_space_views' => 'setEnabledSpaceViews',
         'id' => 'setId',
         'linked_space_id' => 'setLinkedSpaceId',
@@ -137,6 +141,7 @@ class PaymentConnectorConfiguration implements ModelInterface, ArrayAccess
         'applicable_for_transaction_processing' => 'getApplicableForTransactionProcessing',
         'conditions' => 'getConditions',
         'connector' => 'getConnector',
+        'enabled_sales_channels' => 'getEnabledSalesChannels',
         'enabled_space_views' => 'getEnabledSpaceViews',
         'id' => 'getId',
         'linked_space_id' => 'getLinkedSpaceId',
@@ -173,6 +178,8 @@ class PaymentConnectorConfiguration implements ModelInterface, ArrayAccess
         
         $this->container['connector'] = isset($data['connector']) ? $data['connector'] : null;
         
+        $this->container['enabled_sales_channels'] = isset($data['enabled_sales_channels']) ? $data['enabled_sales_channels'] : null;
+        
         $this->container['enabled_space_views'] = isset($data['enabled_space_views']) ? $data['enabled_space_views'] : null;
         
         $this->container['id'] = isset($data['id']) ? $data['id'] : null;
@@ -203,6 +210,10 @@ class PaymentConnectorConfiguration implements ModelInterface, ArrayAccess
     public function listInvalidProperties()
     {
         $invalidProperties = [];
+
+        if (!is_null($this->container['name']) && (mb_strlen($this->container['name']) > 100)) {
+            $invalidProperties[] = "invalid value for 'name', the character length must be smaller than or equal to 100.";
+        }
 
         return $invalidProperties;
     }
@@ -360,6 +371,31 @@ class PaymentConnectorConfiguration implements ModelInterface, ArrayAccess
     
 
     /**
+     * Gets enabled_sales_channels
+     *
+     * @return \PostFinanceCheckout\Sdk\Model\SalesChannel[]
+     */
+    public function getEnabledSalesChannels()
+    {
+        return $this->container['enabled_sales_channels'];
+    }
+
+    /**
+     * Sets enabled_sales_channels
+     *
+     * @param \PostFinanceCheckout\Sdk\Model\SalesChannel[] $enabled_sales_channels Defines the sales channels the connector configuration is enabled for. In case the set is empty, the connector configuration is enabled for all sales channels.
+     *
+     * @return $this
+     */
+    public function setEnabledSalesChannels($enabled_sales_channels)
+    {
+        $this->container['enabled_sales_channels'] = $enabled_sales_channels;
+
+        return $this;
+    }
+    
+
+    /**
      * Gets enabled_space_views
      *
      * @return int[]
@@ -453,6 +489,10 @@ class PaymentConnectorConfiguration implements ModelInterface, ArrayAccess
      */
     public function setName($name)
     {
+        if (!is_null($name) && (mb_strlen($name) > 100)) {
+            throw new \InvalidArgumentException('invalid length for $name when calling PaymentConnectorConfiguration., must be smaller than or equal to 100.');
+        }
+
         $this->container['name'] = $name;
 
         return $this;

@@ -285,3 +285,8 @@
 
 * Update author to wallee AG.
 
+= 1.4 - November 11, 2020 =
+
+* Update author url to wallee AG.
+* Update wallee SDK
+

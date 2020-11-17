@@ -1,8 +1,8 @@
 <?php
 /**
- *  SDK
+ * PostFinance Checkout SDK
  *
- * This library allows to interact with the  payment service.
+ * This library allows to interact with the PostFinance Checkout payment service.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -182,6 +182,10 @@ class PaymentTerminal implements ModelInterface, ArrayAccess
     public function listInvalidProperties()
     {
         $invalidProperties = [];
+
+        if (!is_null($this->container['name']) && (mb_strlen($this->container['name']) > 100)) {
+            $invalidProperties[] = "invalid value for 'name', the character length must be smaller than or equal to 100.";
+        }
 
         return $invalidProperties;
     }
@@ -407,6 +411,10 @@ class PaymentTerminal implements ModelInterface, ArrayAccess
      */
     public function setName($name)
     {
+        if (!is_null($name) && (mb_strlen($name) > 100)) {
+            throw new \InvalidArgumentException('invalid length for $name when calling PaymentTerminal., must be smaller than or equal to 100.');
+        }
+
         $this->container['name'] = $name;
 
         return $this;

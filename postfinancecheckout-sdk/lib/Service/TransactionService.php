@@ -1,8 +1,8 @@
 <?php
 /**
- *  SDK
+ * PostFinance Checkout SDK
  *
- * This library allows to interact with the  payment service.
+ * This library allows to interact with the PostFinance Checkout payment service.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -139,6 +139,7 @@ class TransactionService {
 		}
 		// make the API Call
 		try {
+			$this->apiClient->setConnectionTimeout(ApiClient::CONNECTION_TIMEOUT);
 			$response = $this->apiClient->callApi(
 				$resourcePath,
 				'POST',
@@ -257,6 +258,7 @@ class TransactionService {
 		}
 		// make the API Call
 		try {
+			$this->apiClient->setConnectionTimeout(ApiClient::CONNECTION_TIMEOUT);
 			$response = $this->apiClient->callApi(
 				$resourcePath,
 				'POST',
@@ -371,6 +373,7 @@ class TransactionService {
 		}
 		// make the API Call
 		try {
+			$this->apiClient->setConnectionTimeout(ApiClient::CONNECTION_TIMEOUT);
 			$response = $this->apiClient->callApi(
 				$resourcePath,
 				'POST',
@@ -483,6 +486,7 @@ class TransactionService {
 		}
 		// make the API Call
 		try {
+			$this->apiClient->setConnectionTimeout(ApiClient::CONNECTION_TIMEOUT);
 			$response = $this->apiClient->callApi(
 				$resourcePath,
 				'POST',
@@ -595,6 +599,7 @@ class TransactionService {
 		}
 		// make the API Call
 		try {
+			$this->apiClient->setConnectionTimeout(ApiClient::CONNECTION_TIMEOUT);
 			$response = $this->apiClient->callApi(
 				$resourcePath,
 				'POST',
@@ -701,6 +706,7 @@ class TransactionService {
 		}
 		// make the API Call
 		try {
+			$this->apiClient->setConnectionTimeout(ApiClient::CONNECTION_TIMEOUT);
 			$response = $this->apiClient->callApi(
 				$resourcePath,
 				'POST',
@@ -804,6 +810,7 @@ class TransactionService {
 		}
 		// make the API Call
 		try {
+			$this->apiClient->setConnectionTimeout(ApiClient::CONNECTION_TIMEOUT);
 			$response = $this->apiClient->callApi(
 				$resourcePath,
 				'GET',
@@ -846,41 +853,47 @@ class TransactionService {
 	}
 
 	/**
-	 * Operation fetchPossiblePaymentMethods
+	 * Operation fetchPaymentMethods
 	 *
 	 * Fetch Possible Payment Methods
 	 *
 	 * @param int $space_id  (required)
 	 * @param int $id The id of the transaction which should be returned. (required)
+	 * @param string $integration_mode The integration mode defines the type of integration that is applied on the transaction. (required)
 	 * @throws \PostFinanceCheckout\Sdk\ApiException
 	 * @throws \PostFinanceCheckout\Sdk\VersioningException
 	 * @throws \PostFinanceCheckout\Sdk\Http\ConnectionException
 	 * @return \PostFinanceCheckout\Sdk\Model\PaymentMethodConfiguration[]
 	 */
-	public function fetchPossiblePaymentMethods($space_id, $id) {
-		return $this->fetchPossiblePaymentMethodsWithHttpInfo($space_id, $id)->getData();
+	public function fetchPaymentMethods($space_id, $id, $integration_mode) {
+		return $this->fetchPaymentMethodsWithHttpInfo($space_id, $id, $integration_mode)->getData();
 	}
 
 	/**
-	 * Operation fetchPossiblePaymentMethodsWithHttpInfo
+	 * Operation fetchPaymentMethodsWithHttpInfo
 	 *
 	 * Fetch Possible Payment Methods
 	 *
 	 * @param int $space_id  (required)
 	 * @param int $id The id of the transaction which should be returned. (required)
+	 * @param string $integration_mode The integration mode defines the type of integration that is applied on the transaction. (required)
 	 * @throws \PostFinanceCheckout\Sdk\ApiException
 	 * @throws \PostFinanceCheckout\Sdk\VersioningException
 	 * @throws \PostFinanceCheckout\Sdk\Http\ConnectionException
 	 * @return ApiResponse
 	 */
-	public function fetchPossiblePaymentMethodsWithHttpInfo($space_id, $id) {
+	public function fetchPaymentMethodsWithHttpInfo($space_id, $id, $integration_mode) {
 		// verify the required parameter 'space_id' is set
 		if (is_null($space_id)) {
-			throw new \InvalidArgumentException('Missing the required parameter $space_id when calling fetchPossiblePaymentMethods');
+			throw new \InvalidArgumentException('Missing the required parameter $space_id when calling fetchPaymentMethods');
 		}
 		// verify the required parameter 'id' is set
 		if (is_null($id)) {
-			throw new \InvalidArgumentException('Missing the required parameter $id when calling fetchPossiblePaymentMethods');
+			throw new \InvalidArgumentException('Missing the required parameter $id when calling fetchPaymentMethods');
+		}
+		// verify the required parameter 'integration_mode' is set
+		if (is_null($integration_mode)) {
+			throw new \InvalidArgumentException('Missing the required parameter $integration_mode when calling fetchPaymentMethods');
 		}
 		// header params
 		$headerParams = [];
@@ -898,9 +911,12 @@ class TransactionService {
 		if (!is_null($id)) {
 			$queryParams['id'] = $this->apiClient->getSerializer()->toQueryValue($id);
 		}
+		if (!is_null($integration_mode)) {
+			$queryParams['integrationMode'] = $this->apiClient->getSerializer()->toQueryValue($integration_mode);
+		}
 
 		// path params
-		$resourcePath = '/transaction/fetchPossiblePaymentMethods';
+		$resourcePath = '/transaction/fetch-payment-methods';
 		// default format to json
 		$resourcePath = str_replace('{format}', 'json', $resourcePath);
 
@@ -916,6 +932,7 @@ class TransactionService {
 		}
 		// make the API Call
 		try {
+			$this->apiClient->setConnectionTimeout(ApiClient::CONNECTION_TIMEOUT);
 			$response = $this->apiClient->callApi(
 				$resourcePath,
 				'GET',
@@ -923,7 +940,7 @@ class TransactionService {
 				$httpBody,
 				$headerParams,
 				'\PostFinanceCheckout\Sdk\Model\PaymentMethodConfiguration[]',
-				'/transaction/fetchPossiblePaymentMethods'
+				'/transaction/fetch-payment-methods'
 			);
 			return new ApiResponse($response->getStatusCode(), $response->getHeaders(), $this->apiClient->getSerializer()->deserialize($response->getData(), '\PostFinanceCheckout\Sdk\Model\PaymentMethodConfiguration[]', $response->getHeaders()));
 		} catch (ApiException $e) {
@@ -958,35 +975,41 @@ class TransactionService {
 	}
 
 	/**
-	 * Operation fetchPossiblePaymentMethodsWithCredentials
+	 * Operation fetchPaymentMethodsWithCredentials
 	 *
 	 * Fetch Possible Payment Methods with Credentials
 	 *
 	 * @param string $credentials The credentials identifies the transaction and contains the security details which grants the access this operation. (required)
+	 * @param string $integration_mode The integration mode defines the type of integration that is applied on the transaction. (required)
 	 * @throws \PostFinanceCheckout\Sdk\ApiException
 	 * @throws \PostFinanceCheckout\Sdk\VersioningException
 	 * @throws \PostFinanceCheckout\Sdk\Http\ConnectionException
 	 * @return \PostFinanceCheckout\Sdk\Model\PaymentMethodConfiguration[]
 	 */
-	public function fetchPossiblePaymentMethodsWithCredentials($credentials) {
-		return $this->fetchPossiblePaymentMethodsWithCredentialsWithHttpInfo($credentials)->getData();
+	public function fetchPaymentMethodsWithCredentials($credentials, $integration_mode) {
+		return $this->fetchPaymentMethodsWithCredentialsWithHttpInfo($credentials, $integration_mode)->getData();
 	}
 
 	/**
-	 * Operation fetchPossiblePaymentMethodsWithCredentialsWithHttpInfo
+	 * Operation fetchPaymentMethodsWithCredentialsWithHttpInfo
 	 *
 	 * Fetch Possible Payment Methods with Credentials
 	 *
 	 * @param string $credentials The credentials identifies the transaction and contains the security details which grants the access this operation. (required)
+	 * @param string $integration_mode The integration mode defines the type of integration that is applied on the transaction. (required)
 	 * @throws \PostFinanceCheckout\Sdk\ApiException
 	 * @throws \PostFinanceCheckout\Sdk\VersioningException
 	 * @throws \PostFinanceCheckout\Sdk\Http\ConnectionException
 	 * @return ApiResponse
 	 */
-	public function fetchPossiblePaymentMethodsWithCredentialsWithHttpInfo($credentials) {
+	public function fetchPaymentMethodsWithCredentialsWithHttpInfo($credentials, $integration_mode) {
 		// verify the required parameter 'credentials' is set
 		if (is_null($credentials)) {
-			throw new \InvalidArgumentException('Missing the required parameter $credentials when calling fetchPossiblePaymentMethodsWithCredentials');
+			throw new \InvalidArgumentException('Missing the required parameter $credentials when calling fetchPaymentMethodsWithCredentials');
+		}
+		// verify the required parameter 'integration_mode' is set
+		if (is_null($integration_mode)) {
+			throw new \InvalidArgumentException('Missing the required parameter $integration_mode when calling fetchPaymentMethodsWithCredentials');
 		}
 		// header params
 		$headerParams = [];
@@ -1001,9 +1024,12 @@ class TransactionService {
 		if (!is_null($credentials)) {
 			$queryParams['credentials'] = $this->apiClient->getSerializer()->toQueryValue($credentials);
 		}
+		if (!is_null($integration_mode)) {
+			$queryParams['integrationMode'] = $this->apiClient->getSerializer()->toQueryValue($integration_mode);
+		}
 
 		// path params
-		$resourcePath = '/transaction/fetchPossiblePaymentMethodsWithCredentials';
+		$resourcePath = '/transaction/fetch-payment-methods-with-credentials';
 		// default format to json
 		$resourcePath = str_replace('{format}', 'json', $resourcePath);
 
@@ -1019,6 +1045,7 @@ class TransactionService {
 		}
 		// make the API Call
 		try {
+			$this->apiClient->setConnectionTimeout(ApiClient::CONNECTION_TIMEOUT);
 			$response = $this->apiClient->callApi(
 				$resourcePath,
 				'GET',
@@ -1026,7 +1053,7 @@ class TransactionService {
 				$httpBody,
 				$headerParams,
 				'\PostFinanceCheckout\Sdk\Model\PaymentMethodConfiguration[]',
-				'/transaction/fetchPossiblePaymentMethodsWithCredentials'
+				'/transaction/fetch-payment-methods-with-credentials'
 			);
 			return new ApiResponse($response->getStatusCode(), $response->getHeaders(), $this->apiClient->getSerializer()->deserialize($response->getData(), '\PostFinanceCheckout\Sdk\Model\PaymentMethodConfiguration[]', $response->getHeaders()));
 		} catch (ApiException $e) {
@@ -1131,6 +1158,7 @@ class TransactionService {
 		}
 		// make the API Call
 		try {
+			$this->apiClient->setConnectionTimeout(ApiClient::CONNECTION_TIMEOUT);
 			$response = $this->apiClient->callApi(
 				$resourcePath,
 				'GET',
@@ -1243,6 +1271,7 @@ class TransactionService {
 		}
 		// make the API Call
 		try {
+			$this->apiClient->setConnectionTimeout(ApiClient::CONNECTION_TIMEOUT);
 			$response = $this->apiClient->callApi(
 				$resourcePath,
 				'GET',
@@ -1355,6 +1384,7 @@ class TransactionService {
 		}
 		// make the API Call
 		try {
+			$this->apiClient->setConnectionTimeout(ApiClient::CONNECTION_TIMEOUT);
 			$response = $this->apiClient->callApi(
 				$resourcePath,
 				'GET',
@@ -1467,6 +1497,7 @@ class TransactionService {
 		}
 		// make the API Call
 		try {
+			$this->apiClient->setConnectionTimeout(ApiClient::CONNECTION_TIMEOUT);
 			$response = $this->apiClient->callApi(
 				$resourcePath,
 				'POST',
@@ -1579,6 +1610,7 @@ class TransactionService {
 		}
 		// make the API Call
 		try {
+			$this->apiClient->setConnectionTimeout(ApiClient::CONNECTION_TIMEOUT);
 			$response = $this->apiClient->callApi(
 				$resourcePath,
 				'POST',
@@ -1691,6 +1723,7 @@ class TransactionService {
 		}
 		// make the API Call
 		try {
+			$this->apiClient->setConnectionTimeout(ApiClient::CONNECTION_TIMEOUT);
 			$response = $this->apiClient->callApi(
 				$resourcePath,
 				'GET',
@@ -1794,6 +1827,7 @@ class TransactionService {
 		}
 		// make the API Call
 		try {
+			$this->apiClient->setConnectionTimeout(ApiClient::CONNECTION_TIMEOUT);
 			$response = $this->apiClient->callApi(
 				$resourcePath,
 				'GET',
@@ -1908,6 +1942,7 @@ class TransactionService {
 		}
 		// make the API Call
 		try {
+			$this->apiClient->setConnectionTimeout(ApiClient::CONNECTION_TIMEOUT);
 			$response = $this->apiClient->callApi(
 				$resourcePath,
 				'POST',
@@ -2022,6 +2057,7 @@ class TransactionService {
 		}
 		// make the API Call
 		try {
+			$this->apiClient->setConnectionTimeout(ApiClient::CONNECTION_TIMEOUT);
 			$response = $this->apiClient->callApi(
 				$resourcePath,
 				'POST',
@@ -2144,6 +2180,7 @@ class TransactionService {
 		}
 		// make the API Call
 		try {
+			$this->apiClient->setConnectionTimeout(ApiClient::CONNECTION_TIMEOUT);
 			$response = $this->apiClient->callApi(
 				$resourcePath,
 				'POST',

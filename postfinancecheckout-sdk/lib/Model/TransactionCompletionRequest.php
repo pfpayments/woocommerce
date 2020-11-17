@@ -1,8 +1,8 @@
 <?php
 /**
- *  SDK
+ * PostFinance Checkout SDK
  *
- * This library allows to interact with the  payment service.
+ * This library allows to interact with the PostFinance Checkout payment service.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -50,6 +50,7 @@ class TransactionCompletionRequest implements ModelInterface, ArrayAccess
       */
     protected static $swaggerTypes = [
         'external_id' => 'string',
+        'invoice_merchant_reference' => 'string',
         'last_completion' => 'bool',
         'line_items' => '\PostFinanceCheckout\Sdk\Model\CompletionLineItemCreate[]',
         'transaction_id' => 'int'
@@ -62,6 +63,7 @@ class TransactionCompletionRequest implements ModelInterface, ArrayAccess
       */
     protected static $swaggerFormats = [
         'external_id' => null,
+        'invoice_merchant_reference' => null,
         'last_completion' => null,
         'line_items' => null,
         'transaction_id' => 'int64'
@@ -75,6 +77,7 @@ class TransactionCompletionRequest implements ModelInterface, ArrayAccess
      */
     protected static $attributeMap = [
         'external_id' => 'externalId',
+        'invoice_merchant_reference' => 'invoiceMerchantReference',
         'last_completion' => 'lastCompletion',
         'line_items' => 'lineItems',
         'transaction_id' => 'transactionId'
@@ -87,6 +90,7 @@ class TransactionCompletionRequest implements ModelInterface, ArrayAccess
      */
     protected static $setters = [
         'external_id' => 'setExternalId',
+        'invoice_merchant_reference' => 'setInvoiceMerchantReference',
         'last_completion' => 'setLastCompletion',
         'line_items' => 'setLineItems',
         'transaction_id' => 'setTransactionId'
@@ -99,6 +103,7 @@ class TransactionCompletionRequest implements ModelInterface, ArrayAccess
      */
     protected static $getters = [
         'external_id' => 'getExternalId',
+        'invoice_merchant_reference' => 'getInvoiceMerchantReference',
         'last_completion' => 'getLastCompletion',
         'line_items' => 'getLineItems',
         'transaction_id' => 'getTransactionId'
@@ -124,6 +129,8 @@ class TransactionCompletionRequest implements ModelInterface, ArrayAccess
         
         $this->container['external_id'] = isset($data['external_id']) ? $data['external_id'] : null;
         
+        $this->container['invoice_merchant_reference'] = isset($data['invoice_merchant_reference']) ? $data['invoice_merchant_reference'] : null;
+        
         $this->container['last_completion'] = isset($data['last_completion']) ? $data['last_completion'] : null;
         
         $this->container['line_items'] = isset($data['line_items']) ? $data['line_items'] : null;
@@ -144,6 +151,18 @@ class TransactionCompletionRequest implements ModelInterface, ArrayAccess
         if ($this->container['external_id'] === null) {
             $invalidProperties[] = "'external_id' can't be null";
         }
+        if ((mb_strlen($this->container['external_id']) > 100)) {
+            $invalidProperties[] = "invalid value for 'external_id', the character length must be smaller than or equal to 100.";
+        }
+
+        if ((mb_strlen($this->container['external_id']) < 1)) {
+            $invalidProperties[] = "invalid value for 'external_id', the character length must be bigger than or equal to 1.";
+        }
+
+        if (!is_null($this->container['invoice_merchant_reference']) && (mb_strlen($this->container['invoice_merchant_reference']) > 100)) {
+            $invalidProperties[] = "invalid value for 'invoice_merchant_reference', the character length must be smaller than or equal to 100.";
+        }
+
         if ($this->container['last_completion'] === null) {
             $invalidProperties[] = "'last_completion' can't be null";
         }
@@ -249,7 +268,43 @@ class TransactionCompletionRequest implements ModelInterface, ArrayAccess
      */
     public function setExternalId($external_id)
     {
+        if ((mb_strlen($external_id) > 100)) {
+            throw new \InvalidArgumentException('invalid length for $external_id when calling TransactionCompletionRequest., must be smaller than or equal to 100.');
+        }
+        if ((mb_strlen($external_id) < 1)) {
+            throw new \InvalidArgumentException('invalid length for $external_id when calling TransactionCompletionRequest., must be bigger than or equal to 1.');
+        }
+
         $this->container['external_id'] = $external_id;
+
+        return $this;
+    }
+    
+
+    /**
+     * Gets invoice_merchant_reference
+     *
+     * @return string
+     */
+    public function getInvoiceMerchantReference()
+    {
+        return $this->container['invoice_merchant_reference'];
+    }
+
+    /**
+     * Sets invoice_merchant_reference
+     *
+     * @param string $invoice_merchant_reference 
+     *
+     * @return $this
+     */
+    public function setInvoiceMerchantReference($invoice_merchant_reference)
+    {
+        if (!is_null($invoice_merchant_reference) && (mb_strlen($invoice_merchant_reference) > 100)) {
+            throw new \InvalidArgumentException('invalid length for $invoice_merchant_reference when calling TransactionCompletionRequest., must be smaller than or equal to 100.');
+        }
+
+        $this->container['invoice_merchant_reference'] = $invoice_merchant_reference;
 
         return $this;
     }

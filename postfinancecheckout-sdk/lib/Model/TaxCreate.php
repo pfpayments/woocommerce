@@ -1,8 +1,8 @@
 <?php
 /**
- *  SDK
+ * PostFinance Checkout SDK
  *
- * This library allows to interact with the  payment service.
+ * This library allows to interact with the PostFinance Checkout payment service.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -133,6 +133,14 @@ class TaxCreate implements ModelInterface, ArrayAccess
         if ($this->container['title'] === null) {
             $invalidProperties[] = "'title' can't be null";
         }
+        if ((mb_strlen($this->container['title']) > 40)) {
+            $invalidProperties[] = "invalid value for 'title', the character length must be smaller than or equal to 40.";
+        }
+
+        if ((mb_strlen($this->container['title']) < 2)) {
+            $invalidProperties[] = "invalid value for 'title', the character length must be bigger than or equal to 2.";
+        }
+
         return $invalidProperties;
     }
 
@@ -257,6 +265,13 @@ class TaxCreate implements ModelInterface, ArrayAccess
      */
     public function setTitle($title)
     {
+        if ((mb_strlen($title) > 40)) {
+            throw new \InvalidArgumentException('invalid length for $title when calling TaxCreate., must be smaller than or equal to 40.');
+        }
+        if ((mb_strlen($title) < 2)) {
+            throw new \InvalidArgumentException('invalid length for $title when calling TaxCreate., must be bigger than or equal to 2.');
+        }
+
         $this->container['title'] = $title;
 
         return $this;

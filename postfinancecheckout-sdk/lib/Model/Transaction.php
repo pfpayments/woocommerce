@@ -1,8 +1,8 @@
 <?php
 /**
- *  SDK
+ * PostFinance Checkout SDK
  *
- * This library allows to interact with the  payment service.
+ * This library allows to interact with the PostFinance Checkout payment service.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -63,6 +63,7 @@ class Transaction implements ModelInterface, ArrayAccess
         'charge_retry_enabled' => 'bool',
         'completed_amount' => 'float',
         'completed_on' => '\DateTime',
+        'completion_behavior' => '\PostFinanceCheckout\Sdk\Model\TransactionCompletionBehavior',
         'completion_timeout_on' => '\DateTime',
         'confirmed_by' => 'int',
         'confirmed_on' => '\DateTime',
@@ -101,9 +102,12 @@ class Transaction implements ModelInterface, ArrayAccess
         'space_view_id' => 'int',
         'state' => '\PostFinanceCheckout\Sdk\Model\TransactionState',
         'success_url' => 'string',
+        'terminal' => '\PostFinanceCheckout\Sdk\Model\PaymentTerminal',
         'time_zone' => 'string',
         'token' => '\PostFinanceCheckout\Sdk\Model\Token',
         'tokenization_mode' => '\PostFinanceCheckout\Sdk\Model\TokenizationMode',
+        'total_applied_fees' => 'float',
+        'total_settled_amount' => 'float',
         'user_agent_header' => 'string',
         'user_failure_message' => 'string',
         'user_interface_type' => '\PostFinanceCheckout\Sdk\Model\TransactionUserInterfaceType',
@@ -130,6 +134,7 @@ class Transaction implements ModelInterface, ArrayAccess
         'charge_retry_enabled' => null,
         'completed_amount' => null,
         'completed_on' => 'date-time',
+        'completion_behavior' => null,
         'completion_timeout_on' => 'date-time',
         'confirmed_by' => 'int64',
         'confirmed_on' => 'date-time',
@@ -168,9 +173,12 @@ class Transaction implements ModelInterface, ArrayAccess
         'space_view_id' => 'int64',
         'state' => null,
         'success_url' => null,
+        'terminal' => null,
         'time_zone' => null,
         'token' => null,
         'tokenization_mode' => null,
+        'total_applied_fees' => null,
+        'total_settled_amount' => null,
         'user_agent_header' => null,
         'user_failure_message' => null,
         'user_interface_type' => null,
@@ -198,6 +206,7 @@ class Transaction implements ModelInterface, ArrayAccess
         'charge_retry_enabled' => 'chargeRetryEnabled',
         'completed_amount' => 'completedAmount',
         'completed_on' => 'completedOn',
+        'completion_behavior' => 'completionBehavior',
         'completion_timeout_on' => 'completionTimeoutOn',
         'confirmed_by' => 'confirmedBy',
         'confirmed_on' => 'confirmedOn',
@@ -236,9 +245,12 @@ class Transaction implements ModelInterface, ArrayAccess
         'space_view_id' => 'spaceViewId',
         'state' => 'state',
         'success_url' => 'successUrl',
+        'terminal' => 'terminal',
         'time_zone' => 'timeZone',
         'token' => 'token',
         'tokenization_mode' => 'tokenizationMode',
+        'total_applied_fees' => 'totalAppliedFees',
+        'total_settled_amount' => 'totalSettledAmount',
         'user_agent_header' => 'userAgentHeader',
         'user_failure_message' => 'userFailureMessage',
         'user_interface_type' => 'userInterfaceType',
@@ -265,6 +277,7 @@ class Transaction implements ModelInterface, ArrayAccess
         'charge_retry_enabled' => 'setChargeRetryEnabled',
         'completed_amount' => 'setCompletedAmount',
         'completed_on' => 'setCompletedOn',
+        'completion_behavior' => 'setCompletionBehavior',
         'completion_timeout_on' => 'setCompletionTimeoutOn',
         'confirmed_by' => 'setConfirmedBy',
         'confirmed_on' => 'setConfirmedOn',
@@ -303,9 +316,12 @@ class Transaction implements ModelInterface, ArrayAccess
         'space_view_id' => 'setSpaceViewId',
         'state' => 'setState',
         'success_url' => 'setSuccessUrl',
+        'terminal' => 'setTerminal',
         'time_zone' => 'setTimeZone',
         'token' => 'setToken',
         'tokenization_mode' => 'setTokenizationMode',
+        'total_applied_fees' => 'setTotalAppliedFees',
+        'total_settled_amount' => 'setTotalSettledAmount',
         'user_agent_header' => 'setUserAgentHeader',
         'user_failure_message' => 'setUserFailureMessage',
         'user_interface_type' => 'setUserInterfaceType',
@@ -332,6 +348,7 @@ class Transaction implements ModelInterface, ArrayAccess
         'charge_retry_enabled' => 'getChargeRetryEnabled',
         'completed_amount' => 'getCompletedAmount',
         'completed_on' => 'getCompletedOn',
+        'completion_behavior' => 'getCompletionBehavior',
         'completion_timeout_on' => 'getCompletionTimeoutOn',
         'confirmed_by' => 'getConfirmedBy',
         'confirmed_on' => 'getConfirmedOn',
@@ -370,9 +387,12 @@ class Transaction implements ModelInterface, ArrayAccess
         'space_view_id' => 'getSpaceViewId',
         'state' => 'getState',
         'success_url' => 'getSuccessUrl',
+        'terminal' => 'getTerminal',
         'time_zone' => 'getTimeZone',
         'token' => 'getToken',
         'tokenization_mode' => 'getTokenizationMode',
+        'total_applied_fees' => 'getTotalAppliedFees',
+        'total_settled_amount' => 'getTotalSettledAmount',
         'user_agent_header' => 'getUserAgentHeader',
         'user_failure_message' => 'getUserFailureMessage',
         'user_interface_type' => 'getUserInterfaceType',
@@ -424,6 +444,8 @@ class Transaction implements ModelInterface, ArrayAccess
         $this->container['completed_amount'] = isset($data['completed_amount']) ? $data['completed_amount'] : null;
         
         $this->container['completed_on'] = isset($data['completed_on']) ? $data['completed_on'] : null;
+        
+        $this->container['completion_behavior'] = isset($data['completion_behavior']) ? $data['completion_behavior'] : null;
         
         $this->container['completion_timeout_on'] = isset($data['completion_timeout_on']) ? $data['completion_timeout_on'] : null;
         
@@ -501,11 +523,17 @@ class Transaction implements ModelInterface, ArrayAccess
         
         $this->container['success_url'] = isset($data['success_url']) ? $data['success_url'] : null;
         
+        $this->container['terminal'] = isset($data['terminal']) ? $data['terminal'] : null;
+        
         $this->container['time_zone'] = isset($data['time_zone']) ? $data['time_zone'] : null;
         
         $this->container['token'] = isset($data['token']) ? $data['token'] : null;
         
         $this->container['tokenization_mode'] = isset($data['tokenization_mode']) ? $data['tokenization_mode'] : null;
+        
+        $this->container['total_applied_fees'] = isset($data['total_applied_fees']) ? $data['total_applied_fees'] : null;
+        
+        $this->container['total_settled_amount'] = isset($data['total_settled_amount']) ? $data['total_settled_amount'] : null;
         
         $this->container['user_agent_header'] = isset($data['user_agent_header']) ? $data['user_agent_header'] : null;
         
@@ -525,6 +553,46 @@ class Transaction implements ModelInterface, ArrayAccess
     public function listInvalidProperties()
     {
         $invalidProperties = [];
+
+        if (!is_null($this->container['customer_email_address']) && (mb_strlen($this->container['customer_email_address']) > 254)) {
+            $invalidProperties[] = "invalid value for 'customer_email_address', the character length must be smaller than or equal to 254.";
+        }
+
+        if (!is_null($this->container['device_session_identifier']) && (mb_strlen($this->container['device_session_identifier']) > 40)) {
+            $invalidProperties[] = "invalid value for 'device_session_identifier', the character length must be smaller than or equal to 40.";
+        }
+
+        if (!is_null($this->container['device_session_identifier']) && (mb_strlen($this->container['device_session_identifier']) < 10)) {
+            $invalidProperties[] = "invalid value for 'device_session_identifier', the character length must be bigger than or equal to 10.";
+        }
+
+        if (!is_null($this->container['failed_url']) && (mb_strlen($this->container['failed_url']) > 1000)) {
+            $invalidProperties[] = "invalid value for 'failed_url', the character length must be smaller than or equal to 1000.";
+        }
+
+        if (!is_null($this->container['failed_url']) && (mb_strlen($this->container['failed_url']) < 9)) {
+            $invalidProperties[] = "invalid value for 'failed_url', the character length must be bigger than or equal to 9.";
+        }
+
+        if (!is_null($this->container['invoice_merchant_reference']) && (mb_strlen($this->container['invoice_merchant_reference']) > 100)) {
+            $invalidProperties[] = "invalid value for 'invoice_merchant_reference', the character length must be smaller than or equal to 100.";
+        }
+
+        if (!is_null($this->container['merchant_reference']) && (mb_strlen($this->container['merchant_reference']) > 100)) {
+            $invalidProperties[] = "invalid value for 'merchant_reference', the character length must be smaller than or equal to 100.";
+        }
+
+        if (!is_null($this->container['shipping_method']) && (mb_strlen($this->container['shipping_method']) > 200)) {
+            $invalidProperties[] = "invalid value for 'shipping_method', the character length must be smaller than or equal to 200.";
+        }
+
+        if (!is_null($this->container['success_url']) && (mb_strlen($this->container['success_url']) > 1000)) {
+            $invalidProperties[] = "invalid value for 'success_url', the character length must be smaller than or equal to 1000.";
+        }
+
+        if (!is_null($this->container['success_url']) && (mb_strlen($this->container['success_url']) < 9)) {
+            $invalidProperties[] = "invalid value for 'success_url', the character length must be bigger than or equal to 9.";
+        }
 
         return $invalidProperties;
     }
@@ -957,6 +1025,31 @@ class Transaction implements ModelInterface, ArrayAccess
     
 
     /**
+     * Gets completion_behavior
+     *
+     * @return \PostFinanceCheckout\Sdk\Model\TransactionCompletionBehavior
+     */
+    public function getCompletionBehavior()
+    {
+        return $this->container['completion_behavior'];
+    }
+
+    /**
+     * Sets completion_behavior
+     *
+     * @param \PostFinanceCheckout\Sdk\Model\TransactionCompletionBehavior $completion_behavior The completion behavior controls when the transaction is completed.
+     *
+     * @return $this
+     */
+    public function setCompletionBehavior($completion_behavior)
+    {
+        $this->container['completion_behavior'] = $completion_behavior;
+
+        return $this;
+    }
+    
+
+    /**
      * Gets completion_timeout_on
      *
      * @return \DateTime
@@ -1125,6 +1218,10 @@ class Transaction implements ModelInterface, ArrayAccess
      */
     public function setCustomerEmailAddress($customer_email_address)
     {
+        if (!is_null($customer_email_address) && (mb_strlen($customer_email_address) > 254)) {
+            throw new \InvalidArgumentException('invalid length for $customer_email_address when calling Transaction., must be smaller than or equal to 254.');
+        }
+
         $this->container['customer_email_address'] = $customer_email_address;
 
         return $this;
@@ -1225,6 +1322,13 @@ class Transaction implements ModelInterface, ArrayAccess
      */
     public function setDeviceSessionIdentifier($device_session_identifier)
     {
+        if (!is_null($device_session_identifier) && (mb_strlen($device_session_identifier) > 40)) {
+            throw new \InvalidArgumentException('invalid length for $device_session_identifier when calling Transaction., must be smaller than or equal to 40.');
+        }
+        if (!is_null($device_session_identifier) && (mb_strlen($device_session_identifier) < 10)) {
+            throw new \InvalidArgumentException('invalid length for $device_session_identifier when calling Transaction., must be bigger than or equal to 10.');
+        }
+
         $this->container['device_session_identifier'] = $device_session_identifier;
 
         return $this;
@@ -1375,6 +1479,13 @@ class Transaction implements ModelInterface, ArrayAccess
      */
     public function setFailedUrl($failed_url)
     {
+        if (!is_null($failed_url) && (mb_strlen($failed_url) > 1000)) {
+            throw new \InvalidArgumentException('invalid length for $failed_url when calling Transaction., must be smaller than or equal to 1000.');
+        }
+        if (!is_null($failed_url) && (mb_strlen($failed_url) < 9)) {
+            throw new \InvalidArgumentException('invalid length for $failed_url when calling Transaction., must be bigger than or equal to 9.');
+        }
+
         $this->container['failed_url'] = $failed_url;
 
         return $this;
@@ -1525,6 +1636,10 @@ class Transaction implements ModelInterface, ArrayAccess
      */
     public function setInvoiceMerchantReference($invoice_merchant_reference)
     {
+        if (!is_null($invoice_merchant_reference) && (mb_strlen($invoice_merchant_reference) > 100)) {
+            throw new \InvalidArgumentException('invalid length for $invoice_merchant_reference when calling Transaction., must be smaller than or equal to 100.');
+        }
+
         $this->container['invoice_merchant_reference'] = $invoice_merchant_reference;
 
         return $this;
@@ -1625,6 +1740,10 @@ class Transaction implements ModelInterface, ArrayAccess
      */
     public function setMerchantReference($merchant_reference)
     {
+        if (!is_null($merchant_reference) && (mb_strlen($merchant_reference) > 100)) {
+            throw new \InvalidArgumentException('invalid length for $merchant_reference when calling Transaction., must be smaller than or equal to 100.');
+        }
+
         $this->container['merchant_reference'] = $merchant_reference;
 
         return $this;
@@ -1825,6 +1944,10 @@ class Transaction implements ModelInterface, ArrayAccess
      */
     public function setShippingMethod($shipping_method)
     {
+        if (!is_null($shipping_method) && (mb_strlen($shipping_method) > 200)) {
+            throw new \InvalidArgumentException('invalid length for $shipping_method when calling Transaction., must be smaller than or equal to 200.');
+        }
+
         $this->container['shipping_method'] = $shipping_method;
 
         return $this;
@@ -1900,7 +2023,39 @@ class Transaction implements ModelInterface, ArrayAccess
      */
     public function setSuccessUrl($success_url)
     {
+        if (!is_null($success_url) && (mb_strlen($success_url) > 1000)) {
+            throw new \InvalidArgumentException('invalid length for $success_url when calling Transaction., must be smaller than or equal to 1000.');
+        }
+        if (!is_null($success_url) && (mb_strlen($success_url) < 9)) {
+            throw new \InvalidArgumentException('invalid length for $success_url when calling Transaction., must be bigger than or equal to 9.');
+        }
+
         $this->container['success_url'] = $success_url;
+
+        return $this;
+    }
+    
+
+    /**
+     * Gets terminal
+     *
+     * @return \PostFinanceCheckout\Sdk\Model\PaymentTerminal
+     */
+    public function getTerminal()
+    {
+        return $this->container['terminal'];
+    }
+
+    /**
+     * Sets terminal
+     *
+     * @param \PostFinanceCheckout\Sdk\Model\PaymentTerminal $terminal The terminal on which the payment was processed.
+     *
+     * @return $this
+     */
+    public function setTerminal($terminal)
+    {
+        $this->container['terminal'] = $terminal;
 
         return $this;
     }
@@ -1976,6 +2131,56 @@ class Transaction implements ModelInterface, ArrayAccess
     public function setTokenizationMode($tokenization_mode)
     {
         $this->container['tokenization_mode'] = $tokenization_mode;
+
+        return $this;
+    }
+    
+
+    /**
+     * Gets total_applied_fees
+     *
+     * @return float
+     */
+    public function getTotalAppliedFees()
+    {
+        return $this->container['total_applied_fees'];
+    }
+
+    /**
+     * Sets total_applied_fees
+     *
+     * @param float $total_applied_fees The total applied fees is the sum of all fees that have been applied so far.
+     *
+     * @return $this
+     */
+    public function setTotalAppliedFees($total_applied_fees)
+    {
+        $this->container['total_applied_fees'] = $total_applied_fees;
+
+        return $this;
+    }
+    
+
+    /**
+     * Gets total_settled_amount
+     *
+     * @return float
+     */
+    public function getTotalSettledAmount()
+    {
+        return $this->container['total_settled_amount'];
+    }
+
+    /**
+     * Sets total_settled_amount
+     *
+     * @param float $total_settled_amount The total settled amount is the total amount which has been settled so far.
+     *
+     * @return $this
+     */
+    public function setTotalSettledAmount($total_settled_amount)
+    {
+        $this->container['total_settled_amount'] = $total_settled_amount;
 
         return $this;
     }

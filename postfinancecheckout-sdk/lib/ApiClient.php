@@ -1,8 +1,8 @@
 <?php
 /**
- *  SDK
+ * PostFinance Checkout SDK
  *
- * This library allows to interact with the  payment service.
+ * This library allows to interact with the PostFinance Checkout payment service.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -54,7 +54,7 @@ final class ApiClient {
 	 *
 	 * @var string
 	 */
-	private $userAgent = 'PHP-Client/2.0.17/php';
+	private $userAgent = 'PHP-Client/2.1.4/php';
 
 	/**
 	 * The path to the certificate authority file.
@@ -76,6 +76,7 @@ final class ApiClient {
 	 * @var integer
 	 */
 	private $connectionTimeout = 20;
+	CONST CONNECTION_TIMEOUT = 20;
 
 	/**
 	 * The http client type to use for communication.
@@ -238,6 +239,16 @@ final class ApiClient {
 		}
 
 		$this->connectionTimeout = $connectionTimeout;
+		return $this;
+	}
+
+	/**
+	 * Resets the connection timeout in seconds.
+	 *
+	 * @return ApiClient
+	 */
+	public function resetConnectionTimeout() {
+		$this->connectionTimeout = self::CONNECTION_TIMEOUT;
 		return $this;
 	}
 
@@ -428,9 +439,11 @@ final class ApiClient {
 	 * @param array  $headerParams the header parameters
 	 * @param string $responseType the expected response type
 	 * @param string $endpointPath the path to the method endpoint before expanding parameters
-	 * @throws ApiException on a non 2xx response
-	 * @throws VersioningException on a versioning/locking problem
-	 * @return mixed
+	 *
+	 * @return \PostFinanceCheckout\Sdk\ApiResponse
+	 * @throws \PostFinanceCheckout\Sdk\ApiException
+	 * @throws \PostFinanceCheckout\Sdk\Http\ConnectionException
+	 * @throws \PostFinanceCheckout\Sdk\VersioningException
 	 */
 	public function callApi($resourcePath, $method, $queryParams, $postData, $headerParams, $responseType = null, $endpointPath = null) {
 		$request = new HttpRequest($this->getSerializer(), $this->buildRequestUrl($resourcePath, $queryParams), $method, $this->generateUniqueToken());
@@ -532,5 +545,632 @@ final class ApiClient {
 	        substr($s,16,4). '-' .
 	        substr($s,20);
 	}
+
+    // Builder pattern to get API instances for this client.
+    
+    protected $accountService;
+
+    /**
+     * @return \PostFinanceCheckout\Sdk\Service\AccountService
+     */
+    public function getAccountService() {
+        if(is_null($this->accountService)){
+            $this->accountService = new \PostFinanceCheckout\Sdk\Service\AccountService($this);
+        }
+        return $this->accountService;
+    }
+    
+    protected $applicationUserService;
+
+    /**
+     * @return \PostFinanceCheckout\Sdk\Service\ApplicationUserService
+     */
+    public function getApplicationUserService() {
+        if(is_null($this->applicationUserService)){
+            $this->applicationUserService = new \PostFinanceCheckout\Sdk\Service\ApplicationUserService($this);
+        }
+        return $this->applicationUserService;
+    }
+    
+    protected $chargeAttemptService;
+
+    /**
+     * @return \PostFinanceCheckout\Sdk\Service\ChargeAttemptService
+     */
+    public function getChargeAttemptService() {
+        if(is_null($this->chargeAttemptService)){
+            $this->chargeAttemptService = new \PostFinanceCheckout\Sdk\Service\ChargeAttemptService($this);
+        }
+        return $this->chargeAttemptService;
+    }
+    
+    protected $chargeFlowLevelPaymentLinkService;
+
+    /**
+     * @return \PostFinanceCheckout\Sdk\Service\ChargeFlowLevelPaymentLinkService
+     */
+    public function getChargeFlowLevelPaymentLinkService() {
+        if(is_null($this->chargeFlowLevelPaymentLinkService)){
+            $this->chargeFlowLevelPaymentLinkService = new \PostFinanceCheckout\Sdk\Service\ChargeFlowLevelPaymentLinkService($this);
+        }
+        return $this->chargeFlowLevelPaymentLinkService;
+    }
+    
+    protected $chargeFlowLevelService;
+
+    /**
+     * @return \PostFinanceCheckout\Sdk\Service\ChargeFlowLevelService
+     */
+    public function getChargeFlowLevelService() {
+        if(is_null($this->chargeFlowLevelService)){
+            $this->chargeFlowLevelService = new \PostFinanceCheckout\Sdk\Service\ChargeFlowLevelService($this);
+        }
+        return $this->chargeFlowLevelService;
+    }
+    
+    protected $chargeFlowService;
+
+    /**
+     * @return \PostFinanceCheckout\Sdk\Service\ChargeFlowService
+     */
+    public function getChargeFlowService() {
+        if(is_null($this->chargeFlowService)){
+            $this->chargeFlowService = new \PostFinanceCheckout\Sdk\Service\ChargeFlowService($this);
+        }
+        return $this->chargeFlowService;
+    }
+    
+    protected $conditionTypeService;
+
+    /**
+     * @return \PostFinanceCheckout\Sdk\Service\ConditionTypeService
+     */
+    public function getConditionTypeService() {
+        if(is_null($this->conditionTypeService)){
+            $this->conditionTypeService = new \PostFinanceCheckout\Sdk\Service\ConditionTypeService($this);
+        }
+        return $this->conditionTypeService;
+    }
+    
+    protected $countryService;
+
+    /**
+     * @return \PostFinanceCheckout\Sdk\Service\CountryService
+     */
+    public function getCountryService() {
+        if(is_null($this->countryService)){
+            $this->countryService = new \PostFinanceCheckout\Sdk\Service\CountryService($this);
+        }
+        return $this->countryService;
+    }
+    
+    protected $countryStateService;
+
+    /**
+     * @return \PostFinanceCheckout\Sdk\Service\CountryStateService
+     */
+    public function getCountryStateService() {
+        if(is_null($this->countryStateService)){
+            $this->countryStateService = new \PostFinanceCheckout\Sdk\Service\CountryStateService($this);
+        }
+        return $this->countryStateService;
+    }
+    
+    protected $currencyService;
+
+    /**
+     * @return \PostFinanceCheckout\Sdk\Service\CurrencyService
+     */
+    public function getCurrencyService() {
+        if(is_null($this->currencyService)){
+            $this->currencyService = new \PostFinanceCheckout\Sdk\Service\CurrencyService($this);
+        }
+        return $this->currencyService;
+    }
+    
+    protected $customerAddressService;
+
+    /**
+     * @return \PostFinanceCheckout\Sdk\Service\CustomerAddressService
+     */
+    public function getCustomerAddressService() {
+        if(is_null($this->customerAddressService)){
+            $this->customerAddressService = new \PostFinanceCheckout\Sdk\Service\CustomerAddressService($this);
+        }
+        return $this->customerAddressService;
+    }
+    
+    protected $customerCommentService;
+
+    /**
+     * @return \PostFinanceCheckout\Sdk\Service\CustomerCommentService
+     */
+    public function getCustomerCommentService() {
+        if(is_null($this->customerCommentService)){
+            $this->customerCommentService = new \PostFinanceCheckout\Sdk\Service\CustomerCommentService($this);
+        }
+        return $this->customerCommentService;
+    }
+    
+    protected $customerService;
+
+    /**
+     * @return \PostFinanceCheckout\Sdk\Service\CustomerService
+     */
+    public function getCustomerService() {
+        if(is_null($this->customerService)){
+            $this->customerService = new \PostFinanceCheckout\Sdk\Service\CustomerService($this);
+        }
+        return $this->customerService;
+    }
+    
+    protected $deliveryIndicationService;
+
+    /**
+     * @return \PostFinanceCheckout\Sdk\Service\DeliveryIndicationService
+     */
+    public function getDeliveryIndicationService() {
+        if(is_null($this->deliveryIndicationService)){
+            $this->deliveryIndicationService = new \PostFinanceCheckout\Sdk\Service\DeliveryIndicationService($this);
+        }
+        return $this->deliveryIndicationService;
+    }
+    
+    protected $documentTemplateService;
+
+    /**
+     * @return \PostFinanceCheckout\Sdk\Service\DocumentTemplateService
+     */
+    public function getDocumentTemplateService() {
+        if(is_null($this->documentTemplateService)){
+            $this->documentTemplateService = new \PostFinanceCheckout\Sdk\Service\DocumentTemplateService($this);
+        }
+        return $this->documentTemplateService;
+    }
+    
+    protected $documentTemplateTypeService;
+
+    /**
+     * @return \PostFinanceCheckout\Sdk\Service\DocumentTemplateTypeService
+     */
+    public function getDocumentTemplateTypeService() {
+        if(is_null($this->documentTemplateTypeService)){
+            $this->documentTemplateTypeService = new \PostFinanceCheckout\Sdk\Service\DocumentTemplateTypeService($this);
+        }
+        return $this->documentTemplateTypeService;
+    }
+    
+    protected $humanUserService;
+
+    /**
+     * @return \PostFinanceCheckout\Sdk\Service\HumanUserService
+     */
+    public function getHumanUserService() {
+        if(is_null($this->humanUserService)){
+            $this->humanUserService = new \PostFinanceCheckout\Sdk\Service\HumanUserService($this);
+        }
+        return $this->humanUserService;
+    }
+    
+    protected $labelDescriptionGroupService;
+
+    /**
+     * @return \PostFinanceCheckout\Sdk\Service\LabelDescriptionGroupService
+     */
+    public function getLabelDescriptionGroupService() {
+        if(is_null($this->labelDescriptionGroupService)){
+            $this->labelDescriptionGroupService = new \PostFinanceCheckout\Sdk\Service\LabelDescriptionGroupService($this);
+        }
+        return $this->labelDescriptionGroupService;
+    }
+    
+    protected $labelDescriptionService;
+
+    /**
+     * @return \PostFinanceCheckout\Sdk\Service\LabelDescriptionService
+     */
+    public function getLabelDescriptionService() {
+        if(is_null($this->labelDescriptionService)){
+            $this->labelDescriptionService = new \PostFinanceCheckout\Sdk\Service\LabelDescriptionService($this);
+        }
+        return $this->labelDescriptionService;
+    }
+    
+    protected $languageService;
+
+    /**
+     * @return \PostFinanceCheckout\Sdk\Service\LanguageService
+     */
+    public function getLanguageService() {
+        if(is_null($this->languageService)){
+            $this->languageService = new \PostFinanceCheckout\Sdk\Service\LanguageService($this);
+        }
+        return $this->languageService;
+    }
+    
+    protected $legalOrganizationFormService;
+
+    /**
+     * @return \PostFinanceCheckout\Sdk\Service\LegalOrganizationFormService
+     */
+    public function getLegalOrganizationFormService() {
+        if(is_null($this->legalOrganizationFormService)){
+            $this->legalOrganizationFormService = new \PostFinanceCheckout\Sdk\Service\LegalOrganizationFormService($this);
+        }
+        return $this->legalOrganizationFormService;
+    }
+    
+    protected $manualTaskService;
+
+    /**
+     * @return \PostFinanceCheckout\Sdk\Service\ManualTaskService
+     */
+    public function getManualTaskService() {
+        if(is_null($this->manualTaskService)){
+            $this->manualTaskService = new \PostFinanceCheckout\Sdk\Service\ManualTaskService($this);
+        }
+        return $this->manualTaskService;
+    }
+    
+    protected $paymentConnectorConfigurationService;
+
+    /**
+     * @return \PostFinanceCheckout\Sdk\Service\PaymentConnectorConfigurationService
+     */
+    public function getPaymentConnectorConfigurationService() {
+        if(is_null($this->paymentConnectorConfigurationService)){
+            $this->paymentConnectorConfigurationService = new \PostFinanceCheckout\Sdk\Service\PaymentConnectorConfigurationService($this);
+        }
+        return $this->paymentConnectorConfigurationService;
+    }
+    
+    protected $paymentConnectorService;
+
+    /**
+     * @return \PostFinanceCheckout\Sdk\Service\PaymentConnectorService
+     */
+    public function getPaymentConnectorService() {
+        if(is_null($this->paymentConnectorService)){
+            $this->paymentConnectorService = new \PostFinanceCheckout\Sdk\Service\PaymentConnectorService($this);
+        }
+        return $this->paymentConnectorService;
+    }
+    
+    protected $paymentLinkService;
+
+    /**
+     * @return \PostFinanceCheckout\Sdk\Service\PaymentLinkService
+     */
+    public function getPaymentLinkService() {
+        if(is_null($this->paymentLinkService)){
+            $this->paymentLinkService = new \PostFinanceCheckout\Sdk\Service\PaymentLinkService($this);
+        }
+        return $this->paymentLinkService;
+    }
+    
+    protected $paymentMethodBrandService;
+
+    /**
+     * @return \PostFinanceCheckout\Sdk\Service\PaymentMethodBrandService
+     */
+    public function getPaymentMethodBrandService() {
+        if(is_null($this->paymentMethodBrandService)){
+            $this->paymentMethodBrandService = new \PostFinanceCheckout\Sdk\Service\PaymentMethodBrandService($this);
+        }
+        return $this->paymentMethodBrandService;
+    }
+    
+    protected $paymentMethodConfigurationService;
+
+    /**
+     * @return \PostFinanceCheckout\Sdk\Service\PaymentMethodConfigurationService
+     */
+    public function getPaymentMethodConfigurationService() {
+        if(is_null($this->paymentMethodConfigurationService)){
+            $this->paymentMethodConfigurationService = new \PostFinanceCheckout\Sdk\Service\PaymentMethodConfigurationService($this);
+        }
+        return $this->paymentMethodConfigurationService;
+    }
+    
+    protected $paymentMethodService;
+
+    /**
+     * @return \PostFinanceCheckout\Sdk\Service\PaymentMethodService
+     */
+    public function getPaymentMethodService() {
+        if(is_null($this->paymentMethodService)){
+            $this->paymentMethodService = new \PostFinanceCheckout\Sdk\Service\PaymentMethodService($this);
+        }
+        return $this->paymentMethodService;
+    }
+    
+    protected $paymentProcessorConfigurationService;
+
+    /**
+     * @return \PostFinanceCheckout\Sdk\Service\PaymentProcessorConfigurationService
+     */
+    public function getPaymentProcessorConfigurationService() {
+        if(is_null($this->paymentProcessorConfigurationService)){
+            $this->paymentProcessorConfigurationService = new \PostFinanceCheckout\Sdk\Service\PaymentProcessorConfigurationService($this);
+        }
+        return $this->paymentProcessorConfigurationService;
+    }
+    
+    protected $paymentProcessorService;
+
+    /**
+     * @return \PostFinanceCheckout\Sdk\Service\PaymentProcessorService
+     */
+    public function getPaymentProcessorService() {
+        if(is_null($this->paymentProcessorService)){
+            $this->paymentProcessorService = new \PostFinanceCheckout\Sdk\Service\PaymentProcessorService($this);
+        }
+        return $this->paymentProcessorService;
+    }
+    
+    protected $permissionService;
+
+    /**
+     * @return \PostFinanceCheckout\Sdk\Service\PermissionService
+     */
+    public function getPermissionService() {
+        if(is_null($this->permissionService)){
+            $this->permissionService = new \PostFinanceCheckout\Sdk\Service\PermissionService($this);
+        }
+        return $this->permissionService;
+    }
+    
+    protected $refundCommentService;
+
+    /**
+     * @return \PostFinanceCheckout\Sdk\Service\RefundCommentService
+     */
+    public function getRefundCommentService() {
+        if(is_null($this->refundCommentService)){
+            $this->refundCommentService = new \PostFinanceCheckout\Sdk\Service\RefundCommentService($this);
+        }
+        return $this->refundCommentService;
+    }
+    
+    protected $refundService;
+
+    /**
+     * @return \PostFinanceCheckout\Sdk\Service\RefundService
+     */
+    public function getRefundService() {
+        if(is_null($this->refundService)){
+            $this->refundService = new \PostFinanceCheckout\Sdk\Service\RefundService($this);
+        }
+        return $this->refundService;
+    }
+    
+    protected $shopifyTransactionService;
+
+    /**
+     * @return \PostFinanceCheckout\Sdk\Service\ShopifyTransactionService
+     */
+    public function getShopifyTransactionService() {
+        if(is_null($this->shopifyTransactionService)){
+            $this->shopifyTransactionService = new \PostFinanceCheckout\Sdk\Service\ShopifyTransactionService($this);
+        }
+        return $this->shopifyTransactionService;
+    }
+    
+    protected $spaceService;
+
+    /**
+     * @return \PostFinanceCheckout\Sdk\Service\SpaceService
+     */
+    public function getSpaceService() {
+        if(is_null($this->spaceService)){
+            $this->spaceService = new \PostFinanceCheckout\Sdk\Service\SpaceService($this);
+        }
+        return $this->spaceService;
+    }
+    
+    protected $staticValueService;
+
+    /**
+     * @return \PostFinanceCheckout\Sdk\Service\StaticValueService
+     */
+    public function getStaticValueService() {
+        if(is_null($this->staticValueService)){
+            $this->staticValueService = new \PostFinanceCheckout\Sdk\Service\StaticValueService($this);
+        }
+        return $this->staticValueService;
+    }
+    
+    protected $tokenService;
+
+    /**
+     * @return \PostFinanceCheckout\Sdk\Service\TokenService
+     */
+    public function getTokenService() {
+        if(is_null($this->tokenService)){
+            $this->tokenService = new \PostFinanceCheckout\Sdk\Service\TokenService($this);
+        }
+        return $this->tokenService;
+    }
+    
+    protected $tokenVersionService;
+
+    /**
+     * @return \PostFinanceCheckout\Sdk\Service\TokenVersionService
+     */
+    public function getTokenVersionService() {
+        if(is_null($this->tokenVersionService)){
+            $this->tokenVersionService = new \PostFinanceCheckout\Sdk\Service\TokenVersionService($this);
+        }
+        return $this->tokenVersionService;
+    }
+    
+    protected $transactionCommentService;
+
+    /**
+     * @return \PostFinanceCheckout\Sdk\Service\TransactionCommentService
+     */
+    public function getTransactionCommentService() {
+        if(is_null($this->transactionCommentService)){
+            $this->transactionCommentService = new \PostFinanceCheckout\Sdk\Service\TransactionCommentService($this);
+        }
+        return $this->transactionCommentService;
+    }
+    
+    protected $transactionCompletionService;
+
+    /**
+     * @return \PostFinanceCheckout\Sdk\Service\TransactionCompletionService
+     */
+    public function getTransactionCompletionService() {
+        if(is_null($this->transactionCompletionService)){
+            $this->transactionCompletionService = new \PostFinanceCheckout\Sdk\Service\TransactionCompletionService($this);
+        }
+        return $this->transactionCompletionService;
+    }
+    
+    protected $transactionIframeService;
+
+    /**
+     * @return \PostFinanceCheckout\Sdk\Service\TransactionIframeService
+     */
+    public function getTransactionIframeService() {
+        if(is_null($this->transactionIframeService)){
+            $this->transactionIframeService = new \PostFinanceCheckout\Sdk\Service\TransactionIframeService($this);
+        }
+        return $this->transactionIframeService;
+    }
+    
+    protected $transactionInvoiceCommentService;
+
+    /**
+     * @return \PostFinanceCheckout\Sdk\Service\TransactionInvoiceCommentService
+     */
+    public function getTransactionInvoiceCommentService() {
+        if(is_null($this->transactionInvoiceCommentService)){
+            $this->transactionInvoiceCommentService = new \PostFinanceCheckout\Sdk\Service\TransactionInvoiceCommentService($this);
+        }
+        return $this->transactionInvoiceCommentService;
+    }
+    
+    protected $transactionInvoiceService;
+
+    /**
+     * @return \PostFinanceCheckout\Sdk\Service\TransactionInvoiceService
+     */
+    public function getTransactionInvoiceService() {
+        if(is_null($this->transactionInvoiceService)){
+            $this->transactionInvoiceService = new \PostFinanceCheckout\Sdk\Service\TransactionInvoiceService($this);
+        }
+        return $this->transactionInvoiceService;
+    }
+    
+    protected $transactionLightboxService;
+
+    /**
+     * @return \PostFinanceCheckout\Sdk\Service\TransactionLightboxService
+     */
+    public function getTransactionLightboxService() {
+        if(is_null($this->transactionLightboxService)){
+            $this->transactionLightboxService = new \PostFinanceCheckout\Sdk\Service\TransactionLightboxService($this);
+        }
+        return $this->transactionLightboxService;
+    }
+    
+    protected $transactionMobileSdkService;
+
+    /**
+     * @return \PostFinanceCheckout\Sdk\Service\TransactionMobileSdkService
+     */
+    public function getTransactionMobileSdkService() {
+        if(is_null($this->transactionMobileSdkService)){
+            $this->transactionMobileSdkService = new \PostFinanceCheckout\Sdk\Service\TransactionMobileSdkService($this);
+        }
+        return $this->transactionMobileSdkService;
+    }
+    
+    protected $transactionPaymentPageService;
+
+    /**
+     * @return \PostFinanceCheckout\Sdk\Service\TransactionPaymentPageService
+     */
+    public function getTransactionPaymentPageService() {
+        if(is_null($this->transactionPaymentPageService)){
+            $this->transactionPaymentPageService = new \PostFinanceCheckout\Sdk\Service\TransactionPaymentPageService($this);
+        }
+        return $this->transactionPaymentPageService;
+    }
+    
+    protected $transactionService;
+
+    /**
+     * @return \PostFinanceCheckout\Sdk\Service\TransactionService
+     */
+    public function getTransactionService() {
+        if(is_null($this->transactionService)){
+            $this->transactionService = new \PostFinanceCheckout\Sdk\Service\TransactionService($this);
+        }
+        return $this->transactionService;
+    }
+    
+    protected $transactionVoidService;
+
+    /**
+     * @return \PostFinanceCheckout\Sdk\Service\TransactionVoidService
+     */
+    public function getTransactionVoidService() {
+        if(is_null($this->transactionVoidService)){
+            $this->transactionVoidService = new \PostFinanceCheckout\Sdk\Service\TransactionVoidService($this);
+        }
+        return $this->transactionVoidService;
+    }
+    
+    protected $userAccountRoleService;
+
+    /**
+     * @return \PostFinanceCheckout\Sdk\Service\UserAccountRoleService
+     */
+    public function getUserAccountRoleService() {
+        if(is_null($this->userAccountRoleService)){
+            $this->userAccountRoleService = new \PostFinanceCheckout\Sdk\Service\UserAccountRoleService($this);
+        }
+        return $this->userAccountRoleService;
+    }
+    
+    protected $userSpaceRoleService;
+
+    /**
+     * @return \PostFinanceCheckout\Sdk\Service\UserSpaceRoleService
+     */
+    public function getUserSpaceRoleService() {
+        if(is_null($this->userSpaceRoleService)){
+            $this->userSpaceRoleService = new \PostFinanceCheckout\Sdk\Service\UserSpaceRoleService($this);
+        }
+        return $this->userSpaceRoleService;
+    }
+    
+    protected $webhookListenerService;
+
+    /**
+     * @return \PostFinanceCheckout\Sdk\Service\WebhookListenerService
+     */
+    public function getWebhookListenerService() {
+        if(is_null($this->webhookListenerService)){
+            $this->webhookListenerService = new \PostFinanceCheckout\Sdk\Service\WebhookListenerService($this);
+        }
+        return $this->webhookListenerService;
+    }
+    
+    protected $webhookUrlService;
+
+    /**
+     * @return \PostFinanceCheckout\Sdk\Service\WebhookUrlService
+     */
+    public function getWebhookUrlService() {
+        if(is_null($this->webhookUrlService)){
+            $this->webhookUrlService = new \PostFinanceCheckout\Sdk\Service\WebhookUrlService($this);
+        }
+        return $this->webhookUrlService;
+    }
+    
 
 }

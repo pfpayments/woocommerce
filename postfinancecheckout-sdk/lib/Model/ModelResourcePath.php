@@ -1,8 +1,8 @@
 <?php
 /**
- *  SDK
+ * PostFinance Checkout SDK
  *
- * This library allows to interact with the  payment service.
+ * This library allows to interact with the PostFinance Checkout payment service.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -162,6 +162,14 @@ class ModelResourcePath implements ModelInterface, ArrayAccess
     {
         $invalidProperties = [];
 
+        if (!is_null($this->container['path']) && (mb_strlen($this->container['path']) > 500)) {
+            $invalidProperties[] = "invalid value for 'path', the character length must be smaller than or equal to 500.";
+        }
+
+        if (!is_null($this->container['path']) && (mb_strlen($this->container['path']) < 4)) {
+            $invalidProperties[] = "invalid value for 'path', the character length must be bigger than or equal to 4.";
+        }
+
         return $invalidProperties;
     }
 
@@ -311,6 +319,13 @@ class ModelResourcePath implements ModelInterface, ArrayAccess
      */
     public function setPath($path)
     {
+        if (!is_null($path) && (mb_strlen($path) > 500)) {
+            throw new \InvalidArgumentException('invalid length for $path when calling ModelResourcePath., must be smaller than or equal to 500.');
+        }
+        if (!is_null($path) && (mb_strlen($path) < 4)) {
+            throw new \InvalidArgumentException('invalid length for $path when calling ModelResourcePath., must be bigger than or equal to 4.');
+        }
+
         $this->container['path'] = $path;
 
         return $this;

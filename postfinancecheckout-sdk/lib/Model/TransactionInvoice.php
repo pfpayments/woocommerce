@@ -1,8 +1,8 @@
 <?php
 /**
- *  SDK
+ * PostFinance Checkout SDK
  *
- * This library allows to interact with the  payment service.
+ * This library allows to interact with the PostFinance Checkout payment service.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -51,12 +51,14 @@ class TransactionInvoice extends TransactionAwareEntity
         'billing_address' => '\PostFinanceCheckout\Sdk\Model\Address',
         'completion' => '\PostFinanceCheckout\Sdk\Model\TransactionCompletion',
         'created_on' => '\DateTime',
+        'derecognized_by' => 'int',
         'derecognized_on' => '\DateTime',
         'due_on' => '\DateTime',
         'environment' => '\PostFinanceCheckout\Sdk\Model\Environment',
         'external_id' => 'string',
         'language' => 'string',
         'line_items' => '\PostFinanceCheckout\Sdk\Model\LineItem[]',
+        'linked_space_id' => 'int',
         'merchant_reference' => 'string',
         'outstanding_amount' => 'float',
         'paid_on' => '\DateTime',
@@ -78,12 +80,14 @@ class TransactionInvoice extends TransactionAwareEntity
         'billing_address' => null,
         'completion' => null,
         'created_on' => 'date-time',
+        'derecognized_by' => 'int64',
         'derecognized_on' => 'date-time',
         'due_on' => 'date-time',
         'environment' => null,
         'external_id' => null,
         'language' => null,
         'line_items' => null,
+        'linked_space_id' => 'int64',
         'merchant_reference' => null,
         'outstanding_amount' => null,
         'paid_on' => 'date-time',
@@ -106,12 +110,14 @@ class TransactionInvoice extends TransactionAwareEntity
         'billing_address' => 'billingAddress',
         'completion' => 'completion',
         'created_on' => 'createdOn',
+        'derecognized_by' => 'derecognizedBy',
         'derecognized_on' => 'derecognizedOn',
         'due_on' => 'dueOn',
         'environment' => 'environment',
         'external_id' => 'externalId',
         'language' => 'language',
         'line_items' => 'lineItems',
+        'linked_space_id' => 'linkedSpaceId',
         'merchant_reference' => 'merchantReference',
         'outstanding_amount' => 'outstandingAmount',
         'paid_on' => 'paidOn',
@@ -133,12 +139,14 @@ class TransactionInvoice extends TransactionAwareEntity
         'billing_address' => 'setBillingAddress',
         'completion' => 'setCompletion',
         'created_on' => 'setCreatedOn',
+        'derecognized_by' => 'setDerecognizedBy',
         'derecognized_on' => 'setDerecognizedOn',
         'due_on' => 'setDueOn',
         'environment' => 'setEnvironment',
         'external_id' => 'setExternalId',
         'language' => 'setLanguage',
         'line_items' => 'setLineItems',
+        'linked_space_id' => 'setLinkedSpaceId',
         'merchant_reference' => 'setMerchantReference',
         'outstanding_amount' => 'setOutstandingAmount',
         'paid_on' => 'setPaidOn',
@@ -160,12 +168,14 @@ class TransactionInvoice extends TransactionAwareEntity
         'billing_address' => 'getBillingAddress',
         'completion' => 'getCompletion',
         'created_on' => 'getCreatedOn',
+        'derecognized_by' => 'getDerecognizedBy',
         'derecognized_on' => 'getDerecognizedOn',
         'due_on' => 'getDueOn',
         'environment' => 'getEnvironment',
         'external_id' => 'getExternalId',
         'language' => 'getLanguage',
         'line_items' => 'getLineItems',
+        'linked_space_id' => 'getLinkedSpaceId',
         'merchant_reference' => 'getMerchantReference',
         'outstanding_amount' => 'getOutstandingAmount',
         'paid_on' => 'getPaidOn',
@@ -199,6 +209,8 @@ class TransactionInvoice extends TransactionAwareEntity
         
         $this->container['created_on'] = isset($data['created_on']) ? $data['created_on'] : null;
         
+        $this->container['derecognized_by'] = isset($data['derecognized_by']) ? $data['derecognized_by'] : null;
+        
         $this->container['derecognized_on'] = isset($data['derecognized_on']) ? $data['derecognized_on'] : null;
         
         $this->container['due_on'] = isset($data['due_on']) ? $data['due_on'] : null;
@@ -210,6 +222,8 @@ class TransactionInvoice extends TransactionAwareEntity
         $this->container['language'] = isset($data['language']) ? $data['language'] : null;
         
         $this->container['line_items'] = isset($data['line_items']) ? $data['line_items'] : null;
+        
+        $this->container['linked_space_id'] = isset($data['linked_space_id']) ? $data['linked_space_id'] : null;
         
         $this->container['merchant_reference'] = isset($data['merchant_reference']) ? $data['merchant_reference'] : null;
         
@@ -239,6 +253,18 @@ class TransactionInvoice extends TransactionAwareEntity
     public function listInvalidProperties()
     {
         $invalidProperties = parent::listInvalidProperties();
+
+        if (!is_null($this->container['external_id']) && (mb_strlen($this->container['external_id']) > 100)) {
+            $invalidProperties[] = "invalid value for 'external_id', the character length must be smaller than or equal to 100.";
+        }
+
+        if (!is_null($this->container['external_id']) && (mb_strlen($this->container['external_id']) < 1)) {
+            $invalidProperties[] = "invalid value for 'external_id', the character length must be bigger than or equal to 1.";
+        }
+
+        if (!is_null($this->container['merchant_reference']) && (mb_strlen($this->container['merchant_reference']) > 100)) {
+            $invalidProperties[] = "invalid value for 'merchant_reference', the character length must be smaller than or equal to 100.";
+        }
 
         return $invalidProperties;
     }
@@ -421,6 +447,31 @@ class TransactionInvoice extends TransactionAwareEntity
     
 
     /**
+     * Gets derecognized_by
+     *
+     * @return int
+     */
+    public function getDerecognizedBy()
+    {
+        return $this->container['derecognized_by'];
+    }
+
+    /**
+     * Sets derecognized_by
+     *
+     * @param int $derecognized_by The id of the user which marked the invoice as derecognized.
+     *
+     * @return $this
+     */
+    public function setDerecognizedBy($derecognized_by)
+    {
+        $this->container['derecognized_by'] = $derecognized_by;
+
+        return $this;
+    }
+    
+
+    /**
      * Gets derecognized_on
      *
      * @return \DateTime
@@ -514,6 +565,13 @@ class TransactionInvoice extends TransactionAwareEntity
      */
     public function setExternalId($external_id)
     {
+        if (!is_null($external_id) && (mb_strlen($external_id) > 100)) {
+            throw new \InvalidArgumentException('invalid length for $external_id when calling TransactionInvoice., must be smaller than or equal to 100.');
+        }
+        if (!is_null($external_id) && (mb_strlen($external_id) < 1)) {
+            throw new \InvalidArgumentException('invalid length for $external_id when calling TransactionInvoice., must be bigger than or equal to 1.');
+        }
+
         $this->container['external_id'] = $external_id;
 
         return $this;
@@ -571,6 +629,31 @@ class TransactionInvoice extends TransactionAwareEntity
     
 
     /**
+     * Gets linked_space_id
+     *
+     * @return int
+     */
+    public function getLinkedSpaceId()
+    {
+        return $this->container['linked_space_id'];
+    }
+
+    /**
+     * Sets linked_space_id
+     *
+     * @param int $linked_space_id The linked space id holds the ID of the space to which the entity belongs to.
+     *
+     * @return $this
+     */
+    public function setLinkedSpaceId($linked_space_id)
+    {
+        $this->container['linked_space_id'] = $linked_space_id;
+
+        return $this;
+    }
+    
+
+    /**
      * Gets merchant_reference
      *
      * @return string
@@ -589,6 +672,10 @@ class TransactionInvoice extends TransactionAwareEntity
      */
     public function setMerchantReference($merchant_reference)
     {
+        if (!is_null($merchant_reference) && (mb_strlen($merchant_reference) > 100)) {
+            throw new \InvalidArgumentException('invalid length for $merchant_reference when calling TransactionInvoice., must be smaller than or equal to 100.');
+        }
+
         $this->container['merchant_reference'] = $merchant_reference;
 
         return $this;

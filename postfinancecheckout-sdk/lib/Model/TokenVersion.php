@@ -1,8 +1,8 @@
 <?php
 /**
- *  SDK
+ * PostFinance Checkout SDK
  *
- * This library allows to interact with the  payment service.
+ * This library allows to interact with the PostFinance Checkout payment service.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -54,6 +54,7 @@ class TokenVersion implements ModelInterface, ArrayAccess
         'created_on' => '\DateTime',
         'environment' => '\PostFinanceCheckout\Sdk\Model\ChargeAttemptEnvironment',
         'expires_on' => '\DateTime',
+        'icon_url' => 'string',
         'id' => 'int',
         'labels' => '\PostFinanceCheckout\Sdk\Model\Label[]',
         'language' => 'string',
@@ -84,6 +85,7 @@ class TokenVersion implements ModelInterface, ArrayAccess
         'created_on' => 'date-time',
         'environment' => null,
         'expires_on' => 'date-time',
+        'icon_url' => null,
         'id' => 'int64',
         'labels' => null,
         'language' => null,
@@ -115,6 +117,7 @@ class TokenVersion implements ModelInterface, ArrayAccess
         'created_on' => 'createdOn',
         'environment' => 'environment',
         'expires_on' => 'expiresOn',
+        'icon_url' => 'iconUrl',
         'id' => 'id',
         'labels' => 'labels',
         'language' => 'language',
@@ -145,6 +148,7 @@ class TokenVersion implements ModelInterface, ArrayAccess
         'created_on' => 'setCreatedOn',
         'environment' => 'setEnvironment',
         'expires_on' => 'setExpiresOn',
+        'icon_url' => 'setIconUrl',
         'id' => 'setId',
         'labels' => 'setLabels',
         'language' => 'setLanguage',
@@ -175,6 +179,7 @@ class TokenVersion implements ModelInterface, ArrayAccess
         'created_on' => 'getCreatedOn',
         'environment' => 'getEnvironment',
         'expires_on' => 'getExpiresOn',
+        'icon_url' => 'getIconUrl',
         'id' => 'getId',
         'labels' => 'getLabels',
         'language' => 'getLanguage',
@@ -222,6 +227,8 @@ class TokenVersion implements ModelInterface, ArrayAccess
         
         $this->container['expires_on'] = isset($data['expires_on']) ? $data['expires_on'] : null;
         
+        $this->container['icon_url'] = isset($data['icon_url']) ? $data['icon_url'] : null;
+        
         $this->container['id'] = isset($data['id']) ? $data['id'] : null;
         
         $this->container['labels'] = isset($data['labels']) ? $data['labels'] : null;
@@ -266,6 +273,14 @@ class TokenVersion implements ModelInterface, ArrayAccess
     public function listInvalidProperties()
     {
         $invalidProperties = [];
+
+        if (!is_null($this->container['name']) && (mb_strlen($this->container['name']) > 150)) {
+            $invalidProperties[] = "invalid value for 'name', the character length must be smaller than or equal to 150.";
+        }
+
+        if (!is_null($this->container['processor_token']) && (mb_strlen($this->container['processor_token']) > 150)) {
+            $invalidProperties[] = "invalid value for 'processor_token', the character length must be smaller than or equal to 150.";
+        }
 
         return $invalidProperties;
     }
@@ -473,6 +488,31 @@ class TokenVersion implements ModelInterface, ArrayAccess
     
 
     /**
+     * Gets icon_url
+     *
+     * @return string
+     */
+    public function getIconUrl()
+    {
+        return $this->container['icon_url'];
+    }
+
+    /**
+     * Sets icon_url
+     *
+     * @param string $icon_url 
+     *
+     * @return $this
+     */
+    public function setIconUrl($icon_url)
+    {
+        $this->container['icon_url'] = $icon_url;
+
+        return $this;
+    }
+    
+
+    /**
      * Gets id
      *
      * @return int
@@ -591,6 +631,10 @@ class TokenVersion implements ModelInterface, ArrayAccess
      */
     public function setName($name)
     {
+        if (!is_null($name) && (mb_strlen($name) > 150)) {
+            throw new \InvalidArgumentException('invalid length for $name when calling TokenVersion., must be smaller than or equal to 150.');
+        }
+
         $this->container['name'] = $name;
 
         return $this;
@@ -766,6 +810,10 @@ class TokenVersion implements ModelInterface, ArrayAccess
      */
     public function setProcessorToken($processor_token)
     {
+        if (!is_null($processor_token) && (mb_strlen($processor_token) > 150)) {
+            throw new \InvalidArgumentException('invalid length for $processor_token when calling TokenVersion., must be smaller than or equal to 150.');
+        }
+
         $this->container['processor_token'] = $processor_token;
 
         return $this;

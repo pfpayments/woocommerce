@@ -1,8 +1,8 @@
 <?php
 /**
- *  SDK
+ * PostFinance Checkout SDK
  *
- * This library allows to interact with the  payment service.
+ * This library allows to interact with the PostFinance Checkout payment service.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -133,6 +133,10 @@ class DatabaseTranslatedStringItem implements ModelInterface, ArrayAccess
     public function listInvalidProperties()
     {
         $invalidProperties = [];
+
+        if (!is_null($this->container['translation']) && (mb_strlen($this->container['translation']) > 16777216)) {
+            $invalidProperties[] = "invalid value for 'translation', the character length must be smaller than or equal to 16777216.";
+        }
 
         return $invalidProperties;
     }
@@ -283,6 +287,10 @@ class DatabaseTranslatedStringItem implements ModelInterface, ArrayAccess
      */
     public function setTranslation($translation)
     {
+        if (!is_null($translation) && (mb_strlen($translation) > 16777216)) {
+            throw new \InvalidArgumentException('invalid length for $translation when calling DatabaseTranslatedStringItem., must be smaller than or equal to 16777216.');
+        }
+
         $this->container['translation'] = $translation;
 
         return $this;

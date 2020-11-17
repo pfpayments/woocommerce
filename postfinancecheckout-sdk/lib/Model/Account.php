@@ -1,8 +1,8 @@
 <?php
 /**
- *  SDK
+ * PostFinance Checkout SDK
  *
- * This library allows to interact with the  payment service.
+ * This library allows to interact with the PostFinance Checkout payment service.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -51,7 +51,12 @@ class Account implements ModelInterface, ArrayAccess
     protected static $swaggerTypes = [
         'active' => 'bool',
         'active_or_restricted_active' => 'bool',
+        'created_by' => 'int',
+        'created_on' => '\DateTime',
+        'deleted_by' => 'int',
+        'deleted_on' => '\DateTime',
         'id' => 'int',
+        'last_modified_date' => '\DateTime',
         'name' => 'string',
         'parent_account' => '\PostFinanceCheckout\Sdk\Model\Account',
         'planned_purge_date' => '\DateTime',
@@ -71,7 +76,12 @@ class Account implements ModelInterface, ArrayAccess
     protected static $swaggerFormats = [
         'active' => null,
         'active_or_restricted_active' => null,
+        'created_by' => 'int64',
+        'created_on' => 'date-time',
+        'deleted_by' => 'int64',
+        'deleted_on' => 'date-time',
         'id' => 'int64',
+        'last_modified_date' => 'date-time',
         'name' => null,
         'parent_account' => null,
         'planned_purge_date' => 'date-time',
@@ -92,7 +102,12 @@ class Account implements ModelInterface, ArrayAccess
     protected static $attributeMap = [
         'active' => 'active',
         'active_or_restricted_active' => 'activeOrRestrictedActive',
+        'created_by' => 'createdBy',
+        'created_on' => 'createdOn',
+        'deleted_by' => 'deletedBy',
+        'deleted_on' => 'deletedOn',
         'id' => 'id',
+        'last_modified_date' => 'lastModifiedDate',
         'name' => 'name',
         'parent_account' => 'parentAccount',
         'planned_purge_date' => 'plannedPurgeDate',
@@ -112,7 +127,12 @@ class Account implements ModelInterface, ArrayAccess
     protected static $setters = [
         'active' => 'setActive',
         'active_or_restricted_active' => 'setActiveOrRestrictedActive',
+        'created_by' => 'setCreatedBy',
+        'created_on' => 'setCreatedOn',
+        'deleted_by' => 'setDeletedBy',
+        'deleted_on' => 'setDeletedOn',
         'id' => 'setId',
+        'last_modified_date' => 'setLastModifiedDate',
         'name' => 'setName',
         'parent_account' => 'setParentAccount',
         'planned_purge_date' => 'setPlannedPurgeDate',
@@ -132,7 +152,12 @@ class Account implements ModelInterface, ArrayAccess
     protected static $getters = [
         'active' => 'getActive',
         'active_or_restricted_active' => 'getActiveOrRestrictedActive',
+        'created_by' => 'getCreatedBy',
+        'created_on' => 'getCreatedOn',
+        'deleted_by' => 'getDeletedBy',
+        'deleted_on' => 'getDeletedOn',
         'id' => 'getId',
+        'last_modified_date' => 'getLastModifiedDate',
         'name' => 'getName',
         'parent_account' => 'getParentAccount',
         'planned_purge_date' => 'getPlannedPurgeDate',
@@ -166,7 +191,17 @@ class Account implements ModelInterface, ArrayAccess
         
         $this->container['active_or_restricted_active'] = isset($data['active_or_restricted_active']) ? $data['active_or_restricted_active'] : null;
         
+        $this->container['created_by'] = isset($data['created_by']) ? $data['created_by'] : null;
+        
+        $this->container['created_on'] = isset($data['created_on']) ? $data['created_on'] : null;
+        
+        $this->container['deleted_by'] = isset($data['deleted_by']) ? $data['deleted_by'] : null;
+        
+        $this->container['deleted_on'] = isset($data['deleted_on']) ? $data['deleted_on'] : null;
+        
         $this->container['id'] = isset($data['id']) ? $data['id'] : null;
+        
+        $this->container['last_modified_date'] = isset($data['last_modified_date']) ? $data['last_modified_date'] : null;
         
         $this->container['name'] = isset($data['name']) ? $data['name'] : null;
         
@@ -196,6 +231,14 @@ class Account implements ModelInterface, ArrayAccess
     public function listInvalidProperties()
     {
         $invalidProperties = [];
+
+        if (!is_null($this->container['name']) && (mb_strlen($this->container['name']) > 200)) {
+            $invalidProperties[] = "invalid value for 'name', the character length must be smaller than or equal to 200.";
+        }
+
+        if (!is_null($this->container['name']) && (mb_strlen($this->container['name']) < 3)) {
+            $invalidProperties[] = "invalid value for 'name', the character length must be bigger than or equal to 3.";
+        }
 
         return $invalidProperties;
     }
@@ -328,6 +371,106 @@ class Account implements ModelInterface, ArrayAccess
     
 
     /**
+     * Gets created_by
+     *
+     * @return int
+     */
+    public function getCreatedBy()
+    {
+        return $this->container['created_by'];
+    }
+
+    /**
+     * Sets created_by
+     *
+     * @param int $created_by The ID of the user who created this entity.
+     *
+     * @return $this
+     */
+    public function setCreatedBy($created_by)
+    {
+        $this->container['created_by'] = $created_by;
+
+        return $this;
+    }
+    
+
+    /**
+     * Gets created_on
+     *
+     * @return \DateTime
+     */
+    public function getCreatedOn()
+    {
+        return $this->container['created_on'];
+    }
+
+    /**
+     * Sets created_on
+     *
+     * @param \DateTime $created_on The date and time when this entity was created.
+     *
+     * @return $this
+     */
+    public function setCreatedOn($created_on)
+    {
+        $this->container['created_on'] = $created_on;
+
+        return $this;
+    }
+    
+
+    /**
+     * Gets deleted_by
+     *
+     * @return int
+     */
+    public function getDeletedBy()
+    {
+        return $this->container['deleted_by'];
+    }
+
+    /**
+     * Sets deleted_by
+     *
+     * @param int $deleted_by The ID of a user that deleted this entity.
+     *
+     * @return $this
+     */
+    public function setDeletedBy($deleted_by)
+    {
+        $this->container['deleted_by'] = $deleted_by;
+
+        return $this;
+    }
+    
+
+    /**
+     * Gets deleted_on
+     *
+     * @return \DateTime
+     */
+    public function getDeletedOn()
+    {
+        return $this->container['deleted_on'];
+    }
+
+    /**
+     * Sets deleted_on
+     *
+     * @param \DateTime $deleted_on The date and time when this entity was deleted.
+     *
+     * @return $this
+     */
+    public function setDeletedOn($deleted_on)
+    {
+        $this->container['deleted_on'] = $deleted_on;
+
+        return $this;
+    }
+    
+
+    /**
      * Gets id
      *
      * @return int
@@ -353,6 +496,31 @@ class Account implements ModelInterface, ArrayAccess
     
 
     /**
+     * Gets last_modified_date
+     *
+     * @return \DateTime
+     */
+    public function getLastModifiedDate()
+    {
+        return $this->container['last_modified_date'];
+    }
+
+    /**
+     * Sets last_modified_date
+     *
+     * @param \DateTime $last_modified_date 
+     *
+     * @return $this
+     */
+    public function setLastModifiedDate($last_modified_date)
+    {
+        $this->container['last_modified_date'] = $last_modified_date;
+
+        return $this;
+    }
+    
+
+    /**
      * Gets name
      *
      * @return string
@@ -371,6 +539,13 @@ class Account implements ModelInterface, ArrayAccess
      */
     public function setName($name)
     {
+        if (!is_null($name) && (mb_strlen($name) > 200)) {
+            throw new \InvalidArgumentException('invalid length for $name when calling Account., must be smaller than or equal to 200.');
+        }
+        if (!is_null($name) && (mb_strlen($name) < 3)) {
+            throw new \InvalidArgumentException('invalid length for $name when calling Account., must be bigger than or equal to 3.');
+        }
+
         $this->container['name'] = $name;
 
         return $this;

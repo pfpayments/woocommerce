@@ -1,8 +1,8 @@
 <?php
 /**
- *  SDK
+ * PostFinance Checkout SDK
  *
- * This library allows to interact with the  payment service.
+ * This library allows to interact with the PostFinance Checkout payment service.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -140,6 +140,10 @@ class AbstractWebhookListenerUpdate implements ModelInterface, ArrayAccess
     {
         $invalidProperties = [];
 
+        if (!is_null($this->container['name']) && (mb_strlen($this->container['name']) > 50)) {
+            $invalidProperties[] = "invalid value for 'name', the character length must be smaller than or equal to 50.";
+        }
+
         return $invalidProperties;
     }
 
@@ -264,6 +268,10 @@ class AbstractWebhookListenerUpdate implements ModelInterface, ArrayAccess
      */
     public function setName($name)
     {
+        if (!is_null($name) && (mb_strlen($name) > 50)) {
+            throw new \InvalidArgumentException('invalid length for $name when calling AbstractWebhookListenerUpdate., must be smaller than or equal to 50.');
+        }
+
         $this->container['name'] = $name;
 
         return $this;

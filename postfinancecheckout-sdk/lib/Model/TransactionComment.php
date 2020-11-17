@@ -1,8 +1,8 @@
 <?php
 /**
- *  SDK
+ * PostFinance Checkout SDK
  *
- * This library allows to interact with the  payment service.
+ * This library allows to interact with the PostFinance Checkout payment service.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -183,6 +183,10 @@ class TransactionComment implements ModelInterface, ArrayAccess
     {
         $invalidProperties = [];
 
+        if (!is_null($this->container['content']) && (mb_strlen($this->container['content']) > 262144)) {
+            $invalidProperties[] = "invalid value for 'content', the character length must be smaller than or equal to 262144.";
+        }
+
         return $invalidProperties;
     }
 
@@ -282,6 +286,10 @@ class TransactionComment implements ModelInterface, ArrayAccess
      */
     public function setContent($content)
     {
+        if (!is_null($content) && (mb_strlen($content) > 262144)) {
+            throw new \InvalidArgumentException('invalid length for $content when calling TransactionComment., must be smaller than or equal to 262144.');
+        }
+
         $this->container['content'] = $content;
 
         return $this;

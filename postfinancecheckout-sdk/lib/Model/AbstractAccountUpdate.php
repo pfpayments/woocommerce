@@ -1,8 +1,8 @@
 <?php
 /**
- *  SDK
+ * PostFinance Checkout SDK
  *
- * This library allows to interact with the  payment service.
+ * This library allows to interact with the PostFinance Checkout payment service.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -48,6 +48,7 @@ class AbstractAccountUpdate implements ModelInterface, ArrayAccess
       * @var string[]
       */
     protected static $swaggerTypes = [
+        'last_modified_date' => '\DateTime',
         'name' => 'string',
         'subaccount_limit' => 'int'
     ];
@@ -58,6 +59,7 @@ class AbstractAccountUpdate implements ModelInterface, ArrayAccess
       * @var string[]
       */
     protected static $swaggerFormats = [
+        'last_modified_date' => 'date-time',
         'name' => null,
         'subaccount_limit' => 'int64'
     ];
@@ -69,6 +71,7 @@ class AbstractAccountUpdate implements ModelInterface, ArrayAccess
      * @var string[]
      */
     protected static $attributeMap = [
+        'last_modified_date' => 'lastModifiedDate',
         'name' => 'name',
         'subaccount_limit' => 'subaccountLimit'
     ];
@@ -79,6 +82,7 @@ class AbstractAccountUpdate implements ModelInterface, ArrayAccess
      * @var string[]
      */
     protected static $setters = [
+        'last_modified_date' => 'setLastModifiedDate',
         'name' => 'setName',
         'subaccount_limit' => 'setSubaccountLimit'
     ];
@@ -89,6 +93,7 @@ class AbstractAccountUpdate implements ModelInterface, ArrayAccess
      * @var string[]
      */
     protected static $getters = [
+        'last_modified_date' => 'getLastModifiedDate',
         'name' => 'getName',
         'subaccount_limit' => 'getSubaccountLimit'
     ];
@@ -111,6 +116,8 @@ class AbstractAccountUpdate implements ModelInterface, ArrayAccess
     public function __construct(array $data = null)
     {
         
+        $this->container['last_modified_date'] = isset($data['last_modified_date']) ? $data['last_modified_date'] : null;
+        
         $this->container['name'] = isset($data['name']) ? $data['name'] : null;
         
         $this->container['subaccount_limit'] = isset($data['subaccount_limit']) ? $data['subaccount_limit'] : null;
@@ -125,6 +132,14 @@ class AbstractAccountUpdate implements ModelInterface, ArrayAccess
     public function listInvalidProperties()
     {
         $invalidProperties = [];
+
+        if (!is_null($this->container['name']) && (mb_strlen($this->container['name']) > 200)) {
+            $invalidProperties[] = "invalid value for 'name', the character length must be smaller than or equal to 200.";
+        }
+
+        if (!is_null($this->container['name']) && (mb_strlen($this->container['name']) < 3)) {
+            $invalidProperties[] = "invalid value for 'name', the character length must be bigger than or equal to 3.";
+        }
 
         return $invalidProperties;
     }
@@ -207,6 +222,31 @@ class AbstractAccountUpdate implements ModelInterface, ArrayAccess
     
 
     /**
+     * Gets last_modified_date
+     *
+     * @return \DateTime
+     */
+    public function getLastModifiedDate()
+    {
+        return $this->container['last_modified_date'];
+    }
+
+    /**
+     * Sets last_modified_date
+     *
+     * @param \DateTime $last_modified_date 
+     *
+     * @return $this
+     */
+    public function setLastModifiedDate($last_modified_date)
+    {
+        $this->container['last_modified_date'] = $last_modified_date;
+
+        return $this;
+    }
+    
+
+    /**
      * Gets name
      *
      * @return string
@@ -225,6 +265,13 @@ class AbstractAccountUpdate implements ModelInterface, ArrayAccess
      */
     public function setName($name)
     {
+        if (!is_null($name) && (mb_strlen($name) > 200)) {
+            throw new \InvalidArgumentException('invalid length for $name when calling AbstractAccountUpdate., must be smaller than or equal to 200.');
+        }
+        if (!is_null($name) && (mb_strlen($name) < 3)) {
+            throw new \InvalidArgumentException('invalid length for $name when calling AbstractAccountUpdate., must be bigger than or equal to 3.');
+        }
+
         $this->container['name'] = $name;
 
         return $this;

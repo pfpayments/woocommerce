@@ -1,8 +1,8 @@
 <?php
 /**
- *  SDK
+ * PostFinance Checkout SDK
  *
- * This library allows to interact with the  payment service.
+ * This library allows to interact with the PostFinance Checkout payment service.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -49,10 +49,7 @@ class TransactionPaymentPageServiceTest extends TestCase
     /**
      * @var PostFinanceCheckout\Sdk\Model\TransactionCreate
      */
-    private $transactionBag;
-    
-    private $transactionPaymentPageService;
-    private $transactionService;
+    private $transactionPayload;
 
     /**
      * @var int
@@ -76,15 +73,8 @@ class TransactionPaymentPageServiceTest extends TestCase
     {
         parent::setUp();
 
-        if (is_null($this->transactionPaymentPageService)) {
-            $this->transactionPaymentPageService = new TransactionPaymentPageService($this->getApiClient());
-        }
-
-        if (is_null($this->transactionService)) {
-            $this->transactionService = new TransactionService($this->getApiClient());
-        }
-
-        $this->transactionBag = $this->getTransactionBag();
+        $this->apiClient = $this->getApiClient();
+        $this->transactionPayload = $this->getTransactionPayload();
     }
 
     /**
@@ -117,9 +107,9 @@ class TransactionPaymentPageServiceTest extends TestCase
     /**
      * @return TransactionCreate
      */
-    private function getTransactionBag()
+    private function getTransactionPayload()
     {
-        if (is_null($this->transactionBag)) {
+        if (is_null($this->transactionPayload)) {
             // line item
             $lineItem = new LineItemCreate();
             $lineItem->setName('Red T-Shirt');
@@ -133,7 +123,7 @@ class TransactionPaymentPageServiceTest extends TestCase
             $billingAddress = new AddressCreate();
             $billingAddress->setCity('Winterthur');
             $billingAddress->setCountry('CH');
-            $billingAddress->setEmailAddress('test@postfinancecheckout.com');
+            $billingAddress->setEmailAddress('test@example.com');
             $billingAddress->setFamilyName('Customer');
             $billingAddress->setGivenName('Good');
             $billingAddress->setPostCode('8400');
@@ -142,14 +132,14 @@ class TransactionPaymentPageServiceTest extends TestCase
             $billingAddress->setPhoneNumber('+41791234567');
             $billingAddress->setSalutation('Ms');
 
-            $this->transactionBag = new TransactionCreate();
-            $this->transactionBag->setCurrency('CHF');
-            $this->transactionBag->setLineItems([$lineItem]);
-            $this->transactionBag->setAutoConfirmationEnabled(true);
-            $this->transactionBag->setBillingAddress($billingAddress);
-            $this->transactionBag->setShippingAddress($billingAddress);
+            $this->transactionPayload = new TransactionCreate();
+            $this->transactionPayload->setCurrency('CHF');
+            $this->transactionPayload->setLineItems([$lineItem]);
+            $this->transactionPayload->setAutoConfirmationEnabled(true);
+            $this->transactionPayload->setBillingAddress($billingAddress);
+            $this->transactionPayload->setShippingAddress($billingAddress);
         }
-        return $this->transactionBag;
+        return $this->transactionPayload;
     }
 
     /**
@@ -157,8 +147,8 @@ class TransactionPaymentPageServiceTest extends TestCase
      */
     public function testPaymentPageUrl()
     {
-        $transaction    = $this->transactionService->create($this->spaceId, $this->getTransactionBag());
-        $paymentPageUrl = $this->transactionPaymentPageService->paymentPageUrl($this->spaceId, $transaction->getId());
+        $transaction    = $this->apiClient->getTransactionService()->create($this->spaceId, $this->getTransactionPayload());
+        $paymentPageUrl = $this->apiClient->getTransactionPaymentPageService()->paymentPageUrl($this->spaceId, $transaction->getId());
         $this->assertEquals(0, strpos($paymentPageUrl, 'http'));
     }
 }

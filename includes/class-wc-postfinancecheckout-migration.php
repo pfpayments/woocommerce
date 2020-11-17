@@ -7,7 +7,7 @@ if (!defined('ABSPATH')) {
  *
  * This WooCommerce plugin enables to process payments with PostFinance Checkout (https://www.postfinance.ch/checkout).
  *
- * @author wallee AG (http://www.customweb.com/)
+ * @author wallee AG (http://www.wallee.com/)
  * @license http://www.apache.org/licenses/LICENSE-2.0 Apache Software License (ASL 2.0)
  */
 /**
@@ -257,7 +257,7 @@ class WC_PostFinanceCheckout_Migration {
 	public static function plugin_row_meta( $links, $file ) {
 	    if ( WC_POSTFINANCECHECKOUT_PLUGIN_BASENAME === $file ) {
 	        $row_meta = array(
-	            'docs' => '<a href="https://plugin-documentation.postfinance-checkout.ch/pfpayments/woocommerce/1.3.11/docs/en/documentation.html" aria-label="' . esc_attr__('View Documentation', 'woo-postfinancecheckout') . '">' . esc_html__('Documentation', 'woo-postfinancecheckout') . '</a>',
+	            'docs' => '<a href="https://plugin-documentation.postfinance-checkout.ch/pfpayments/woocommerce/1.4.0/docs/en/documentation.html" aria-label="' . esc_attr__('View Documentation', 'woo-postfinancecheckout') . '">' . esc_html__('Documentation', 'woo-postfinancecheckout') . '</a>',
 	        );
 	        
 	        return array_merge( $links, $row_meta );
