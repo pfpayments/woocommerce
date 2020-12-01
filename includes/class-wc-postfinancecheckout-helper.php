@@ -317,9 +317,9 @@ class WC_PostFinanceCheckout_Helper
         $type_array = array(
             '%s'
         );
-        $wpdb->query($wpdb->prepare("SELECT * FROM " . $wpdb->prefix . "woocommerce_postfinancecheckout_transaction_info WHERE transaction_id = %d and space_id = %d FOR UPDATE", $transaction_id, $space_id));
+        $wpdb->query($wpdb->prepare("SELECT * FROM " . $wpdb->prefix . "wc_postfinancecheckout_transaction_info WHERE transaction_id = %d and space_id = %d FOR UPDATE", $transaction_id, $space_id));
         
-        $wpdb->update($wpdb->prefix . 'woocommerce_postfinancecheckout_transaction_info', $data_array, array(
+        $wpdb->update($wpdb->prefix . 'wc_postfinancecheckout_transaction_info', $data_array, array(
             'transaction_id' => $transaction_id,
             'space_id' => $space_id
         ), $type_array, array(

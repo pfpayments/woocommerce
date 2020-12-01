@@ -37,7 +37,7 @@ class WC_PostFinanceCheckout_Entity_Attribute_Options extends WC_PostFinanceChec
 	}
 
 	protected static function get_table_name(){
-		return 'woocommerce_postfinancecheckout_attribute_options';
+		return 'wc_postfinancecheckout_attribute_options';
 	}
 
 	protected function prepare_base_fields_for_storage(&$data_array, &$type_array){

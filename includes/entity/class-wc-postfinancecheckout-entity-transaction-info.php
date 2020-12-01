@@ -72,7 +72,7 @@ class WC_PostFinanceCheckout_Entity_Transaction_Info extends WC_PostFinanceCheck
 	}
 
 	protected static function get_table_name(){
-		return 'woocommerce_postfinancecheckout_transaction_info';
+		return 'wc_postfinancecheckout_transaction_info';
 	}
 
 	/**

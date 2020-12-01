@@ -24,6 +24,7 @@ class WC_PostFinanceCheckout_Migration {
 	    '1.0.3' => 'update_1_0_3_image_domain',
 	    '1.0.4' => 'update_1_0_4_failure_msg_and_attribute',
 		'1.0.5' => 'update_1_0_5_clear_provider_transients',
+		'1.0.6' => 'update_1_0_6_shorten_table_names',
 	);
 
 	/**
@@ -165,12 +166,12 @@ class WC_PostFinanceCheckout_Migration {
 	public static function wpmu_drop_tables($tables){
 		global $wpdb;
 		
-		$tables[] = $wpdb->prefix . 'woocommerce_postfinancecheckout_method_configuration';
-		$tables[] = $wpdb->prefix . 'woocommerce_postfinancecheckout_transaction_info';
-		$tables[] = $wpdb->prefix . 'woocommerce_postfinancecheckout_token_info';
-		$tables[] = $wpdb->prefix . 'woocommerce_postfinancecheckout_completion_job';
-		$tables[] = $wpdb->prefix . 'woocommerce_postfinancecheckout_void_job';
-		$tables[] = $wpdb->prefix . 'woocommerce_postfinancecheckout_refund_job';
+		$tables[] = $wpdb->prefix . 'wc_postfinancecheckout_method_config';
+		$tables[] = $wpdb->prefix . 'wc_postfinancecheckout_transaction_info';
+		$tables[] = $wpdb->prefix . 'wc_postfinancecheckout_token_info';
+		$tables[] = $wpdb->prefix . 'wc_postfinancecheckout_completion_job';
+		$tables[] = $wpdb->prefix . 'wc_postfinancecheckout_void_job';
+		$tables[] = $wpdb->prefix . 'wc_postfinancecheckout_refund_job';
 		
 		return $tables;
 	}
@@ -257,7 +258,7 @@ class WC_PostFinanceCheckout_Migration {
 	public static function plugin_row_meta( $links, $file ) {
 	    if ( WC_POSTFINANCECHECKOUT_PLUGIN_BASENAME === $file ) {
 	        $row_meta = array(
-	            'docs' => '<a href="https://plugin-documentation.postfinance-checkout.ch/pfpayments/woocommerce/1.4.0/docs/en/documentation.html" aria-label="' . esc_attr__('View Documentation', 'woo-postfinancecheckout') . '">' . esc_html__('Documentation', 'woo-postfinancecheckout') . '</a>',
+	            'docs' => '<a href="https://plugin-documentation.postfinance-checkout.ch/pfpayments/woocommerce/1.5.0/docs/en/documentation.html" aria-label="' . esc_attr__('View Documentation', 'woo-postfinancecheckout') . '">' . esc_html__('Documentation', 'woo-postfinancecheckout') . '</a>',
 	        );
 	        
 	        return array_merge( $links, $row_meta );
@@ -271,7 +272,7 @@ class WC_PostFinanceCheckout_Migration {
 		global $wpdb;
 		
 		$result = $wpdb->query(
-				"CREATE TABLE IF NOT EXISTS {$wpdb->prefix}woocommerce_postfinancecheckout_method_configuration(
+				"CREATE TABLE IF NOT EXISTS {$wpdb->prefix}wc_postfinancecheckout_method_config(
 				`id` int(10) unsigned NOT NULL AUTO_INCREMENT,
 				`state` varchar(255) COLLATE utf8_unicode_ci NOT NULL,
 				`space_id` bigint(20) unsigned NOT NULL,
@@ -293,7 +294,7 @@ class WC_PostFinanceCheckout_Migration {
 		}
 		
 		$result = $wpdb->query(
-				"CREATE TABLE IF NOT EXISTS {$wpdb->prefix}woocommerce_postfinancecheckout_transaction_info(
+				"CREATE TABLE IF NOT EXISTS {$wpdb->prefix}wc_postfinancecheckout_transaction_info(
 				`id` int(10) unsigned NOT NULL AUTO_INCREMENT,
 				`transaction_id` bigint(20) unsigned NOT NULL,
 				`state` varchar(255) COLLATE utf8_unicode_ci NOT NULL,
@@ -321,7 +322,7 @@ class WC_PostFinanceCheckout_Migration {
 		}
 		
 		$result = $wpdb->query(
-				"CREATE TABLE IF NOT EXISTS {$wpdb->prefix}woocommerce_postfinancecheckout_token_info(
+				"CREATE TABLE IF NOT EXISTS {$wpdb->prefix}wc_postfinancecheckout_token_info(
 				`id` int(10) unsigned NOT NULL AUTO_INCREMENT,
 				`token_id` bigint(20) unsigned NOT NULL,
 				`state` varchar(255) COLLATE utf8_unicode_ci NOT NULL,
@@ -343,7 +344,7 @@ class WC_PostFinanceCheckout_Migration {
 			throw new Exception($wpdb->last_error);
 		}
 		$result = $wpdb->query(
-				"CREATE TABLE IF NOT EXISTS {$wpdb->prefix}woocommerce_postfinancecheckout_completion_job(
+				"CREATE TABLE IF NOT EXISTS {$wpdb->prefix}wc_postfinancecheckout_completion_job(
 				`id` int(10) unsigned NOT NULL AUTO_INCREMENT,
 				`state` varchar(255) COLLATE utf8_unicode_ci NOT NULL,
 				`completion_id` bigint(20) unsigned,
@@ -366,7 +367,7 @@ class WC_PostFinanceCheckout_Migration {
 		}
 		
 		$result = $wpdb->query(
-				"CREATE TABLE IF NOT EXISTS {$wpdb->prefix}woocommerce_postfinancecheckout_void_job(
+				"CREATE TABLE IF NOT EXISTS {$wpdb->prefix}wc_postfinancecheckout_void_job(
 				`id` int(10) unsigned NOT NULL AUTO_INCREMENT,
 				`state` varchar(255) COLLATE utf8_unicode_ci NOT NULL,
 				`void_id` bigint(20) unsigned,
@@ -387,7 +388,7 @@ class WC_PostFinanceCheckout_Migration {
 		}
 		
 		$result = $wpdb->query(
-				"CREATE TABLE IF NOT EXISTS {$wpdb->prefix}woocommerce_postfinancecheckout_refund_job(
+				"CREATE TABLE IF NOT EXISTS {$wpdb->prefix}wc_postfinancecheckout_refund_job(
 				`id` int(10) unsigned NOT NULL AUTO_INCREMENT,
 				`state` varchar(255) COLLATE utf8_unicode_ci NOT NULL,
 				`wc_refund_id` bigint(20) unsigned NOT NULL,
@@ -407,18 +408,19 @@ class WC_PostFinanceCheckout_Migration {
 		if ($result === false) {
 			throw new Exception($wpdb->last_error);
 		}
+
 	}
 	
 	public static function update_1_0_1_image_url(){
 		global $wpdb;
 		$result = $wpdb->query(
-				"ALTER TABLE `{$wpdb->prefix}woocommerce_postfinancecheckout_method_configuration` CHANGE `image` `image` VARCHAR(2047) CHARACTER SET utf8 COLLATE utf8_unicode_ci NULL DEFAULT NULL;");
+				"ALTER TABLE `{$wpdb->prefix}wc_postfinancecheckout_method_config` CHANGE `image` `image` VARCHAR(2047) CHARACTER SET utf8 COLLATE utf8_unicode_ci NULL DEFAULT NULL;");
 		if ($result === false) {
 			throw new Exception($wpdb->last_error);
 		}
 		
 		$result = $wpdb->query(
-				"ALTER TABLE `{$wpdb->prefix}woocommerce_postfinancecheckout_transaction_info` CHANGE `image` `image` VARCHAR(2047) CHARACTER SET utf8 COLLATE utf8_unicode_ci NULL DEFAULT NULL;");
+				"ALTER TABLE `{$wpdb->prefix}wc_postfinancecheckout_transaction_info` CHANGE `image` `image` VARCHAR(2047) CHARACTER SET utf8 COLLATE utf8_unicode_ci NULL DEFAULT NULL;");
 		if ($result === false) {
 			throw new Exception($wpdb->last_error);
 		}
@@ -427,22 +429,22 @@ class WC_PostFinanceCheckout_Migration {
 	public static function update_1_0_2_order_allow_null(){
 	    global $wpdb;
 	    $result = $wpdb->query(
-	        "ALTER TABLE `{$wpdb->prefix}woocommerce_postfinancecheckout_transaction_info` CHANGE `order_id` `order_id` int(10) unsigned NULL DEFAULT NULL;");
+	        "ALTER TABLE `{$wpdb->prefix}wc_postfinancecheckout_transaction_info` CHANGE `order_id` `order_id` int(10) unsigned NULL DEFAULT NULL;");
 	    if ($result === false) {
 	        throw new Exception($wpdb->last_error);
 	    }
 	    
 	    
-	    $result = $wpdb->query("SHOW COLUMNS FROM `{$wpdb->prefix}woocommerce_postfinancecheckout_transaction_info` LIKE 'order_mapping_id'");
+	    $result = $wpdb->query("SHOW COLUMNS FROM `{$wpdb->prefix}wc_postfinancecheckout_transaction_info` LIKE 'order_mapping_id'");
 	    if ($result == 0) {
 	        $result = $wpdb->query(
-	            "ALTER TABLE `{$wpdb->prefix}woocommerce_postfinancecheckout_transaction_info` ADD `order_mapping_id` int(10) unsigned NULL AFTER order_id;");
+	            "ALTER TABLE `{$wpdb->prefix}wc_postfinancecheckout_transaction_info` ADD `order_mapping_id` int(10) unsigned NULL AFTER order_id;");
 	        if ($result === false) {
 	            throw new Exception($wpdb->last_error);
 	        }
 	    }	    
 	    $result = $wpdb->query(
-	        "ALTER TABLE `{$wpdb->prefix}woocommerce_postfinancecheckout_token_info` CHANGE `customer_id` `customer_id` int(10) unsigned NULL DEFAULT NULL;");
+	        "ALTER TABLE `{$wpdb->prefix}wc_postfinancecheckout_token_info` CHANGE `customer_id` `customer_id` int(10) unsigned NULL DEFAULT NULL;");
 	    
 	    if ($result === false) {
 	        throw new Exception($wpdb->last_error);
@@ -452,19 +454,19 @@ class WC_PostFinanceCheckout_Migration {
 	public static function update_1_0_3_image_domain(){
 	    global $wpdb;
 	    
-	    $result = $wpdb->query("SHOW COLUMNS FROM `{$wpdb->prefix}woocommerce_postfinancecheckout_method_configuration` LIKE 'image_base'");
+	    $result = $wpdb->query("SHOW COLUMNS FROM `{$wpdb->prefix}wc_postfinancecheckout_method_config` LIKE 'image_base'");
 	    if ($result == 0) {
 	        $result = $wpdb->query(
-	            "ALTER TABLE `{$wpdb->prefix}woocommerce_postfinancecheckout_method_configuration` ADD COLUMN `image_base` VARCHAR(2047) CHARACTER SET utf8 COLLATE utf8_unicode_ci NULL DEFAULT NULL AFTER image;");
+	            "ALTER TABLE `{$wpdb->prefix}wc_postfinancecheckout_method_config` ADD COLUMN `image_base` VARCHAR(2047) CHARACTER SET utf8 COLLATE utf8_unicode_ci NULL DEFAULT NULL AFTER image;");
 	        if ($result === false) {
 	            throw new Exception($wpdb->last_error);
 	        }
 	    }
 	    
-	    $result = $wpdb->query("SHOW COLUMNS FROM `{$wpdb->prefix}woocommerce_postfinancecheckout_transaction_info` LIKE 'image_base'");
+	    $result = $wpdb->query("SHOW COLUMNS FROM `{$wpdb->prefix}wc_postfinancecheckout_transaction_info` LIKE 'image_base'");
 	    if ($result == 0) {
 	        $result = $wpdb->query(
-	            "ALTER TABLE `{$wpdb->prefix}woocommerce_postfinancecheckout_transaction_info` ADD COLUMN `image_base` VARCHAR(2047) CHARACTER SET utf8 COLLATE utf8_unicode_ci NULL DEFAULT NULL AFTER image;");
+	            "ALTER TABLE `{$wpdb->prefix}wc_postfinancecheckout_transaction_info` ADD COLUMN `image_base` VARCHAR(2047) CHARACTER SET utf8 COLLATE utf8_unicode_ci NULL DEFAULT NULL AFTER image;");
 	        if ($result === false) {
 	            throw new Exception($wpdb->last_error);
 	        }
@@ -474,17 +476,17 @@ class WC_PostFinanceCheckout_Migration {
 	public static function update_1_0_4_failure_msg_and_attribute(){
 	    global $wpdb;
 	    
-	    $result = $wpdb->query("SHOW COLUMNS FROM `{$wpdb->prefix}woocommerce_postfinancecheckout_transaction_info` LIKE 'user_failure_message'");
+	    $result = $wpdb->query("SHOW COLUMNS FROM `{$wpdb->prefix}wc_postfinancecheckout_transaction_info` LIKE 'user_failure_message'");
 	    if ($result == 0) {
 	        $result = $wpdb->query(
-	            "ALTER TABLE `{$wpdb->prefix}woocommerce_postfinancecheckout_transaction_info` ADD COLUMN `user_failure_message` VARCHAR(2047) CHARACTER SET utf8 COLLATE utf8_unicode_ci NULL DEFAULT NULL AFTER failure_reason;");
+	            "ALTER TABLE `{$wpdb->prefix}wc_postfinancecheckout_transaction_info` ADD COLUMN `user_failure_message` VARCHAR(2047) CHARACTER SET utf8 COLLATE utf8_unicode_ci NULL DEFAULT NULL AFTER failure_reason;");
 	        if ($result === false) {
 	            throw new Exception($wpdb->last_error);
 	        }
 	    }
 	    //Do not use foreign keys to reference attribute to cascade deletion, as some shop still run with MyISAM enginge as default.
 	    $result = $wpdb->query(
-	        "CREATE TABLE IF NOT EXISTS {$wpdb->prefix}woocommerce_postfinancecheckout_attribute_options(
+	        "CREATE TABLE IF NOT EXISTS {$wpdb->prefix}wc_postfinancecheckout_attribute_options(
 				`id` int(10) unsigned NOT NULL AUTO_INCREMENT,
                 `attribute_id` bigint(20) UNSIGNED NOT NULL,
 				`send` varchar(1) COLLATE utf8_unicode_ci,
@@ -498,6 +500,44 @@ class WC_PostFinanceCheckout_Migration {
 	
 	public static function update_1_0_5_clear_provider_transients() {
 		WC_PostFinanceCheckout_Helper::instance()->delete_provider_transients();
+	}
+
+	public static function update_1_0_6_shorten_table_names() {
+		global $wpdb;
+		// old table names format => new table names format
+		$table_rename_map = [
+			"{$wpdb->prefix}woocommerce_postfinancecheckout_attribute_options" => "{$wpdb->prefix}wc_postfinancecheckout_attribute_options",
+			"{$wpdb->prefix}woocommerce_postfinancecheckout_completion_job" => "{$wpdb->prefix}wc_postfinancecheckout_completion_job",
+			"{$wpdb->prefix}woocommerce_postfinancecheckout_method_configuration" => "{$wpdb->prefix}wc_postfinancecheckout_method_config",
+			"{$wpdb->prefix}woocommerce_postfinancecheckout_refund_job" => "{$wpdb->prefix}wc_postfinancecheckout_refund_job",
+			"{$wpdb->prefix}woocommerce_postfinancecheckout_token_info" => "{$wpdb->prefix}wc_postfinancecheckout_token_info",
+			"{$wpdb->prefix}woocommerce_postfinancecheckout_transaction_info" => "{$wpdb->prefix}wc_postfinancecheckout_transaction_info",
+			"{$wpdb->prefix}woocommerce_postfinancecheckout_void_job" => "{$wpdb->prefix}wc_postfinancecheckout_void_job",
+		];
+
+		// rollback table rename if there are issues
+		$wpdb->query('START TRANSACTION');
+
+		foreach ($table_rename_map as $key=>$value) {
+			// check old table exists
+			$wallee_old_table_result = $wpdb->get_row("SHOW TABLES WHERE Tables_in_{$wpdb->dbname} = '{$key}'");
+
+			if ($wallee_old_table_result) {
+				// check new table doesn't exist, if it does there's a problem!
+				$wallee_new_table_result = $wpdb->get_row("SHOW TABLES WHERE Tables_in_{$wpdb->dbname} = '{$value}'");
+
+				if (!$wallee_new_table_result){
+					$result = $wpdb->query(
+						"RENAME TABLE {$key} TO {$value}"
+					);
+					if ($result === false) {
+						throw new Exception($wpdb->last_error);
+					}
+				}
+			}
+		}
+
+		$wpdb->query( "COMMIT" );
 	}
 }
 

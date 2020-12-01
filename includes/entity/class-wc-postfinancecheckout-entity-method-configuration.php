@@ -52,7 +52,7 @@ class WC_PostFinanceCheckout_Entity_Method_Configuration extends WC_PostFinanceC
 	}
 
 	protected static function get_table_name(){
-		return 'woocommerce_postfinancecheckout_method_configuration';
+		return 'wc_postfinancecheckout_method_config';
 	}
 	
 	public static function load_by_configuration($space_id, $configuration_id){

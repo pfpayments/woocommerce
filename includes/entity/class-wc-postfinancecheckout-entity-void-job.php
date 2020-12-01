@@ -48,7 +48,7 @@ class WC_PostFinanceCheckout_Entity_Void_Job extends WC_PostFinanceCheckout_Enti
 	}
 
 	protected static function get_table_name(){
-		return 'woocommerce_postfinancecheckout_void_job';
+		return 'wc_postfinancecheckout_void_job';
 	}
 
 	/**

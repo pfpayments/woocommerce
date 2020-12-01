@@ -290,3 +290,7 @@
 * Update author url to wallee AG.
 * Update wallee SDK
 
+= 1.5 - November 27, 2020 =
+
+* Shorten table names
+

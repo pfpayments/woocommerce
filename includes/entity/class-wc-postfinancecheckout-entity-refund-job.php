@@ -52,7 +52,7 @@ class WC_PostFinanceCheckout_Entity_Refund_Job extends WC_PostFinanceCheckout_En
 	}
 
 	protected static function get_table_name(){
-		return 'woocommerce_postfinancecheckout_refund_job';
+		return 'wc_postfinancecheckout_refund_job';
 	}
 
 	/**

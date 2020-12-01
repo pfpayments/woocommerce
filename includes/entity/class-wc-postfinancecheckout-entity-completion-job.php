@@ -55,7 +55,7 @@ class WC_PostFinanceCheckout_Entity_Completion_Job extends WC_PostFinanceCheckou
 	}
 
 	protected static function get_table_name(){
-		return 'woocommerce_postfinancecheckout_completion_job';
+		return 'wc_postfinancecheckout_completion_job';
 	}
 
 	/**
