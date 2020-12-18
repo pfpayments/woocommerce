@@ -610,6 +610,17 @@ class WC_PostFinanceCheckout_Service_Line_Item extends WC_PostFinanceCheckout_Se
 			$product = wc_get_product($id);
 
 			$product_attributes = $product->get_attributes('edit');
+
+			// code block to do check for ean code for invoice
+			$wpm_gtin_code_key = '_wpm_gtin_code';
+			$wpm_gtin_code = $product->get_meta($wpm_gtin_code_key);
+
+			if ($wpm_gtin_code) {
+				$wpm_gtin_attribute = new \PostFinanceCheckout\Sdk\Model\LineItemAttributeCreate();
+				$wpm_gtin_attribute->setLabel('EAN');
+                $wpm_gtin_attribute->setValue($wpm_gtin_code);
+                $attributes['ean_code'] = $wpm_gtin_attribute;
+			}
 			
 			foreach($product_attributes as $key => $object){
 				if(is_a($object, 'WC_Product_Attribute')){
@@ -630,8 +641,9 @@ class WC_PostFinanceCheckout_Service_Line_Item extends WC_PostFinanceCheckout_Se
 						}
 					}
 				}
-			}			
+			}
 		}
+		
 		return $attributes;
 	}
 	

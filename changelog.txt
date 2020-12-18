@@ -294,3 +294,7 @@
 
 * Shorten table names
 
+= 1.5.1 - December 18, 2020 =
+
+* Added EAN code to line items
+
