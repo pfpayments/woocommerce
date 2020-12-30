@@ -58,7 +58,7 @@ class WC_PostFinanceCheckout_Service_Line_Item extends WC_PostFinanceCheckout_Se
 
 			$line_item->setAmountIncludingTax($this->round_amount($discount_including_tax, $currency));
 			$line_item->setDiscountIncludingTax($this->round_amount($amount_including_tax - $discount_including_tax, $currency));
-			$line_item->setName($product->get_name());
+			$line_item->setName($this->fix_length($product->get_name(), 150));
 			
 			$quantity = empty($values['quantity'])? 1 : $values['quantity'];
 
@@ -114,7 +114,7 @@ class WC_PostFinanceCheckout_Service_Line_Item extends WC_PostFinanceCheckout_Se
 			$amount_including_tax = $fee->amount + $fee->tax;
 			
 			$line_item->setAmountIncludingTax($this->round_amount($amount_including_tax, $currency));
-			$line_item->setName($fee->name);
+			$line_item->setName($this->fix_length($fee->name, 150));
 			$line_item->setQuantity(1);
 			$line_item->setShippingRequired(false);
 			
@@ -161,7 +161,7 @@ class WC_PostFinanceCheckout_Service_Line_Item extends WC_PostFinanceCheckout_Se
 				$amount_including_tax = $shipping_rate->cost + $shipping_rate->get_shipping_tax();
 				
 				$line_item->setAmountIncludingTax($this->round_amount($amount_including_tax, $currency));
-				$line_item->setName($shipping_rate->get_label());
+				$line_item->setName($this->fix_length($shipping_rate->get_label(), 150));
 				$line_item->setQuantity(1);
 				$line_item->setShippingRequired(false);
 				
@@ -233,12 +233,12 @@ class WC_PostFinanceCheckout_Service_Line_Item extends WC_PostFinanceCheckout_Se
 			$product = $item->get_product();
 			$sku = null;
 			if (is_bool($product)) {
-				$line_item->setName($item->get_name());
+				$line_item->setName($this->fix_length($item->get_name(), 150));
 				$line_item->setShippingRequired(true);
 				$sku = $item->get_name();
 			}
 			else {
-				$line_item->setName($product->get_name());
+				$line_item->setName($this->fix_length($product->get_name(), 150));
 				$line_item->setShippingRequired(!$product->get_virtual()); 
 				$sku = $product->get_sku();
 				if (empty($sku)) {
@@ -302,7 +302,7 @@ class WC_PostFinanceCheckout_Service_Line_Item extends WC_PostFinanceCheckout_Se
 			$amount_including_tax = $fee->get_total() + $fee->get_total_tax();
 			
 			$line_item->setAmountIncludingTax($this->round_amount($amount_including_tax, $currency));
-			$line_item->setName($fee->get_name());
+			$line_item->setName($this->fix_length($fee->get_name(), 150));
 			$line_item->setQuantity(1);
 			$line_item->setShippingRequired(false);
 			
@@ -350,7 +350,7 @@ class WC_PostFinanceCheckout_Service_Line_Item extends WC_PostFinanceCheckout_Se
 			$amount_including_tax = $shipping->get_total() + $shipping->get_total_tax();
 			
 			$line_item->setAmountIncludingTax($this->round_amount($amount_including_tax, $currency));
-			$line_item->setName($shipping->get_method_title());
+			$line_item->setName($this->fix_length($shipping->get_method_title(), 150));
 			$line_item->setQuantity(1);
 			$line_item->setShippingRequired(false);
 			$sku = $shipping->get_method_title();
@@ -413,7 +413,7 @@ class WC_PostFinanceCheckout_Service_Line_Item extends WC_PostFinanceCheckout_Se
 			$line_item->setQuantity($quantity);
 			
 			$product = $item->get_product();
-			$line_item->setName($product->get_name());
+			$line_item->setName($this->fix_length($product->get_name(), 150));
 			$line_item->setShippingRequired(!$product->get_virtual());
 			
 			$sku = $product->get_sku();
@@ -487,7 +487,7 @@ class WC_PostFinanceCheckout_Service_Line_Item extends WC_PostFinanceCheckout_Se
 			$amount_including_tax = $backend_items[$fee_id]['completion_total'] + $tax;
 			
 			$line_item->setAmountIncludingTax($this->round_amount($amount_including_tax, $currency));
-			$line_item->setName($fee->get_name());
+			$line_item->setName($this->fix_length($fee->get_name(), 150));
 			$line_item->setQuantity(1);
 			$line_item->setShippingRequired(false);
 			
@@ -545,7 +545,7 @@ class WC_PostFinanceCheckout_Service_Line_Item extends WC_PostFinanceCheckout_Se
 			$amount_including_tax = $backend_items[$shipping_id]['completion_total'] + $tax;
 			
 			$line_item->setAmountIncludingTax($this->round_amount($amount_including_tax, $currency));
-			$line_item->setName($shipping->get_method_title());
+			$line_item->setName($this->fix_length($shipping->get_method_title(), 150));
 			$line_item->setQuantity(1);
 			$line_item->setShippingRequired(false);
 			$sku = $shipping->get_method_title();
