@@ -302,3 +302,7 @@
 
 * Bug Fix - truncate line item name when over 150 chars
 
+= 1.5.3 - June 7, 2021 =
+
+* Tested plugin against wordpress version 5.7.2 and woocommerce 5.3.0
+
