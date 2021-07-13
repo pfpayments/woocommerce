@@ -306,3 +306,7 @@
 
 * Tested plugin against wordpress version 5.7.2 and woocommerce 5.3.0
 
+= 1.5.4 - June 13, 2021 =
+
+* Updated the webhook for invoice payment method
+

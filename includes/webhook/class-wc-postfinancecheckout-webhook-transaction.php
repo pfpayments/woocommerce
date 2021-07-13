@@ -54,10 +54,6 @@ class WC_PostFinanceCheckout_Webhook_Transaction extends WC_PostFinanceCheckout_
 			    case \PostFinanceCheckout\Sdk\Model\TransactionState::FAILED:
 					$this->failed($transaction, $order);
 					break;
-			    case \PostFinanceCheckout\Sdk\Model\TransactionState::FULFILL:
-					$this->authorize($transaction, $order);				
-					$this->fulfill($transaction, $order);
-					break;
 			    case \PostFinanceCheckout\Sdk\Model\TransactionState::VOIDED:
 					$this->voided($transaction, $order);
 					break;
@@ -119,13 +115,6 @@ class WC_PostFinanceCheckout_Webhook_Transaction extends WC_PostFinanceCheckout_
     		$order->update_status($status);
     		WC_PostFinanceCheckout_Helper::instance()->maybe_restock_items_for_order($order);
 	    }
-	}
-
-	protected function fulfill(\PostFinanceCheckout\Sdk\Model\Transaction $transaction, WC_Order $order){
-	    do_action('wc_postfinancecheckout_fulfill', $transaction , $order);
-	    //Sets the status to procesing or complete depending on items
-	    $order->payment_complete($transaction->getId());
-		    
 	}
 
 	protected function voided(\PostFinanceCheckout\Sdk\Model\Transaction $transaction, WC_Order $order){

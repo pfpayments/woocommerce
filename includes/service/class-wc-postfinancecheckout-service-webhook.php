@@ -62,7 +62,14 @@ class WC_PostFinanceCheckout_Service_Webhook extends WC_PostFinanceCheckout_Serv
 				array(
 				    \PostFinanceCheckout\Sdk\Model\DeliveryIndicationState::MANUAL_CHECK_REQUIRED 
 				), 'WC_PostFinanceCheckout_Webhook_Delivery_Indication');
-		
+
+		$this->webhook_entities[1472041816898] = new WC_PostFinanceCheckout_Webhook_Entity(1472041816898, 'Transaction Invoice',
+			array(
+				\PostFinanceCheckout\Sdk\Model\TransactionInvoiceState::NOT_APPLICABLE,
+				\PostFinanceCheckout\Sdk\Model\TransactionInvoiceState::PAID,
+				\PostFinanceCheckout\Sdk\Model\TransactionInvoiceState::DERECOGNIZED,
+			), 'WC_PostFinanceCheckout_Webhook_Transaction_Invoice');
+
 	    $this->webhook_entities[1472041831364] = new WC_PostFinanceCheckout_Webhook_Entity(1472041831364, 'Transaction Completion', 
 				array(
 				    \PostFinanceCheckout\Sdk\Model\TransactionCompletionState::FAILED,
