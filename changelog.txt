@@ -310,3 +310,7 @@
 
 * Updated the webhook for invoice payment method
 
+= 1.5.5 - July 21, 2021 =
+
+* Testing Wordpress version 5.8
+
