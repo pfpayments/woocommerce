@@ -314,3 +314,7 @@
 
 * Testing Wordpress version 5.8
 
+= 1.5.6 - July 28, 2021 =
+
+* Fixed coupons using lightbox integration type
+

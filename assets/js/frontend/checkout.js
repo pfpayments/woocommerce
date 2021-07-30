@@ -214,12 +214,6 @@ jQuery(function ($) {
                         self.update_sent = false;
                         return false;
                     }
-                    if(postfinancecheckout_js_params.integration && postfinancecheckout_js_params.integration === self.integrations.LIGHTBOX ) {
-                        jqXHR.abort();
-                        $(self.checkout_payment_area).unblock();
-                        self.update_sent = false;
-                        return false;
-                    }
                     self.update_sent = true;
                 }
             });
