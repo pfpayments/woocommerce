@@ -318,3 +318,7 @@
 
 * Fixed coupons using lightbox integration type
 
+= 1.5.7 - August 2, 2021 =
+
+* Migrate travis
+
