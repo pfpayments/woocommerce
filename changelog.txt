@@ -326,3 +326,7 @@
 
 * Fixed coupons using lightbox integration type
 
+= 1.5.9 - August 10, 2021 =
+
+* Improved error reporting for api errors
+
