@@ -50,6 +50,7 @@ class PaymentTerminalLocationVersion implements ModelInterface, ArrayAccess
       */
     protected static $swaggerTypes = [
         'address' => '\PostFinanceCheckout\Sdk\Model\PaymentTerminalAddress',
+        'contact_address' => '\PostFinanceCheckout\Sdk\Model\PaymentTerminalAddress',
         'created_by' => 'int',
         'created_on' => '\DateTime',
         'id' => 'int',
@@ -68,6 +69,7 @@ class PaymentTerminalLocationVersion implements ModelInterface, ArrayAccess
       */
     protected static $swaggerFormats = [
         'address' => null,
+        'contact_address' => null,
         'created_by' => 'int64',
         'created_on' => 'date-time',
         'id' => 'int64',
@@ -87,6 +89,7 @@ class PaymentTerminalLocationVersion implements ModelInterface, ArrayAccess
      */
     protected static $attributeMap = [
         'address' => 'address',
+        'contact_address' => 'contactAddress',
         'created_by' => 'createdBy',
         'created_on' => 'createdOn',
         'id' => 'id',
@@ -105,6 +108,7 @@ class PaymentTerminalLocationVersion implements ModelInterface, ArrayAccess
      */
     protected static $setters = [
         'address' => 'setAddress',
+        'contact_address' => 'setContactAddress',
         'created_by' => 'setCreatedBy',
         'created_on' => 'setCreatedOn',
         'id' => 'setId',
@@ -123,6 +127,7 @@ class PaymentTerminalLocationVersion implements ModelInterface, ArrayAccess
      */
     protected static $getters = [
         'address' => 'getAddress',
+        'contact_address' => 'getContactAddress',
         'created_by' => 'getCreatedBy',
         'created_on' => 'getCreatedOn',
         'id' => 'getId',
@@ -153,6 +158,8 @@ class PaymentTerminalLocationVersion implements ModelInterface, ArrayAccess
     {
         
         $this->container['address'] = isset($data['address']) ? $data['address'] : null;
+        
+        $this->container['contact_address'] = isset($data['contact_address']) ? $data['contact_address'] : null;
         
         $this->container['created_by'] = isset($data['created_by']) ? $data['created_by'] : null;
         
@@ -283,6 +290,31 @@ class PaymentTerminalLocationVersion implements ModelInterface, ArrayAccess
     public function setAddress($address)
     {
         $this->container['address'] = $address;
+
+        return $this;
+    }
+    
+
+    /**
+     * Gets contact_address
+     *
+     * @return \PostFinanceCheckout\Sdk\Model\PaymentTerminalAddress
+     */
+    public function getContactAddress()
+    {
+        return $this->container['contact_address'];
+    }
+
+    /**
+     * Sets contact_address
+     *
+     * @param \PostFinanceCheckout\Sdk\Model\PaymentTerminalAddress $contact_address 
+     *
+     * @return $this
+     */
+    public function setContactAddress($contact_address)
+    {
+        $this->container['contact_address'] = $contact_address;
 
         return $this;
     }

@@ -40,6 +40,11 @@ final class ApiClientTest extends TestCase
      * @var PostFinanceCheckout\Sdk\ApiClient
      */
     protected $apiClient;
+    
+    /**
+     * @var int
+     */
+    private $spaceId = 405;
 
     /**
      * Setup before running each test case
@@ -101,8 +106,28 @@ final class ApiClientTest extends TestCase
     public function testEnvClient()
     {
         putenv('PFC_HTTP_CLIENT=' . HttpClientFactory::TYPE_CURL);
-        echo getenv('PFC_HTTP_CLIENT') . PHP_EOL;
-        $this->callApi();
+        $this->assertEquals(HttpClientFactory::getClient(HttpClientFactory::TYPE_CURL), HttpClientFactory::getClient());
+        
+        putenv('PFC_HTTP_CLIENT=' . HttpClientFactory::TYPE_SOCKET);
+        $this->assertEquals(HttpClientFactory::getClient(HttpClientFactory::TYPE_SOCKET), HttpClientFactory::getClient());
+    }
+    
+    /**
+     * Test case for an empty response
+     */
+    public function testEmptyResponseWithSocketClient()
+    {
+    	$this->apiClient->setHttpClientType(HttpClientFactory::TYPE_SOCKET);
+    	$this->apiClient->getTransactionService()->read($this->spaceId, 1);
+    }
+    
+    /**
+     * Test case for an empty response
+     */
+    public function testEmptyResponseWithCurlClient()
+    {
+    	$this->apiClient->setHttpClientType(HttpClientFactory::TYPE_CURL);
+    	$this->apiClient->getTransactionService()->read($this->spaceId, 1);
     }
 
 }

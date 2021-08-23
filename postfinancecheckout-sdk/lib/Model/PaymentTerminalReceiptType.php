@@ -19,10 +19,12 @@
 
 
 namespace PostFinanceCheckout\Sdk\Model;
+
+use \ArrayAccess;
 use \PostFinanceCheckout\Sdk\ObjectSerializer;
 
 /**
- * PaymentTerminalContactAddress model
+ * PaymentTerminalReceiptType model
  *
  * @category    Class
  * @description 
@@ -30,7 +32,7 @@ use \PostFinanceCheckout\Sdk\ObjectSerializer;
  * @author      customweb GmbH
  * @license     http://www.apache.org/licenses/LICENSE-2.0 Apache License v2
  */
-class PaymentTerminalContactAddress extends PaymentTerminalAddress 
+class PaymentTerminalReceiptType implements ModelInterface, ArrayAccess
 {
     const DISCRIMINATOR = null;
 
@@ -39,7 +41,7 @@ class PaymentTerminalContactAddress extends PaymentTerminalAddress
       *
       * @var string
       */
-    protected static $swaggerModelName = 'PaymentTerminalContactAddress';
+    protected static $swaggerModelName = 'PaymentTerminalReceiptType';
 
     /**
       * Array of property to type mappings. Used for (de)serialization
@@ -47,10 +49,9 @@ class PaymentTerminalContactAddress extends PaymentTerminalAddress
       * @var string[]
       */
     protected static $swaggerTypes = [
-        'family_name' => 'string',
-        'given_name' => 'string',
-        'organization_name' => 'string',
-        'phone_number' => 'string'
+        'description' => 'map[string,string]',
+        'id' => 'int',
+        'name' => 'map[string,string]'
     ];
 
     /**
@@ -59,10 +60,9 @@ class PaymentTerminalContactAddress extends PaymentTerminalAddress
       * @var string[]
       */
     protected static $swaggerFormats = [
-        'family_name' => null,
-        'given_name' => null,
-        'organization_name' => null,
-        'phone_number' => null
+        'description' => null,
+        'id' => 'int64',
+        'name' => null
     ];
 
     /**
@@ -72,10 +72,9 @@ class PaymentTerminalContactAddress extends PaymentTerminalAddress
      * @var string[]
      */
     protected static $attributeMap = [
-        'family_name' => 'familyName',
-        'given_name' => 'givenName',
-        'organization_name' => 'organizationName',
-        'phone_number' => 'phoneNumber'
+        'description' => 'description',
+        'id' => 'id',
+        'name' => 'name'
     ];
 
     /**
@@ -84,10 +83,9 @@ class PaymentTerminalContactAddress extends PaymentTerminalAddress
      * @var string[]
      */
     protected static $setters = [
-        'family_name' => 'setFamilyName',
-        'given_name' => 'setGivenName',
-        'organization_name' => 'setOrganizationName',
-        'phone_number' => 'setPhoneNumber'
+        'description' => 'setDescription',
+        'id' => 'setId',
+        'name' => 'setName'
     ];
 
     /**
@@ -96,14 +94,19 @@ class PaymentTerminalContactAddress extends PaymentTerminalAddress
      * @var string[]
      */
     protected static $getters = [
-        'family_name' => 'getFamilyName',
-        'given_name' => 'getGivenName',
-        'organization_name' => 'getOrganizationName',
-        'phone_number' => 'getPhoneNumber'
+        'description' => 'getDescription',
+        'id' => 'getId',
+        'name' => 'getName'
     ];
 
     
 
+    /**
+     * Associative array for storing property values
+     *
+     * @var mixed[]
+     */
+    protected $container = [];
 
     /**
      * Constructor
@@ -113,16 +116,12 @@ class PaymentTerminalContactAddress extends PaymentTerminalAddress
      */
     public function __construct(array $data = null)
     {
-        parent::__construct($data);
-
         
-        $this->container['family_name'] = isset($data['family_name']) ? $data['family_name'] : null;
+        $this->container['description'] = isset($data['description']) ? $data['description'] : null;
         
-        $this->container['given_name'] = isset($data['given_name']) ? $data['given_name'] : null;
+        $this->container['id'] = isset($data['id']) ? $data['id'] : null;
         
-        $this->container['organization_name'] = isset($data['organization_name']) ? $data['organization_name'] : null;
-        
-        $this->container['phone_number'] = isset($data['phone_number']) ? $data['phone_number'] : null;
+        $this->container['name'] = isset($data['name']) ? $data['name'] : null;
         
     }
 
@@ -133,7 +132,7 @@ class PaymentTerminalContactAddress extends PaymentTerminalAddress
      */
     public function listInvalidProperties()
     {
-        $invalidProperties = parent::listInvalidProperties();
+        $invalidProperties = [];
 
         return $invalidProperties;
     }
@@ -145,7 +144,7 @@ class PaymentTerminalContactAddress extends PaymentTerminalAddress
      */
     public static function swaggerTypes()
     {
-        return self::$swaggerTypes + parent::swaggerTypes();
+        return self::$swaggerTypes;
     }
 
     /**
@@ -155,7 +154,7 @@ class PaymentTerminalContactAddress extends PaymentTerminalAddress
      */
     public static function swaggerFormats()
     {
-        return self::$swaggerFormats + parent::swaggerFormats();
+        return self::$swaggerFormats;
     }
 
 
@@ -167,7 +166,7 @@ class PaymentTerminalContactAddress extends PaymentTerminalAddress
      */
     public static function attributeMap()
     {
-        return parent::attributeMap() + self::$attributeMap;
+        return self::$attributeMap;
     }
 
     /**
@@ -177,7 +176,7 @@ class PaymentTerminalContactAddress extends PaymentTerminalAddress
      */
     public static function setters()
     {
-        return parent::setters() + self::$setters;
+        return self::$setters;
     }
 
     /**
@@ -187,7 +186,7 @@ class PaymentTerminalContactAddress extends PaymentTerminalAddress
      */
     public static function getters()
     {
-        return parent::getters() + self::$getters;
+        return self::$getters;
     }
 
     /**
@@ -216,100 +215,75 @@ class PaymentTerminalContactAddress extends PaymentTerminalAddress
     
 
     /**
-     * Gets family_name
+     * Gets description
      *
-     * @return string
+     * @return map[string,string]
      */
-    public function getFamilyName()
+    public function getDescription()
     {
-        return $this->container['family_name'];
+        return $this->container['description'];
     }
 
     /**
-     * Sets family_name
+     * Sets description
      *
-     * @param string $family_name 
+     * @param map[string,string] $description 
      *
      * @return $this
      */
-    public function setFamilyName($family_name)
+    public function setDescription($description)
     {
-        $this->container['family_name'] = $family_name;
+        $this->container['description'] = $description;
 
         return $this;
     }
     
 
     /**
-     * Gets given_name
+     * Gets id
      *
-     * @return string
+     * @return int
      */
-    public function getGivenName()
+    public function getId()
     {
-        return $this->container['given_name'];
+        return $this->container['id'];
     }
 
     /**
-     * Sets given_name
+     * Sets id
      *
-     * @param string $given_name 
+     * @param int $id The ID is the primary key of the entity. The ID identifies the entity uniquely.
      *
      * @return $this
      */
-    public function setGivenName($given_name)
+    public function setId($id)
     {
-        $this->container['given_name'] = $given_name;
+        $this->container['id'] = $id;
 
         return $this;
     }
     
 
     /**
-     * Gets organization_name
+     * Gets name
      *
-     * @return string
+     * @return map[string,string]
      */
-    public function getOrganizationName()
+    public function getName()
     {
-        return $this->container['organization_name'];
+        return $this->container['name'];
     }
 
     /**
-     * Sets organization_name
+     * Sets name
      *
-     * @param string $organization_name 
+     * @param map[string,string] $name 
      *
      * @return $this
      */
-    public function setOrganizationName($organization_name)
+    public function setName($name)
     {
-        $this->container['organization_name'] = $organization_name;
-
-        return $this;
-    }
-    
-
-    /**
-     * Gets phone_number
-     *
-     * @return string
-     */
-    public function getPhoneNumber()
-    {
-        return $this->container['phone_number'];
-    }
-
-    /**
-     * Sets phone_number
-     *
-     * @param string $phone_number 
-     *
-     * @return $this
-     */
-    public function setPhoneNumber($phone_number)
-    {
-        $this->container['phone_number'] = $phone_number;
+        $this->container['name'] = $name;
 
         return $this;
     }

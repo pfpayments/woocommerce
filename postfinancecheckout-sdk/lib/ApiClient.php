@@ -54,7 +54,7 @@ final class ApiClient {
 	 *
 	 * @var string
 	 */
-	private $userAgent = 'PHP-Client/2.1.4/php';
+	private $userAgent = 'PHP-Client/3.0.1/php';
 
 	/**
 	 * The path to the certificate authority file.
@@ -572,6 +572,30 @@ final class ApiClient {
         return $this->applicationUserService;
     }
     
+    protected $bankAccountService;
+
+    /**
+     * @return \PostFinanceCheckout\Sdk\Service\BankAccountService
+     */
+    public function getBankAccountService() {
+        if(is_null($this->bankAccountService)){
+            $this->bankAccountService = new \PostFinanceCheckout\Sdk\Service\BankAccountService($this);
+        }
+        return $this->bankAccountService;
+    }
+    
+    protected $bankTransactionService;
+
+    /**
+     * @return \PostFinanceCheckout\Sdk\Service\BankTransactionService
+     */
+    public function getBankTransactionService() {
+        if(is_null($this->bankTransactionService)){
+            $this->bankTransactionService = new \PostFinanceCheckout\Sdk\Service\BankTransactionService($this);
+        }
+        return $this->bankTransactionService;
+    }
+    
     protected $chargeAttemptService;
 
     /**
@@ -582,6 +606,18 @@ final class ApiClient {
             $this->chargeAttemptService = new \PostFinanceCheckout\Sdk\Service\ChargeAttemptService($this);
         }
         return $this->chargeAttemptService;
+    }
+    
+    protected $chargeBankTransactionService;
+
+    /**
+     * @return \PostFinanceCheckout\Sdk\Service\ChargeBankTransactionService
+     */
+    public function getChargeBankTransactionService() {
+        if(is_null($this->chargeBankTransactionService)){
+            $this->chargeBankTransactionService = new \PostFinanceCheckout\Sdk\Service\ChargeBankTransactionService($this);
+        }
+        return $this->chargeBankTransactionService;
     }
     
     protected $chargeFlowLevelPaymentLinkService;
@@ -654,6 +690,18 @@ final class ApiClient {
             $this->countryStateService = new \PostFinanceCheckout\Sdk\Service\CountryStateService($this);
         }
         return $this->countryStateService;
+    }
+    
+    protected $currencyBankAccountService;
+
+    /**
+     * @return \PostFinanceCheckout\Sdk\Service\CurrencyBankAccountService
+     */
+    public function getCurrencyBankAccountService() {
+        if(is_null($this->currencyBankAccountService)){
+            $this->currencyBankAccountService = new \PostFinanceCheckout\Sdk\Service\CurrencyBankAccountService($this);
+        }
+        return $this->currencyBankAccountService;
     }
     
     protected $currencyService;
@@ -740,6 +788,18 @@ final class ApiClient {
         return $this->documentTemplateTypeService;
     }
     
+    protected $externalTransferBankTransactionService;
+
+    /**
+     * @return \PostFinanceCheckout\Sdk\Service\ExternalTransferBankTransactionService
+     */
+    public function getExternalTransferBankTransactionService() {
+        if(is_null($this->externalTransferBankTransactionService)){
+            $this->externalTransferBankTransactionService = new \PostFinanceCheckout\Sdk\Service\ExternalTransferBankTransactionService($this);
+        }
+        return $this->externalTransferBankTransactionService;
+    }
+    
     protected $humanUserService;
 
     /**
@@ -750,6 +810,18 @@ final class ApiClient {
             $this->humanUserService = new \PostFinanceCheckout\Sdk\Service\HumanUserService($this);
         }
         return $this->humanUserService;
+    }
+    
+    protected $internalTransferBankTransactionService;
+
+    /**
+     * @return \PostFinanceCheckout\Sdk\Service\InternalTransferBankTransactionService
+     */
+    public function getInternalTransferBankTransactionService() {
+        if(is_null($this->internalTransferBankTransactionService)){
+            $this->internalTransferBankTransactionService = new \PostFinanceCheckout\Sdk\Service\InternalTransferBankTransactionService($this);
+        }
+        return $this->internalTransferBankTransactionService;
     }
     
     protected $labelDescriptionGroupService;
@@ -908,6 +980,30 @@ final class ApiClient {
         return $this->paymentProcessorService;
     }
     
+    protected $paymentTerminalService;
+
+    /**
+     * @return \PostFinanceCheckout\Sdk\Service\PaymentTerminalService
+     */
+    public function getPaymentTerminalService() {
+        if(is_null($this->paymentTerminalService)){
+            $this->paymentTerminalService = new \PostFinanceCheckout\Sdk\Service\PaymentTerminalService($this);
+        }
+        return $this->paymentTerminalService;
+    }
+    
+    protected $paymentTerminalTillService;
+
+    /**
+     * @return \PostFinanceCheckout\Sdk\Service\PaymentTerminalTillService
+     */
+    public function getPaymentTerminalTillService() {
+        if(is_null($this->paymentTerminalTillService)){
+            $this->paymentTerminalTillService = new \PostFinanceCheckout\Sdk\Service\PaymentTerminalTillService($this);
+        }
+        return $this->paymentTerminalTillService;
+    }
+    
     protected $permissionService;
 
     /**
@@ -918,6 +1014,18 @@ final class ApiClient {
             $this->permissionService = new \PostFinanceCheckout\Sdk\Service\PermissionService($this);
         }
         return $this->permissionService;
+    }
+    
+    protected $refundBankTransactionService;
+
+    /**
+     * @return \PostFinanceCheckout\Sdk\Service\RefundBankTransactionService
+     */
+    public function getRefundBankTransactionService() {
+        if(is_null($this->refundBankTransactionService)){
+            $this->refundBankTransactionService = new \PostFinanceCheckout\Sdk\Service\RefundBankTransactionService($this);
+        }
+        return $this->refundBankTransactionService;
     }
     
     protected $refundCommentService;
@@ -932,6 +1040,18 @@ final class ApiClient {
         return $this->refundCommentService;
     }
     
+    protected $refundRecoveryBankTransactionService;
+
+    /**
+     * @return \PostFinanceCheckout\Sdk\Service\RefundRecoveryBankTransactionService
+     */
+    public function getRefundRecoveryBankTransactionService() {
+        if(is_null($this->refundRecoveryBankTransactionService)){
+            $this->refundRecoveryBankTransactionService = new \PostFinanceCheckout\Sdk\Service\RefundRecoveryBankTransactionService($this);
+        }
+        return $this->refundRecoveryBankTransactionService;
+    }
+    
     protected $refundService;
 
     /**
@@ -942,6 +1062,78 @@ final class ApiClient {
             $this->refundService = new \PostFinanceCheckout\Sdk\Service\RefundService($this);
         }
         return $this->refundService;
+    }
+    
+    protected $shopifyRecurringOrderService;
+
+    /**
+     * @return \PostFinanceCheckout\Sdk\Service\ShopifyRecurringOrderService
+     */
+    public function getShopifyRecurringOrderService() {
+        if(is_null($this->shopifyRecurringOrderService)){
+            $this->shopifyRecurringOrderService = new \PostFinanceCheckout\Sdk\Service\ShopifyRecurringOrderService($this);
+        }
+        return $this->shopifyRecurringOrderService;
+    }
+    
+    protected $shopifySubscriberService;
+
+    /**
+     * @return \PostFinanceCheckout\Sdk\Service\ShopifySubscriberService
+     */
+    public function getShopifySubscriberService() {
+        if(is_null($this->shopifySubscriberService)){
+            $this->shopifySubscriberService = new \PostFinanceCheckout\Sdk\Service\ShopifySubscriberService($this);
+        }
+        return $this->shopifySubscriberService;
+    }
+    
+    protected $shopifySubscriptionProductService;
+
+    /**
+     * @return \PostFinanceCheckout\Sdk\Service\ShopifySubscriptionProductService
+     */
+    public function getShopifySubscriptionProductService() {
+        if(is_null($this->shopifySubscriptionProductService)){
+            $this->shopifySubscriptionProductService = new \PostFinanceCheckout\Sdk\Service\ShopifySubscriptionProductService($this);
+        }
+        return $this->shopifySubscriptionProductService;
+    }
+    
+    protected $shopifySubscriptionService;
+
+    /**
+     * @return \PostFinanceCheckout\Sdk\Service\ShopifySubscriptionService
+     */
+    public function getShopifySubscriptionService() {
+        if(is_null($this->shopifySubscriptionService)){
+            $this->shopifySubscriptionService = new \PostFinanceCheckout\Sdk\Service\ShopifySubscriptionService($this);
+        }
+        return $this->shopifySubscriptionService;
+    }
+    
+    protected $shopifySubscriptionSuspensionService;
+
+    /**
+     * @return \PostFinanceCheckout\Sdk\Service\ShopifySubscriptionSuspensionService
+     */
+    public function getShopifySubscriptionSuspensionService() {
+        if(is_null($this->shopifySubscriptionSuspensionService)){
+            $this->shopifySubscriptionSuspensionService = new \PostFinanceCheckout\Sdk\Service\ShopifySubscriptionSuspensionService($this);
+        }
+        return $this->shopifySubscriptionSuspensionService;
+    }
+    
+    protected $shopifySubscriptionVersionService;
+
+    /**
+     * @return \PostFinanceCheckout\Sdk\Service\ShopifySubscriptionVersionService
+     */
+    public function getShopifySubscriptionVersionService() {
+        if(is_null($this->shopifySubscriptionVersionService)){
+            $this->shopifySubscriptionVersionService = new \PostFinanceCheckout\Sdk\Service\ShopifySubscriptionVersionService($this);
+        }
+        return $this->shopifySubscriptionVersionService;
     }
     
     protected $shopifyTransactionService;
@@ -1110,6 +1302,18 @@ final class ApiClient {
             $this->transactionService = new \PostFinanceCheckout\Sdk\Service\TransactionService($this);
         }
         return $this->transactionService;
+    }
+    
+    protected $transactionTerminalService;
+
+    /**
+     * @return \PostFinanceCheckout\Sdk\Service\TransactionTerminalService
+     */
+    public function getTransactionTerminalService() {
+        if(is_null($this->transactionTerminalService)){
+            $this->transactionTerminalService = new \PostFinanceCheckout\Sdk\Service\TransactionTerminalService($this);
+        }
+        return $this->transactionTerminalService;
     }
     
     protected $transactionVoidService;

@@ -121,17 +121,17 @@ class TokenCreate extends AbstractTokenUpdate
     {
         $invalidProperties = parent::listInvalidProperties();
 
+        if (!is_null($this->container['customer_email_address']) && (mb_strlen($this->container['customer_email_address']) > 150)) {
+            $invalidProperties[] = "invalid value for 'customer_email_address', the character length must be smaller than or equal to 150.";
+        }
+
+        if (!is_null($this->container['token_reference']) && (mb_strlen($this->container['token_reference']) > 100)) {
+            $invalidProperties[] = "invalid value for 'token_reference', the character length must be smaller than or equal to 100.";
+        }
+
         if ($this->container['external_id'] === null) {
             $invalidProperties[] = "'external_id' can't be null";
         }
-        if ((mb_strlen($this->container['external_id']) > 100)) {
-            $invalidProperties[] = "invalid value for 'external_id', the character length must be smaller than or equal to 100.";
-        }
-
-        if ((mb_strlen($this->container['external_id']) < 1)) {
-            $invalidProperties[] = "invalid value for 'external_id', the character length must be bigger than or equal to 1.";
-        }
-
         return $invalidProperties;
     }
 
@@ -225,19 +225,12 @@ class TokenCreate extends AbstractTokenUpdate
     /**
      * Sets external_id
      *
-     * @param string $external_id The external id helps to identify the entity and a subsequent creation of an entity with the same ID will not create a new entity.
+     * @param string $external_id A client generated nonce which identifies the entity to be created. Subsequent creation requests with the same external ID will not create new entities but return the initially created entity instead.
      *
      * @return $this
      */
     public function setExternalId($external_id)
     {
-        if ((mb_strlen($external_id) > 100)) {
-            throw new \InvalidArgumentException('invalid length for $external_id when calling TokenCreate., must be smaller than or equal to 100.');
-        }
-        if ((mb_strlen($external_id) < 1)) {
-            throw new \InvalidArgumentException('invalid length for $external_id when calling TokenCreate., must be bigger than or equal to 1.');
-        }
-
         $this->container['external_id'] = $external_id;
 
         return $this;

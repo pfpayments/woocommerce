@@ -1,6 +1,6 @@
 {
     "name": "postfinancecheckout/sdk",
-    "version": "2.1.4",
+    "version": "3.0.1",
 	"description": "PostFinance Checkout SDK for PHP",
 	"keywords": [
 		"postfinancecheckout",

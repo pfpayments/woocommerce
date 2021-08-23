@@ -18,7 +18,11 @@ class WC_PostFinanceCheckout_Webhook_Transaction extends WC_PostFinanceCheckout_
 	/**
 	 *
 	 * @see WC_PostFinanceCheckout_Webhook_Order_Related_Abstract::load_entity()
+	 *
+	 * @param \WC_PostFinanceCheckout_Webhook_Request $request
+	 *
 	 * @return \PostFinanceCheckout\Sdk\Model\Transaction
+	 * @throws \Exception
 	 */
     protected function load_entity(WC_PostFinanceCheckout_Webhook_Request $request){
         $transaction_service = new \PostFinanceCheckout\Sdk\Service\TransactionService(WC_PostFinanceCheckout_Helper::instance()->get_api_client());
@@ -42,7 +46,7 @@ class WC_PostFinanceCheckout_Webhook_Transaction extends WC_PostFinanceCheckout_
 		if ($transaction->getState() != $transaction_info->get_state()) {
 			switch ($transaction->getState()) {
 			    case \PostFinanceCheckout\Sdk\Model\TransactionState::CONFIRMED:
-			    case \PostFinanceCheckout\Sdk\Model\TransactionState::PROCESSING:					
+			    case \PostFinanceCheckout\Sdk\Model\TransactionState::PROCESSING:
 					$this->confirm($transaction, $order);
 					break;
 			    case \PostFinanceCheckout\Sdk\Model\TransactionState::AUTHORIZED:
@@ -53,6 +57,9 @@ class WC_PostFinanceCheckout_Webhook_Transaction extends WC_PostFinanceCheckout_
 					break;
 			    case \PostFinanceCheckout\Sdk\Model\TransactionState::FAILED:
 					$this->failed($transaction, $order);
+					break;
+				case \PostFinanceCheckout\Sdk\Model\TransactionState::FULFILL:
+					$this->authorize($transaction, $order);
 					break;
 			    case \PostFinanceCheckout\Sdk\Model\TransactionState::VOIDED:
 					$this->voided($transaction, $order);
@@ -66,7 +73,7 @@ class WC_PostFinanceCheckout_Webhook_Transaction extends WC_PostFinanceCheckout_
 					break;
 			}
 		}
-		
+
 		WC_PostFinanceCheckout_Service_Transaction::instance()->update_transaction_info($transaction, $order);
 	}
 
@@ -80,11 +87,15 @@ class WC_PostFinanceCheckout_Webhook_Transaction extends WC_PostFinanceCheckout_
 	   }
 	}
 
+	/**
+	 * @param \PostFinanceCheckout\Sdk\Model\Transaction $transaction
+	 * @param \WC_Order                                    $order
+	 */
 	protected function authorize(\PostFinanceCheckout\Sdk\Model\Transaction $transaction, WC_Order $order){
-	    if (!$order->get_meta("_postfinancecheckout_authorized", true)) {
+	    if (!$order->get_meta('_postfinancecheckout_authorized', true)) {
     	    do_action('wc_postfinancecheckout_authorized', $transaction , $order);
     		$status = apply_filters('wc_postfinancecheckout_authorized_status', 'on-hold', $order);
-    		$order->add_meta_data("_postfinancecheckout_authorized", "true", true);
+    		$order->add_meta_data('_postfinancecheckout_authorized', 'true', true);
     		$order->update_status($status);
     		wc_maybe_reduce_stock_levels($order->get_id());
     		if (isset(WC()->cart)) {
@@ -97,7 +108,7 @@ class WC_PostFinanceCheckout_Webhook_Transaction extends WC_PostFinanceCheckout_
 		if (!$order->get_meta('_postfinancecheckout_manual_check', true)) {
 		    do_action('wc_postfinancecheckout_completed', $transaction , $order);
 			$status = apply_filters('wc_postfinancecheckout_completed_status', 'postfi-waiting', $order);
-			$order->update_status($status);	
+			$order->update_status($status);
 		}
 	}
 

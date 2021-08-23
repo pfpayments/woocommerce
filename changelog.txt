@@ -330,3 +330,8 @@
 
 * Improved error reporting for api errors
 
+= 1.6.0 - August 10, 2021 =
+
+* Handle deprecated Webhooks for order's stuck in 'hold' status
+* Update SDK to 3.0.1
+
