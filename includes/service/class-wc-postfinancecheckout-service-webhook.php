@@ -53,6 +53,7 @@ class WC_PostFinanceCheckout_Service_Webhook extends WC_PostFinanceCheckout_Serv
 				    \PostFinanceCheckout\Sdk\Model\TransactionState::AUTHORIZED,
 				    \PostFinanceCheckout\Sdk\Model\TransactionState::DECLINE,
 				    \PostFinanceCheckout\Sdk\Model\TransactionState::FAILED,
+					\PostFinanceCheckout\Sdk\Model\TransactionState::FULFILL,
 				    \PostFinanceCheckout\Sdk\Model\TransactionState::VOIDED,
 				    \PostFinanceCheckout\Sdk\Model\TransactionState::COMPLETED,
 				    \PostFinanceCheckout\Sdk\Model\TransactionState::PROCESSING

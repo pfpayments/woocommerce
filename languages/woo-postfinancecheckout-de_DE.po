@@ -694,3 +694,11 @@ msgstr "PostFinance Checkout Transaction"
 #: includes/admin/class-wc-postfinancecheckout-admin-settings-page.php:104
 msgid "'WooCommerce > Settings > PostFinanceCheckout > Enforce Consistency' and 'WooCommerce > Settings > Tax > Rounding' are both enabled. Please disable at least one of them."
 msgstr "'WooCommerce > Einstellungen > PostFinanceCheckout > Konsistenz erzwingen' und 'WooCommerce > Einstellungen > Steuern > Rundung' sind beide aktiviert. Bitte deaktivieren Sie mindestens eine davon."
+
+#: includes/webhook/class-wc-postfinancecheckout-webhook-transaction-invoice.php:56
+msgid "Invoice Not Settled"
+msgstr "Nicht beglichene Rechnung"
+
+#: includes/webhook/class-wc-postfinancecheckout-webhook-transaction-invoice.php:59
+msgid "Invoice Settled"
+msgstr "Rechnung beglichen"

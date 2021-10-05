@@ -518,12 +518,12 @@ msgid "https://wordpress.org/plugins/woo-postfinancecheckout"
 msgstr ""
 
 #. Author of the plugin
-msgid "wallee GmbH"
+msgid "wallee AG"
 msgstr ""
 
 #. Author URI of the plugin
 msgid "https://www.wallee.com"
-msgstr ""	
+msgstr ""
 
 
 #: includes/admin/class-wc-postfinancecheckout-admin-settings-page.php:277
@@ -628,4 +628,13 @@ msgstr ""
 #: includes/admin/class-wc-postfinancecheckout-admin-notices.php:104
 #: includes/admin/class-wc-postfinancecheckout-admin-settings-page.php:104
 msgid "'WooCommerce > Settings > PostFinanceCheckout > Enforce Consistency' and 'WooCommerce > Settings > Tax > Rounding' are both enabled. Please disable at least one of them."
+msgstr ""
+
+#: includes/webhook/class-wc-postfinancecheckout-webhook-transaction-invoice.php:56
+msgid "Invoice Not Settled"
+msgstr ""
+
+
+#: includes/webhook/class-wc-postfinancecheckout-webhook-transaction-invoice.php:59
+msgid "Invoice Settled"
 msgstr ""
