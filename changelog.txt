@@ -339,3 +339,7 @@
 
 * Revert payment flow change done in v1.5.4
 
+= 1.7.1 - November 22, 2021 =
+
+* add german translations
+
