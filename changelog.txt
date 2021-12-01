@@ -343,3 +343,7 @@
 
 * add german translations
 
+= 1.7.1 - November 22, 2021 =
+
+* adjust translation date
+
