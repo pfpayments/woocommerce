@@ -347,3 +347,7 @@
 
 * adjust translation date
 
+= 1.7.3 - January 25, 2022 =
+
+* checkout loading fix
+

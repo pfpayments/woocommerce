@@ -458,7 +458,8 @@ jQuery(function ($) {
             return formatted_message;
         }
     };
-
-    wc_postfinancecheckout_checkout.init();
+    if (typeof elementor === 'undefined') {
+        wc_postfinancecheckout_checkout.init();
+    }
 
 });
