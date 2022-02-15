@@ -351,3 +351,8 @@
 
 * checkout loading fix
 
+= 1.7.4 - February 08, 2022 =
+
+* updated JS snippet
+* tested against WP 5.9, WC 6.1.1
+

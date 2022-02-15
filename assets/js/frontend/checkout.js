@@ -208,7 +208,7 @@ jQuery(function ($) {
                 var target = wc_checkout_params.wc_ajax_url.toString().replace( '%%endpoint%%', 'update_order_review' );
                 if (options.url === target){
                     // no updates on invalid fields
-                    if($(self.checkout_form_identifier + ' .woocommerce-invalid').length) {
+                    if($('form.checkout .woocommerce-invalid').not('.woocommerce-checkout-payment .woocommerce-invalid').length) {
                         jqXHR.abort();
                         $(self.checkout_payment_area).unblock();
                         self.update_sent = false;
