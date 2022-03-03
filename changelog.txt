@@ -360,3 +360,7 @@
 
 * updated documentation
 
+= 1.7.6 - March 1, 2022 =
+
+* create new transaction when subscription is removed from cart to prevent issues with payment choice
+

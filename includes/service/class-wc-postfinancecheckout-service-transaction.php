@@ -130,6 +130,16 @@ class WC_PostFinanceCheckout_Service_Transaction extends WC_PostFinanceCheckout_
 	}
 
 	/**
+	 * Clears the transaction cache
+	 *
+	 * @return void
+	 */
+	public function clear_transaction_cache() {
+		$this->transaction_cache = array();
+		WC()->session->set('wallee_transaction_id', null);
+	}
+
+	/**
 	 * Wait for the transaction to be in one of the given states.
 	 *
      * @param WC_Order $order

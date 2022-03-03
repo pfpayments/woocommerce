@@ -3,7 +3,7 @@
  * Plugin Name: WooCommerce PostFinance Checkout
  * Plugin URI: https://wordpress.org/plugins/woo-postfinancecheckout
  * Description: Process WooCommerce payments with PostFinance Checkout.
- * Version: 1.7.5
+ * Version: 1.7.6
  * License: Apache2
  * License URI: http://www.apache.org/licenses/LICENSE-2.0
  * Author: wallee AG
@@ -45,7 +45,7 @@ if (!class_exists('WooCommerce_PostFinanceCheckout')) {
 		 *
 		 * @var string
 		 */
-		private $version = '1.7.5';
+		private $version = '1.7.6';
 		
 		/**
 		 * The single instance of the class.
@@ -243,6 +243,11 @@ if (!class_exists('WooCommerce_PostFinanceCheckout')) {
 			    $this,
 			    'woocommerce_rest_insert_product_attribute'
 			), 10, 3);
+
+			add_action( 'woocommerce_cart_item_removed', array(
+				$this,
+				'after_remove_product_from_cart'
+			), 10, 2 );
 			
 			add_filter('woocommerce_rest_prepare_product_attribute', array(
 			    $this,
@@ -258,6 +263,23 @@ if (!class_exists('WooCommerce_PostFinanceCheckout')) {
 			    $this,
 			    'valid_order_statuses_for_payment'
 			), 10, 2);
+		}
+
+		public function after_remove_product_from_cart($removed_cart_item_key, $cart) {
+			$line_item = $cart->removed_cart_contents[ $removed_cart_item_key ];
+			$product = wc_get_product($line_item['product_id']);
+			if( $this->is_product_type_subscription($product) ) {
+				// create new transaction in portal by clearing transaction cache
+				$serviceTransaction = WC_Wallee_Service_Transaction::instance();
+				$serviceTransaction->clear_transaction_cache();
+			}
+		}
+
+		public function is_product_type_subscription($product) {
+			if( class_exists( 'WC_Subscriptions_Product' ) && WC_Subscriptions_Product::is_subscription( $product ) ) {
+				return true;
+			}
+			return false;
 		}
 
 		public function register_order_statuses(){
