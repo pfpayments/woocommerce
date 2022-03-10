@@ -368,3 +368,7 @@
 
 * test release for GitLab Ci/CD instegration
 
+= 1.7.8 - March 10, 2022 =
+
+* test release for GitLab Ci/CD instegration, no changes to code, just an empty release
+
