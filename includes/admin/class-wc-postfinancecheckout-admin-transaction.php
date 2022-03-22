@@ -187,7 +187,7 @@ class WC_PostFinanceCheckout_Admin_Transaction {
 	 * @return string
 	 */
 	protected static function get_transaction_url(WC_PostFinanceCheckout_Entity_Transaction_Info $info){
-	    return WC_PostFinanceCheckout_Helper::instance()->get_base_gateway_url() . '/s/' . $info->get_space_id() . '/payment/transaction/view/' .
+	    return WC_PostFinanceCheckout_Helper::instance()->get_base_gateway_url() . 's/' . $info->get_space_id() . '/payment/transaction/view/' .
 				 $info->get_transaction_id();
 	}
 
