@@ -136,8 +136,8 @@ jQuery(function ($) {
                 });
             }
             
-            if (((!description || description === "false")
-                && this.payment_methods[method_id].height === 0) || !has_full_address) {
+            if ((!description || description === "false")
+                && this.payment_methods[method_id].height === 0) {
                 item.css('position', 'absolute');
                 item.css('left', '-100000px');
             } else if ((this.payment_methods[method_id].height === 0) || !has_full_address) {

@@ -380,3 +380,7 @@
 
 * remove double slash from enqueue url
 
+= 1.7.11 - April 11, 2022 =
+
+* add payment method descriptions when address is empty
+
