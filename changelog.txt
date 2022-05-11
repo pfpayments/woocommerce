@@ -384,7 +384,12 @@
 
 * add payment method descriptions when address is empty
 
-= 1.7.11 - May 02, 2022 =
+= 1.7.12 - May 02, 2022 =
 
 * support link update in documentation
+
+= 1.7.13 - May 09, 2022 =
+
+* allow filter for jmerchant to select order id or order number
+* tested against Woocommerce 6.3.1, Wordpress 5.9.3
 

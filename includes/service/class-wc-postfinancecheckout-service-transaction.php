@@ -524,10 +524,21 @@ class WC_PostFinanceCheckout_Service_Transaction extends WC_PostFinanceCheckout_
         }		
         $transaction->setLanguage($language);
 		$transaction->setShippingMethod($this->fix_length($order->get_shipping_method(), 200));
-		$transaction->setMerchantReference($order->get_id());
+		$order_reference = $this->getOrderReference($order);
+		$transaction->setMerchantReference($order_reference);
 		$transaction->setInvoiceMerchantReference($this->fix_length($this->remove_non_ascii($order->get_order_number()), 100));
 		$this->set_order_line_items($order, $transaction);
         $this->set_order_return_urls($order, $transaction);
+	}
+
+	protected function getOrderReference($order) {
+		$reference_type = get_option(WooCommerce_PostFinanceCheckout::CK_ORDER_REFERENCE);
+
+		if ($reference_type == WC_PostFinanceCheckout_Order_Reference::ORDER_NUMBER) {
+			return $order->get_order_number();
+		}
+
+		return $order->get_id();
 	}
 
     /**

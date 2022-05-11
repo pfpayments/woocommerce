@@ -138,7 +138,7 @@ class WC_PostFinanceCheckout_Admin_Settings_Page extends WC_Settings_Page {
 		$settings = array(
 		    array(
 		        'links' => array(
-		            'https://plugin-documentation.postfinance-checkout.ch/pfpayments/woocommerce/1.7.12/docs/en/documentation.html' => __('Documentation', 'woo-postfinancecheckout'),
+		            'https://plugin-documentation.postfinance-checkout.ch/pfpayments/woocommerce/1.7.13/docs/en/documentation.html' => __('Documentation', 'woo-postfinancecheckout'),
 		            'https://checkout.postfinance.ch/en-ch/user/signup' => __('Sign Up', 'woo-postfinancecheckout')
 		        ),
 		        'type' => 'postfinancecheckout_links',
@@ -265,8 +265,8 @@ class WC_PostFinanceCheckout_Admin_Settings_Page extends WC_Settings_Page {
                 'css' => 'min-width:300px;',
                 'default' => WC_PostFinanceCheckout_Integration::IFRAME,
                 'options' => array(
-                    WC_PostFinanceCheckout_Integration::IFRAME => __(WC_PostFinanceCheckout_Integration::IFRAME, 'woo-postfinancecheckout'),
-                    WC_PostFinanceCheckout_Integration::LIGHTBOX  => __(WC_PostFinanceCheckout_Integration::LIGHTBOX, 'woo-postfinancecheckout'),
+                    WC_PostFinanceCheckout_Integration::IFRAME => $this->format_display_string(__(WC_PostFinanceCheckout_Integration::IFRAME, 'woo-postfinancecheckout')),
+                    WC_PostFinanceCheckout_Integration::LIGHTBOX  => $this->format_display_string(__(WC_PostFinanceCheckout_Integration::LIGHTBOX, 'woo-postfinancecheckout')),
                 ),
             ),
 
@@ -295,9 +295,38 @@ class WC_PostFinanceCheckout_Admin_Settings_Page extends WC_Settings_Page {
                 'id' => 'line_items_options'
             ),
 
+            array(
+                'title' => __('Reference Options', 'woo-postfinancecheckout'),
+                'type' => 'title',
+                'id' => 'reference_options'
+            ),
+
+
+            array(
+                'title' => __('Order Reference Type', 'woo-postfinancecheckout'),
+                'desc_tip' => __('Choose which order reference is sent.', 'woo-postfinancecheckout'),
+                'id' => WooCommerce_PostFinanceCheckout::CK_ORDER_REFERENCE,
+                'type' => 'select',
+                'css' => 'min-width:300px;',
+                'default' => WC_PostFinanceCheckout_Order_Reference::ORDER_ID,
+                'options' => array(
+                    WC_PostFinanceCheckout_Order_Reference::ORDER_ID => $this->format_display_string(__(WC_PostFinanceCheckout_Order_Reference::ORDER_ID, 'woo-postfinancecheckout')),
+                    WC_PostFinanceCheckout_Order_Reference::ORDER_NUMBER  => $this->format_display_string(__(WC_PostFinanceCheckout_Order_Reference::ORDER_NUMBER, 'woo-postfinancecheckout')),
+                ),
+            ),
+
+            array(
+                'type' => 'sectionend',
+                'id' => 'reference_options'
+            ),
+
 
         );
 		
 		return apply_filters('wc_postfinancecheckout_settings', $settings);
+	}
+
+	private function format_display_string($display_string){
+		return ucwords(str_replace("_", " ", $display_string));
 	}
 }
