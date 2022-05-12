@@ -388,6 +388,11 @@
 
 * support link update in documentation
 
+= 1.7.14 - May 11, 2022 =
+
+* added order reference number to order info
+* tested against Woocommerce 6.3.1, Wordpress 5.9.3
+
 = 1.7.13 - May 09, 2022 =
 
 * allow filter for jmerchant to select order id or order number

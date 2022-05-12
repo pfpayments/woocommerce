@@ -97,6 +97,13 @@ class WC_PostFinanceCheckout_Admin_Transaction {
 						<td class="label"><label><?php  _e('Transaction State', 'woo-postfinancecheckout') ?></label></td>
 						<td class="value"><strong><?php echo self::get_transaction_state($transaction_info);?></strong></td>
 					</tr>
+
+		    <?php if ($transaction_info->get_order_id() != null):?>
+                <tr>
+                    <td class="label"><label><?php _e('Merchant Reference', 'woo-wallee') ?></label></td>
+                    <td class="value"><strong><?php echo $transaction_info->get_order_id()?></strong></td>
+                </tr>
+		    <?php endif; ?>
 			
             <?php if ($transaction_info->get_failure_reason() != null):?>
             	<tr>
