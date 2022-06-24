@@ -398,3 +398,8 @@
 * allow filter for jmerchant to select order id or order number
 * tested against Woocommerce 6.3.1, Wordpress 5.9.3
 
+= 1.7.15 - June 22, 2022 =
+
+* enable translatepress support for line item translations into the portal
+* tested against Woocommerce 6.3.1, Wordpress 6.0, Translatepress 2.2.9
+

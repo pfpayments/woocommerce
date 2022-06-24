@@ -38,6 +38,32 @@ class WC_PostFinanceCheckout_Service_Line_Item extends WC_PostFinanceCheckout_Se
 		return $all;
 	}
 
+	private function translate_item_language($items) {
+		if( ! class_exists('TRP_Translate_Press') ) return [];
+		if (empty($items)) return [];
+		global $TRP_LANGUAGE;
+		$translations = [];
+		$strings = [];
+
+		// have to get all the item names so we can search for them in the TRP query
+		// items can be cart products or order items
+		foreach ($items as $item) {
+			$strings[] = $item->get_name();
+		}
+
+		$trp = TRP_Translate_Press::get_trp_instance();
+		$query = $trp->get_component('query');
+		// we get the translations from the dictionary
+		$dictionary = $query->get_string_rows("", $strings, $TRP_LANGUAGE);
+		if (is_array($dictionary)) {
+			foreach ($dictionary as $row) {
+				$translations[$row->original] = $row->translated;
+			}
+		}
+
+		return $translations;
+	}
+
 	/**
 	 * Creates the line items for the products
 	 *
@@ -215,7 +241,17 @@ class WC_PostFinanceCheckout_Service_Line_Item extends WC_PostFinanceCheckout_Se
 	protected function create_product_line_items_from_order(WC_Order $order){
 		$items = array();
 		$currency = $order->get_currency();
-		foreach ($order->get_items() as $item) {
+		$order_items = $order->get_items();
+		$cart_items = [];
+		$translations = [];
+
+		foreach ($order_items as $cart_item) {
+			$cart_items[] = $cart_item;
+		}
+
+		$translations = $this->translate_item_language($order_items);
+
+		foreach ($order_items as $item) {
 			/**
 			 * @var WC_Order_Item_Product $item
 			 */
@@ -231,14 +267,16 @@ class WC_PostFinanceCheckout_Service_Line_Item extends WC_PostFinanceCheckout_Se
 			$line_item->setQuantity($quantity);
 			
 			$product = $item->get_product();
+			$product_name = $product->get_name();
+			$name = isset($translations[$product_name]) && !empty($translations[$product_name]) ? $translations[$product_name] : $product_name;
 			$sku = null;
 			if (is_bool($product)) {
-				$line_item->setName($this->fix_length($item->get_name(), 150));
+				$line_item->setName($this->fix_length($name, 150));
 				$line_item->setShippingRequired(true);
 				$sku = $item->get_name();
 			}
 			else {
-				$line_item->setName($this->fix_length($product->get_name(), 150));
+				$line_item->setName($this->fix_length($name, 150));
 				$line_item->setShippingRequired(!$product->get_virtual()); 
 				$sku = $product->get_sku();
 				if (empty($sku)) {
