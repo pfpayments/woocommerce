@@ -403,3 +403,7 @@
 * enable translatepress support for line item translations into the portal
 * tested against Woocommerce 6.3.1, Wordpress 6.0, Translatepress 2.2.9
 
+= 1.7.15 - June 15, 2022 =
+
+* fix for non whitelabelled reference
+

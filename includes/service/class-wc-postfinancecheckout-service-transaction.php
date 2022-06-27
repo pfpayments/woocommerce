@@ -136,7 +136,7 @@ class WC_PostFinanceCheckout_Service_Transaction extends WC_PostFinanceCheckout_
 	 */
 	public function clear_transaction_cache() {
 		$this->transaction_cache = array();
-		WC()->session->set('wallee_transaction_id', null);
+		WC()->session->set('postfinancecheckout_transaction_id', null);
 	}
 
 	/**
