@@ -407,3 +407,7 @@
 
 * fix for non whitelabelled reference
 
+= 1.7.17 - June 27, 2022 =
+
+* fix for upstream translation
+
