@@ -5,7 +5,7 @@
 # PostFinance Checkout Woocommerce
 This repository contains the PostFinance Checkout WooCommerce plugin that enables WooCommerce to process payments with [PostFinance Checkout](https://postfinance.ch/en/business/products/e-commerce/postfinance-checkout-all-in-one.html).
 
-##### To use this extension, a [PostFinance Checkout](https://postfinance.ch/en/business/products/e-commerce/postfinance-checkout-all-in-one.html) account is required.
+##### To use this extension, a [PostFinance Checkout](https://checkout.postfinance.ch/en-ch/user/signup)  account is required.
 
 ## Requirements
 
@@ -15,7 +15,7 @@ This repository contains the PostFinance Checkout WooCommerce plugin that enable
 
 ## Documentation
 
-* [Documentation](https://plugin-documentation.postfinance-checkout.ch/pfpayments/woocommerce/1.7.17/docs/en/documentation.html)
+* [Documentation](https://plugin-documentation.postfinance-checkout.ch/pfpayments/woocommerce/1.7.18/docs/en/documentation.html)
 
 ## Support
 
@@ -24,4 +24,4 @@ Support queries can be issued on the [PostFinance Checkout support site](https:/
 
 ## License
 
-Please see the [license file](https://github.com/pfpayments/woocommerce/blob/1.7.17/LICENSE) for more information.
+Please see the [license file](https://github.com/pfpayments/woocommerce/blob/1.7.18/LICENSE) for more information.
