@@ -413,3 +413,5 @@
 
 improve links on readme
 
+trademark requirements fix
+
