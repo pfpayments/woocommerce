@@ -24,10 +24,10 @@ class WC_PostFinanceCheckout_Return_Handler {
 
 	public static function process(){
 		if (isset($_GET['action']) && isset($_GET['order_key']) && isset($_GET['order_id'])) {
-			$order_key = $_GET['order_key'];
+			$order_key = sanitize_text_field($_GET['order_key']);
 			$order_id = absint($_GET['order_id']);
 			$order = WC_Order_Factory::get_order($order_id);
-			$action = $_GET['action'];
+			$action = sanitize_text_field($_GET['action']);
 			if ($order->get_id() === $order_id && $order->get_order_key() === $order_key) {
 				switch ($action) {
 					case 'success':

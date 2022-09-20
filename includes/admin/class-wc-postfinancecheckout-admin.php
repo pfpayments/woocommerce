@@ -258,7 +258,7 @@ class WC_PostFinanceCheckout_Admin {
 							<label for="postfinancecheckout_attribute_option_send">'.esc_html__( 'Send attribute to PostFinance Checkout.', 'woo-postfinancecheckout' ).'</label>
 					</th>
 						<td>
-								<input name="postfinancecheckout_attribute_option_send" id="postfinancecheckout_attribute_option_send" type="checkbox" value="1" '.checked( $checked, true, false).'/>
+								<input name="postfinancecheckout_attribute_option_send" id="postfinancecheckout_attribute_option_send" type="checkbox" value="1" '.esc_attr(checked( $checked, true, false)).'/>
 								<p class="description">'.esc_html__( 'Should this product attribute be sent to PostFinance Checkout as line item attribute?', 'woo-postfinancecheckout' ).'</p>
 						</td>
 				</tr>';	    

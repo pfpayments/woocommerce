@@ -64,11 +64,11 @@ class WC_PostFinanceCheckout_Admin_Order_Completion {
 		}
 		
 		$order_id = absint($_POST['order_id']);
-		$completion_amount = wc_format_decimal(sanitize_text_field($_POST['completion_amount']), wc_get_price_decimals());
+		$completion_amount = wc_format_decimal($_POST['completion_amount'], wc_get_price_decimals());
 		$line_item_qtys = json_decode(sanitize_text_field(stripslashes($_POST['line_item_qtys'])), true);
 		$line_item_totals = json_decode(sanitize_text_field(stripslashes($_POST['line_item_totals'])), true);
 		$line_item_tax_totals = json_decode(sanitize_text_field(stripslashes($_POST['line_item_tax_totals'])), true);
-		$restock_not_completed_items = 'true' === $_POST['restock_not_completed_items'];
+		$restock_not_completed_items = 'true' === sanitize_text_field($_POST['restock_not_completed_items']);
 		$current_completion_id = null;
 		$transaction_info = null;
 		try {

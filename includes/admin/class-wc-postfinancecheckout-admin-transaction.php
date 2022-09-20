@@ -82,33 +82,33 @@ class WC_PostFinanceCheckout_Admin_Transaction {
 				<tbody>
 					<tr>
 						<td class="label"><label><?php _e('Payment Method', 'woo-postfinancecheckout') ?></label></td>
-						<td class="value"><strong><?php echo $method->get_payment_method_configuration()->get_configuration_name() ?></strong>
+						<td class="value"><strong><?php echo esc_html($method->get_payment_method_configuration()->get_configuration_name()) ?></strong>
 						</td>
 					</tr>
 			<?php if (!empty($transaction_info->get_image())) :?>
 				 <tr>
 						<td class="label"></td>
 						<td class="value"><img
-							src="<?php echo $helper->get_resource_url($transaction_info->get_image_base(), $transaction_info->get_image(), $transaction_info->get_language(), $transaction_info->get_space_id(), $transaction_info->get_space_view_id()) ?>"
+							src="<?php echo esc_url($helper->get_resource_url($transaction_info->get_image_base(), $transaction_info->get_image(), $transaction_info->get_language(), $transaction_info->get_space_id(), $transaction_info->get_space_view_id())) ?>"
 							width="50" /><br /></td>
 					</tr>
 			<?php endif; ?>
     			<tr>
 						<td class="label"><label><?php  _e('Transaction State', 'woo-postfinancecheckout') ?></label></td>
-						<td class="value"><strong><?php echo self::get_transaction_state($transaction_info);?></strong></td>
+						<td class="value"><strong><?php echo esc_html(self::get_transaction_state($transaction_info));?></strong></td>
 					</tr>
 
 		    <?php if ($transaction_info->get_order_id() != null):?>
                 <tr>
-                    <td class="label"><label><?php _e('Merchant Reference', 'woo-wallee') ?></label></td>
-                    <td class="value"><strong><?php echo $transaction_info->get_order_id()?></strong></td>
+                    <td class="label"><label><?php _e('Merchant Reference', 'woo-postfinancecheckout') ?></label></td>
+                    <td class="value"><strong><?php echo esc_html($transaction_info->get_order_id())?></strong></td>
                 </tr>
 		    <?php endif; ?>
 			
             <?php if ($transaction_info->get_failure_reason() != null):?>
             	<tr>
 						<td class="label"><label><?php _e('Failure Reason', 'woo-postfinancecheckout') ?></label></td>
-						<td class="value"><strong><?php echo $transaction_info->get_failure_reason()?></strong></td>
+						<td class="value"><strong><?php echo esc_html($transaction_info->get_failure_reason())?></strong></td>
 					</tr>
             <?php endif; ?>
             	<tr>
@@ -118,7 +118,7 @@ class WC_PostFinanceCheckout_Admin_Transaction {
 					<tr>
 						<td class="label"><label><?php _e('Transaction', 'woo-postfinancecheckout') ?></label></td>
 						<td class="value"><strong> <a
-								href="<?php echo self::get_transaction_url($transaction_info) ?>"
+								href="<?php echo esc_url(self::get_transaction_url($transaction_info)) ?>"
 								target="_blank">
     					<?php _e('View in PostFinance Checkout', 'woo-postfinancecheckout') ?>
     				</a>
@@ -134,16 +134,16 @@ class WC_PostFinanceCheckout_Admin_Transaction {
 	<?php foreach ($labels_by_group as $group) : ?>
 	<div class="postfinancecheckout-transaction-column">
 			<div class="postfinancecheckout-payment-label-container"
-				id="postfinancecheckout-payment-label-container-<?php echo $group['group']->getId() ?>">
+				id="postfinancecheckout-payment-label-container-<?php echo esc_attr($group['group']->getId()) ?>">
 				<p class="postfinancecheckout-payment-label-group">
-					<strong><?php echo $helper->translate($group['group']->getName()) ?></strong>
+					<strong><?php echo esc_html($helper->translate($group['group']->getName())) ?></strong>
 				</p>
 				<table class="form-list" style="margin-bottom: 20px;">
 					<tbody>
         			<?php foreach ($group['labels'] as $label) : ?>
                 		<tr>
-							<td class="label"><label><?php echo $helper->translate($label['descriptor']->getName()) ?></label></td>
-							<td class="value"><strong><?php echo $label['value'] ?></strong></td>
+							<td class="label"><label><?php echo esc_html($helper->translate($label['descriptor']->getName())) ?></label></td>
+							<td class="value"><strong><?php echo esc_html($label['value']) ?></strong></td>
 						</tr>
     		    	<?php endforeach; ?>
     	    	</tbody>

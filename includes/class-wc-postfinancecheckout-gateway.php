@@ -148,7 +148,7 @@ class WC_PostFinanceCheckout_Gateway extends WC_Payment_Gateway {
 			'description_value' => array(
 				'title' => __('Description', 'woocommerce'),
 				'type' => 'info',
-				'value' => !empty($this->get_description()) ? $this->get_description() : __('[not set]', 'woo-postfinancecheckout'),
+				'value' => !empty($this->get_description()) ? esc_attr($this->get_description()) : __('[not set]', 'woo-postfinancecheckout'),
 				'description' => __('Payment method description that the customer will see on your checkout.', 'woo-postfinancecheckout') 
 			),
 			'show_description' => array(
@@ -195,7 +195,7 @@ class WC_PostFinanceCheckout_Gateway extends WC_Payment_Gateway {
 		?>
 <tr valign="top">
 	<th scope="row" class="titledesc">
-							<?php echo $this->get_tooltip_html( $data ); ?>
+							<?php echo esc_html($this->get_tooltip_html($data)); ?>
 							<label for="<?php echo esc_attr( $field_key ); ?>"><?php echo wp_kses_post( $data['title'] ); ?></label>
 	</th>
 	<td class="forminp">
@@ -204,7 +204,7 @@ class WC_PostFinanceCheckout_Gateway extends WC_Payment_Gateway {
 				<span><?php echo wp_kses_post( $data['title'] ); ?></span>
 			</legend>
 			<div class="input-text regular-input <?php echo esc_attr( $data['class'] ); ?>" id="<?php echo esc_attr( $field_key ); ?>" style="<?php echo esc_attr( $data['css'] ); ?>" <?php echo $this->get_custom_attribute_html( $data ); ?> >
-								<?php echo esc_attr($data['value']); ?>
+								<?php echo esc_html($data['value']); ?>
 						</div>
 		</fieldset>
 	</td>
@@ -217,7 +217,7 @@ class WC_PostFinanceCheckout_Gateway extends WC_Payment_Gateway {
 	/**
 	 * Validate Info Field.
 	 *
-	 * @param  string $key Field key
+	 * @param  string $key Field key++
 	 * @param  string|null $value Posted Value
 	 * @return void
 	 */
@@ -288,7 +288,7 @@ class WC_PostFinanceCheckout_Gateway extends WC_Payment_Gateway {
 				if ($isClientError) {
 					$error_types = ["CONFIGURATION_ERROR", "DEVELOPER_ERROR"];
 					if (in_array($response_object->getType(), $error_types)) {
-						$message = $response_object->getType() . ': ' . $response_object->getMessage();
+						$message = esc_attr($response_object->getType()) . ': ' . esc_attr($response_object->getMessage());
 						wc_print_notice( __( $message, 'woocommerce' ), 'error' );
 						return false;
 					}
@@ -367,17 +367,17 @@ class WC_PostFinanceCheckout_Gateway extends WC_Payment_Gateway {
             
             ?>
 		
-            <div id="payment-form-<?php echo $this->id?>">
-            	<input type="hidden" id="postfinancecheckout-iframe-possible-<?php echo $this->id?>" name="postfinancecheckout-iframe-possible-<?php echo $this->id?>" value="false" />
+            <div id="payment-form-<?php echo esc_attr($this->id);?>">
+            	<input type="hidden" id="postfinancecheckout-iframe-possible-<?php echo esc_attr(($this->id));?>" name="postfinancecheckout-iframe-possible-<?php echo esc_attr($this->id);?>" value="false" />
             </div>
-            <input type="hidden" id="postfinancecheckout-space-id-<?php echo $this->id?>" name="postfinancecheckout-space-id-<?php echo $this->id?>" value="<?php echo $transaction->getLinkedSpaceId(); ?>"  />
-        	<input type="hidden" id="postfinancecheckout-transaction-id-<?php echo $this->id?>" name="postfinancecheckout-transaction-id-<?php echo $this->id?>" value="<?php echo $transaction->getId(); ?>"  />
-        	<input type="hidden" id="postfinancecheckout-transaction-nonce-<?php echo $this->id?>" name="postfinancecheckout-transaction-nonce-<?php echo $this->id?>" value="<?php echo $transaction_nonce; ?>" />
-            <div id="postfinancecheckout-method-configuration-<?php echo $this->id?>"
+            <input type="hidden" id="postfinancecheckout-space-id-<?php echo esc_attr($this->id);?>" name="postfinancecheckout-space-id-<?php echo esc_attr($this->id);?>" value="<?php echo esc_attr($transaction->getLinkedSpaceId()); ?>"  />
+        	<input type="hidden" id="postfinancecheckout-transaction-id-<?php echo esc_attr($this->id);?>" name="postfinancecheckout-transaction-id-<?php echo esc_attr($this->id);?>" value="<?php echo esc_attr($transaction->getId()); ?>"  />
+        	<input type="hidden" id="postfinancecheckout-transaction-nonce-<?php echo esc_attr($this->id);?>" name="postfinancecheckout-transaction-nonce-<?php echo esc_attr($this->id);?>" value="<?php echo esc_attr($transaction_nonce); ?>" />
+            <div id="postfinancecheckout-method-configuration-<?php echo esc_attr($this->id);?>"
             	class="postfinancecheckout-method-configuration" style="display: none;"
-            	data-method-id="<?php echo $this->id; ?>"
-            	data-configuration-id="<?php echo $this->get_payment_method_configuration()->get_configuration_id(); ?>"
-            	data-container-id="payment-form-<?php echo $this->id?>" data-description-available="<?php var_export(!empty($this->get_description()));?>"></div>
+            	data-method-id="<?php echo esc_attr($this->id); ?>"
+            	data-configuration-id="<?php echo esc_attr($this->get_payment_method_configuration()->get_configuration_id()); ?>"
+            	data-container-id="payment-form-<?php echo esc_attr($this->id);?>" data-description-available="<?php var_export(!empty($this->get_description()));?>"></div>
             <?php
            
 	    }
@@ -403,9 +403,9 @@ class WC_PostFinanceCheckout_Gateway extends WC_Payment_Gateway {
 	 */
 	public function process_payment($order_id){
 	    
-	    $space_id = $_POST['postfinancecheckout-space-id-'.$this->id];
-	    $transaction_id = $_POST['postfinancecheckout-transaction-id-'.$this->id];
-	    $transaction_nonce = $_POST['postfinancecheckout-transaction-nonce-'.$this->id];
+	    $space_id = sanitize_text_field($_POST['postfinancecheckout-space-id-'.$this->id]);
+	    $transaction_id = sanitize_text_field($_POST['postfinancecheckout-transaction-id-'.$this->id]);
+	    $transaction_nonce = sanitize_text_field($_POST['postfinancecheckout-transaction-nonce-'.$this->id]);
 	    
 	    $is_order_pay_endpoint = apply_filters('wc_postfinancecheckout_is_order_pay_endpoint', is_checkout_pay_page());
 	    

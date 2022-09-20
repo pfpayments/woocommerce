@@ -439,7 +439,7 @@ class WC_PostFinanceCheckout_Helper
             foreach ($order->get_items() as $item) {
                 if ($item->is_type('line_item') && ($product = $item->get_product()) && $product->managing_stock()) {
                     $qty = apply_filters('woocommerce_order_item_quantity', $item->get_quantity(), $order, $item);
-                    $item_name = $product->get_formatted_name();
+                    $item_name = esc_attr($product->get_formatted_name());
                     $new_stock = wc_update_product_stock($product, $qty, 'increase');
                     if (! is_wp_error($new_stock)) {
                         /* translators: 1: item name 2: old stock quantity 3: new stock quantity */

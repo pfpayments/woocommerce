@@ -3,7 +3,7 @@
  * Plugin Name: PostFinance Checkout
  * Plugin URI: https://wordpress.org/plugins/woo-postfinancecheckout
  * Description: Process WooCommerce payments with PostFinance Checkout.
- * Version: 1.7.19
+ * Version: 1.7.20
  * License: Apache2
  * License URI: http://www.apache.org/licenses/LICENSE-2.0
  * Author: wallee AG
@@ -46,7 +46,7 @@ if (!class_exists('WooCommerce_PostFinanceCheckout')) {
 		 *
 		 * @var string
 		 */
-		private $version = '1.7.19';
+		private $version = '1.7.20';
 		
 		/**
 		 * The single instance of the class.
@@ -330,7 +330,7 @@ if (!class_exists('WooCommerce_PostFinanceCheckout')) {
 		public function set_device_id_cookie(){
 		    $value = WC_PostFinanceCheckout_Unique_Id::get_uuid();
 			if (isset($_COOKIE['wc_postfinancecheckout_device_id']) && !empty($_COOKIE['wc_postfinancecheckout_device_id'])) {
-				$value = $_COOKIE['wc_postfinancecheckout_device_id'];
+				$value = sanitize_text_field($_COOKIE['wc_postfinancecheckout_device_id']);
 			}
 			setcookie('wc_postfinancecheckout_device_id', $value, time() + YEAR_IN_SECONDS, '/');
 		}
@@ -347,7 +347,7 @@ if (!class_exists('WooCommerce_PostFinanceCheckout')) {
 
 		public function enqueue_javascript_script(){
 			if(is_cart() || is_checkout()){
-				$unique_id = $_COOKIE['wc_postfinancecheckout_device_id'];
+				$unique_id = sanitize_text_field($_COOKIE['wc_postfinancecheckout_device_id']);
 				$space_id = get_option(WooCommerce_PostFinanceCheckout::CK_SPACE_ID);
 				$script_url = WC_PostFinanceCheckout_Helper::instance()->get_base_gateway_url() . 's/' . 
 						$space_id. '/payment/device.js?sessionIdentifier=' .
@@ -444,31 +444,31 @@ if (!class_exists('WooCommerce_PostFinanceCheckout')) {
 		public function update_additional_customer_data($arguments){
 			$post_data = array();
 			if (!empty($arguments)) {
-				parse_str($arguments, $post_data);
+				wp_parse_str($arguments, $post_data);
 			}
 			
 			
 			WC()->customer->set_props(
 					array(
-						'billing_first_name' => isset($post_data['billing_first_name']) ? wp_unslash($post_data['billing_first_name']) : null,
-						'billing_last_name' => isset($post_data['billing_last_name']) ? wp_unslash($post_data['billing_last_name']) : null,
-						'billing_company' => isset($post_data['billing_company']) ? wp_unslash($post_data['billing_company']) : null,
-						'billing_phone' => isset($post_data['billing_phone']) ? wp_unslash($post_data['billing_phone']) : null,
-                        'billing_email' => isset($post_data['billing_email']) && is_email(wp_unslash($post_data['billing_email'])) ? wp_unslash($post_data['billing_email']) : null
+						'billing_first_name' => isset($post_data['billing_first_name']) ? sanitize_text_field(wp_unslash($post_data['billing_first_name'])) : null,
+						'billing_last_name' => isset($post_data['billing_last_name']) ? sanitize_text_field(wp_unslash($post_data['billing_last_name'])) : null,
+						'billing_company' => isset($post_data['billing_company']) ? sanitize_text_field(wp_unslash($post_data['billing_company'])) : null,
+						'billing_phone' => isset($post_data['billing_phone']) ? sanitize_text_field(wp_unslash($post_data['billing_phone'])) : null,
+                        'billing_email' => isset($post_data['billing_email']) && is_email(wp_unslash($post_data['billing_email'])) ? sanitize_email(wp_unslash($post_data['billing_email'])) : null
 					));
 			
 			if (wc_ship_to_billing_address_only() || !isset($post_data['ship_to_different_address']) || $post_data['ship_to_different_address'] == '0') {
 				WC()->customer->set_props(
 						array(
-							'shipping_first_name' => isset($post_data['billing_first_name']) ? wp_unslash($post_data['billing_first_name']) : null,
-							'shipping_last_name' => isset($post_data['billing_last_name']) ? wp_unslash($post_data['billing_last_name']) : null 
+							'shipping_first_name' => isset($post_data['billing_first_name']) ? sanitize_text_field(wp_unslash($post_data['billing_first_name'])) : null,
+							'shipping_last_name' => isset($post_data['billing_last_name']) ? sanitize_text_field(wp_unslash($post_data['billing_last_name'])) : null
 						));
 			}
 			else {
 				WC()->customer->set_props(
 						array(
-							'shipping_first_name' => isset($post_data['shipping_first_name']) ? wp_unslash($post_data['shipping_first_name']) : null,
-							'shipping_last_name' => isset($post_data['shipping_last_name']) ? wp_unslash($post_data['shipping_last_name']) : null 
+							'shipping_first_name' => isset($post_data['shipping_first_name']) ? sanitize_text_field(wp_unslash($post_data['shipping_first_name'])) : null,
+							'shipping_last_name' => isset($post_data['shipping_last_name']) ? sanitize_text_field(wp_unslash($post_data['shipping_last_name'])) : null
 						));
 			}
 			
@@ -477,26 +477,26 @@ if (!class_exists('WooCommerce_PostFinanceCheckout')) {
             $custom_billing_date_of_birth_field_name = apply_filters('wc_postfinancecheckout_billing_date_of_birth_field_name', '');
 						
 			if(!empty($custom_billing_date_of_birth_field_name) && !empty($post_data[$custom_billing_date_of_birth_field_name])){
-			    $billing_date_of_birth = wp_unslash($post_data[$custom_billing_date_of_birth_field_name]);
+			    $billing_date_of_birth = sanitize_text_field(wp_unslash($post_data[$custom_billing_date_of_birth_field_name]));
 			}
 			elseif(!empty($post_data['billing_date_of_birth'])){
-			    $billing_date_of_birth =  wp_unslash($post_data['billing_date_of_birth']);
+			    $billing_date_of_birth =  sanitize_text_field(wp_unslash($post_data['billing_date_of_birth']));
 			}
 			elseif(!empty($post_data['_billing_date_of_birth'])){
-			    $billing_date_of_birth = wp_unslash($post_data['_billing_date_of_birth']);
+			    $billing_date_of_birth = sanitize_text_field(wp_unslash($post_data['_billing_date_of_birth']));
 			}
 			
 			$billing_gender = '';			
 			$custom_billing_gender_field_name = apply_filters('wc_postfinancecheckout_billing_gender_field_name', '');
 			
 			if(!empty($custom_billing_gender_field_name) && !empty($post_data[$custom_billing_gender_field_name])){
-			    $billing_gender =  wp_unslash($post_data[$custom_billing_gender_field_name]);
+			    $billing_gender =  sanitize_text_field(wp_unslash($post_data[$custom_billing_gender_field_name]));
 			}
 			elseif(!empty($post_data['billing_gender'])){
-			    $billing_gender = wp_unslash($post_data['billing_gender']);
+			    $billing_gender = sanitize_text_field(wp_unslash($post_data['billing_gender']));
 			}
 			elseif(!empty($post_data['_billing_gender'])){
-			    $billing_gender = wp_unslash($post_data['_billing_gender']);
+			    $billing_gender = sanitize_text_field(wp_unslash($post_data['_billing_gender']));
 			}
 			
 			if(!empty($billing_date_of_birth)){
@@ -511,26 +511,26 @@ if (!class_exists('WooCommerce_PostFinanceCheckout')) {
 			    $custom_shipping_date_of_birth_field_name = apply_filters('wc_postfinancecheckout_shipping_date_of_birth_field_name', '');
 			    
 			    if(!empty($custom_shipping_date_of_birth_field_name) && !empty($post_data[$custom_shipping_date_of_birth_field_name])){
-			        $shipping_date_of_birth = wp_unslash($post_data[$custom_shipping_date_of_birth_field_name]);
+			        $shipping_date_of_birth = sanitize_text_field(wp_unslash($post_data[$custom_shipping_date_of_birth_field_name]));
 			    }
 			    elseif(!empty($post_data['shipping_date_of_birth'])){
-			        $shipping_date_of_birth =  wp_unslash($post_data['shipping_date_of_birth']);
+			        $shipping_date_of_birth =  sanitize_text_field(wp_unslash($post_data['shipping_date_of_birth']));
 			    }
 			    elseif(!empty($post_data['_shipping_date_of_birth'])){
-			        $shipping_date_of_birth = wp_unslash($post_data['_shipping_date_of_birth']);
+			        $shipping_date_of_birth = sanitize_text_field(wp_unslash($post_data['_shipping_date_of_birth']));
 			    }
 			    
 			    $shipping_gender = '';
 			    $custom_shipping_gender_field_name = apply_filters('wc_postfinancecheckout_shipping_gender_field_name', '');
 			    
 			    if(!empty($custom_shipping_gender_field_name) && !empty($post_data[$custom_shipping_gender_field_name])){
-			        $shipping_gender =  wp_unslash($post_data[$custom_shipping_gender_field_name]);
+			        $shipping_gender =  sanitize_text_field(wp_unslash($post_data[$custom_shipping_gender_field_name]));
 			    }
 			    elseif(!empty($post_data['shipping_gender'])){
-			        $shipping_gender = wp_unslash($post_data['shipping_gender']);
+			        $shipping_gender = sanitize_text_field(wp_unslash($post_data['shipping_gender']));
 			    }
 			    elseif(!empty($post_data['_shipping_gender'])){
-			        $shipping_gender = wp_unslash($post_data['_shipping_gender']);
+			        $shipping_gender = sanitize_text_field(wp_unslash($post_data['_shipping_gender']));
 			    }
 			    
 			    if(!empty($shipping_date_of_birth)){

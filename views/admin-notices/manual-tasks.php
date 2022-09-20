@@ -23,6 +23,6 @@ if (!defined('ABSPATH')) {
 		?>
     	</p>
 	<p>
-		<a href="<?php echo $manual_taks_url?>" target="_blank"><?php _e('View', 'woo-postfinancecheckout')?></a>
+		<a href="<?php echo esc_url($manual_taks_url);?>" target="_blank"><?php _e('View', 'woo-postfinancecheckout');?></a>
 	</p>
 </div>

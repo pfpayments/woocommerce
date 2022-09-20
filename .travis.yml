@@ -11,6 +11,7 @@ before_deploy:
       mv build/src/readme_mod.txt build/src/readme.txt;
       mkdir build/$WORDPRESS_ORG_SLUG;
       rsync -r build/src/ build/$WORDPRESS_ORG_SLUG/;
+      rm -rf $WORDPRESS_ORG_SLUG/docs
       cd build;
       zip -r $TRAVIS_BUILD_DIR/$WORDPRESS_ORG_SLUG.zip $WORDPRESS_ORG_SLUG;
       cd ..;

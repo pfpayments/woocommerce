@@ -72,7 +72,7 @@ class WC_PostFinanceCheckout_Admin_Refund {
 			echo '<tr style="display:none"><td>';
 			foreach ($refunds as $refund) {
 				echo '<div class="postfinancecheckout-refund-status" data-refund-id="' . $refund->get_wc_refund_id() . '" data-refund-state="' .
-						 $refund->get_state() . '" ></div>';
+				    $refund->get_state() . '" ></div>';
 			}
 			echo '</td></tr>';
 		}

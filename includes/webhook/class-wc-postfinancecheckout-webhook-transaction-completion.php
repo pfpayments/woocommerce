@@ -82,7 +82,7 @@ class WC_PostFinanceCheckout_Webhook_Transaction_Completion extends WC_PostFinan
 						$changed_qty = $changed_qty - $completed_items[$item_id]['qty'];
 					}
 					if ($changed_qty > 0) {
-						$item_name = $product->get_formatted_name();
+						$item_name = esc_attr($product->get_formatted_name());
 						$new_stock = wc_update_product_stock($product, $changed_qty, 'increase');
 						$old_stock = $new_stock - $changed_qty;
 						

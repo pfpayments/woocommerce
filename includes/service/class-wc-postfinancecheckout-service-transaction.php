@@ -808,7 +808,7 @@ class WC_PostFinanceCheckout_Service_Transaction extends WC_PostFinanceCheckout_
 	    }
 	    $create_transaction->setAutoConfirmationEnabled(false);
 	    if(isset($_COOKIE['wc_postfinancecheckout_device_id'])){
-	        $create_transaction->setDeviceSessionIdentifier($_COOKIE['wc_postfinancecheckout_device_id']);
+	        $create_transaction->setDeviceSessionIdentifier(sanitize_text_field($_COOKIE['wc_postfinancecheckout_device_id']));
 	    }
 	    $this->assemble_order_transaction_data($order, $create_transaction);
 	    $create_transaction = apply_filters('wc_postfinancecheckout_modify_order_create_transaction', $create_transaction, $order);
@@ -834,7 +834,7 @@ class WC_PostFinanceCheckout_Service_Transaction extends WC_PostFinanceCheckout_
 		}
 		$create_transaction->setAutoConfirmationEnabled(false);
 		if(isset($_COOKIE['wc_postfinancecheckout_device_id'])){
-			$create_transaction->setDeviceSessionIdentifier($_COOKIE['wc_postfinancecheckout_device_id']);
+			$create_transaction->setDeviceSessionIdentifier(sanitize_text_field($_COOKIE['wc_postfinancecheckout_device_id']));
 		}
 		$this->assemble_session_transaction_data($create_transaction);
 		$create_transaction = apply_filters('wc_postfinancecheckout_modify_session_create_transaction', $create_transaction);
@@ -1029,15 +1029,14 @@ class WC_PostFinanceCheckout_Service_Transaction extends WC_PostFinanceCheckout_
 	 * @return string
 	 */
 	protected function get_session_email_address(){
-		
 		//if we are in update_order_review, the entered email is in the post_data string,
 		//as WooCommerce does not update the email on the customer
 		if (isset($_POST['post_data'])) {
-            $post_data = array();
-			parse_str($_POST['post_data'], $post_data);
-            if (!empty($post_data['billing_email'])  && is_email($post_data['billing_email']) ) {
-                return $post_data['billing_email'];
-            }
+		    $post_data = array();
+				wp_parse_str($_POST['post_data'], $post_data);
+		    if (!empty($post_data['billing_email'])  && is_email($post_data['billing_email'])) {
+			return sanitize_email($post_data['billing_email']);
+		    }
 		}
 		
 		$customer = WC()->customer;

@@ -43,10 +43,6 @@ class WC_PostFinanceCheckout_Migration {
 			__CLASS__,
 			'wpmu_drop_tables' 
 		));
-		add_action('in_plugin_update_message-woo-postfinancecheckout/woocommerce-postfinancecheckout.php', array(
-			__CLASS__,
-			'in_plugin_update_message' 
-		));
 		add_filter( 'plugin_row_meta', array( __CLASS__, 'plugin_row_meta' ), 10, 2 );
 	}
 
@@ -201,54 +197,6 @@ class WC_PostFinanceCheckout_Migration {
 	}
 
 	/**
-	 * Show plugin changes. Code adapted from W3 Total Cache.
-	 */
-	public static function in_plugin_update_message($args){
-		$transient_name = 'postfinancecheckout_upgrade_notice_' . $args['Version'];
-		
-		if (false === ($upgrade_notice = get_transient($transient_name))) {
-			$response = wp_safe_remote_get('https://plugins.svn.wordpress.org/woo-postfinancecheckout/trunk/readme.txt');
-			
-			if (!is_wp_error($response) && !empty($response['body'])) {
-				$upgrade_notice = self::parse_update_notice($response['body'], $args['new_version']);
-				set_transient($transient_name, $upgrade_notice, DAY_IN_SECONDS);
-			}
-		}
-		echo wp_kses_post($upgrade_notice);
-	}
-
-	/**
-	 * Parse update notice from readme file.
-	 *
-	 * @param  string $content
-	 * @param  string $new_version
-	 * @return string
-	 */
-	private static function parse_update_notice($content, $new_version){
-		// Output Upgrade Notice.
-		$matches = null;
-		$regexp = '~==\s*Upgrade Notice\s*==\s*=\s*(.*)\s*=(.*)(=\s*' . preg_quote(WC_POSTFINANCECHECKOUT_VERSION) . '\s*=|$)~Uis';
-		$upgrade_notice = '';
-		
-		if (preg_match($regexp, $content, $matches)) {
-			$version = trim($matches[1]);
-			$notices = (array) preg_split('~[\r\n]+~', trim($matches[2]));
-			
-			// Check the latest stable version and ignore trunk.
-			if ($version === $new_version && version_compare(WC_POSTFINANCECHECKOUT_VERSION, $version, '<')) {
-				$upgrade_notice .= '<div class="plugin_upgrade_notice">';
-				foreach ($notices as $line) {
-					$upgrade_notice .= wp_kses_post(preg_replace('~\[([^\]]*)\]\(([^\)]*)\)~', '<a href="${2}">${1}</a>', $line));
-				}
-				$upgrade_notice .= '</div> ';
-			}
-		}
-		
-		return wp_kses_post($upgrade_notice);
-	}
-	
-	
-	/**
 	 * Show row meta on the plugin screen.
 	 *
 	 * @param   mixed $links Plugin Row Meta.
@@ -258,7 +206,7 @@ class WC_PostFinanceCheckout_Migration {
 	public static function plugin_row_meta( $links, $file ) {
 	    if ( WC_POSTFINANCECHECKOUT_PLUGIN_BASENAME === $file ) {
 	        $row_meta = array(
-	            'docs' => '<a href="https://plugin-documentation.postfinance-checkout.ch/pfpayments/woocommerce/1.7.19/docs/en/documentation.html" aria-label="' . esc_attr__('View Documentation', 'woo-postfinancecheckout') . '">' . esc_html__('Documentation', 'woo-postfinancecheckout') . '</a>',
+	            'docs' => '<a href="https://plugin-documentation.postfinance-checkout.ch/pfpayments/woocommerce/1.7.20/docs/en/documentation.html" aria-label="' . esc_attr__('View Documentation', 'woo-postfinancecheckout') . '">' . esc_html__('Documentation', 'woo-postfinancecheckout') . '</a>',
 	        );
 	        
 	        return array_merge( $links, $row_meta );
@@ -520,13 +468,13 @@ class WC_PostFinanceCheckout_Migration {
 
 		foreach ($table_rename_map as $key=>$value) {
 			// check old table exists
-			$wallee_old_table_result = $wpdb->get_row("SHOW TABLES WHERE Tables_in_{$wpdb->dbname} = '{$key}'");
+			$old_table_result = $wpdb->get_row("SHOW TABLES WHERE Tables_in_{$wpdb->dbname} = '{$key}'");
 
-			if ($wallee_old_table_result) {
+			if ($old_table_result) {
 				// check new table doesn't exist, if it does there's a problem!
-				$wallee_new_table_result = $wpdb->get_row("SHOW TABLES WHERE Tables_in_{$wpdb->dbname} = '{$value}'");
+				$new_table_result = $wpdb->get_row("SHOW TABLES WHERE Tables_in_{$wpdb->dbname} = '{$value}'");
 
-				if (!$wallee_new_table_result){
+				if (!$new_table_result){
 					$result = $wpdb->query(
 						"RENAME TABLE {$key} TO {$value}"
 					);
