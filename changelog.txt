@@ -417,3 +417,5 @@ trademark requirements fix
 
 multiple code improvements for security and best practices
 
+Travis improvements
+

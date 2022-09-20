@@ -8,10 +8,10 @@ before_deploy:
       rsync -r --exclude 'build' --exclude '.git' --exclude '.travis.yml' --exclude 'README.md' . build/src;
       perl -plne 'print "$ENV{'FEATURES'}" if(/== Installation ==/); print "$ENV{'FAQ_ENTRIES'}" if(/== Changelog ==/);' build/src/readme.txt > build/src/readme_mod.txt;
       rm build/src/readme.txt;
+      rm -rf build/src/docs
       mv build/src/readme_mod.txt build/src/readme.txt;
       mkdir build/$WORDPRESS_ORG_SLUG;
       rsync -r build/src/ build/$WORDPRESS_ORG_SLUG/;
-      rm -rf $WORDPRESS_ORG_SLUG/docs
       cd build;
       zip -r $TRAVIS_BUILD_DIR/$WORDPRESS_ORG_SLUG.zip $WORDPRESS_ORG_SLUG;
       cd ..;
