@@ -419,3 +419,5 @@ multiple code improvements for security and best practices
 
 Travis improvements
 
+Adjust documentation (remove setup assistant)
+
