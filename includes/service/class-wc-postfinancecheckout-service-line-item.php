@@ -666,13 +666,19 @@ class WC_PostFinanceCheckout_Service_Line_Item extends WC_PostFinanceCheckout_Se
 						$attribute_options = WC_PostFinanceCheckout_Entity_Attribute_Options::load_by_attribute_id($object->get_id());
 						if($attribute_options->get_send()){
 							$attribute = new \PostFinanceCheckout\Sdk\Model\LineItemAttributeCreate();
-							$attribute->setLabel($this->fix_length(wc_attribute_label($key, $product), 512));
+							$label = wc_attribute_label($key, $product);
+							if (empty($label)) {
+								$label = 'attribute';
+							}
+							$attribute->setLabel($this->fix_length($label, 512));
 							$terms = $object->get_terms();
 							$value = array();
-							if($terms != null){
+							if ($terms != null || !empty($terms)) {
 								foreach($terms as $term){
 									$value[] = get_term_field('name', $term); 
 								}
+							} else {
+								continue;
 							}
 							$attribute->setValue($this->fix_length(implode('|',$value), 512));
 							$attributes[$this->clean_attribute_key($key)] = $attribute;

@@ -421,3 +421,5 @@ Travis improvements
 
 Adjust documentation (remove setup assistant)
 
+Fix line item requires value
+
