@@ -1,38 +1,89 @@
 <?php
-if (!defined('ABSPATH')) {
+/**
+ *
+ * WC_PostFinanceCheckout_Webhook_Request Class
+ *
+ * PostFinanceCheckout
+ * This plugin will add support for all PostFinanceCheckout payments methods and connect the PostFinanceCheckout servers to your WooCommerce webshop (https://postfinance.ch/en/business/products/e-commerce/postfinance-checkout-all-in-one.html).
+ *
+ * @category Class
+ * @package  PostFinanceCheckout
+ * @author   wallee AG (http://www.wallee.com/)
+ * @license  http://www.apache.org/licenses/LICENSE-2.0 Apache Software License (ASL 2.0)
+ */
+
+if ( ! defined( 'ABSPATH' ) ) {
 	exit();
 }
-/**
- * PostFinance Checkout WooCommerce
- *
- * This WooCommerce plugin enables to process payments with PostFinance Checkout (https://postfinance.ch/en/business/products/e-commerce/postfinance-checkout-all-in-one.html).
- *
- * @author wallee AG (http://www.wallee.com/)
- * @license http://www.apache.org/licenses/LICENSE-2.0 Apache Software License (ASL 2.0)
- */
 /**
  * Webhook request.
  */
 class WC_PostFinanceCheckout_Webhook_Request {
+	/**
+	 * Event id.
+	 *
+	 * @var mixed
+	 */
 	private $event_id;
+
+	/**
+	 * Entity id.
+	 *
+	 * @var mixed
+	 */
 	private $entity_id;
+
+	/**
+	 * Listener entity id.
+	 *
+	 * @var mixed
+	 */
 	private $listener_entity_id;
+
+	/**
+	 * Listener entity technical name.
+	 *
+	 * @var mixed
+	 */
 	private $listener_entity_technical_name;
+
+	/**
+	 * Space id.
+	 *
+	 * @var mixed
+	 */
 	private $space_id;
+
+	/**
+	 * Webhook listener id.
+	 *
+	 * @var mixed
+	 */
 	private $webhook_listener_id;
+
+	/**
+	 * Timestamp.
+	 *
+	 * @var mixed
+	 */
 	private $timestamp;
 
 	/**
 	 * Constructor.
 	 *
-	 * @param stdClass $model
+	 * @param stdClass $model model.
 	 */
-	public function __construct($model){
-		$this->event_id = $model->eventId;
+	public function __construct( $model ) {
+		$this->event_id = $model->eventd;
+	       	// phpcs:ignore
 		$this->entity_id = $model->entityId;
+	    	// phpcs:ignore
 		$this->listener_entity_id = $model->listenerEntityId;
+	    	// phpcs:ignore
 		$this->listener_entity_technical_name = $model->listenerEntityTechnicalName;
+	    	// phpcs:ignore
 		$this->space_id = $model->spaceId;
+	    	// phpcs:ignore
 		$this->webhook_listener_id = $model->webhookListenerId;
 		$this->timestamp = $model->timestamp;
 	}
@@ -42,7 +93,7 @@ class WC_PostFinanceCheckout_Webhook_Request {
 	 *
 	 * @return int
 	 */
-	public function get_event_id(){
+	public function get_event_id() {
 		return $this->event_id;
 	}
 
@@ -51,7 +102,7 @@ class WC_PostFinanceCheckout_Webhook_Request {
 	 *
 	 * @return int
 	 */
-	public function get_entity_id(){
+	public function get_entity_id() {
 		return $this->entity_id;
 	}
 
@@ -60,7 +111,7 @@ class WC_PostFinanceCheckout_Webhook_Request {
 	 *
 	 * @return int
 	 */
-	public function get_listener_entity_id(){
+	public function get_listener_entity_id() {
 		return $this->listener_entity_id;
 	}
 
@@ -69,7 +120,7 @@ class WC_PostFinanceCheckout_Webhook_Request {
 	 *
 	 * @return string
 	 */
-	public function get_listener_entity_technical_name(){
+	public function get_listener_entity_technical_name() {
 		return $this->listener_entity_technical_name;
 	}
 
@@ -78,7 +129,7 @@ class WC_PostFinanceCheckout_Webhook_Request {
 	 *
 	 * @return int
 	 */
-	public function get_space_id(){
+	public function get_space_id() {
 		return $this->space_id;
 	}
 
@@ -87,7 +138,7 @@ class WC_PostFinanceCheckout_Webhook_Request {
 	 *
 	 * @return int
 	 */
-	public function get_webhook_listener_id(){
+	public function get_webhook_listener_id() {
 		return $this->webhook_listener_id;
 	}
 
@@ -96,7 +147,7 @@ class WC_PostFinanceCheckout_Webhook_Request {
 	 *
 	 * @return string
 	 */
-	public function get_timestamp(){
+	public function get_timestamp() {
 		return $this->timestamp;
 	}
 }

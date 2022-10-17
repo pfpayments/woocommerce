@@ -1,18 +1,23 @@
 <?php
-if (!defined('ABSPATH')) {
+/**
+ *
+ * WC_PostFinanceCheckout_Entity_Void_Job Class
+ *
+ * PostFinanceCheckout
+ * This plugin will add support for all PostFinanceCheckout payments methods and connect the PostFinanceCheckout servers to your WooCommerce webshop (https://postfinance.ch/en/business/products/e-commerce/postfinance-checkout-all-in-one.html).
+ *
+ * @category Class
+ * @package  PostFinanceCheckout
+ * @author   wallee AG (http://www.wallee.com/)
+ * @license  http://www.apache.org/licenses/LICENSE-2.0 Apache Software License (ASL 2.0)
+ */
+
+if ( ! defined( 'ABSPATH' ) ) {
 	exit();
 }
 /**
- * PostFinance Checkout WooCommerce
- *
- * This WooCommerce plugin enables to process payments with PostFinance Checkout (https://postfinance.ch/en/business/products/e-commerce/postfinance-checkout-all-in-one.html).
- *
- * @author wallee AG (http://www.wallee.com/)
- * @license http://www.apache.org/licenses/LICENSE-2.0 Apache Software License (ASL 2.0)
- */
-/**
  * This entity holds data about a transaction on the gateway.
- * 
+ *
  * @method int get_id()
  * @method int get_void_id()
  * @method void set_void_id(int $id)
@@ -27,89 +32,149 @@ if (!defined('ABSPATH')) {
  * @method boolean get_restock()
  * @method void set_restock(boolean $items)
  * @method void set_failure_reason(map[string,string] $reasons)
- *  
  */
 class WC_PostFinanceCheckout_Entity_Void_Job extends WC_PostFinanceCheckout_Entity_Abstract {
 	const STATE_CREATED = 'created';
 	const STATE_SENT = 'sent';
 	const STATE_DONE = 'done';
 
-	protected static function get_field_definition(){
+	/**
+	 * Get field definition.
+	 *
+	 * @return array
+	 */
+	protected static function get_field_definition() {
 		return array(
-		    'void_id' => WC_PostFinanceCheckout_Entity_Resource_Type::INTEGER,
-		    'state' => WC_PostFinanceCheckout_Entity_Resource_Type::STRING,
-		    'space_id' => WC_PostFinanceCheckout_Entity_Resource_Type::INTEGER,
-		    'transaction_id' => WC_PostFinanceCheckout_Entity_Resource_Type::INTEGER,
-		    'order_id' => WC_PostFinanceCheckout_Entity_Resource_Type::INTEGER,
-		    'restock' => WC_PostFinanceCheckout_Entity_Resource_Type::BOOLEAN,
-		    'failure_reason' => WC_PostFinanceCheckout_Entity_Resource_Type::OBJECT 
-		
+			'void_id' => WC_PostFinanceCheckout_Entity_Resource_Type::INTEGER,
+			'state' => WC_PostFinanceCheckout_Entity_Resource_Type::STRING,
+			'space_id' => WC_PostFinanceCheckout_Entity_Resource_Type::INTEGER,
+			'transaction_id' => WC_PostFinanceCheckout_Entity_Resource_Type::INTEGER,
+			'order_id' => WC_PostFinanceCheckout_Entity_Resource_Type::INTEGER,
+			'restock' => WC_PostFinanceCheckout_Entity_Resource_Type::BOOLEAN,
+			'failure_reason' => WC_PostFinanceCheckout_Entity_Resource_Type::OBJECT,
+
 		);
 	}
 
-	protected static function get_table_name(){
+	/**
+	 * Get table name.
+	 *
+	 * @return string
+	 */
+	protected static function get_table_name() {
 		return 'wc_postfinancecheckout_void_job';
 	}
 
+
 	/**
-	 * Returns the translated failure reason.
+	 * Get failure reason.
 	 *
-	 * @param string $locale
-	 * @return string
+	 * @param mixed $language language.
+	 * @return string|null
 	 */
-	public function get_failure_reason($language = null){
-		$value = $this->get_value('failure_reason');
-		if (empty($value)) {
+	public function get_failure_reason( $language = null ) {
+		$value = $this->get_value( 'failure_reason' );
+		if ( empty( $value ) ) {
 			return null;
 		}
-		
-		return WC_PostFinanceCheckout_Helper::instance()->translate($value, $language);
+
+		return WC_PostFinanceCheckout_Helper::instance()->translate( $value, $language );
 	}
 
-	public static function load_by_void($space_id, $void_id){
+	/**
+	 * Load by void.
+	 *
+	 * @param mixed $space_id space id.
+	 * @param mixed $void_id void id.
+	 * @return WC_PostFinanceCheckout_Entity_Void_Job
+	 */
+	public static function load_by_void( $space_id, $void_id ) {
 		global $wpdb;
 		$result = $wpdb->get_row(
-				$wpdb->prepare("SELECT * FROM " . $wpdb->prefix . self::get_table_name() . " WHERE space_id = %d AND void_id = %d", $space_id, 
-						$void_id), ARRAY_A);
-		if ($result !== null) {
-			return new self($result);
+			$wpdb->prepare(
+				'SELECT * FROM %1$s WHERE space_id = %2$d AND void_id = %3$d',
+				$wpdb->prefix . self::get_table_name(),
+				$space_id,
+				$void_id
+			),
+			ARRAY_A
+		);
+		if ( null !== $result ) {
+			return new self( $result );
 		}
 		return new self();
 	}
 
-	public static function count_running_void_for_transaction($space_id, $transaction_id){
+	/**
+	 * Count running void for transaction.
+	 *
+	 * @param mixed $space_id space id.
+	 * @param mixed $transaction_id transaction id.
+	 * @return string|null
+	 */
+	public static function count_running_void_for_transaction( $space_id, $transaction_id ) {
 		global $wpdb;
-		$query = $wpdb->prepare(
-				"SELECT COUNT(*) FROM " . $wpdb->prefix . self::get_table_name() . " WHERE space_id = %d AND transaction_id = %d AND state != %s", 
-				$space_id, $transaction_id, self::STATE_DONE);
-		$result = $wpdb->get_var($query);
+
+		$result = $wpdb->get_var(
+			$wpdb->prepare(
+				'SELECT COUNT(*) FROM %1$s WHERE space_id = %2$d AND transaction_id = %3$d AND state != "%4$s"',
+				$wpdb->prefix . self::get_table_name(),
+				$space_id,
+				$transaction_id,
+				self::STATE_DONE
+			)
+		);
 		return $result;
 	}
 
-	public static function load_running_void_for_transaction($space_id, $transaction_id){
+	/**
+	 * Load running void for transaction.
+	 *
+	 * @param mixed $space_id space id.
+	 * @param mixed $transaction_id transaction id.
+	 * @return WC_PostFinanceCheckout_Entity_Void_Job
+	 */
+	public static function load_running_void_for_transaction( $space_id, $transaction_id ) {
 		global $wpdb;
 		$result = $wpdb->get_row(
-				$wpdb->prepare(
-						"SELECT * FROM " . $wpdb->prefix . self::get_table_name() . " WHERE space_id = %d AND transaction_id = %d AND state != %s", 
-						$space_id, $transaction_id, self::STATE_DONE), ARRAY_A);
-		if ($result !== null) {
-			return new self($result);
+			$wpdb->prepare(
+				'SELECT * FROM %1$s WHERE space_id = %2$d AND transaction_id = %3$d AND state != "%4$s"',
+				$wpdb->prefix . self::get_table_name(),
+				$space_id,
+				$transaction_id,
+				self::STATE_DONE
+			),
+			ARRAY_A
+		);
+		if ( null !== $result ) {
+			return new self( $result );
 		}
 		return new self();
 	}
 
-	public static function load_not_sent_job_ids(){
+	/**
+	 * Load not sent job ids
+	 *
+	 * @return array
+	 */
+	public static function load_not_sent_job_ids() {
 		global $wpdb;
-		//Returns empty array
-		
+		// Returns empty array.
+
 		$time = new DateTime();
-		$time->sub(new DateInterval('PT10M'));
+		$time->sub( new DateInterval( 'PT10M' ) );
 		$db_results = $wpdb->get_results(
-				$wpdb->prepare("SELECT id FROM " . $wpdb->prefix . self::get_table_name() . " WHERE state = %s AND updated_at < %s", 
-						self::STATE_CREATED, $time->format('Y-m-d H:i:s')), ARRAY_A);
+			$wpdb->prepare(
+				'SELECT id FROM %1$s WHERE state = "%2$s" AND updated_at < "%3$s"',
+				$wpdb->prefix . self::get_table_name(),
+				self::STATE_CREATED,
+				$time->format( 'Y-m-d H:i:s' )
+			),
+			ARRAY_A
+		);
 		$result = array();
-		if(is_array($db_results)){
-			foreach ($db_results as $object_values) {
+		if ( is_array( $db_results ) ) {
+			foreach ( $db_results as $object_values ) {
 				$result[] = $object_values['id'];
 			}
 		}

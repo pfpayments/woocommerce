@@ -11,10 +11,10 @@
   font-family: 'woocommerce-wallee';
   src: url('../font/woocommerce-wallee.eot?8310684');
   src: url('../font/woocommerce-wallee.eot?8310684#iefix') format('embedded-opentype'),
-       url('../font/woocommerce-wallee.woff2?8310684') format('woff2'),
-       url('../font/woocommerce-wallee.woff?8310684') format('woff'),
-       url('../font/woocommerce-wallee.ttf?8310684') format('truetype'),
-       url('../font/woocommerce-wallee.svg?8310684#woocommerce-wallee') format('svg');
+	   url('../font/woocommerce-wallee.woff2?8310684') format('woff2'),
+	   url('../font/woocommerce-wallee.woff?8310684') format('woff'),
+	   url('../font/woocommerce-wallee.ttf?8310684') format('truetype'),
+	   url('../font/woocommerce-wallee.svg?8310684#woocommerce-wallee') format('svg');
   font-weight: normal;
   font-style: normal;
 }
@@ -64,7 +64,7 @@
 }
 
 .order-status.status-postfi-redirected{
-	
+
 }
 
 .order-status.status-postfi-waiting{
@@ -75,20 +75,20 @@
 .order-status.status-postfi-manual{
 	background-color: #f8bfa7;
 	color: #94340c;
-	
+
 }
 
 /* Invoice & PackingSlip Download */
 
 .order_actions .postfinancecheckout-button-download-invoice,.order_actions .postfinancecheckout-button-download-packingslip {
-    display: block;
-    text-indent: -9999px;
-    position: relative;
-    height: 1em;
-    width: 1em;
-    padding: 0!important;
-    height: 2em!important;
-    width: 2em
+	display: block;
+	text-indent: -9999px;
+	position: relative;
+	height: 1em;
+	width: 1em;
+	padding: 0!important;
+	height: 2em!important;
+	width: 2em
 }
 
 .order_actions .postfinancecheckout-button-download-invoice::after, .widefat .wc_actions .postfinancecheckout-action-button.wallee-button-download-invoice::after {
@@ -129,7 +129,7 @@
 
 /* Backend Transction info */
 .order-postfinancecheckout-transaction-metabox {
-	
+
 }
 
 .order-postfinancecheckout-transaction-metabox .postfinancecheckout-transaction-data-column-container

@@ -1,39 +1,69 @@
 <?php
-if (!defined('ABSPATH')) {
-    exit();
-}
 /**
- * PostFinance Checkout WooCommerce
  *
- * This WooCommerce plugin enables to process payments with PostFinance Checkout (https://postfinance.ch/en/business/products/e-commerce/postfinance-checkout-all-in-one.html).
+ * WC_PostFinanceCheckout_Exception_Invalid_Transaction_Amount Class
  *
- * @author wallee AG (http://www.wallee.com/)
- * @license http://www.apache.org/licenses/LICENSE-2.0 Apache Software License (ASL 2.0)
+ * PostFinanceCheckout
+ * This plugin will add support for all PostFinanceCheckout payments methods and connect the PostFinanceCheckout servers to your WooCommerce webshop (https://postfinance.ch/en/business/products/e-commerce/postfinance-checkout-all-in-one.html).
+ *
+ * @category Class
+ * @package  PostFinanceCheckout
+ * @author   wallee AG (http://www.wallee.com/)
+ * @license  http://www.apache.org/licenses/LICENSE-2.0 Apache Software License (ASL 2.0)
  */
+
+if ( ! defined( 'ABSPATH' ) ) {
+	exit();
+}
 
 /**
  * This exception indicating an error with the transaction amount
- *
- * @author Nico Eigenmann
  */
-class WC_PostFinanceCheckout_Exception_Invalid_Transaction_Amount extends Exception
-{
+class WC_PostFinanceCheckout_Exception_Invalid_Transaction_Amount extends Exception {
 
-    private $item_total;
-    private $order_total;
-    
-    public function __construct ($item_total, $order_total) {
-        parent::__construct("The item total '".$item_total."' does not match the order total '".$order_total."'.");
-        $this->item_total = $item_total;
-        $this->order_total = $order_total;
-    }
 
-    public function get_item_total(){
-        return $this->item_total;
-    }
-    
-    public function get_order_total(){
-        return $this->order_total;
-    }
-    
+	/**
+	 * Item total.
+	 *
+	 * @var mixed $item_total item total.
+	 */
+	private $item_total;
+
+	/**
+	 * Order total.
+	 *
+	 * @var mixed $order_total order total.
+	 */
+	private $order_total;
+
+	/**
+	 * Construct.
+	 *
+	 * @param mixed $item_total item total.
+	 * @param mixed $order_total order total.
+	 */
+	public function __construct( $item_total, $order_total ) {
+		parent::__construct( "The item total '" . $item_total . "' does not match the order total '" . $order_total . "'." );
+		$this->item_total = $item_total;
+		$this->order_total = $order_total;
+	}
+
+	/**
+	 * Get item total.
+	 *
+	 * @return mixed
+	 */
+	public function get_item_total() {
+		return $this->item_total;
+	}
+
+	/**
+	 * Get order total.
+	 *
+	 * @return mixed
+	 */
+	public function get_order_total() {
+		return $this->order_total;
+	}
+
 }

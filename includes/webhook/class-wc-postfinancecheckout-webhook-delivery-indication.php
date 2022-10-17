@@ -1,45 +1,74 @@
 <?php
-if (!defined('ABSPATH')) {
+/**
+ *
+ * WC_PostFinanceCheckout_Webhook_Delivery_Indication Class
+ *
+ * PostFinanceCheckout
+ * This plugin will add support for all PostFinanceCheckout payments methods and connect the PostFinanceCheckout servers to your WooCommerce webshop (https://postfinance.ch/en/business/products/e-commerce/postfinance-checkout-all-in-one.html).
+ *
+ * @category Class
+ * @package  PostFinanceCheckout
+ * @author   wallee AG (http://www.wallee.com/)
+ * @license  http://www.apache.org/licenses/LICENSE-2.0 Apache Software License (ASL 2.0)
+ */
+
+if ( ! defined( 'ABSPATH' ) ) {
 	exit();
 }
-/**
- * PostFinance Checkout WooCommerce
- *
- * This WooCommerce plugin enables to process payments with PostFinance Checkout (https://postfinance.ch/en/business/products/e-commerce/postfinance-checkout-all-in-one.html).
- *
- * @author wallee AG (http://www.wallee.com/)
- * @license http://www.apache.org/licenses/LICENSE-2.0 Apache Software License (ASL 2.0)
- */
 /**
  * Webhook processor to handle delivery indication state transitions.
  */
 class WC_PostFinanceCheckout_Webhook_Delivery_Indication extends WC_PostFinanceCheckout_Webhook_Order_Related_Abstract {
 
+
 	/**
+	 * Load entity.
 	 *
-	 * @see WC_PostFinanceCheckout_Webhook_Order_Related_Abstract::load_entity()
-	 * @return \PostFinanceCheckout\Sdk\Model\DeliveryIndication
+	 * @param WC_PostFinanceCheckout_Webhook_Request $request request.
+	 * @return object|\PostFinanceCheckout\Sdk\Model\DeliveryIndication DeliveryIndication.
+	 * @throws \PostFinanceCheckout\Sdk\ApiException ApiException.
+	 * @throws \PostFinanceCheckout\Sdk\Http\ConnectionException ConnectionException.
+	 * @throws \PostFinanceCheckout\Sdk\VersioningException VersioningException.
 	 */
-    protected function load_entity(WC_PostFinanceCheckout_Webhook_Request $request){
-        $delivery_indication_service = new \PostFinanceCheckout\Sdk\Service\DeliveryIndicationService(WC_PostFinanceCheckout_Helper::instance()->get_api_client());
-		return $delivery_indication_service->read($request->get_space_id(), $request->get_entity_id());
+	protected function load_entity( WC_PostFinanceCheckout_Webhook_Request $request ) {
+		$delivery_indication_service = new \PostFinanceCheckout\Sdk\Service\DeliveryIndicationService( WC_PostFinanceCheckout_Helper::instance()->get_api_client() );
+		return $delivery_indication_service->read( $request->get_space_id(), $request->get_entity_id() );
 	}
 
-	protected function get_order_id($delivery_indication){
+	/**
+	 * Get order id.
+	 *
+	 * @param mixed $delivery_indication delivery indication.
+	 * @return int|string
+	 */
+	protected function get_order_id( $delivery_indication ) {
 		/* @var \PostFinanceCheckout\Sdk\Model\DeliveryIndication $delivery_indication */
-        return WC_PostFinanceCheckout_Entity_Transaction_Info::load_by_transaction($delivery_indication->getTransaction()->getLinkedSpaceId(), $delivery_indication->getTransaction()->getId())->get_order_id();
+		return WC_PostFinanceCheckout_Entity_Transaction_Info::load_by_transaction( $delivery_indication->getTransaction()->getLinkedSpaceId(), $delivery_indication->getTransaction()->getId() )->get_order_id();
 	}
 
-	protected function get_transaction_id($delivery_indication){
+	/**
+	 * Get transaction id.
+	 *
+	 * @param mixed $delivery_indication delivery indication.
+	 * @return int
+	 */
+	protected function get_transaction_id( $delivery_indication ) {
 		/* @var \PostFinanceCheckout\Sdk\Model\DeliveryIndication $delivery_indication */
 		return $delivery_indication->getLinkedTransaction();
 	}
 
-	protected function process_order_related_inner(WC_Order $order, $delivery_indication){
+	/**
+	 * Process order related inner.
+	 *
+	 * @param WC_Order $order order.
+	 * @param mixed    $delivery_indication delivery indication.
+	 * @return void
+	 */
+	protected function process_order_related_inner( WC_Order $order, $delivery_indication ) {
 		/* @var \PostFinanceCheckout\Sdk\Model\DeliveryIndication $delivery_indication */
-		switch ($delivery_indication->getState()) {
-		    case \PostFinanceCheckout\Sdk\Model\DeliveryIndicationState::MANUAL_CHECK_REQUIRED:
-				$this->review($order);
+		switch ( $delivery_indication->getState() ) {
+			case \PostFinanceCheckout\Sdk\Model\DeliveryIndicationState::MANUAL_CHECK_REQUIRED:
+				$this->review( $order );
 				break;
 			default:
 				// Nothing to do.
@@ -47,9 +76,15 @@ class WC_PostFinanceCheckout_Webhook_Delivery_Indication extends WC_PostFinanceC
 		}
 	}
 
-	protected function review(WC_Order $order){
-		$status = apply_filters('wc_postfinancecheckout_manual_task_status', 'postfi-manual', $order);
-		$order->add_meta_data('_postfinancecheckout_manual_check', true);
-		$order->update_status($status, __('A manual decision about whether to accept the payment is required.', 'woo-postfinancecheckout'));
+	/**
+	 * Review.
+	 *
+	 * @param WC_Order $order order.
+	 * @return void
+	 */
+	protected function review( WC_Order $order ) {
+		$status = apply_filters( 'wc_postfinancecheckout_manual_task_status', 'postfi-manual', $order );
+		$order->add_meta_data( '_postfinancecheckout_manual_check', true );
+		$order->update_status( $status, __( 'A manual decision about whether to accept the payment is required.', 'woo-postfinancecheckout' ) );
 	}
 }
