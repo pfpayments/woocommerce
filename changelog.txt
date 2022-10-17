@@ -425,3 +425,5 @@ Fix line item requires value
 
 Numerous fixes to meet Wordpress community standards and guidelines
 
+Travis build fix for deployment
+

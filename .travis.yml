@@ -21,16 +21,14 @@ before_deploy:
     mv travis-ci/class-wc-$TRAVIS_WHITELABEL-migration.php build/src/includes;
     rm build/src/includes/admin/class-wc-$TRAVIS_WHITELABEL-admin-settings-page.php;
     mv travis-ci/class-wc-$TRAVIS_WHITELABEL-admin-settings-page.php build/src/includes/admin;
+    rm -rf build/src/docs;
+    rm -rf build/src/$TRAVIS_WHITELABEL-sdk || true;
+    rm -rf build/src/travis-ci;
+    ../../phpcs/bin/phpcbf -n --standard=WordPress build/src/ || true;
+    ../../phpcs/bin/phpcs -n --standard=WordPress build/src/ || true;
     mkdir build/$WORDPRESS_ORG_SLUG;
     rsync -r build/src/ build/$WORDPRESS_ORG_SLUG/;
-    cd build/$WORDPRESS_ORG_SLUG/;
-    rm -rf docs;
-    rm -rf $TRAVIS_WHITELABEL-sdk || true;
-    rm -rf travis-ci;
-    ../../phpcs/bin/phpcbf -n --standard=WordPress . || true;
-    ../../phpcs/bin/phpcs -n --standard=WordPress . || true;
-    cd ../;
-    zip -r $TRAVIS_BUILD_DIR/$WORDPRESS_ORG_SLUG.zip $WORDPRESS_ORG_SLUG;
+    zip -r $TRAVIS_BUILD_DIR/$WORDPRESS_ORG_SLUG.zip build/$WORDPRESS_ORG_SLUG;
     cd ..;
     fi
 
