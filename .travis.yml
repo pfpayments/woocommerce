@@ -2,35 +2,35 @@ language: generic
 
 before_deploy:
   - if ! [ "$BEFORE_DEPLOY_RUN" ]; then
-      export BEFORE_DEPLOY_RUN=1;
-      git clone https://github.com/squizlabs/PHP_CodeSniffer.git phpcs;
-      git clone -b master https://github.com/WordPress/WordPress-Coding-Standards.git wpcs;
-      git clone https://github.com/$TRAVIS_RUN_BRANCH/travis-wp.git travis-ci;
-      cd phpcs;
-      ./bin/phpcs --config-set installed_paths ../wpcs;
-      cd ../;
-      mkdir build;
-      mkdir build/src;
-      rsync -r --exclude 'build' --exclude 'wpcs' --exclude 'phpcs' --exclude '.git' --exclude '.travis.yml' --exclude 'README.md' . build/src;
-      perl -plne 'print "$ENV{'FEATURES'}" if(/== Installation ==/); print "$ENV{'FAQ_ENTRIES'}" if(/== Changelog ==/);' build/src/readme.txt > build/src/readme_mod.txt;
-      rm build/src/readme.txt;
-      mv build/src/readme_mod.txt build/src/readme.txt;
-      mkdir build/$WORDPRESS_ORG_SLUG;
-      rsync -r build/src/ build/$WORDPRESS_ORG_SLUG/;
-      cd build;
-      zip -r $TRAVIS_BUILD_DIR/$WORDPRESS_ORG_SLUG.zip $WORDPRESS_ORG_SLUG;
-      rm src/woocommerce-$TRAVIS_WHITELABEL.php || true;
-      mv ../travis-ci/woocommerce-$TRAVIS_WHITELABEL.php src || true;
-      rm src/includes/class-wc-$TRAVIS_WHITELABEL-migration.php || true;
-      mv ../travis-ci/class-wc-$TRAVIS_WHITELABEL-migration.php src/includes || true;
-      rm src/includes/admin/class-wc-$TRAVIS_WHITELABEL-admin-settings-page.php || true;
-      mv ../travis-ci/class-wc-$TRAVIS_WHITELABEL-admin-settings-page.php src/includes/admin || true;
-      rm -rf src/docs;
-      rm -rf src/$TRAVIS_WHITELABEL-sdk || true;
-      rm -rf ../travis-ci;
-      ../phpcs/bin/phpcbf -n --standard=WordPress src/ || true;
-      ../phpcs/bin/phpcs -n --standard=WordPress src/ || true;
-      cd ..;
+    export BEFORE_DEPLOY_RUN=1;
+    git clone https://github.com/squizlabs/PHP_CodeSniffer.git phpcs;
+    git clone -b master https://github.com/WordPress/WordPress-Coding-Standards.git wpcs;
+    git clone https://github.com/$TRAVIS_RUN_BRANCH/travis-wp.git ../travis-ci;
+    cd phpcs;
+    ./bin/phpcs --config-set installed_paths ../wpcs;
+    cd ../;
+    mkdir build;
+    mkdir build/src;
+    rsync -r --exclude 'build' --exclude 'wpcs' --exclude 'phpcs' --exclude '.git' --exclude '.travis.yml' --exclude 'README.md' . build/src;
+    perl -plne 'print "$ENV{'FEATURES'}" if(/== Installation ==/); print "$ENV{'FAQ_ENTRIES'}" if(/== Changelog ==/);' build/src/readme.txt > build/src/readme_mod.txt;
+    rm build/src/readme.txt;
+    mv build/src/readme_mod.txt build/src/readme.txt;
+    mkdir build/$WORDPRESS_ORG_SLUG;
+    rsync -r build/src/ build/$WORDPRESS_ORG_SLUG/;
+    cd build;
+    zip -r $TRAVIS_BUILD_DIR/$WORDPRESS_ORG_SLUG.zip $WORDPRESS_ORG_SLUG;
+    rm src/woocommerce-$TRAVIS_WHITELABEL.php || true;
+    mv ../../travis-ci/woocommerce-$TRAVIS_WHITELABEL.php src || true;
+    rm src/includes/class-wc-$TRAVIS_WHITELABEL-migration.php || true;
+    mv ../../travis-ci/class-wc-$TRAVIS_WHITELABEL-migration.php src/includes || true;
+    rm src/includes/admin/class-wc-$TRAVIS_WHITELABEL-admin-settings-page.php || true;
+    mv ../../travis-ci/class-wc-$TRAVIS_WHITELABEL-admin-settings-page.php src/includes/admin || true;
+    rm -rf src/docs;
+    rm -rf src/$TRAVIS_WHITELABEL-sdk || true;
+    rm -rf ../../travis-ci;
+    ../phpcs/bin/phpcbf -n --standard=WordPress src/ || true;
+    ../phpcs/bin/phpcs -n --standard=WordPress src/ || true;
+    cd ..;
     fi
 
 deploy:
@@ -39,7 +39,7 @@ deploy:
     file: "$WORDPRESS_ORG_SLUG.zip"
     skip_cleanup: true
     on:
-       tags: true
+      tags: true
   - provider: wordpress-plugin
     edge:
       source: TypistTech/dpl
