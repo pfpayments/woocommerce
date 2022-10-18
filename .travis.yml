@@ -17,20 +17,19 @@ before_deploy:
       mv build/src/readme_mod.txt build/src/readme.txt;
       mkdir build/$WORDPRESS_ORG_SLUG;
       rsync -r build/src/ build/$WORDPRESS_ORG_SLUG/;
-      ls -la build/$WORDPRESS_ORG_SLUG;
-      ls -la build/src;
-      zip -r $TRAVIS_BUILD_DIR/$WORDPRESS_ORG_SLUG.zip build/$WORDPRESS_ORG_SLUG;
-      rm build/src/woocommerce-$TRAVIS_WHITELABEL.php || true;
-      mv travis-ci/woocommerce-$TRAVIS_WHITELABEL.php build/src || true;
-      rm build/src/includes/class-wc-$TRAVIS_WHITELABEL-migration.php || true;
-      mv travis-ci/class-wc-$TRAVIS_WHITELABEL-migration.php build/src/includes || true;
-      rm build/src/includes/admin/class-wc-$TRAVIS_WHITELABEL-admin-settings-page.php || true;
-      mv travis-ci/class-wc-$TRAVIS_WHITELABEL-admin-settings-page.php build/src/includes/admin || true;
-      rm -rf build/src/docs;
-      rm -rf build/src/$TRAVIS_WHITELABEL-sdk || true;
-      rm -rf build/src/travis-ci;
-      phpcs/bin/phpcbf -n --standard=WordPress build/src/ || true;
-      phpcs/bin/phpcs -n --standard=WordPress build/src/ || true;
+      cd build;
+      zip -r $TRAVIS_BUILD_DIR/$WORDPRESS_ORG_SLUG.zip $WORDPRESS_ORG_SLUG;
+      rm src/woocommerce-$TRAVIS_WHITELABEL.php || true;
+      mv ../travis-ci/woocommerce-$TRAVIS_WHITELABEL.php src || true;
+      rm src/includes/class-wc-$TRAVIS_WHITELABEL-migration.php || true;
+      mv ../travis-ci/class-wc-$TRAVIS_WHITELABEL-migration.php src/includes || true;
+      rm src/includes/admin/class-wc-$TRAVIS_WHITELABEL-admin-settings-page.php || true;
+      mv ../travis-ci/class-wc-$TRAVIS_WHITELABEL-admin-settings-page.php src/includes/admin || true;
+      rm -rf src/docs;
+      rm -rf src/$TRAVIS_WHITELABEL-sdk || true;
+      rm -rf ../travis-ci;
+      ../phpcs/bin/phpcbf -n --standard=WordPress src/ || true;
+      ../phpcs/bin/phpcs -n --standard=WordPress src/ || true;
       cd ..;
     fi
 
