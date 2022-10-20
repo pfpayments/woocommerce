@@ -15,7 +15,7 @@ This repository contains the PostFinance Checkout plugin that enables WooCommerc
 
 ## Documentation
 
-* [Documentation](https://plugin-documentation.postfinance-checkout.ch/pfpayments/woocommerce/2.0.5/docs/en/documentation.html)
+* [Documentation](https://plugin-documentation.postfinance-checkout.ch/pfpayments/woocommerce/2.0.6/docs/en/documentation.html)
 
 ## Support
 
@@ -24,4 +24,4 @@ Support queries can be issued on the [PostFinance Checkout support site](https:/
 
 ## License
 
-Please see the [license file](https://github.com/pfpayments/woocommerce/blob/2.0.5/LICENSE) for more information.
+Please see the [license file](https://github.com/pfpayments/woocommerce/blob/2.0.6/LICENSE) for more information.

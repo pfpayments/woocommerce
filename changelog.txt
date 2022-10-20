@@ -435,3 +435,5 @@ Travis build fix for deployment
 
 changes to build pipeline
 
+Minor bugfix for dependencies
+
