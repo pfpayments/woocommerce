@@ -439,3 +439,5 @@ Minor bugfix for dependencies
 
 sanitation bugfix
 
+travis timeout fix
+

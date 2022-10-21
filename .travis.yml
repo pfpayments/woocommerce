@@ -19,8 +19,8 @@ before_deploy:
     cd build;
     zip -r $TRAVIS_BUILD_DIR/$WORDPRESS_ORG_SLUG.zip $WORDPRESS_ORG_SLUG;
     rm -rf src/docs;
-    ../phpcs/bin/phpcbf -n --standard=WordPress src/ || true;
-    ../phpcs/bin/phpcs -n --standard=WordPress src/ || true;
+    ../phpcs/bin/phpcbf -n --standard=WordPress src/ --ignore=/src/$TRAVIS_WHITELABEL-sdk || true;
+    ../phpcs/bin/phpcs -n --standard=WordPress src/ --ignore=/src/$TRAVIS_WHITELABEL-sdk || true;
     cd ..;
     fi
 
