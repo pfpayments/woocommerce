@@ -441,3 +441,5 @@ sanitation bugfix
 
 travis timeout fix
 
+fixes for escaping output
+
