@@ -5,7 +5,6 @@ before_deploy:
       export BEFORE_DEPLOY_RUN=1;
       git clone https://github.com/squizlabs/PHP_CodeSniffer.git phpcs;
       git clone -b master https://github.com/WordPress/WordPress-Coding-Standards.git wpcs;
-      git clone https://github.com/$TRAVIS_RUN_BRANCH/travis-wp.git ../travis-ci;
       cd phpcs;
       ./bin/phpcs --config-set installed_paths ../wpcs;
       cd ../;
@@ -19,15 +18,7 @@ before_deploy:
       rsync -r build/src/ build/$WORDPRESS_ORG_SLUG/;
       cd build;
       zip -r $TRAVIS_BUILD_DIR/$WORDPRESS_ORG_SLUG.zip $WORDPRESS_ORG_SLUG;
-      rm src/woocommerce-$TRAVIS_WHITELABEL.php || true;
-      mv ../../travis-ci/woocommerce-$TRAVIS_WHITELABEL.php src || true;
-      rm src/includes/class-wc-$TRAVIS_WHITELABEL-migration.php || true;
-      mv ../../travis-ci/class-wc-$TRAVIS_WHITELABEL-migration.php src/includes || true;
-      rm src/includes/admin/class-wc-$TRAVIS_WHITELABEL-admin-settings-page.php || true;
-      mv ../../travis-ci/class-wc-$TRAVIS_WHITELABEL-admin-settings-page.php src/includes/admin || true;
       rm -rf src/docs;
-      rm -rf src/$TRAVIS_WHITELABEL-sdk || true;
-      rm -rf ../../travis-ci;
       ../phpcs/bin/phpcbf -n --standard=WordPress src/ --ignore=/src/$TRAVIS_WHITELABEL-sdk || true;
       ../phpcs/bin/phpcs -n --standard=WordPress src/ --ignore=/src/$TRAVIS_WHITELABEL-sdk || true;
       cd ..;

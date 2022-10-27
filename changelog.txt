@@ -443,3 +443,5 @@ travis timeout fix
 
 fixes for escaping output
 
+major version update
+
