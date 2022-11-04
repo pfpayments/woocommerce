@@ -49,7 +49,7 @@ class WC_PostFinanceCheckout_Admin_Notices {
 	 */
 	public static function manual_tasks_notices() {
 		$number_of_manual_tasks = WC_PostFinanceCheckout_Service_Manual_Task::instance()->get_number_of_manual_tasks();
-		if ( 0 === $number_of_manual_tasks ) {
+		if ( 0 === (int) $number_of_manual_tasks ) {
 			return;
 		}
 		$manual_taks_url = self::get_manual_tasks_url();

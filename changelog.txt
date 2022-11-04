@@ -445,3 +445,13 @@ fixes for escaping output
 
 major version update
 
+Features:
+- Support of Wordpress 6.1
+- Support of Woocommerce 7.0.1
+Bugfixes:
+- Fix that when 0 manual task are needed, the message ?0 manuelle Tasks ben?tigen Ihre Aufmerksamkeit? is shown.
+Tested against:
+- PHP 7.4.32
+- Wordpress: 6.1
+- Woocommerce: 6.7.0
+
