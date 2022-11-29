@@ -455,3 +455,13 @@ Tested against:
 - Wordpress: 6.1
 - Woocommerce: 6.7.0
 
+## Features:
+- Added analytics headers.
+- Support of Wordpress 6.1.1
+- Support of Woocommerce 7.1.0
+
+## Tested against:
+- PHP 7.4.32
+- Wordpress: 6.1.1
+- Woocommerce: 7.1.0
+

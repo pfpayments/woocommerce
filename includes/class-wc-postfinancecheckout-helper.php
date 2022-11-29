@@ -11,6 +11,8 @@
  * @author   wallee AG (http://www.wallee.com/)
  * @license  http://www.apache.org/licenses/LICENSE-2.0 Apache Software License (ASL 2.0)
  */
+	
+use Automattic\Jetpack\Constants;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit();
@@ -20,6 +22,9 @@ if ( ! defined( 'ABSPATH' ) ) {
  */
 class WC_PostFinanceCheckout_Helper {
 
+	const SHOP_SYSTEM = 'x-meta-shop-system';
+	const SHOP_SYSTEM_VERSION = 'x-meta-shop-system-version';
+	const SHOP_SYSTEM_AND_VERSION = 'x-meta-shop-system-and-version';
 
 	/**
 	 * Instance.
@@ -84,6 +89,9 @@ class WC_PostFinanceCheckout_Helper {
 			if ( ! empty( $user_id ) && ! empty( $user_key ) ) {
 				$this->api_client = new \PostFinanceCheckout\Sdk\ApiClient( $user_id, $user_key );
 				$this->api_client->setBasePath( rtrim( $this->get_base_gateway_url(), '/' ) . '/api' );
+				foreach (self::getDefaultHeaderData() as $key => $value) {
+					$this->api_client->addDefaultHeader($key, $value);
+				}
 			} else {
 				throw new Exception( __( 'The API access data is incomplete.', 'woo-postfinancecheckout' ) );
 			}
@@ -527,5 +535,21 @@ class WC_PostFinanceCheckout_Helper {
 			}
 			do_action( 'wc_postfinancecheckout_restocked_order', $order );
 		}
+	}
+	
+	/**
+	 * @return array
+	 */
+	protected static function getDefaultHeaderData()
+	{
+		$version = Constants::get_constant( 'WC_VERSION' );
+		
+		$shop_version = str_replace('v', '', $version);
+		[$major_version, $minor_version, $_] = explode('.', $shop_version, 3);
+		return [
+			self::SHOP_SYSTEM             => 'woocommerce',
+			self::SHOP_SYSTEM_VERSION     => $shop_version,
+			self::SHOP_SYSTEM_AND_VERSION => 'woocommerce-' . $major_version . '.' . $minor_version,
+		];
 	}
 }
