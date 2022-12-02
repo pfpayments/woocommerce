@@ -545,7 +545,7 @@ class WC_PostFinanceCheckout_Helper {
 		$version = Constants::get_constant( 'WC_VERSION' );
 		
 		$shop_version = str_replace('v', '', $version);
-		[$major_version, $minor_version, $_] = explode('.', $shop_version, 3);
+		list ($major_version, $minor_version) = explode('.', $shop_version, 3);
 		return [
 			self::SHOP_SYSTEM             => 'woocommerce',
 			self::SHOP_SYSTEM_VERSION     => $shop_version,
