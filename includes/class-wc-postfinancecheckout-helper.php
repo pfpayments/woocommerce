@@ -11,8 +11,6 @@
  * @author   wallee AG (http://www.wallee.com/)
  * @license  http://www.apache.org/licenses/LICENSE-2.0 Apache Software License (ASL 2.0)
  */
-	
-use Automattic\Jetpack\Constants;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit();
@@ -542,7 +540,7 @@ class WC_PostFinanceCheckout_Helper {
 	 */
 	protected static function getDefaultHeaderData()
 	{
-		$version = Constants::get_constant( 'WC_VERSION' );
+		$version = WC_VERSION;
 		
 		$shop_version = str_replace('v', '', $version);
 		list ($major_version, $minor_version) = explode('.', $shop_version, 3);
