@@ -74,7 +74,7 @@ class WC_PostFinanceCheckout_Webhook_Request {
 	 * @param stdClass $model model.
 	 */
 	public function __construct( $model ) {
-		$this->event_id = $model->eventd;
+		$this->event_id = $model->eventId;
 	       	// phpcs:ignore
 		$this->entity_id = $model->entityId;
 	    	// phpcs:ignore
