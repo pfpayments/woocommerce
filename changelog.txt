@@ -496,3 +496,11 @@ Tested against:
 - Wordpress 6.1.1
 - Woocommerce 7.3.0
 
+## Feature
+- Make the latest version of the plugin available on the marketplace
+
+## Tested Against
+- PHP 7.4.32
+- Wordpress 6.1.1
+- Woocommerce 7.3.0
+
