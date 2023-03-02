@@ -88,7 +88,8 @@ class PaymentTerminalTillService {
 	 * Operation performTransactionWithHttpInfo
 	 *
 	 * Perform Payment Terminal Transaction
-	 *
+     * (Time out for this request is 90 seconds.)
+     *
 	 * @param int $space_id  (required)
 	 * @param int $transaction_id The ID of the transaction which is used to process with the terminal. (required)
 	 * @param int $terminal_id The ID of the terminal which should be used to process the transaction. (required)
@@ -117,7 +118,7 @@ class PaymentTerminalTillService {
 		if (!is_null($headerAccept)) {
 			$headerParams[HttpRequest::HEADER_KEY_ACCEPT] = $headerAccept;
 		}
-		$headerParams[HttpRequest::HEADER_KEY_CONTENT_TYPE] = $this->apiClient->selectHeaderContentType(['application/json;charset=utf-8']);
+		$headerParams[HttpRequest::HEADER_KEY_CONTENT_TYPE] = $this->apiClient->selectHeaderContentType(['*/*']);
 
 		// query params
 		$queryParams = [];
@@ -151,7 +152,6 @@ class PaymentTerminalTillService {
 		}
 		// make the API Call
 		try {
-			$this->apiClient->setConnectionTimeout(90);
 			$response = $this->apiClient->callApi(
 				$resourcePath,
 				'GET',
@@ -159,8 +159,9 @@ class PaymentTerminalTillService {
 				$httpBody,
 				$headerParams,
 				'\PostFinanceCheckout\Sdk\Model\Transaction',
-				'/payment-terminal-till/perform-transaction'
-			);
+				'/payment-terminal-till/perform-transaction',
+                90
+            );
 			return new ApiResponse($response->getStatusCode(), $response->getHeaders(), $this->apiClient->getSerializer()->deserialize($response->getData(), '\PostFinanceCheckout\Sdk\Model\Transaction', $response->getHeaders()));
 		} catch (ApiException $e) {
 			switch ($e->getCode()) {
@@ -231,7 +232,8 @@ class PaymentTerminalTillService {
 	 * Operation performTransactionByIdentifierWithHttpInfo
 	 *
 	 * Perform Payment Terminal Transaction (using TID)
-	 *
+     * (Time out for this request is 90 seconds.)
+     *
 	 * @param int $space_id  (required)
 	 * @param int $transaction_id The ID of the transaction which is used to process with the terminal. (required)
 	 * @param string $terminal_identifier The identifier (aka TID) of the terminal which should be used to process the transaction. (required)
@@ -260,7 +262,7 @@ class PaymentTerminalTillService {
 		if (!is_null($headerAccept)) {
 			$headerParams[HttpRequest::HEADER_KEY_ACCEPT] = $headerAccept;
 		}
-		$headerParams[HttpRequest::HEADER_KEY_CONTENT_TYPE] = $this->apiClient->selectHeaderContentType(['application/json;charset=utf-8']);
+		$headerParams[HttpRequest::HEADER_KEY_CONTENT_TYPE] = $this->apiClient->selectHeaderContentType(['*/*']);
 
 		// query params
 		$queryParams = [];
@@ -294,7 +296,6 @@ class PaymentTerminalTillService {
 		}
 		// make the API Call
 		try {
-			$this->apiClient->setConnectionTimeout(90);
 			$response = $this->apiClient->callApi(
 				$resourcePath,
 				'GET',
@@ -302,8 +303,9 @@ class PaymentTerminalTillService {
 				$httpBody,
 				$headerParams,
 				'\PostFinanceCheckout\Sdk\Model\Transaction',
-				'/payment-terminal-till/perform-transaction-by-identifier'
-			);
+				'/payment-terminal-till/perform-transaction-by-identifier',
+                90
+            );
 			return new ApiResponse($response->getStatusCode(), $response->getHeaders(), $this->apiClient->getSerializer()->deserialize($response->getData(), '\PostFinanceCheckout\Sdk\Model\Transaction', $response->getHeaders()));
 		} catch (ApiException $e) {
 			switch ($e->getCode()) {

@@ -14,4 +14,4 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit();
 }
 ?>
-<div class="error notice notice-error"><p><?php esc_html_e( 'WooCommerce PostFinance Checkout deactivated because it depends on WooCommerce.', 'woo-postfinancecheckout' ); ?></p></div>
+<div class="error notice notice-error"><p><?php esc_html_e( 'PostFinance Checkout deactivated because it depends on WooCommerce.', 'woo-postfinancecheckout' ); ?></p></div>

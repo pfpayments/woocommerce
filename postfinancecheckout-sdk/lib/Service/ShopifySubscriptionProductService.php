@@ -86,7 +86,8 @@ class ShopifySubscriptionProductService {
 	 * Operation countWithHttpInfo
 	 *
 	 * Count
-	 *
+     
+     *
 	 * @param int $space_id  (required)
 	 * @param \PostFinanceCheckout\Sdk\Model\EntityQueryFilter $filter The filter which restricts the entities which are used to calculate the count. (optional)
 	 * @throws \PostFinanceCheckout\Sdk\ApiException
@@ -135,7 +136,6 @@ class ShopifySubscriptionProductService {
 		}
 		// make the API Call
 		try {
-			$this->apiClient->setConnectionTimeout(ApiClient::CONNECTION_TIMEOUT);
 			$response = $this->apiClient->callApi(
 				$resourcePath,
 				'POST',
@@ -144,7 +144,7 @@ class ShopifySubscriptionProductService {
 				$headerParams,
 				'int',
 				'/shopify-subscription-product/count'
-			);
+            );
 			return new ApiResponse($response->getStatusCode(), $response->getHeaders(), $this->apiClient->getSerializer()->deserialize($response->getData(), 'int', $response->getHeaders()));
 		} catch (ApiException $e) {
 			switch ($e->getCode()) {
@@ -197,7 +197,8 @@ class ShopifySubscriptionProductService {
 	 * Operation createWithHttpInfo
 	 *
 	 * Create
-	 *
+     
+     *
 	 * @param int $space_id  (required)
 	 * @param \PostFinanceCheckout\Sdk\Model\ShopifySubscriptionProductCreate $entity The Shopify subscription product object with the properties which should be created. (required)
 	 * @throws \PostFinanceCheckout\Sdk\ApiException
@@ -250,7 +251,6 @@ class ShopifySubscriptionProductService {
 		}
 		// make the API Call
 		try {
-			$this->apiClient->setConnectionTimeout(ApiClient::CONNECTION_TIMEOUT);
 			$response = $this->apiClient->callApi(
 				$resourcePath,
 				'POST',
@@ -259,7 +259,7 @@ class ShopifySubscriptionProductService {
 				$headerParams,
 				'\PostFinanceCheckout\Sdk\Model\ShopifySubscriptionProduct',
 				'/shopify-subscription-product/create'
-			);
+            );
 			return new ApiResponse($response->getStatusCode(), $response->getHeaders(), $this->apiClient->getSerializer()->deserialize($response->getData(), '\PostFinanceCheckout\Sdk\Model\ShopifySubscriptionProduct', $response->getHeaders()));
 		} catch (ApiException $e) {
 			switch ($e->getCode()) {
@@ -312,7 +312,8 @@ class ShopifySubscriptionProductService {
 	 * Operation readWithHttpInfo
 	 *
 	 * Read
-	 *
+     
+     *
 	 * @param int $space_id  (required)
 	 * @param int $id The id of the Shopify subscription product which should be returned. (required)
 	 * @throws \PostFinanceCheckout\Sdk\ApiException
@@ -363,7 +364,6 @@ class ShopifySubscriptionProductService {
 		}
 		// make the API Call
 		try {
-			$this->apiClient->setConnectionTimeout(ApiClient::CONNECTION_TIMEOUT);
 			$response = $this->apiClient->callApi(
 				$resourcePath,
 				'GET',
@@ -372,7 +372,7 @@ class ShopifySubscriptionProductService {
 				$headerParams,
 				'\PostFinanceCheckout\Sdk\Model\ShopifySubscriptionProduct',
 				'/shopify-subscription-product/read'
-			);
+            );
 			return new ApiResponse($response->getStatusCode(), $response->getHeaders(), $this->apiClient->getSerializer()->deserialize($response->getData(), '\PostFinanceCheckout\Sdk\Model\ShopifySubscriptionProduct', $response->getHeaders()));
 		} catch (ApiException $e) {
 			switch ($e->getCode()) {
@@ -425,7 +425,8 @@ class ShopifySubscriptionProductService {
 	 * Operation searchWithHttpInfo
 	 *
 	 * Search
-	 *
+     
+     *
 	 * @param int $space_id  (required)
 	 * @param \PostFinanceCheckout\Sdk\Model\EntityQuery $query The query restricts the Shopify subscription products which are returned by the search. (required)
 	 * @throws \PostFinanceCheckout\Sdk\ApiException
@@ -478,7 +479,6 @@ class ShopifySubscriptionProductService {
 		}
 		// make the API Call
 		try {
-			$this->apiClient->setConnectionTimeout(ApiClient::CONNECTION_TIMEOUT);
 			$response = $this->apiClient->callApi(
 				$resourcePath,
 				'POST',
@@ -487,7 +487,7 @@ class ShopifySubscriptionProductService {
 				$headerParams,
 				'\PostFinanceCheckout\Sdk\Model\ShopifySubscriptionProduct[]',
 				'/shopify-subscription-product/search'
-			);
+            );
 			return new ApiResponse($response->getStatusCode(), $response->getHeaders(), $this->apiClient->getSerializer()->deserialize($response->getData(), '\PostFinanceCheckout\Sdk\Model\ShopifySubscriptionProduct[]', $response->getHeaders()));
 		} catch (ApiException $e) {
 			switch ($e->getCode()) {
@@ -540,7 +540,8 @@ class ShopifySubscriptionProductService {
 	 * Operation updateWithHttpInfo
 	 *
 	 * Update
-	 *
+     
+     *
 	 * @param int $space_id  (required)
 	 * @param \PostFinanceCheckout\Sdk\Model\ShopifySubscriptionProductUpdate $entity The Shopify subscription product object with all the properties which should be updated. The id and the version are required properties. (required)
 	 * @throws \PostFinanceCheckout\Sdk\ApiException
@@ -593,7 +594,6 @@ class ShopifySubscriptionProductService {
 		}
 		// make the API Call
 		try {
-			$this->apiClient->setConnectionTimeout(ApiClient::CONNECTION_TIMEOUT);
 			$response = $this->apiClient->callApi(
 				$resourcePath,
 				'POST',
@@ -602,7 +602,7 @@ class ShopifySubscriptionProductService {
 				$headerParams,
 				'\PostFinanceCheckout\Sdk\Model\ShopifySubscriptionProduct',
 				'/shopify-subscription-product/update'
-			);
+            );
 			return new ApiResponse($response->getStatusCode(), $response->getHeaders(), $this->apiClient->getSerializer()->deserialize($response->getData(), '\PostFinanceCheckout\Sdk\Model\ShopifySubscriptionProduct', $response->getHeaders()));
 		} catch (ApiException $e) {
 			switch ($e->getCode()) {

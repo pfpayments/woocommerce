@@ -24,15 +24,15 @@ use \ArrayAccess;
 use \PostFinanceCheckout\Sdk\ObjectSerializer;
 
 /**
- * TransactionLineItemUpdateRequest model
+ * AnalyticsQueryResultBatch model
  *
  * @category    Class
- * @description 
+ * @description A batch of the result of a query executed in Analytics.
  * @package     PostFinanceCheckout\Sdk
  * @author      customweb GmbH
  * @license     http://www.apache.org/licenses/LICENSE-2.0 Apache License v2
  */
-class TransactionLineItemUpdateRequest implements ModelInterface, ArrayAccess
+class AnalyticsQueryResultBatch implements ModelInterface, ArrayAccess
 {
     const DISCRIMINATOR = null;
 
@@ -41,7 +41,7 @@ class TransactionLineItemUpdateRequest implements ModelInterface, ArrayAccess
       *
       * @var string
       */
-    protected static $swaggerModelName = 'TransactionLineItemUpdateRequest';
+    protected static $swaggerModelName = 'AnalyticsQueryResultBatch';
 
     /**
       * Array of property to type mappings. Used for (de)serialization
@@ -49,8 +49,10 @@ class TransactionLineItemUpdateRequest implements ModelInterface, ArrayAccess
       * @var string[]
       */
     protected static $swaggerTypes = [
-        'new_line_items' => '\PostFinanceCheckout\Sdk\Model\LineItemCreate[]',
-        'transaction_id' => 'int'
+        'columns' => '\PostFinanceCheckout\Sdk\Model\AnalyticsSchemaColumn[]',
+        'next_token' => 'string',
+        'query_execution' => '\PostFinanceCheckout\Sdk\Model\AnalyticsQueryExecution',
+        'rows' => 'string[][]'
     ];
 
     /**
@@ -59,8 +61,10 @@ class TransactionLineItemUpdateRequest implements ModelInterface, ArrayAccess
       * @var string[]
       */
     protected static $swaggerFormats = [
-        'new_line_items' => null,
-        'transaction_id' => 'int64'
+        'columns' => null,
+        'next_token' => null,
+        'query_execution' => null,
+        'rows' => null
     ];
 
     /**
@@ -70,8 +74,10 @@ class TransactionLineItemUpdateRequest implements ModelInterface, ArrayAccess
      * @var string[]
      */
     protected static $attributeMap = [
-        'new_line_items' => 'newLineItems',
-        'transaction_id' => 'transactionId'
+        'columns' => 'columns',
+        'next_token' => 'nextToken',
+        'query_execution' => 'queryExecution',
+        'rows' => 'rows'
     ];
 
     /**
@@ -80,8 +86,10 @@ class TransactionLineItemUpdateRequest implements ModelInterface, ArrayAccess
      * @var string[]
      */
     protected static $setters = [
-        'new_line_items' => 'setNewLineItems',
-        'transaction_id' => 'setTransactionId'
+        'columns' => 'setColumns',
+        'next_token' => 'setNextToken',
+        'query_execution' => 'setQueryExecution',
+        'rows' => 'setRows'
     ];
 
     /**
@@ -90,8 +98,10 @@ class TransactionLineItemUpdateRequest implements ModelInterface, ArrayAccess
      * @var string[]
      */
     protected static $getters = [
-        'new_line_items' => 'getNewLineItems',
-        'transaction_id' => 'getTransactionId'
+        'columns' => 'getColumns',
+        'next_token' => 'getNextToken',
+        'query_execution' => 'getQueryExecution',
+        'rows' => 'getRows'
     ];
 
     
@@ -112,9 +122,13 @@ class TransactionLineItemUpdateRequest implements ModelInterface, ArrayAccess
     public function __construct(array $data = null)
     {
         
-        $this->container['new_line_items'] = isset($data['new_line_items']) ? $data['new_line_items'] : null;
+        $this->container['columns'] = isset($data['columns']) ? $data['columns'] : null;
         
-        $this->container['transaction_id'] = isset($data['transaction_id']) ? $data['transaction_id'] : null;
+        $this->container['next_token'] = isset($data['next_token']) ? $data['next_token'] : null;
+        
+        $this->container['query_execution'] = isset($data['query_execution']) ? $data['query_execution'] : null;
+        
+        $this->container['rows'] = isset($data['rows']) ? $data['rows'] : null;
         
     }
 
@@ -127,9 +141,6 @@ class TransactionLineItemUpdateRequest implements ModelInterface, ArrayAccess
     {
         $invalidProperties = [];
 
-        if ($this->container['transaction_id'] === null) {
-            $invalidProperties[] = "'transaction_id' can't be null";
-        }
         return $invalidProperties;
     }
 
@@ -211,50 +222,100 @@ class TransactionLineItemUpdateRequest implements ModelInterface, ArrayAccess
     
 
     /**
-     * Gets new_line_items
+     * Gets columns
      *
-     * @return \PostFinanceCheckout\Sdk\Model\LineItemCreate[]
+     * @return \PostFinanceCheckout\Sdk\Model\AnalyticsSchemaColumn[]
      */
-    public function getNewLineItems()
+    public function getColumns()
     {
-        return $this->container['new_line_items'];
+        return $this->container['columns'];
     }
 
     /**
-     * Sets new_line_items
+     * Sets columns
      *
-     * @param \PostFinanceCheckout\Sdk\Model\LineItemCreate[] $new_line_items 
+     * @param \PostFinanceCheckout\Sdk\Model\AnalyticsSchemaColumn[] $columns The schemas of the columns returned by the query (in order). Will be null if the results of the query are not (yet) available.
      *
      * @return $this
      */
-    public function setNewLineItems($new_line_items)
+    public function setColumns($columns)
     {
-        $this->container['new_line_items'] = $new_line_items;
+        $this->container['columns'] = $columns;
 
         return $this;
     }
     
 
     /**
-     * Gets transaction_id
+     * Gets next_token
      *
-     * @return int
+     * @return string
      */
-    public function getTransactionId()
+    public function getNextToken()
     {
-        return $this->container['transaction_id'];
+        return $this->container['next_token'];
     }
 
     /**
-     * Sets transaction_id
+     * Sets next_token
      *
-     * @param int $transaction_id 
+     * @param string $next_token The token to be provided to fetch the next batch of results. May be null if no more result batches are available.
      *
      * @return $this
      */
-    public function setTransactionId($transaction_id)
+    public function setNextToken($next_token)
     {
-        $this->container['transaction_id'] = $transaction_id;
+        $this->container['next_token'] = $next_token;
+
+        return $this;
+    }
+    
+
+    /**
+     * Gets query_execution
+     *
+     * @return \PostFinanceCheckout\Sdk\Model\AnalyticsQueryExecution
+     */
+    public function getQueryExecution()
+    {
+        return $this->container['query_execution'];
+    }
+
+    /**
+     * Sets query_execution
+     *
+     * @param \PostFinanceCheckout\Sdk\Model\AnalyticsQueryExecution $query_execution The query execution which produced the result.
+     *
+     * @return $this
+     */
+    public function setQueryExecution($query_execution)
+    {
+        $this->container['query_execution'] = $query_execution;
+
+        return $this;
+    }
+    
+
+    /**
+     * Gets rows
+     *
+     * @return string[][]
+     */
+    public function getRows()
+    {
+        return $this->container['rows'];
+    }
+
+    /**
+     * Sets rows
+     *
+     * @param string[][] $rows The rows of the result set contained in this batch where each row is a list of column values (in order of the columns specified in the query). Will be null if the results of the query are not (yet) available.
+     *
+     * @return $this
+     */
+    public function setRows($rows)
+    {
+        $this->container['rows'] = $rows;
 
         return $this;
     }
@@ -266,6 +327,7 @@ class TransactionLineItemUpdateRequest implements ModelInterface, ArrayAccess
      *
      * @return boolean
      */
+    #[\ReturnTypeWillChange]
     public function offsetExists($offset)
     {
         return isset($this->container[$offset]);
@@ -278,6 +340,7 @@ class TransactionLineItemUpdateRequest implements ModelInterface, ArrayAccess
      *
      * @return mixed
      */
+    #[\ReturnTypeWillChange]
     public function offsetGet($offset)
     {
         return isset($this->container[$offset]) ? $this->container[$offset] : null;
@@ -291,6 +354,7 @@ class TransactionLineItemUpdateRequest implements ModelInterface, ArrayAccess
      *
      * @return void
      */
+    #[\ReturnTypeWillChange]
     public function offsetSet($offset, $value)
     {
         if (is_null($offset)) {
@@ -307,6 +371,7 @@ class TransactionLineItemUpdateRequest implements ModelInterface, ArrayAccess
      *
      * @return void
      */
+    #[\ReturnTypeWillChange]
     public function offsetUnset($offset)
     {
         unset($this->container[$offset]);

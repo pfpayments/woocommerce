@@ -86,7 +86,8 @@ class RefundService {
 	 * Operation countWithHttpInfo
 	 *
 	 * Count
-	 *
+     
+     *
 	 * @param int $space_id  (required)
 	 * @param \PostFinanceCheckout\Sdk\Model\EntityQueryFilter $filter The filter which restricts the entities which are used to calculate the count. (optional)
 	 * @throws \PostFinanceCheckout\Sdk\ApiException
@@ -135,7 +136,6 @@ class RefundService {
 		}
 		// make the API Call
 		try {
-			$this->apiClient->setConnectionTimeout(ApiClient::CONNECTION_TIMEOUT);
 			$response = $this->apiClient->callApi(
 				$resourcePath,
 				'POST',
@@ -144,7 +144,7 @@ class RefundService {
 				$headerParams,
 				'int',
 				'/refund/count'
-			);
+            );
 			return new ApiResponse($response->getStatusCode(), $response->getHeaders(), $this->apiClient->getSerializer()->deserialize($response->getData(), 'int', $response->getHeaders()));
 		} catch (ApiException $e) {
 			switch ($e->getCode()) {
@@ -197,7 +197,8 @@ class RefundService {
 	 * Operation failWithHttpInfo
 	 *
 	 * fail
-	 *
+     
+     *
 	 * @param int $space_id  (required)
 	 * @param int $refund_id The id of the refund which should be marked as failed. (required)
 	 * @throws \PostFinanceCheckout\Sdk\ApiException
@@ -248,7 +249,6 @@ class RefundService {
 		}
 		// make the API Call
 		try {
-			$this->apiClient->setConnectionTimeout(ApiClient::CONNECTION_TIMEOUT);
 			$response = $this->apiClient->callApi(
 				$resourcePath,
 				'POST',
@@ -257,7 +257,7 @@ class RefundService {
 				$headerParams,
 				'\PostFinanceCheckout\Sdk\Model\Refund',
 				'/refund/fail'
-			);
+            );
 			return new ApiResponse($response->getStatusCode(), $response->getHeaders(), $this->apiClient->getSerializer()->deserialize($response->getData(), '\PostFinanceCheckout\Sdk\Model\Refund', $response->getHeaders()));
 		} catch (ApiException $e) {
 			switch ($e->getCode()) {
@@ -310,7 +310,8 @@ class RefundService {
 	 * Operation getRefundDocumentWithHttpInfo
 	 *
 	 * getRefundDocument
-	 *
+     
+     *
 	 * @param int $space_id  (required)
 	 * @param int $id The id of the refund to get the document for. (required)
 	 * @throws \PostFinanceCheckout\Sdk\ApiException
@@ -361,7 +362,6 @@ class RefundService {
 		}
 		// make the API Call
 		try {
-			$this->apiClient->setConnectionTimeout(ApiClient::CONNECTION_TIMEOUT);
 			$response = $this->apiClient->callApi(
 				$resourcePath,
 				'GET',
@@ -370,7 +370,7 @@ class RefundService {
 				$headerParams,
 				'\PostFinanceCheckout\Sdk\Model\RenderedDocument',
 				'/refund/getRefundDocument'
-			);
+            );
 			return new ApiResponse($response->getStatusCode(), $response->getHeaders(), $this->apiClient->getSerializer()->deserialize($response->getData(), '\PostFinanceCheckout\Sdk\Model\RenderedDocument', $response->getHeaders()));
 		} catch (ApiException $e) {
 			switch ($e->getCode()) {
@@ -424,7 +424,8 @@ class RefundService {
 	 * Operation getRefundDocumentWithTargetMediaTypeWithHttpInfo
 	 *
 	 * getRefundDocumentWithTargetMediaType
-	 *
+     
+     *
 	 * @param int $space_id  (required)
 	 * @param int $id The id of the refund to get the document for. (required)
 	 * @param int $target_media_type_id The id of the target media type for which the refund should be generated for. (required)
@@ -483,7 +484,6 @@ class RefundService {
 		}
 		// make the API Call
 		try {
-			$this->apiClient->setConnectionTimeout(ApiClient::CONNECTION_TIMEOUT);
 			$response = $this->apiClient->callApi(
 				$resourcePath,
 				'GET',
@@ -492,7 +492,7 @@ class RefundService {
 				$headerParams,
 				'\PostFinanceCheckout\Sdk\Model\RenderedDocument',
 				'/refund/getRefundDocumentWithTargetMediaType'
-			);
+            );
 			return new ApiResponse($response->getStatusCode(), $response->getHeaders(), $this->apiClient->getSerializer()->deserialize($response->getData(), '\PostFinanceCheckout\Sdk\Model\RenderedDocument', $response->getHeaders()));
 		} catch (ApiException $e) {
 			switch ($e->getCode()) {
@@ -545,7 +545,8 @@ class RefundService {
 	 * Operation readWithHttpInfo
 	 *
 	 * Read
-	 *
+     
+     *
 	 * @param int $space_id  (required)
 	 * @param int $id The id of the refund which should be returned. (required)
 	 * @throws \PostFinanceCheckout\Sdk\ApiException
@@ -596,7 +597,6 @@ class RefundService {
 		}
 		// make the API Call
 		try {
-			$this->apiClient->setConnectionTimeout(ApiClient::CONNECTION_TIMEOUT);
 			$response = $this->apiClient->callApi(
 				$resourcePath,
 				'GET',
@@ -605,7 +605,7 @@ class RefundService {
 				$headerParams,
 				'\PostFinanceCheckout\Sdk\Model\Refund',
 				'/refund/read'
-			);
+            );
 			return new ApiResponse($response->getStatusCode(), $response->getHeaders(), $this->apiClient->getSerializer()->deserialize($response->getData(), '\PostFinanceCheckout\Sdk\Model\Refund', $response->getHeaders()));
 		} catch (ApiException $e) {
 			switch ($e->getCode()) {
@@ -658,7 +658,8 @@ class RefundService {
 	 * Operation refundWithHttpInfo
 	 *
 	 * create
-	 *
+     
+     *
 	 * @param int $space_id  (required)
 	 * @param \PostFinanceCheckout\Sdk\Model\RefundCreate $refund The refund object which should be created. (required)
 	 * @throws \PostFinanceCheckout\Sdk\ApiException
@@ -711,7 +712,6 @@ class RefundService {
 		}
 		// make the API Call
 		try {
-			$this->apiClient->setConnectionTimeout(ApiClient::CONNECTION_TIMEOUT);
 			$response = $this->apiClient->callApi(
 				$resourcePath,
 				'POST',
@@ -720,7 +720,7 @@ class RefundService {
 				$headerParams,
 				'\PostFinanceCheckout\Sdk\Model\Refund',
 				'/refund/refund'
-			);
+            );
 			return new ApiResponse($response->getStatusCode(), $response->getHeaders(), $this->apiClient->getSerializer()->deserialize($response->getData(), '\PostFinanceCheckout\Sdk\Model\Refund', $response->getHeaders()));
 		} catch (ApiException $e) {
 			switch ($e->getCode()) {
@@ -773,7 +773,8 @@ class RefundService {
 	 * Operation searchWithHttpInfo
 	 *
 	 * Search
-	 *
+     
+     *
 	 * @param int $space_id  (required)
 	 * @param \PostFinanceCheckout\Sdk\Model\EntityQuery $query The query restricts the refunds which are returned by the search. (required)
 	 * @throws \PostFinanceCheckout\Sdk\ApiException
@@ -826,7 +827,6 @@ class RefundService {
 		}
 		// make the API Call
 		try {
-			$this->apiClient->setConnectionTimeout(ApiClient::CONNECTION_TIMEOUT);
 			$response = $this->apiClient->callApi(
 				$resourcePath,
 				'POST',
@@ -835,7 +835,7 @@ class RefundService {
 				$headerParams,
 				'\PostFinanceCheckout\Sdk\Model\Refund[]',
 				'/refund/search'
-			);
+            );
 			return new ApiResponse($response->getStatusCode(), $response->getHeaders(), $this->apiClient->getSerializer()->deserialize($response->getData(), '\PostFinanceCheckout\Sdk\Model\Refund[]', $response->getHeaders()));
 		} catch (ApiException $e) {
 			switch ($e->getCode()) {
@@ -888,7 +888,8 @@ class RefundService {
 	 * Operation succeedWithHttpInfo
 	 *
 	 * succeed
-	 *
+     
+     *
 	 * @param int $space_id  (required)
 	 * @param int $refund_id The id of the refund which should be marked as successful. (required)
 	 * @throws \PostFinanceCheckout\Sdk\ApiException
@@ -939,7 +940,6 @@ class RefundService {
 		}
 		// make the API Call
 		try {
-			$this->apiClient->setConnectionTimeout(ApiClient::CONNECTION_TIMEOUT);
 			$response = $this->apiClient->callApi(
 				$resourcePath,
 				'POST',
@@ -948,7 +948,7 @@ class RefundService {
 				$headerParams,
 				'\PostFinanceCheckout\Sdk\Model\Refund',
 				'/refund/succeed'
-			);
+            );
 			return new ApiResponse($response->getStatusCode(), $response->getHeaders(), $this->apiClient->getSerializer()->deserialize($response->getData(), '\PostFinanceCheckout\Sdk\Model\Refund', $response->getHeaders()));
 		} catch (ApiException $e) {
 			switch ($e->getCode()) {

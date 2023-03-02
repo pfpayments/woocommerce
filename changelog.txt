@@ -504,3 +504,17 @@ Tested against:
 - Wordpress 6.1.1
 - Woocommerce 7.3.0
 
+## Feature
+- Upgrade the **PHP sdk version** to 3.2.0 to add compatibility with PHP 8.1
+- Support of Woocommerce 7.4.0
+- Loading jQuery BlockUI only if it is available
+
+## Bug
+- Removal of *woocommerce* trademark from translations and error message
+
+## Tested Against
+- PHP 8.1
+- Wordpress 6.1.1
+- Woocommerce 7.4.0
+- PHP sdk 3.2.0
+

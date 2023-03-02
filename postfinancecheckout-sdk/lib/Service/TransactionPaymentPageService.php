@@ -86,7 +86,8 @@ class TransactionPaymentPageService {
 	 * Operation paymentPageUrlWithHttpInfo
 	 *
 	 * Build Payment Page URL
-	 *
+     
+     *
 	 * @param int $space_id  (required)
 	 * @param int $id The id of the transaction which should be returned. (required)
 	 * @throws \PostFinanceCheckout\Sdk\ApiException
@@ -137,7 +138,6 @@ class TransactionPaymentPageService {
 		}
 		// make the API Call
 		try {
-			$this->apiClient->setConnectionTimeout(ApiClient::CONNECTION_TIMEOUT);
 			$response = $this->apiClient->callApi(
 				$resourcePath,
 				'GET',
@@ -146,7 +146,7 @@ class TransactionPaymentPageService {
 				$headerParams,
 				'string',
 				'/transaction-payment-page/payment-page-url'
-			);
+            );
 			return new ApiResponse($response->getStatusCode(), $response->getHeaders(), $this->apiClient->getSerializer()->deserialize($response->getData(), 'string', $response->getHeaders()));
 		} catch (ApiException $e) {
 			switch ($e->getCode()) {

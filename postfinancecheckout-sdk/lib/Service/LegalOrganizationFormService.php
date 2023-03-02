@@ -84,7 +84,8 @@ class LegalOrganizationFormService {
 	 * Operation allWithHttpInfo
 	 *
 	 * All
-	 *
+     
+     *
 	 * @throws \PostFinanceCheckout\Sdk\ApiException
 	 * @throws \PostFinanceCheckout\Sdk\VersioningException
 	 * @throws \PostFinanceCheckout\Sdk\Http\ConnectionException
@@ -119,7 +120,6 @@ class LegalOrganizationFormService {
 		}
 		// make the API Call
 		try {
-			$this->apiClient->setConnectionTimeout(ApiClient::CONNECTION_TIMEOUT);
 			$response = $this->apiClient->callApi(
 				$resourcePath,
 				'GET',
@@ -128,7 +128,7 @@ class LegalOrganizationFormService {
 				$headerParams,
 				'\PostFinanceCheckout\Sdk\Model\LegalOrganizationForm[]',
 				'/legal-organization-form/all'
-			);
+            );
 			return new ApiResponse($response->getStatusCode(), $response->getHeaders(), $this->apiClient->getSerializer()->deserialize($response->getData(), '\PostFinanceCheckout\Sdk\Model\LegalOrganizationForm[]', $response->getHeaders()));
 		} catch (ApiException $e) {
 			switch ($e->getCode()) {
@@ -180,7 +180,8 @@ class LegalOrganizationFormService {
 	 * Operation countryWithHttpInfo
 	 *
 	 * Find by Country
-	 *
+     
+     *
 	 * @param string $code The country in ISO 3166-1 alpha-2 format, for which all legal organization forms should be returned. (required)
 	 * @throws \PostFinanceCheckout\Sdk\ApiException
 	 * @throws \PostFinanceCheckout\Sdk\VersioningException
@@ -223,7 +224,6 @@ class LegalOrganizationFormService {
 		}
 		// make the API Call
 		try {
-			$this->apiClient->setConnectionTimeout(ApiClient::CONNECTION_TIMEOUT);
 			$response = $this->apiClient->callApi(
 				$resourcePath,
 				'GET',
@@ -232,7 +232,7 @@ class LegalOrganizationFormService {
 				$headerParams,
 				'\PostFinanceCheckout\Sdk\Model\LegalOrganizationForm[]',
 				'/legal-organization-form/country'
-			);
+            );
 			return new ApiResponse($response->getStatusCode(), $response->getHeaders(), $this->apiClient->getSerializer()->deserialize($response->getData(), '\PostFinanceCheckout\Sdk\Model\LegalOrganizationForm[]', $response->getHeaders()));
 		} catch (ApiException $e) {
 			switch ($e->getCode()) {
@@ -284,7 +284,8 @@ class LegalOrganizationFormService {
 	 * Operation readWithHttpInfo
 	 *
 	 * Read
-	 *
+     
+     *
 	 * @param int $id The id of the legal organization form which should be returned. (required)
 	 * @throws \PostFinanceCheckout\Sdk\ApiException
 	 * @throws \PostFinanceCheckout\Sdk\VersioningException
@@ -327,7 +328,6 @@ class LegalOrganizationFormService {
 		}
 		// make the API Call
 		try {
-			$this->apiClient->setConnectionTimeout(ApiClient::CONNECTION_TIMEOUT);
 			$response = $this->apiClient->callApi(
 				$resourcePath,
 				'GET',
@@ -336,7 +336,7 @@ class LegalOrganizationFormService {
 				$headerParams,
 				'\PostFinanceCheckout\Sdk\Model\LegalOrganizationForm',
 				'/legal-organization-form/read'
-			);
+            );
 			return new ApiResponse($response->getStatusCode(), $response->getHeaders(), $this->apiClient->getSerializer()->deserialize($response->getData(), '\PostFinanceCheckout\Sdk\Model\LegalOrganizationForm', $response->getHeaders()));
 		} catch (ApiException $e) {
 			switch ($e->getCode()) {

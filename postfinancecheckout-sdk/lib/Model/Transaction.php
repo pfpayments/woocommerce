@@ -51,7 +51,7 @@ class Transaction implements ModelInterface, ArrayAccess
     protected static $swaggerTypes = [
         'accept_header' => 'string',
         'accept_language_header' => 'string',
-        'allowed_payment_method_brands' => '\PostFinanceCheckout\Sdk\Model\PaymentMethodBrand[]',
+        'allowed_payment_method_brands' => 'int[]',
         'allowed_payment_method_configurations' => 'int[]',
         'authorization_amount' => 'float',
         'authorization_environment' => '\PostFinanceCheckout\Sdk\Model\ChargeAttemptEnvironment',
@@ -117,7 +117,8 @@ class Transaction implements ModelInterface, ArrayAccess
         'user_interface_type' => '\PostFinanceCheckout\Sdk\Model\TransactionUserInterfaceType',
         'version' => 'int',
         'window_height' => 'string',
-        'window_width' => 'string'
+        'window_width' => 'string',
+        'years_to_keep' => 'int'
     ];
 
     /**
@@ -128,7 +129,7 @@ class Transaction implements ModelInterface, ArrayAccess
     protected static $swaggerFormats = [
         'accept_header' => null,
         'accept_language_header' => null,
-        'allowed_payment_method_brands' => null,
+        'allowed_payment_method_brands' => 'int64',
         'allowed_payment_method_configurations' => 'int64',
         'authorization_amount' => null,
         'authorization_environment' => null,
@@ -194,7 +195,8 @@ class Transaction implements ModelInterface, ArrayAccess
         'user_interface_type' => null,
         'version' => 'int32',
         'window_height' => null,
-        'window_width' => null
+        'window_width' => null,
+        'years_to_keep' => 'int32'
     ];
 
     /**
@@ -272,7 +274,8 @@ class Transaction implements ModelInterface, ArrayAccess
         'user_interface_type' => 'userInterfaceType',
         'version' => 'version',
         'window_height' => 'windowHeight',
-        'window_width' => 'windowWidth'
+        'window_width' => 'windowWidth',
+        'years_to_keep' => 'yearsToKeep'
     ];
 
     /**
@@ -349,7 +352,8 @@ class Transaction implements ModelInterface, ArrayAccess
         'user_interface_type' => 'setUserInterfaceType',
         'version' => 'setVersion',
         'window_height' => 'setWindowHeight',
-        'window_width' => 'setWindowWidth'
+        'window_width' => 'setWindowWidth',
+        'years_to_keep' => 'setYearsToKeep'
     ];
 
     /**
@@ -426,7 +430,8 @@ class Transaction implements ModelInterface, ArrayAccess
         'user_interface_type' => 'getUserInterfaceType',
         'version' => 'getVersion',
         'window_height' => 'getWindowHeight',
-        'window_width' => 'getWindowWidth'
+        'window_width' => 'getWindowWidth',
+        'years_to_keep' => 'getYearsToKeep'
     ];
 
     
@@ -584,6 +589,8 @@ class Transaction implements ModelInterface, ArrayAccess
         $this->container['window_height'] = isset($data['window_height']) ? $data['window_height'] : null;
         
         $this->container['window_width'] = isset($data['window_width']) ? $data['window_width'] : null;
+        
+        $this->container['years_to_keep'] = isset($data['years_to_keep']) ? $data['years_to_keep'] : null;
         
     }
 
@@ -769,7 +776,7 @@ class Transaction implements ModelInterface, ArrayAccess
     /**
      * Gets allowed_payment_method_brands
      *
-     * @return \PostFinanceCheckout\Sdk\Model\PaymentMethodBrand[]
+     * @return int[]
      */
     public function getAllowedPaymentMethodBrands()
     {
@@ -779,7 +786,7 @@ class Transaction implements ModelInterface, ArrayAccess
     /**
      * Sets allowed_payment_method_brands
      *
-     * @param \PostFinanceCheckout\Sdk\Model\PaymentMethodBrand[] $allowed_payment_method_brands 
+     * @param int[] $allowed_payment_method_brands 
      *
      * @return $this
      */
@@ -1204,7 +1211,7 @@ class Transaction implements ModelInterface, ArrayAccess
     /**
      * Sets created_on
      *
-     * @param \DateTime $created_on The created on date indicates the date on which the entity was stored into the database.
+     * @param \DateTime $created_on The date and time when the object was created.
      *
      * @return $this
      */
@@ -1308,7 +1315,7 @@ class Transaction implements ModelInterface, ArrayAccess
     /**
      * Sets customers_presence
      *
-     * @param \PostFinanceCheckout\Sdk\Model\CustomersPresence $customers_presence The customer's presence indicates what kind of authentication methods can be used during the authorization of the transaction. If no value is provided, 'Virtually Present' is used by default.
+     * @param \PostFinanceCheckout\Sdk\Model\CustomersPresence $customers_presence The customer's presence indicates what kind of authentication method was finally used during authorization of the transaction. If no value is provided, 'Virtually Present' is used by default.
      *
      * @return $this
      */
@@ -1597,7 +1604,7 @@ class Transaction implements ModelInterface, ArrayAccess
     /**
      * Sets id
      *
-     * @param int $id The ID is the primary key of the entity. The ID identifies the entity uniquely.
+     * @param int $id A unique identifier for the object.
      *
      * @return $this
      */
@@ -1726,7 +1733,7 @@ class Transaction implements ModelInterface, ArrayAccess
     /**
      * Sets language
      *
-     * @param string $language 
+     * @param string $language The language that is linked to the object.
      *
      * @return $this
      */
@@ -1776,7 +1783,7 @@ class Transaction implements ModelInterface, ArrayAccess
     /**
      * Sets linked_space_id
      *
-     * @param int $linked_space_id The linked space id holds the ID of the space to which the entity belongs to.
+     * @param int $linked_space_id The ID of the space this object belongs to.
      *
      * @return $this
      */
@@ -1905,7 +1912,7 @@ class Transaction implements ModelInterface, ArrayAccess
     /**
      * Sets planned_purge_date
      *
-     * @param \DateTime $planned_purge_date The planned purge date indicates when the entity is permanently removed. When the date is null the entity is not planned to be removed.
+     * @param \DateTime $planned_purge_date The date and time when the object is planned to be permanently removed. If the value is empty, the object will not be removed.
      *
      * @return $this
      */
@@ -2134,7 +2141,7 @@ class Transaction implements ModelInterface, ArrayAccess
     /**
      * Sets state
      *
-     * @param \PostFinanceCheckout\Sdk\Model\TransactionState $state 
+     * @param \PostFinanceCheckout\Sdk\Model\TransactionState $state The object's current state.
      *
      * @return $this
      */
@@ -2416,7 +2423,7 @@ class Transaction implements ModelInterface, ArrayAccess
     /**
      * Sets version
      *
-     * @param int $version The version number indicates the version of the entity. The version is incremented whenever the entity is changed.
+     * @param int $version The version is used for optimistic locking and incremented whenever the object is updated.
      *
      * @return $this
      */
@@ -2477,6 +2484,31 @@ class Transaction implements ModelInterface, ArrayAccess
         return $this;
     }
     
+
+    /**
+     * Gets years_to_keep
+     *
+     * @return int
+     */
+    public function getYearsToKeep()
+    {
+        return $this->container['years_to_keep'];
+    }
+
+    /**
+     * Sets years_to_keep
+     *
+     * @param int $years_to_keep The number of years the transaction will be stored after it has been authorized.
+     *
+     * @return $this
+     */
+    public function setYearsToKeep($years_to_keep)
+    {
+        $this->container['years_to_keep'] = $years_to_keep;
+
+        return $this;
+    }
+    
     /**
      * Returns true if offset exists. False otherwise.
      *
@@ -2484,6 +2516,7 @@ class Transaction implements ModelInterface, ArrayAccess
      *
      * @return boolean
      */
+    #[\ReturnTypeWillChange]
     public function offsetExists($offset)
     {
         return isset($this->container[$offset]);
@@ -2496,6 +2529,7 @@ class Transaction implements ModelInterface, ArrayAccess
      *
      * @return mixed
      */
+    #[\ReturnTypeWillChange]
     public function offsetGet($offset)
     {
         return isset($this->container[$offset]) ? $this->container[$offset] : null;
@@ -2509,6 +2543,7 @@ class Transaction implements ModelInterface, ArrayAccess
      *
      * @return void
      */
+    #[\ReturnTypeWillChange]
     public function offsetSet($offset, $value)
     {
         if (is_null($offset)) {
@@ -2525,6 +2560,7 @@ class Transaction implements ModelInterface, ArrayAccess
      *
      * @return void
      */
+    #[\ReturnTypeWillChange]
     public function offsetUnset($offset)
     {
         unset($this->container[$offset]);

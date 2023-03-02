@@ -70,6 +70,13 @@ class WC_PostFinanceCheckout_Service_Transaction extends WC_PostFinanceCheckout_
 	private $charge_attempt_service;
 
 	/**
+	 * The charge attempt API service.
+	 *
+	 * @var \PostFinanceCheckout\Sdk\Service\TransactionLineItemVersionService
+	 */
+	private $transaction_line_item_version_service;
+
+	/**
 	 * Returns the transaction API service.
 	 *
 	 * @return \PostFinanceCheckout\Sdk\Service\TransactionService
@@ -132,6 +139,19 @@ class WC_PostFinanceCheckout_Service_Transaction extends WC_PostFinanceCheckout_
 			$this->charge_attempt_service = new \PostFinanceCheckout\Sdk\Service\ChargeAttemptService( WC_PostFinanceCheckout_Helper::instance()->get_api_client() );
 		}
 		return $this->charge_attempt_service;
+	}
+
+	/**
+	 * Returns the transaction line item version service.
+	 *
+	 * @return \PostFinanceCheckout\Sdk\Service\TransactionLineItemVersionService
+	 * @throws Exception Exception.
+	 */
+	protected function get_transaction_line_item_version_service() {
+		if ( is_null( $this->transaction_line_item_version_service ) ) {
+			$this->transaction_line_item_version_service = new \PostFinanceCheckout\Sdk\Service\TransactionLineItemVersionService( WC_PostFinanceCheckout_Helper::instance()->get_api_client() );
+		}
+		return $this->transaction_line_item_version_service;
 	}
 
 	/**
@@ -251,19 +271,20 @@ class WC_PostFinanceCheckout_Service_Transaction extends WC_PostFinanceCheckout_
 	}
 
 	/**
-	 * Updates the line items of the given transaction.
+	 * Updates the line items version of the given transaction.
 	 *
-	 * @param int                                         $space_id space id.
-	 * @param int                                         $transaction_id transaction id.
-	 * @param \PostFinanceCheckout\Sdk\Model\LineItem[] $line_items line items.
+	 * @param int                                         		$space_id space id.
+	 * @param int                                         		$transaction_id transaction id.
+	 * @param \PostFinanceCheckout\Sdk\Model\LineItemCreate[] $line_items line items.
 	 * @return \PostFinanceCheckout\Sdk\Model\TransactionLineItemVersion
 	 * @throws Exception Exception.
 	 */
 	public function update_line_items( $space_id, $transaction_id, $line_items ) {
-		$update_request = new \PostFinanceCheckout\Sdk\Model\TransactionLineItemUpdateRequest();
-		$update_request->setTransactionId( $transaction_id );
-		$update_request->setNewLineItems( $line_items );
-		return $this->get_transaction_service()->updateTransactionLineItems( $space_id, $update_request );
+		$line_item_version_create = new \PostFinanceCheckout\Sdk\Model\TransactionLineItemVersionCreate();
+		$line_item_version_create->setLineItems( $line_items );
+		$line_item_version_create->setTransaction( $transaction_id );
+		$line_item_version_create->setExternalId( uniqid( $transaction_id . '-' ) );
+		return $this->get_transaction_line_item_version_service()->create( $space_id, $line_item_version_create );
 	}
 
 	/**

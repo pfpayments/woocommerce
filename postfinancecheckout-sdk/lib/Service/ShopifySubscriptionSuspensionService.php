@@ -86,7 +86,8 @@ class ShopifySubscriptionSuspensionService {
 	 * Operation countWithHttpInfo
 	 *
 	 * Count
-	 *
+     
+     *
 	 * @param int $space_id  (required)
 	 * @param \PostFinanceCheckout\Sdk\Model\EntityQueryFilter $filter The filter which restricts the entities which are used to calculate the count. (optional)
 	 * @throws \PostFinanceCheckout\Sdk\ApiException
@@ -135,7 +136,6 @@ class ShopifySubscriptionSuspensionService {
 		}
 		// make the API Call
 		try {
-			$this->apiClient->setConnectionTimeout(ApiClient::CONNECTION_TIMEOUT);
 			$response = $this->apiClient->callApi(
 				$resourcePath,
 				'POST',
@@ -144,7 +144,7 @@ class ShopifySubscriptionSuspensionService {
 				$headerParams,
 				'int',
 				'/shopify-subscription-suspension/count'
-			);
+            );
 			return new ApiResponse($response->getStatusCode(), $response->getHeaders(), $this->apiClient->getSerializer()->deserialize($response->getData(), 'int', $response->getHeaders()));
 		} catch (ApiException $e) {
 			switch ($e->getCode()) {
@@ -197,7 +197,8 @@ class ShopifySubscriptionSuspensionService {
 	 * Operation reactivateWithHttpInfo
 	 *
 	 * Reactivate
-	 *
+     
+     *
 	 * @param int $space_id  (required)
 	 * @param int $subscription_id The ID identifies the suspended Shopify subscription which should be reactivated. (required)
 	 * @throws \PostFinanceCheckout\Sdk\ApiException
@@ -248,7 +249,6 @@ class ShopifySubscriptionSuspensionService {
 		}
 		// make the API Call
 		try {
-			$this->apiClient->setConnectionTimeout(ApiClient::CONNECTION_TIMEOUT);
 			$response = $this->apiClient->callApi(
 				$resourcePath,
 				'POST',
@@ -257,7 +257,7 @@ class ShopifySubscriptionSuspensionService {
 				$headerParams,
 				null,
 				'/shopify-subscription-suspension/reactivate'
-			);
+            );
 			return new ApiResponse($response->getStatusCode(), $response->getHeaders());
 		} catch (ApiException $e) {
 			switch ($e->getCode()) {
@@ -302,7 +302,8 @@ class ShopifySubscriptionSuspensionService {
 	 * Operation readWithHttpInfo
 	 *
 	 * Read
-	 *
+     
+     *
 	 * @param int $space_id  (required)
 	 * @param int $id The id of the Shopify subscription suspension which should be returned. (required)
 	 * @throws \PostFinanceCheckout\Sdk\ApiException
@@ -353,7 +354,6 @@ class ShopifySubscriptionSuspensionService {
 		}
 		// make the API Call
 		try {
-			$this->apiClient->setConnectionTimeout(ApiClient::CONNECTION_TIMEOUT);
 			$response = $this->apiClient->callApi(
 				$resourcePath,
 				'GET',
@@ -362,7 +362,7 @@ class ShopifySubscriptionSuspensionService {
 				$headerParams,
 				'\PostFinanceCheckout\Sdk\Model\ShopifySubscriptionSuspension',
 				'/shopify-subscription-suspension/read'
-			);
+            );
 			return new ApiResponse($response->getStatusCode(), $response->getHeaders(), $this->apiClient->getSerializer()->deserialize($response->getData(), '\PostFinanceCheckout\Sdk\Model\ShopifySubscriptionSuspension', $response->getHeaders()));
 		} catch (ApiException $e) {
 			switch ($e->getCode()) {
@@ -415,7 +415,8 @@ class ShopifySubscriptionSuspensionService {
 	 * Operation searchWithHttpInfo
 	 *
 	 * Search
-	 *
+     
+     *
 	 * @param int $space_id  (required)
 	 * @param \PostFinanceCheckout\Sdk\Model\EntityQuery $query The query restricts the Shopify subscription suspensions which are returned by the search. (required)
 	 * @throws \PostFinanceCheckout\Sdk\ApiException
@@ -468,7 +469,6 @@ class ShopifySubscriptionSuspensionService {
 		}
 		// make the API Call
 		try {
-			$this->apiClient->setConnectionTimeout(ApiClient::CONNECTION_TIMEOUT);
 			$response = $this->apiClient->callApi(
 				$resourcePath,
 				'POST',
@@ -477,7 +477,7 @@ class ShopifySubscriptionSuspensionService {
 				$headerParams,
 				'\PostFinanceCheckout\Sdk\Model\ShopifySubscriptionSuspension[]',
 				'/shopify-subscription-suspension/search'
-			);
+            );
 			return new ApiResponse($response->getStatusCode(), $response->getHeaders(), $this->apiClient->getSerializer()->deserialize($response->getData(), '\PostFinanceCheckout\Sdk\Model\ShopifySubscriptionSuspension[]', $response->getHeaders()));
 		} catch (ApiException $e) {
 			switch ($e->getCode()) {
@@ -530,7 +530,8 @@ class ShopifySubscriptionSuspensionService {
 	 * Operation suspendWithHttpInfo
 	 *
 	 * Suspend
-	 *
+     
+     *
 	 * @param int $space_id  (required)
 	 * @param \PostFinanceCheckout\Sdk\Model\ShopifySubscriptionSuspensionCreate $suspension  (required)
 	 * @throws \PostFinanceCheckout\Sdk\ApiException
@@ -583,7 +584,6 @@ class ShopifySubscriptionSuspensionService {
 		}
 		// make the API Call
 		try {
-			$this->apiClient->setConnectionTimeout(ApiClient::CONNECTION_TIMEOUT);
 			$response = $this->apiClient->callApi(
 				$resourcePath,
 				'POST',
@@ -592,7 +592,7 @@ class ShopifySubscriptionSuspensionService {
 				$headerParams,
 				'\PostFinanceCheckout\Sdk\Model\ShopifySubscriptionSuspension',
 				'/shopify-subscription-suspension/suspend'
-			);
+            );
 			return new ApiResponse($response->getStatusCode(), $response->getHeaders(), $this->apiClient->getSerializer()->deserialize($response->getData(), '\PostFinanceCheckout\Sdk\Model\ShopifySubscriptionSuspension', $response->getHeaders()));
 		} catch (ApiException $e) {
 			switch ($e->getCode()) {

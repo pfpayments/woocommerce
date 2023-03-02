@@ -48,7 +48,7 @@ class AbstractTransactionPending implements ModelInterface, ArrayAccess
       * @var string[]
       */
     protected static $swaggerTypes = [
-        'allowed_payment_method_brands' => '\PostFinanceCheckout\Sdk\Model\PaymentMethodBrand[]',
+        'allowed_payment_method_brands' => 'int[]',
         'allowed_payment_method_configurations' => 'int[]',
         'billing_address' => '\PostFinanceCheckout\Sdk\Model\AddressCreate',
         'completion_behavior' => '\PostFinanceCheckout\Sdk\Model\TransactionCompletionBehavior',
@@ -75,7 +75,7 @@ class AbstractTransactionPending implements ModelInterface, ArrayAccess
       * @var string[]
       */
     protected static $swaggerFormats = [
-        'allowed_payment_method_brands' => null,
+        'allowed_payment_method_brands' => 'int64',
         'allowed_payment_method_configurations' => 'int64',
         'billing_address' => null,
         'completion_behavior' => null,
@@ -360,7 +360,7 @@ class AbstractTransactionPending implements ModelInterface, ArrayAccess
     /**
      * Gets allowed_payment_method_brands
      *
-     * @return \PostFinanceCheckout\Sdk\Model\PaymentMethodBrand[]
+     * @return int[]
      */
     public function getAllowedPaymentMethodBrands()
     {
@@ -370,7 +370,7 @@ class AbstractTransactionPending implements ModelInterface, ArrayAccess
     /**
      * Sets allowed_payment_method_brands
      *
-     * @param \PostFinanceCheckout\Sdk\Model\PaymentMethodBrand[] $allowed_payment_method_brands 
+     * @param int[] $allowed_payment_method_brands 
      *
      * @return $this
      */
@@ -610,7 +610,7 @@ class AbstractTransactionPending implements ModelInterface, ArrayAccess
     /**
      * Sets language
      *
-     * @param string $language 
+     * @param string $language The language that is linked to the object.
      *
      * @return $this
      */
@@ -868,6 +868,7 @@ class AbstractTransactionPending implements ModelInterface, ArrayAccess
      *
      * @return boolean
      */
+    #[\ReturnTypeWillChange]
     public function offsetExists($offset)
     {
         return isset($this->container[$offset]);
@@ -880,6 +881,7 @@ class AbstractTransactionPending implements ModelInterface, ArrayAccess
      *
      * @return mixed
      */
+    #[\ReturnTypeWillChange]
     public function offsetGet($offset)
     {
         return isset($this->container[$offset]) ? $this->container[$offset] : null;
@@ -893,6 +895,7 @@ class AbstractTransactionPending implements ModelInterface, ArrayAccess
      *
      * @return void
      */
+    #[\ReturnTypeWillChange]
     public function offsetSet($offset, $value)
     {
         if (is_null($offset)) {
@@ -909,6 +912,7 @@ class AbstractTransactionPending implements ModelInterface, ArrayAccess
      *
      * @return void
      */
+    #[\ReturnTypeWillChange]
     public function offsetUnset($offset)
     {
         unset($this->container[$offset]);

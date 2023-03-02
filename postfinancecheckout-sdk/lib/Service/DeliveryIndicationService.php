@@ -86,7 +86,8 @@ class DeliveryIndicationService {
 	 * Operation countWithHttpInfo
 	 *
 	 * Count
-	 *
+     
+     *
 	 * @param int $space_id  (required)
 	 * @param \PostFinanceCheckout\Sdk\Model\EntityQueryFilter $filter The filter which restricts the entities which are used to calculate the count. (optional)
 	 * @throws \PostFinanceCheckout\Sdk\ApiException
@@ -135,7 +136,6 @@ class DeliveryIndicationService {
 		}
 		// make the API Call
 		try {
-			$this->apiClient->setConnectionTimeout(ApiClient::CONNECTION_TIMEOUT);
 			$response = $this->apiClient->callApi(
 				$resourcePath,
 				'POST',
@@ -144,7 +144,7 @@ class DeliveryIndicationService {
 				$headerParams,
 				'int',
 				'/delivery-indication/count'
-			);
+            );
 			return new ApiResponse($response->getStatusCode(), $response->getHeaders(), $this->apiClient->getSerializer()->deserialize($response->getData(), 'int', $response->getHeaders()));
 		} catch (ApiException $e) {
 			switch ($e->getCode()) {
@@ -197,7 +197,8 @@ class DeliveryIndicationService {
 	 * Operation markAsNotSuitableWithHttpInfo
 	 *
 	 * markAsNotSuitable
-	 *
+     
+     *
 	 * @param int $space_id  (required)
 	 * @param int $delivery_indication_id The delivery indication id which should be marked as not suitable. (required)
 	 * @throws \PostFinanceCheckout\Sdk\ApiException
@@ -250,7 +251,6 @@ class DeliveryIndicationService {
 		}
 		// make the API Call
 		try {
-			$this->apiClient->setConnectionTimeout(ApiClient::CONNECTION_TIMEOUT);
 			$response = $this->apiClient->callApi(
 				$resourcePath,
 				'POST',
@@ -259,7 +259,7 @@ class DeliveryIndicationService {
 				$headerParams,
 				'\PostFinanceCheckout\Sdk\Model\DeliveryIndication',
 				'/delivery-indication/markAsNotSuitable'
-			);
+            );
 			return new ApiResponse($response->getStatusCode(), $response->getHeaders(), $this->apiClient->getSerializer()->deserialize($response->getData(), '\PostFinanceCheckout\Sdk\Model\DeliveryIndication', $response->getHeaders()));
 		} catch (ApiException $e) {
 			switch ($e->getCode()) {
@@ -312,7 +312,8 @@ class DeliveryIndicationService {
 	 * Operation markAsSuitableWithHttpInfo
 	 *
 	 * markAsSuitable
-	 *
+     
+     *
 	 * @param int $space_id  (required)
 	 * @param int $delivery_indication_id The delivery indication id which should be marked as suitable. (required)
 	 * @throws \PostFinanceCheckout\Sdk\ApiException
@@ -365,7 +366,6 @@ class DeliveryIndicationService {
 		}
 		// make the API Call
 		try {
-			$this->apiClient->setConnectionTimeout(ApiClient::CONNECTION_TIMEOUT);
 			$response = $this->apiClient->callApi(
 				$resourcePath,
 				'POST',
@@ -374,7 +374,7 @@ class DeliveryIndicationService {
 				$headerParams,
 				'\PostFinanceCheckout\Sdk\Model\DeliveryIndication',
 				'/delivery-indication/markAsSuitable'
-			);
+            );
 			return new ApiResponse($response->getStatusCode(), $response->getHeaders(), $this->apiClient->getSerializer()->deserialize($response->getData(), '\PostFinanceCheckout\Sdk\Model\DeliveryIndication', $response->getHeaders()));
 		} catch (ApiException $e) {
 			switch ($e->getCode()) {
@@ -427,7 +427,8 @@ class DeliveryIndicationService {
 	 * Operation readWithHttpInfo
 	 *
 	 * Read
-	 *
+     
+     *
 	 * @param int $space_id  (required)
 	 * @param int $id The id of the delivery indication which should be returned. (required)
 	 * @throws \PostFinanceCheckout\Sdk\ApiException
@@ -478,7 +479,6 @@ class DeliveryIndicationService {
 		}
 		// make the API Call
 		try {
-			$this->apiClient->setConnectionTimeout(ApiClient::CONNECTION_TIMEOUT);
 			$response = $this->apiClient->callApi(
 				$resourcePath,
 				'GET',
@@ -487,7 +487,7 @@ class DeliveryIndicationService {
 				$headerParams,
 				'\PostFinanceCheckout\Sdk\Model\DeliveryIndication',
 				'/delivery-indication/read'
-			);
+            );
 			return new ApiResponse($response->getStatusCode(), $response->getHeaders(), $this->apiClient->getSerializer()->deserialize($response->getData(), '\PostFinanceCheckout\Sdk\Model\DeliveryIndication', $response->getHeaders()));
 		} catch (ApiException $e) {
 			switch ($e->getCode()) {
@@ -540,7 +540,8 @@ class DeliveryIndicationService {
 	 * Operation searchWithHttpInfo
 	 *
 	 * Search
-	 *
+     
+     *
 	 * @param int $space_id  (required)
 	 * @param \PostFinanceCheckout\Sdk\Model\EntityQuery $query The query restricts the delivery indications which are returned by the search. (required)
 	 * @throws \PostFinanceCheckout\Sdk\ApiException
@@ -593,7 +594,6 @@ class DeliveryIndicationService {
 		}
 		// make the API Call
 		try {
-			$this->apiClient->setConnectionTimeout(ApiClient::CONNECTION_TIMEOUT);
 			$response = $this->apiClient->callApi(
 				$resourcePath,
 				'POST',
@@ -602,7 +602,7 @@ class DeliveryIndicationService {
 				$headerParams,
 				'\PostFinanceCheckout\Sdk\Model\DeliveryIndication[]',
 				'/delivery-indication/search'
-			);
+            );
 			return new ApiResponse($response->getStatusCode(), $response->getHeaders(), $this->apiClient->getSerializer()->deserialize($response->getData(), '\PostFinanceCheckout\Sdk\Model\DeliveryIndication[]', $response->getHeaders()));
 		} catch (ApiException $e) {
 			switch ($e->getCode()) {

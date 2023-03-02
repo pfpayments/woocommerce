@@ -420,6 +420,7 @@ class WC_PostFinanceCheckout_Gateway extends WC_Payment_Gateway {
 					WooCommerce_PostFinanceCheckout::instance()->plugin_url() . '/assets/js/frontend/checkout.js',
 					array(
 						'jquery',
+						'jquery-blockui',
 						'postfinancecheckout-remote-checkout-js',
 					),
 					1,

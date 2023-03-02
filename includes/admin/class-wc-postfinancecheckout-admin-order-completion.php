@@ -100,22 +100,20 @@ class WC_PostFinanceCheckout_Admin_Order_Completion {
 			wp_die( -1 );
 		}
 
-		$order_id                    = isset( $_POST['order_id'] ) ? absint( $_POST['order_id'] ) : null;
-		$completion_amount           = isset( $_POST['completion_amount'] ) ? wc_format_decimal( sanitize_text_field( wp_unslash( $_POST['completion_amount'] ) ), wc_get_price_decimals() ) : null;
+		$order_id               	 = isset( $_POST['order_id'] ) ? absint( $_POST['order_id'] ) : 0;
+		$completion_amount           = isset( $_POST['completion_amount'] ) ? wc_format_decimal( sanitize_text_field( wp_unslash( $_POST['completion_amount'] ) ), wc_get_price_decimals() ) : 0;
 		// phpcs:ignore
-		$line_item_qtys              = isset( $_POST['line_item_qtys'] ) ?  array_map('sanitize_text_field', json_decode( wp_unslash( $_POST['line_item_qtys'] ), true ) ) : null;
+		$line_item_qtys         	 = isset( $_POST['line_item_qtys'] ) ? json_decode( sanitize_text_field( wp_unslash( $_POST['line_item_qtys'] ) ), true ) : array();
 		// phpcs:ignore
-		$line_item_totals            = isset( $_POST['line_item_totals'] ) ? array_map('sanitize_text_field', json_decode( wp_unslash( $_POST['line_item_totals'] ), true ) ) : null;
-	    	// phpcs:ignore
-		$line_item_tax_totals        = isset( $_POST['line_item_tax_totals'] ) ? array_map('sanitize_text_field', json_decode( wp_unslash( $_POST['line_item_tax_totals'] ), true ) ): null;
+		$line_item_totals       	 = isset( $_POST['line_item_totals'] ) ? json_decode( sanitize_text_field( wp_unslash( $_POST['line_item_totals'] ) ), true ) : array();
+		// phpcs:ignore
+		$line_item_tax_totals   	 = isset( $_POST['line_item_tax_totals'] ) ? json_decode( sanitize_text_field( wp_unslash( $_POST['line_item_tax_totals'] ) ), true ) : array();
 		$restock_not_completed_items = isset( $_POST['restock_not_completed_items'] ) && 'true' === sanitize_text_field( wp_unslash( $_POST['restock_not_completed_items'] ) );
-		$current_completion_id       = null;
-		$transaction_info            = null;
 		try {
 
 			// Prepare line items which we are completed.
 			$line_items = array();
-			$item_ids   = array_unique( array_merge( array_keys( $line_item_qtys, $line_item_totals, true ) ) );
+			$item_ids   = array_unique( array_merge( array_keys( $line_item_qtys ), array_keys( $line_item_totals ) ) );
 			foreach ( $item_ids as $item_id ) {
 				$line_items[ $item_id ] = array(
 					'qty'              => 0,
@@ -173,8 +171,7 @@ class WC_PostFinanceCheckout_Admin_Order_Completion {
 			WC_PostFinanceCheckout_Helper::instance()->lock_by_transaction_id( $transaction_info->get_space_id(), $transaction_info->get_transaction_id() );
 			$transaction_info = WC_PostFinanceCheckout_Entity_Transaction_Info::load_by_transaction(
 				$transaction_info->get_space_id(),
-				$transaction_info->get_transaction_id(),
-				$transaction_info->get_space_id()
+				$transaction_info->get_transaction_id()
 			);
 
 			if ( $transaction_info->get_state() !== TransactionState::AUTHORIZED ) {

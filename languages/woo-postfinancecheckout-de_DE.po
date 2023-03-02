@@ -1,6 +1,6 @@
 msgid ""
 msgstr ""
-"Project-Id-Version: WooCommerce PostFinance Checkout\n"
+"Project-Id-Version: PostFinance Checkout\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2021-11-30 16:16+0100\n"
 "PO-Revision-Date: 2021-11-30 16:16+0100\n"
@@ -45,8 +45,8 @@ msgid "Woocommerce %s+ is required. (You're running version %s)"
 msgstr "Woocommerce %s+ wird benötigt. (Du verwendest Version %s)"
 
 #: includes/class-wc-postfinancecheckout-migration.php:116
-msgid "Could not activate plugin WooCommerce PostFinance Checkout."
-msgstr "Das Plugin WooCommerce PostFinance Checkout konnte nicht aktiviert werden."
+msgid "Could not activate plugin PostFinance Checkout."
+msgstr "Das Plugin PostFinance Checkout konnte nicht aktiviert werden."
 
 #: includes/class-wc-postfinancecheckout-migration.php:118
 msgid "Please check the following requirements before activating:"
@@ -536,21 +536,21 @@ msgstr ""
 
 #: views/admin-notices/migration-failed.php:15
 msgid ""
-"There was an issue executing the migration for WooCommerce PostFinance Checkout."
+"There was an issue executing the migration for PostFinance Checkout."
 msgstr ""
-"Es gab ein Problem bei der Ausführung der Migration für WooCommerce "
+"Es gab ein Problem bei der Ausführung der Migration für "
 "PostFinance Checkout."
 
 #: views/admin-notices/plugin-deactivated.php:14
 msgid ""
-"WooCommerce PostFinance Checkout deactivated because it depends on WooCommerce."
+"PostFinance Checkout deactivated because it depends on WooCommerce."
 msgstr ""
-"WooCommerce PostFinance Checkout wurde deaktiviert, weil es von WooCommerce "
+"PostFinance Checkout wurde deaktiviert, weil es von WooCommerce "
 "abhängig ist."
 
 #. Name of the plugin
-msgid "WooCommerce PostFinance Checkout"
-msgstr "WooCommerce PostFinance Checkout"
+msgid "PostFinance Checkout"
+msgstr "PostFinance Checkout"
 
 #. Description of the plugin
 msgid "Process WooCommerce payments with PostFinance Checkout."

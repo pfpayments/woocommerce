@@ -87,7 +87,8 @@ class UserSpaceRoleService {
 	 * Operation addRoleWithHttpInfo
 	 *
 	 * Add Role
-	 *
+     
+     *
 	 * @param int $user_id The id of the user to whom the role is assigned. (required)
 	 * @param int $space_id The space to which the role is mapped. (required)
 	 * @param int $role_id The role which is mapped to the user and space. (required)
@@ -146,7 +147,6 @@ class UserSpaceRoleService {
 		}
 		// make the API Call
 		try {
-			$this->apiClient->setConnectionTimeout(ApiClient::CONNECTION_TIMEOUT);
 			$response = $this->apiClient->callApi(
 				$resourcePath,
 				'POST',
@@ -155,7 +155,7 @@ class UserSpaceRoleService {
 				$headerParams,
 				'\PostFinanceCheckout\Sdk\Model\UserSpaceRole',
 				'/user-space-role/addRole'
-			);
+            );
 			return new ApiResponse($response->getStatusCode(), $response->getHeaders(), $this->apiClient->getSerializer()->deserialize($response->getData(), '\PostFinanceCheckout\Sdk\Model\UserSpaceRole', $response->getHeaders()));
 		} catch (ApiException $e) {
 			switch ($e->getCode()) {
@@ -208,7 +208,8 @@ class UserSpaceRoleService {
 	 * Operation callListWithHttpInfo
 	 *
 	 * List Roles
-	 *
+     
+     *
 	 * @param int $user_id The id of the user to whom the role is assigned. (required)
 	 * @param int $space_id The space to which the role is mapped. (required)
 	 * @throws \PostFinanceCheckout\Sdk\ApiException
@@ -259,7 +260,6 @@ class UserSpaceRoleService {
 		}
 		// make the API Call
 		try {
-			$this->apiClient->setConnectionTimeout(ApiClient::CONNECTION_TIMEOUT);
 			$response = $this->apiClient->callApi(
 				$resourcePath,
 				'POST',
@@ -268,7 +268,7 @@ class UserSpaceRoleService {
 				$headerParams,
 				'\PostFinanceCheckout\Sdk\Model\UserSpaceRole[]',
 				'/user-space-role/list'
-			);
+            );
 			return new ApiResponse($response->getStatusCode(), $response->getHeaders(), $this->apiClient->getSerializer()->deserialize($response->getData(), '\PostFinanceCheckout\Sdk\Model\UserSpaceRole[]', $response->getHeaders()));
 		} catch (ApiException $e) {
 			switch ($e->getCode()) {
@@ -328,7 +328,8 @@ class UserSpaceRoleService {
 	 * Operation removeRoleWithHttpInfo
 	 *
 	 * Remove Role
-	 *
+     
+     *
 	 * @param int $id The id of user space role which should be removed (required)
 	 * @throws \PostFinanceCheckout\Sdk\ApiException
 	 * @throws \PostFinanceCheckout\Sdk\VersioningException
@@ -371,7 +372,6 @@ class UserSpaceRoleService {
 		}
 		// make the API Call
 		try {
-			$this->apiClient->setConnectionTimeout(ApiClient::CONNECTION_TIMEOUT);
 			$response = $this->apiClient->callApi(
 				$resourcePath,
 				'POST',
@@ -380,7 +380,7 @@ class UserSpaceRoleService {
 				$headerParams,
 				null,
 				'/user-space-role/removeRole'
-			);
+            );
 			return new ApiResponse($response->getStatusCode(), $response->getHeaders());
 		} catch (ApiException $e) {
 			switch ($e->getCode()) {

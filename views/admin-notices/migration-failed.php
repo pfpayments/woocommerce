@@ -15,5 +15,5 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 ?>
 <div class="error notice notice-error">
-	<p><?php esc_html_e( 'There was an issue executing the migration for WooCommerce PostFinance Checkout.', 'woo-postfinancecheckout' ); ?></p>
+	<p><?php esc_html_e( 'There was an issue executing the migration for PostFinance Checkout.', 'woo-postfinancecheckout' ); ?></p>
 </div>

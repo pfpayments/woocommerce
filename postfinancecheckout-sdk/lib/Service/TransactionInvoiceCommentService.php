@@ -86,7 +86,8 @@ class TransactionInvoiceCommentService {
 	 * Operation allWithHttpInfo
 	 *
 	 * Find by invoice
-	 *
+     
+     *
 	 * @param int $space_id  (required)
 	 * @param int $invoice_id  (required)
 	 * @throws \PostFinanceCheckout\Sdk\ApiException
@@ -137,7 +138,6 @@ class TransactionInvoiceCommentService {
 		}
 		// make the API Call
 		try {
-			$this->apiClient->setConnectionTimeout(ApiClient::CONNECTION_TIMEOUT);
 			$response = $this->apiClient->callApi(
 				$resourcePath,
 				'POST',
@@ -146,7 +146,7 @@ class TransactionInvoiceCommentService {
 				$headerParams,
 				'\PostFinanceCheckout\Sdk\Model\TransactionInvoiceComment[]',
 				'/transaction-invoice-comment/all'
-			);
+            );
 			return new ApiResponse($response->getStatusCode(), $response->getHeaders(), $this->apiClient->getSerializer()->deserialize($response->getData(), '\PostFinanceCheckout\Sdk\Model\TransactionInvoiceComment[]', $response->getHeaders()));
 		} catch (ApiException $e) {
 			switch ($e->getCode()) {
@@ -199,7 +199,8 @@ class TransactionInvoiceCommentService {
 	 * Operation createWithHttpInfo
 	 *
 	 * Create
-	 *
+     
+     *
 	 * @param int $space_id  (required)
 	 * @param \PostFinanceCheckout\Sdk\Model\TransactionInvoiceCommentCreate $entity  (required)
 	 * @throws \PostFinanceCheckout\Sdk\ApiException
@@ -252,7 +253,6 @@ class TransactionInvoiceCommentService {
 		}
 		// make the API Call
 		try {
-			$this->apiClient->setConnectionTimeout(ApiClient::CONNECTION_TIMEOUT);
 			$response = $this->apiClient->callApi(
 				$resourcePath,
 				'POST',
@@ -261,7 +261,7 @@ class TransactionInvoiceCommentService {
 				$headerParams,
 				'\PostFinanceCheckout\Sdk\Model\TransactionInvoiceComment',
 				'/transaction-invoice-comment/create'
-			);
+            );
 			return new ApiResponse($response->getStatusCode(), $response->getHeaders(), $this->apiClient->getSerializer()->deserialize($response->getData(), '\PostFinanceCheckout\Sdk\Model\TransactionInvoiceComment', $response->getHeaders()));
 		} catch (ApiException $e) {
 			switch ($e->getCode()) {
@@ -314,7 +314,8 @@ class TransactionInvoiceCommentService {
 	 * Operation deleteWithHttpInfo
 	 *
 	 * Delete
-	 *
+     
+     *
 	 * @param int $space_id  (required)
 	 * @param int $id  (required)
 	 * @throws \PostFinanceCheckout\Sdk\ApiException
@@ -365,7 +366,6 @@ class TransactionInvoiceCommentService {
 		}
 		// make the API Call
 		try {
-			$this->apiClient->setConnectionTimeout(ApiClient::CONNECTION_TIMEOUT);
 			$response = $this->apiClient->callApi(
 				$resourcePath,
 				'POST',
@@ -374,7 +374,7 @@ class TransactionInvoiceCommentService {
 				$headerParams,
 				null,
 				'/transaction-invoice-comment/delete'
-			);
+            );
 			return new ApiResponse($response->getStatusCode(), $response->getHeaders());
 		} catch (ApiException $e) {
 			switch ($e->getCode()) {
@@ -427,7 +427,8 @@ class TransactionInvoiceCommentService {
 	 * Operation pinWithHttpInfo
 	 *
 	 * Pin
-	 *
+     
+     *
 	 * @param int $space_id  (required)
 	 * @param int $id  (required)
 	 * @throws \PostFinanceCheckout\Sdk\ApiException
@@ -478,7 +479,6 @@ class TransactionInvoiceCommentService {
 		}
 		// make the API Call
 		try {
-			$this->apiClient->setConnectionTimeout(ApiClient::CONNECTION_TIMEOUT);
 			$response = $this->apiClient->callApi(
 				$resourcePath,
 				'GET',
@@ -487,7 +487,7 @@ class TransactionInvoiceCommentService {
 				$headerParams,
 				null,
 				'/transaction-invoice-comment/pin'
-			);
+            );
 			return new ApiResponse($response->getStatusCode(), $response->getHeaders());
 		} catch (ApiException $e) {
 			switch ($e->getCode()) {
@@ -540,7 +540,8 @@ class TransactionInvoiceCommentService {
 	 * Operation readWithHttpInfo
 	 *
 	 * Read
-	 *
+     
+     *
 	 * @param int $space_id  (required)
 	 * @param int $id  (required)
 	 * @throws \PostFinanceCheckout\Sdk\ApiException
@@ -591,7 +592,6 @@ class TransactionInvoiceCommentService {
 		}
 		// make the API Call
 		try {
-			$this->apiClient->setConnectionTimeout(ApiClient::CONNECTION_TIMEOUT);
 			$response = $this->apiClient->callApi(
 				$resourcePath,
 				'GET',
@@ -600,7 +600,7 @@ class TransactionInvoiceCommentService {
 				$headerParams,
 				'\PostFinanceCheckout\Sdk\Model\TransactionInvoiceComment',
 				'/transaction-invoice-comment/read'
-			);
+            );
 			return new ApiResponse($response->getStatusCode(), $response->getHeaders(), $this->apiClient->getSerializer()->deserialize($response->getData(), '\PostFinanceCheckout\Sdk\Model\TransactionInvoiceComment', $response->getHeaders()));
 		} catch (ApiException $e) {
 			switch ($e->getCode()) {
@@ -653,7 +653,8 @@ class TransactionInvoiceCommentService {
 	 * Operation unpinWithHttpInfo
 	 *
 	 * Unpin
-	 *
+     
+     *
 	 * @param int $space_id  (required)
 	 * @param int $id  (required)
 	 * @throws \PostFinanceCheckout\Sdk\ApiException
@@ -704,7 +705,6 @@ class TransactionInvoiceCommentService {
 		}
 		// make the API Call
 		try {
-			$this->apiClient->setConnectionTimeout(ApiClient::CONNECTION_TIMEOUT);
 			$response = $this->apiClient->callApi(
 				$resourcePath,
 				'GET',
@@ -713,7 +713,7 @@ class TransactionInvoiceCommentService {
 				$headerParams,
 				null,
 				'/transaction-invoice-comment/unpin'
-			);
+            );
 			return new ApiResponse($response->getStatusCode(), $response->getHeaders());
 		} catch (ApiException $e) {
 			switch ($e->getCode()) {
@@ -766,7 +766,8 @@ class TransactionInvoiceCommentService {
 	 * Operation updateWithHttpInfo
 	 *
 	 * Update
-	 *
+     
+     *
 	 * @param int $space_id  (required)
 	 * @param \PostFinanceCheckout\Sdk\Model\TransactionInvoiceCommentActive $entity  (required)
 	 * @throws \PostFinanceCheckout\Sdk\ApiException
@@ -819,7 +820,6 @@ class TransactionInvoiceCommentService {
 		}
 		// make the API Call
 		try {
-			$this->apiClient->setConnectionTimeout(ApiClient::CONNECTION_TIMEOUT);
 			$response = $this->apiClient->callApi(
 				$resourcePath,
 				'POST',
@@ -828,7 +828,7 @@ class TransactionInvoiceCommentService {
 				$headerParams,
 				'\PostFinanceCheckout\Sdk\Model\TransactionInvoiceComment',
 				'/transaction-invoice-comment/update'
-			);
+            );
 			return new ApiResponse($response->getStatusCode(), $response->getHeaders(), $this->apiClient->getSerializer()->deserialize($response->getData(), '\PostFinanceCheckout\Sdk\Model\TransactionInvoiceComment', $response->getHeaders()));
 		} catch (ApiException $e) {
 			switch ($e->getCode()) {
