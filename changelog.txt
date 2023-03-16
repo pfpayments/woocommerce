@@ -518,3 +518,12 @@ Tested against:
 - Woocommerce 7.4.0
 - PHP sdk 3.2.0
 
+## Bugfix
+- Fix incompatibilities with the new WooCommerce version 7.5.0
+
+## Tested Against
+- PHP 8.1
+- Wordpress 6.1.1
+- Woocommerce 7.5.0
+- PHP SDK 3.2.0
+
