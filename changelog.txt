@@ -527,3 +527,14 @@ Tested against:
 - Woocommerce 7.5.0
 - PHP SDK 3.2.0
 
+= 2.1.9 - March 22, 2023 =
+
+## Feature
+- Smart Coupons Compatibility
+
+## Tested Against
+- PHP 8.1
+- Wordpress 6.1.1
+- Woocommerce 7.5.0
+- PHP SDK 3.2.0
+

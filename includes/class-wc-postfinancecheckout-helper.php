@@ -200,21 +200,29 @@ class WC_PostFinanceCheckout_Helper {
 		}
 	}
 
-
 	/**
 	 * Get total amount including tax.
 	 *
 	 * @param array $line_items line items.
+	 * @param bool 	$excludeDiscounts exclude discounts.
 	 * @return int
 	 */
-	public function get_total_amount_including_tax( array $line_items ) {
+	public function get_total_amount_including_tax( array $line_items, bool $excludeDiscounts = false) {
 		$sum = 0;
+		/** @var \PostFinanceCheckout\Sdk\Model\LineItemCreate $line_item */
 		foreach ( $line_items as $line_item ) {
-			$sum += $line_item->getAmountIncludingTax();
+			$type = $line_item->getType();
+			$name = $line_item->getName();
+
+			if ( $excludeDiscounts && $type === \PostFinanceCheckout\Sdk\Model\LineItemType::DISCOUNT && strpos( $name, WC_PostFinanceCheckout_Packages_Coupon_Discount::COUPON ) !== false ) {
+				//convert negative values to positive in order to be able to subtract it
+				$sum -= abs( $line_item->getAmountIncludingTax() );
+			} else {
+				$sum += $line_item->getAmountIncludingTax();
+			}
 		}
 		return $sum;
 	}
-
 
 	/**
 	 * Cleanup line items.
@@ -226,8 +234,11 @@ class WC_PostFinanceCheckout_Helper {
 	 * @throws WC_PostFinanceCheckout_Exception_Invalid_Transaction_Amount WC_PostFinanceCheckout_Exception_Invalid_Transaction_Amount.
 	 */
 	public function cleanup_line_items( array $line_items, $expected_sum, $currency ) {
-		$effective_sum = $this->round_amount( $this->get_total_amount_including_tax( $line_items ), $currency );
+		//ensure that the effective sum coincides with the total discounted by the coupons
+		$has_coupons = apply_filters( 'wc_postfinancecheckout_packages_coupon_cart_has_coupon_discounts_applied', $currency );
+		$effective_sum = $this->round_amount( $this->get_total_amount_including_tax( $line_items, $has_coupons ), $currency );
 		$rounded_expected_sum = $this->round_amount( $expected_sum, $currency );
+
 		$inconsistent_amount = $rounded_expected_sum - $effective_sum;
 		if ( 0 != $inconsistent_amount ) {
 			$enforce_consistency = get_option( WooCommerce_PostFinanceCheckout::CK_ENFORCE_CONSISTENCY );
@@ -314,7 +325,7 @@ class WC_PostFinanceCheckout_Helper {
 	 * @param mixed $currency_code currency code.
 	 * @return float
 	 */
-	private function round_amount( $amount, $currency_code ) {
+	public function round_amount( $amount, $currency_code ) {
 		return round( $amount, $this->get_currency_fraction_digits( $currency_code ) );
 	}
 

@@ -37,10 +37,10 @@ class WC_PostFinanceCheckout_Service_Line_Item extends WC_PostFinanceCheckout_Se
 		$items = $this->create_product_line_items_from_session( $cart, $currency );
 		$fees = $this->create_fee_lines_items_from_session( $cart, $currency );
 		$shipping = $this->create_shipping_line_items_from_session( $packages, $chosen_methods, $currency );
-		$combined = array_merge( $items, $fees, $shipping );
+		$coupons = $this->create_coupons_line_items_from_session();
+		$combined = array_merge( $items, $fees, $shipping, $coupons );
 
-		$all = WC_PostFinanceCheckout_Helper::instance()->cleanup_line_items( $combined, $cart->total, $currency );
-		return $all;
+		return WC_PostFinanceCheckout_Helper::instance()->cleanup_line_items( $combined, $cart->total, $currency );
 	}
 
 	/**
@@ -95,12 +95,23 @@ class WC_PostFinanceCheckout_Service_Line_Item extends WC_PostFinanceCheckout_Se
 			 * @var WC_Product $product product.
 			 */
 			$product = $values['data'];
-			$line_item = new \PostFinanceCheckout\Sdk\Model\LineItemCreate();
 			$amount_including_tax = $values['line_subtotal'] + $values['line_subtotal_tax'];
 			$discount_including_tax = $values['line_total'] + $values['line_tax'];
 
-			$line_item->setAmountIncludingTax( $this->round_amount( $discount_including_tax, $currency ) );
-			$line_item->setDiscountIncludingTax( $this->round_amount( $amount_including_tax - $discount_including_tax, $currency ) );
+			//there is no coupon discount applied
+			$amount = $discount_including_tax;
+			$discount = $amount_including_tax - $discount_including_tax;
+
+			$coupon_discount = apply_filters( 'wc_postfinancecheckout_packages_coupon_percentage_discounts_by_item', $values['key'] );
+			if ( $coupon_discount > 0 ) {
+				//there is some coupon discount applied
+				$amount = $amount_including_tax;
+				$discount = $amount_including_tax - $discount_including_tax - $coupon_discount;
+			}
+
+			$line_item = new \PostFinanceCheckout\Sdk\Model\LineItemCreate();
+			$line_item->setAmountIncludingTax( $this->round_amount( $amount, $currency ) );
+			$line_item->setDiscountIncludingTax( $this->round_amount( $discount, $currency ) );
 			$line_item->setName( $this->fix_length( $product->get_name(), 150 ) );
 
 			$quantity = empty( $values['quantity'] ) ? 1 : $values['quantity'];
@@ -121,7 +132,6 @@ class WC_PostFinanceCheckout_Service_Line_Item extends WC_PostFinanceCheckout_Se
 				$sku
 			);
 			$line_item->setSku( $sku, 200 );
-
 			$line_item->setTaxes( $this->get_taxes( WC_Tax::get_rates( $product->get_tax_class() ) ) );
 			$line_item->setType( \PostFinanceCheckout\Sdk\Model\LineItemType::PRODUCT );
 			$line_item->setUniqueId( WC_PostFinanceCheckout_Unique_Id::get_uuid() );
@@ -238,6 +248,66 @@ class WC_PostFinanceCheckout_Service_Line_Item extends WC_PostFinanceCheckout_Se
 	}
 
 	/**
+	 * Returns the line items for coupons.
+	 *
+	 * @return \PostFinanceCheckout\Sdk\Model\LineItemCreate[]
+	 */
+	protected function create_coupons_line_items_from_session() {
+		$coupons = array();
+		$currency = get_woocommerce_currency();
+		$cart = WC()->cart;
+
+		if ( empty( $cart->get_applied_coupons() ) ) {
+			return $coupons;
+		}
+
+		//all wp coupons available
+		$wp_coupons = $cart->get_coupons();
+		foreach ( $cart->get_applied_coupons() as $coupon_code ) {
+			//check if there is a coupon with this code
+			if ( empty( $wp_coupons[ $coupon_code ] ) ) {
+				continue;
+			}
+			/** @var WC_Coupon $coupon_applied */
+			$coupon_applied = $wp_coupons[ $coupon_code ];
+			$amount = $this->round_amount( $cart->get_coupon_discount_amount( $coupon_code ), $currency );
+			$line_item = $this->create_coupon_line_item( $coupon_applied, $amount );
+			$coupons[] = $this->clean_line_item( $line_item );
+		}
+		return $coupons;
+	}
+
+	/**
+	 * Create coupon line item
+	 * @param WC_Coupon|WC_Order_Item_Coupon $coupon
+	 * @param float $amount
+	 * @return \PostFinanceCheckout\Sdk\Model\LineItemCreate|null
+	 */
+	private function create_coupon_line_item( $coupon, float $amount = 0 ) {
+		//check if the coupon is valid
+		if ( !$coupon instanceof WC_Coupon && !$coupon instanceof WC_Order_Item_Coupon ) {
+			return null;
+		}
+
+		$coupon = new WC_Coupon( $coupon->get_code() );
+
+		$currency = get_woocommerce_currency();
+		//convert coupon amount to a negative amount
+		$amount = $this->round_amount( $amount, $currency ) * -1;
+		$sku = $this->fix_length( $coupon->get_discount_type(), 150 );
+		$sku = str_replace( array( "\n", "\r", ), '', $sku );
+
+		$line_item = new \PostFinanceCheckout\Sdk\Model\LineItemCreate();
+		$line_item->setAmountIncludingTax( $amount );
+		$line_item->setName( sprintf( '%s: %s', WC_PostFinanceCheckout_Packages_Coupon_Discount::COUPON, $coupon->get_code() ) );
+		$line_item->setQuantity( 1 );
+		$line_item->setShippingRequired( false );
+		$line_item->setSku( $sku, 200 );
+		$line_item->setType( \PostFinanceCheckout\Sdk\Model\LineItemType::DISCOUNT );
+		$line_item->setUniqueId( 'coupon-' . $coupon->get_id() );
+		return $line_item;
+	}
+	/**
 	 * Returns the line items from the given cart
 	 *
 	 * @param WC_Order $order order.
@@ -262,8 +332,8 @@ class WC_PostFinanceCheckout_Service_Line_Item extends WC_PostFinanceCheckout_Se
 		$items = $this->create_product_line_items_from_order( $order );
 		$fees = $this->create_fee_lines_items_from_order( $order );
 		$shipping = $this->create_shipping_line_items_from_order( $order );
-		$combined = array_merge( $items, $fees, $shipping );
-		return $combined;
+		$coupons = $this->create_coupons_line_items_from_order( $order );
+		return array_merge( $items, $fees, $shipping, $coupons );
 	}
 
 	/**
@@ -297,8 +367,19 @@ class WC_PostFinanceCheckout_Service_Line_Item extends WC_PostFinanceCheckout_Se
 			$amount_including_tax = $item->get_subtotal() + $item->get_subtotal_tax();
 			$discount_including_tax = $item->get_total() + $item->get_total_tax();
 
-			$line_item->setAmountIncludingTax( $this->round_amount( $discount_including_tax, $currency ) );
-			$line_item->setDiscountIncludingTax( $this->round_amount( $amount_including_tax - $discount_including_tax, $currency ) );
+			//there is no coupon discount applied
+			$amount = $discount_including_tax;
+			$discount = $amount_including_tax - $discount_including_tax;
+
+			$coupon_discount = $item->get_meta( '_postfinancecheckout_coupon_discount_line_item_discounts' );
+			if ( $coupon_discount > 0 ) {
+				//there is some coupon discount applied
+				$amount = $amount_including_tax;
+				$discount = $amount_including_tax - $discount_including_tax - $coupon_discount;
+			}
+
+			$line_item->setAmountIncludingTax( $this->round_amount( $amount, $currency ) );
+			$line_item->setDiscountIncludingTax( $this->round_amount( $discount, $currency ) );
 			$quantity = empty( $item->get_quantity() ) ? 1 : $item->get_quantity();
 
 			$line_item->setQuantity( $quantity );
@@ -459,6 +540,21 @@ class WC_PostFinanceCheckout_Service_Line_Item extends WC_PostFinanceCheckout_Se
 		return $shippings;
 	}
 
+	protected function create_coupons_line_items_from_order( WC_Order $order ) {
+		$coupons = array();
+		if ( empty( $order->get_coupons() ) ) {
+			return $coupons;
+		}
+
+		//all wp coupons available
+		foreach ( $order->get_coupons() as $coupon ) {
+			/** @var WC_Order_Item_Coupon $coupon */
+			$line_item = $this->create_coupon_line_item( $coupon, $coupon->get_discount() );
+			$coupons[] = $this->clean_line_item( $line_item );
+		}
+		return $coupons;
+	}
+
 	/**
 	 * Get items from backend.
 	 *
@@ -472,7 +568,8 @@ class WC_PostFinanceCheckout_Service_Line_Item extends WC_PostFinanceCheckout_Se
 		$items = $this->create_product_line_items_from_backend( $backend_items, $order );
 		$fees = $this->create_fee_lines_items_from_backend( $backend_items, $order );
 		$shipping = $this->create_shipping_line_items_from_backend( $backend_items, $order );
-		$combined = array_merge( $items, $fees, $shipping );
+		$coupons = $this->create_coupons_line_items_from_order( $order );
+		$combined = array_merge( $items, $fees, $shipping, $coupons );
 
 		return WC_PostFinanceCheckout_Helper::instance()->cleanup_line_items( $combined, $amount, $order->get_currency() );
 	}

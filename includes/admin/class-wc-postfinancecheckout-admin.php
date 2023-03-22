@@ -99,7 +99,7 @@ class WC_PostFinanceCheckout_Admin {
 			'woocommerce_hidden_order_itemmeta',
 			array(
 				$this,
-				'hide_order_unique_id_meta',
+				'hide_postfinancecheckout_order_item_meta',
 			),
 			10,
 			1
@@ -270,13 +270,16 @@ class WC_PostFinanceCheckout_Admin {
 	}
 
 	/**
-	 * Hide order unique id meta
+	 * Hide postfinancecheckout order item meta
 	 *
 	 * @param array $arr array.
 	 * @return array
 	 */
-	public function hide_order_unique_id_meta( $arr ) {
+	public function hide_postfinancecheckout_order_item_meta( $arr ) {
 		$arr[] = '_postfinancecheckout_unique_line_item_id';
+		$arr[] = '_postfinancecheckout_coupon_discount_line_item_id';
+		$arr[] = '_postfinancecheckout_coupon_discount_line_item_key';
+		$arr[] = '_postfinancecheckout_coupon_discount_line_item_discounts';
 		return $arr;
 	}
 
