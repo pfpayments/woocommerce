@@ -538,3 +538,14 @@ Tested against:
 - Woocommerce 7.5.0
 - PHP SDK 3.2.0
 
+= 2.1.10 - March 30, 2023 =
+
+## Bugfix
+- Prevent Customer from upgrading to unsupported version of WooCommerce (7.5.+)
+
+## Tested Against
+- PHP 8.1
+- Wordpress 6.1.1
+- Woocommerce 7.4.1
+- PHP SDK 3.2.0
+
