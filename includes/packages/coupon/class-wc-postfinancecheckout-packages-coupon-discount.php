@@ -101,6 +101,12 @@ class WC_PostFinanceCheckout_Packages_Coupon_Discount {
 	 */
 	public static function get_coupons_discount_totals_including_tax( $currency ) {
 		$coupons_discount_total = 0;
+
+		//guard clause if the cart is empty, nothing to do here. This applies to subscription renewals
+		if ( empty( WC()->cart ) ) {
+			return $coupons_discount_total;
+		}
+
 		foreach (WC()->cart->get_coupon_discount_totals() as $coupon_discount_total) {
 			$coupons_discount_total += WC_PostFinanceCheckout_Helper::instance()->round_amount( $coupon_discount_total, $currency );
 		}
