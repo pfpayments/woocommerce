@@ -62,6 +62,11 @@ msgstr "Dokumentation ansehen."
 msgid "Documentation"
 msgstr "Dokumentation"
 
+#: includes/class-wc-postfinancecheckout-migration.php:587
+#, php-format
+msgid "A version of the PostFinanceCheckout plugin is yet to be released for this version of WooCommerce."
+msgstr "Eine Version des PostFinanceCheckout Plugin ist für diese Version von WooCommerce noch nicht freigegeben."
+
 #: includes/class-wc-postfinancecheckout-customer-document.php:57
 msgid "Order Documents"
 msgstr "Bestelldokumente"

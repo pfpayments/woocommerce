@@ -69,6 +69,7 @@ class WC_PostFinanceCheckout_Migration {
 			)
 		);
 		add_filter( 'plugin_row_meta', array( __CLASS__, 'plugin_row_meta' ), 10, 2 );
+		add_action ( 'admin_notices' , array( __CLASS__ , 'supported_payments_integration_notice') , 30 );
 	}
 
 	/**
@@ -130,9 +131,6 @@ class WC_PostFinanceCheckout_Migration {
 
 			if ( version_compare( $woocommerce_data['Version'], WC_POSTFINANCECHECKOUT_REQUIRED_WC_VERSION, '<' ) ) {
 				$errors[] = sprintf( __( "Woocommerce %1\$s+ is required. (You're running version %2\$s)", 'woo-postfinancecheckout' ), WC_POSTFINANCECHECKOUT_REQUIRED_WC_VERSION, $woocommerce_data['Version'] );
-			}
-			if ( version_compare( $woocommerce_data['Version'], WC_POSTFINANCECHECKOUT_REQUIRED_WC_MAXIMUM_VERSION, '>' ) ) {
-				$errors[] = sprintf( __( "Woocommerce version supported up to %1\$s+. (You're running version %2\$s)", 'woo-postfinancecheckout' ), WC_POSTFINANCECHECKOUT_REQUIRED_WC_MAXIMUM_VERSION, $woocommerce_data['Version'] );
 			}
 		}
 
@@ -251,7 +249,7 @@ class WC_PostFinanceCheckout_Migration {
 	public static function plugin_row_meta( $links, $file ) {
 		if ( WC_POSTFINANCECHECKOUT_PLUGIN_BASENAME === $file ) {
 			$row_meta = array(
-				'docs' => '<a href="https://plugin-documentation.postfinance-checkout.ch/pfpayments/woocommerce/2.1.11/docs/en/documentation.html" aria-label="' . esc_attr__( 'View Documentation', 'woo-postfinancecheckout' ) . '">' . esc_html__( 'Documentation', 'woo-postfinancecheckout' ) . '</a>',
+				'docs' => '<a href="https://plugin-documentation.postfinance-checkout.ch/pfpayments/woocommerce/2.1.12/docs/en/documentation.html" aria-label="' . esc_attr__( 'View Documentation', 'woo-postfinancecheckout' ) . '">' . esc_html__( 'Documentation', 'woo-postfinancecheckout' ) . '</a>',
 			);
 
 			return array_merge( $links, $row_meta );
@@ -578,6 +576,22 @@ class WC_PostFinanceCheckout_Migration {
 		}
 
 		$wpdb->query( 'COMMIT' );
+	}
+
+	/**
+	 * Shows notification if there are unsupported features with woocommerce version.
+	 * 
+	 * @return void
+	 */
+	public static function supported_payments_integration_notice() {
+		$woocommerce_data = get_plugin_data( WP_PLUGIN_DIR . '/woocommerce/woocommerce.php', false, false );
+    
+		if (version_compare( $woocommerce_data['Version'], WC_POSTFINANCECHECKOUT_REQUIRED_WC_MAXIMUM_VERSION, '>' )) {
+		    $class = 'notice notice-info is-dismissible';
+		    $message = __( 'A version of the PostFinanceCheckout plugin is yet to be released for this version of WooCommerce.', 'sample-text-domain' );
+    
+		    printf( '<div class="%1$s"><p>%2$s</p></div>', esc_attr( $class ), esc_html( $message ) );
+		}
 	}
 }
 

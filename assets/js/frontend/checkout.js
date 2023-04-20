@@ -26,17 +26,35 @@ jQuery(
 			form_data_timer : null,
 			checkout_form_identifier : 'form.checkout',
 			checkout_payment_area: '.woocommerce-checkout-payment, .woocommerce-checkout-review-order-table',
+			$order_review: $( '#order_review' ),
+			$checkout_form: $( 'form.checkout' ),
+			$order_button: $( '#place_order' ),
+
+			/**
+			 * This function gets interesting info for testing
+			 */
+			info : function() {
+				var versions = window.postfinancecheckout_js_params.versions || {};
+				var info = [
+					{library: 'integration', version: window.postfinancecheckout_js_params.integration},
+					{library: 'jQuery', version: $().jquery},
+					{library: 'wordpress', version: versions.wordpress || null},
+					{library: 'woocommerce', version: versions.woocommerce || null},
+					{library: 'woo-postfinancecheckout', version: versions.postfinancecheckout || null},
+				];
+				console.table(info, []);
+			},
 
 			init : function() {
 				// Payment methods.
-				$( 'form.checkout' ).off( 'click.woo-postfinancecheckout' ).on(
+				this.$checkout_form.off( 'click.woo-postfinancecheckout' ).on(
 					'click.woo-postfinancecheckout',
 					'input[name="payment_method"]',
 					{ self : this },
 					this.payment_method_click
 				);
 
-				$( 'form.checkout' ).off( 'button#place_order' ).on(
+				this.$checkout_form.off( 'button#place_order' ).on(
 					'button#place_order',
 					{ self : this },
 					function (event) {
@@ -48,7 +66,8 @@ jQuery(
 
 				if ($( document.body ).hasClass( 'woocommerce-order-pay' )) {
 					this.checkout_form_identifier = '#order_review';
-					$( '#order_review' ).off( 'click.woo-postfinancecheckout' ).on(
+					this.$checkout_form = $( '#order_review' );
+					this.$order_review.off( 'click.woo-postfinancecheckout' ).on(
 						'click.woo-postfinancecheckout',
 						'input[name="payment_method"]',
 						{
@@ -58,13 +77,14 @@ jQuery(
 					);
 				}
 				this.register_ajax_prefilter();
+				this.register_window_fetch_prefilter();
 				this.form_data_timer = setInterval( this.check_form_data_change.bind( this ), 4000 );
-				$( this.checkout_form_identifier ).find( 'input[name="payment_method"]:checked' ).trigger( "click" );
+				this.$checkout_form.find( 'input[name="payment_method"]:checked' ).trigger( "click" );
 				window.wc_postfinancecheckout_checkout = this;
 			},
 
 			check_form_data_change : function() {
-				var $required_inputs = $( this.checkout_form_identifier ).find( '.address-field.validate-required' ).find( 'input, select' );
+				var $required_inputs = this.$checkout_form.find( '.address-field.validate-required' ).find( 'input, select' );
 				var current = '';
 				var complete = true;
 				if ( $required_inputs.length ) {
@@ -81,7 +101,7 @@ jQuery(
 						}
 					);
 					// no updates on invalid fields.
-					if ($( self.checkout_form_identifier + ' .woocommerce-invalid' ).length) {
+					if ($( this.checkout_form_identifier + ' .woocommerce-invalid' ).length) {
 						complete = false;
 						return false;
 					}
@@ -128,15 +148,16 @@ jQuery(
 				var description = configuration.data( "description-available" );
 
 				// Hide iFrame by moving it (display:none leads to issues).
-				var item = $( this.checkout_form_identifier )
+				var item = this.$checkout_form
 				.find( 'input[name="payment_method"]:checked' )
 				.closest( 'li.wc_payment_method' )
 				.find( 'div.payment_box' );
+
 				var form = item.find( '#payment-form-' + method_id );
 				form.css( 'display', '' );
 
-				var required_inputs = $( this.checkout_form_identifier ).find( '.address-field.validate-required:visible' );
-				var    has_full_address = true;
+				var required_inputs = this.$checkout_form.find( '.address-field.validate-required:visible' );
+				var has_full_address = true;
 
 				if ( required_inputs.length ) {
 					required_inputs.each(
@@ -176,19 +197,18 @@ jQuery(
 			},
 
 			enable_place_order_button: function(){
-				var order_button = $( '#place_order' );
-				order_button.removeAttr( 'disabled' );
-				order_button.removeClass( 'postfinancecheckout-disabled' );
+				this.$order_button.removeAttr( 'disabled' );
+				this.$order_button.removeClass( 'postfinancecheckout-disabled' );
 			},
 
 			disable_place_order_button: function(){
-				var order_button = $( '#place_order' );
-				order_button.prop( 'disabled', true );
-				order_button.addClass( 'postfinancecheckout-disabled' );
+				this.$order_button.prop( 'disabled', true );
+				this.$order_button.addClass( 'postfinancecheckout-disabled' );
 			},
 
 			/**
 			 * This function handle the success function of Place Order in WooCommerce
+			 * @version <=7.4.1
 			 */
 			register_ajax_prefilter : function() {
 				var self = this;
@@ -236,7 +256,35 @@ jQuery(
 						}
 					}
 				);
+			},
 
+			/**
+			 * This function handle the success function of Place Order in WooCommerce
+			 * @version >=7.5.0
+			 */
+			register_window_fetch_prefilter : function() {
+				var {fetch: origFetch} = window;
+				var self = this;
+
+				window.fetch = async (url, options) => {
+					var response = await origFetch(url, options);
+
+					/* work with the cloned response in a separate promise chain -- could use the same chain with `await`. */
+					if (url === wc_checkout_params.checkout_url && self.is_supported_method( self.get_selected_payment_method() )) {
+						response
+							.clone()
+							.json()
+							.then(body => {
+								if (body.result !== undefined && 'success' === body.result){
+									self.process_order_created(body);
+								}
+							})
+							.catch(err => console.error(err));
+					}
+
+					/* the original response can be resolved unmodified: */
+					return response;
+				};
 			},
 
 			is_supported_method : function(method_id) {
@@ -244,7 +292,7 @@ jQuery(
 			},
 
 			get_selected_payment_method : function() {
-				return $( this.checkout_form_identifier ).find( 'input[name="payment_method"]:checked' ).val();
+				return this.$checkout_form.find( 'input[name="payment_method"]:checked' ).val();
 			},
 
 			register_method : function(method_id, configuration_id, container_id) {
@@ -261,7 +309,7 @@ jQuery(
 				}
 				var self = this;
 
-				$( this.checkout_form_identifier ).block(
+				this.$checkout_form.block(
 					{
 						message : null,
 						overlayCSS : {
@@ -296,7 +344,7 @@ jQuery(
 
 				this.payment_methods[method_id].handler.setInitializeCallback(
 					function(){
-						$( self.checkout_form_identifier ).unblock();
+						self.$checkout_form.unblock();
 					}
 				);
 
@@ -322,7 +370,8 @@ jQuery(
 				this.payment_methods[method_id].container_id = container_id;
 
 				if (this.checkout_form_identifier === '#order_review') {
-					$( this.checkout_form_identifier ).off( 'submit.postfinancecheckout' ).on(
+					this.$checkout_form.off( 'submit.postfinancecheckout' )
+					.on(
 						'submit.postfinancecheckout',
 						function(){
 							var method_id = self.get_selected_payment_method();
@@ -330,8 +379,7 @@ jQuery(
 						}
 					);
 				} else {
-					 var form = $( this.checkout_form_identifier );
-					form.off( 'checkout_place_order_' + method_id + '.postfinancecheckout' )
+					this.$checkout_form.off( 'checkout_place_order_' + method_id + '.postfinancecheckout' )
 					.on(
 						'checkout_place_order_' + method_id + '.postfinancecheckout',
 						function(){
@@ -346,8 +394,8 @@ jQuery(
 					return true;
 				}
 
-				var form = $( this.checkout_form_identifier );
-				var required_inputs = $( this.checkout_form_identifier ).find( '.address-field.validate-required:visible' );
+				var form = this.$checkout_form;
+				var required_inputs = this.$checkout_form.find( '.address-field.validate-required:visible' );
 				var has_full_address = true;
 
 				if ( required_inputs.length ) {
@@ -361,7 +409,7 @@ jQuery(
 					);
 				}
 				if ( ! has_full_address) {
-					$( this.checkout_form_identifier ).trigger( 'validate' );
+					this.$checkout_form.trigger( 'validate' );
 					this.submit_error( postfinancecheckout_js_params.i18n_not_complete );
 					return false;
 				}
@@ -382,12 +430,12 @@ jQuery(
 				} else {
 					if (this.checkout_form_identifier === '#order_review') {
 
-						self = this;
+						var self = this;
 						$.ajax(
 							{
 								type: 'POST',
 								url: window.location.href,
-								data: form.serialize(),
+								data: new URLSearchParams( form[0] ).toString(),
 								dataType: 'json',
 								success: function( result ) {
 									self.validated = false;
@@ -413,7 +461,7 @@ jQuery(
 				var self = this;
 				// handle lightbox integration.
 				if (postfinancecheckout_js_params.integration && postfinancecheckout_js_params.integration === self.integrations.LIGHTBOX ) {
-					var required_inputs = $( self.checkout_form_identifier ).find( '.validate-required:visible' );
+					var required_inputs = self.$checkout_form.find( '.validate-required:visible' );
 					var has_full_address = true;
 					if (required_inputs.length) {
 						required_inputs.each(
@@ -431,7 +479,7 @@ jQuery(
 						);
 					}
 					if ( ! has_full_address) {
-						$( self.checkout_form_identifier ).trigger( 'validate' );
+						self.$checkout_form.trigger( 'validate' );
 						self.submit_error( postfinancecheckout_js_params.i18n_not_complete );
 						return false;
 					}
@@ -457,11 +505,10 @@ jQuery(
 			process_validation : function(method_id, validation_result) {
 				if (validation_result.success) {
 					this.validated = true;
-					$( this.checkout_form_identifier ).submit();
+					this.$checkout_form.submit();
 					return true;
 				} else {
-					var form = $( this.checkout_form_identifier );
-					form.unblock();
+					this.$checkout_form.unblock();
 					this.form_data_timer = setInterval( this.check_form_data_change.bind( this ),3000 );
 					if (validation_result.errors) {
 						this.submit_error( validation_result.errors );
@@ -481,14 +528,15 @@ jQuery(
 
 			// We emulate the woocommerce submit_error function, as it is not callable from outside.
 			submit_error: function( error_message ) {
+				var self = this;
 				var formatted_message = '<div class="woocommerce-error">' + this.format_error_messages( error_message ) + '</div>';
-				 $( '.woocommerce-NoticeGroup-checkout, .woocommerce-error, .woocommerce-message' ).remove();
-				$( this.checkout_form_identifier ).prepend( '<div class="woocommerce-NoticeGroup woocommerce-NoticeGroup-checkout">' + formatted_message + '</div>' );
-				$( this.checkout_form_identifier ).removeClass( 'processing' ).unblock();
-				$( this.checkout_form_identifier ).find( '.input-text, select, input:checkbox' ).trigger( 'validate' ).blur();
+				$( '.woocommerce-NoticeGroup-checkout, .woocommerce-error, .woocommerce-message' ).remove();
+				this.$checkout_form.prepend( '<div class="woocommerce-NoticeGroup woocommerce-NoticeGroup-checkout">' + formatted_message + '</div>' );
+				this.$checkout_form.removeClass( 'processing' ).unblock();
+				this.$checkout_form.find( '.input-text, select, input:checkbox' ).trigger( 'validate' ).blur();
 				$( 'html, body' ).animate(
 					{
-						scrollTop: ( $( this.checkout_form_identifier ).offset().top - 100 )
+						scrollTop: ( self.$checkout_form.offset().top - 100 )
 					},
 					1000
 				);

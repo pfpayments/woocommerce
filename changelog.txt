@@ -549,7 +549,7 @@ Tested against:
 - Woocommerce 7.4.1
 - PHP SDK 3.2.0
 
-= 2.1.11 - April 05, 2023 =
+= 2.1.11 - April 13, 2023 =
 
 ## Bugfix
 - Fix the Smart Coupon impact on renewal of Subscriptions
@@ -559,4 +559,15 @@ Tested against:
 - Wordpress 6.2
 - Woocommerce 7.4.1
 - PHP SDK 3.2.0
+
+= 2.1.12 - April 20, 2023 =
+
+* [Features] Provide a *Warning Message* in case the installed Woocommerce version is not supported
+* [Features] Support of Woocommerce 7.5.0
+* [Features] Support of Woocommerce 7.5.1
+
+* [Tested Against] PHP 8.1
+* [Tested Against] Wordpress 6.2.0
+* [Tested Against] Woocommerce 7.5.1
+* [Tested Against] PHP SDK 3.2.0
 
