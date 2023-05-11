@@ -589,3 +589,13 @@ Tested against:
 * [Tested Against] Woocommerce 7.6.1
 * [Tested Against] PHP SDK 3.2.0
 
+* [Features] Provide a fallback to handle payment when Woocommerce latest release break the iframe / lightbox 
+* [Features] Support of Woocommerce 7.7.0
+* [BugFix] Fix the line item inconsistency when using Taxes and a Coupon
+* [BugFix] Fix the parameter organisation name when using the payment method **Powerpay Invoice**
+
+* [Tested Against] PHP 8.0.28
+* [Tested Against] Wordpress 6.2.0
+* [Tested Against] Woocommerce 7.7.0
+* [Tested Against] PHP SDK 3.2.0
+

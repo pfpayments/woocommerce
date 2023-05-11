@@ -1036,7 +1036,10 @@ class WC_PostFinanceCheckout_Service_Transaction extends WC_PostFinanceCheckout_
 		$address->setCountry( $customer->get_shipping_country() );
 		$address->setFamilyName( $this->fix_length( $customer->get_shipping_last_name(), 100 ) );
 		$address->setGivenName( $this->fix_length( $customer->get_shipping_first_name(), 100 ) );
-		$address->setOrganizationName( $this->fix_length( $customer->get_shipping_company(), 100 ) );
+		// Because of a problem with WC, we don't get the shipping_company value from the checkout.
+		// We use the billing_company if shipping_company is empty.
+		$shipping_company = !empty($customer->get_shipping_company()) ?  $customer->get_shipping_company() : $customer->get_billing_company();
+		$address->setOrganizationName( $this->fix_length( $shipping_company, 100 ) );
 		if ( ! empty( $customer->get_shipping_state() ) ) {
 			$address->setPostalState( $customer->get_shipping_country() . '-' . $customer->get_shipping_state() );
 		}

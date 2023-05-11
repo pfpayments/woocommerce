@@ -270,7 +270,7 @@ class WC_PostFinanceCheckout_Service_Line_Item extends WC_PostFinanceCheckout_Se
 			}
 			/** @var WC_Coupon $coupon_applied */
 			$coupon_applied = $wp_coupons[ $coupon_code ];
-			$amount = $this->round_amount( $cart->get_coupon_discount_amount( $coupon_code ), $currency );
+			$amount = $this->round_amount( $cart->get_coupon_discount_amount( $coupon_code, false ), $currency );
 			$line_item = $this->create_coupon_line_item( $coupon_applied, $amount );
 			$coupons[] = $this->clean_line_item( $line_item );
 		}
@@ -549,7 +549,7 @@ class WC_PostFinanceCheckout_Service_Line_Item extends WC_PostFinanceCheckout_Se
 		//all wp coupons available
 		foreach ( $order->get_coupons() as $coupon ) {
 			/** @var WC_Order_Item_Coupon $coupon */
-			$line_item = $this->create_coupon_line_item( $coupon, $coupon->get_discount() );
+			$line_item = $this->create_coupon_line_item( $coupon, $coupon->get_discount() + $coupon->get_discount_tax() );
 			$coupons[] = $this->clean_line_item( $line_item );
 		}
 		return $coupons;
