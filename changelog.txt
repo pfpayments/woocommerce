@@ -599,3 +599,10 @@ Tested against:
 * [Tested Against] Woocommerce 7.7.0
 * [Tested Against] PHP SDK 3.2.0
 
+* [BugFix] Fix the thankyou page redirection issue
+
+* [Tested Against] PHP 8.0.28
+* [Tested Against] Wordpress 6.2.0
+* [Tested Against] Woocommerce 7.7.0
+* [Tested Against] PHP SDK 3.2.0
+
