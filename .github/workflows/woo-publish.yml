@@ -1,0 +1,68 @@
+name: Release Plugin
+on:  
+  push:
+    tags:
+      - '*'
+
+jobs:
+  tag:
+    name: New release
+    runs-on: ubuntu-latest
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v2
+
+    - name: Setup
+      env:
+        WORDPRESS_ORG_SLUG: ${{ vars.WORDPRESS_ORG_SLUG }}
+        WHITELABEL: ${{ vars.WHITELABEL_NAME }}
+        FAQ_ENTRIES: ${{ vars.FAQ_ENTRIES }}
+        FEATURES: ${{ vars.FEATURES }}
+      run: |
+        echo $GITHUB_WORKSPACE
+        echo $WORDPRESS_ORG_SLUG
+        ls -ltrh
+        git clone https://github.com/squizlabs/PHP_CodeSniffer.git phpcs;
+        git clone -b master https://github.com/WordPress/WordPress-Coding-Standards.git wpcs;
+        cd phpcs;
+        ./bin/phpcs --config-set installed_paths ../wpcs;
+        cd ../;
+        ls -ltrh
+        pwd
+        mkdir -p $GITHUB_WORKSPACE/build-woo/src;
+        rsync -r --exclude 'build-woo' --exclude 'wpcs' --exclude 'phpcs' --exclude '.git' --exclude '.github' --exclude '.travis.yml' --exclude 'README.md' . $GITHUB_WORKSPACE/build-woo/src;
+        perl -plne 'print "$ENV{'FEATURES'}" if(/== Installation ==/); print "$ENV{'FAQ_ENTRIES'}" if(/== Changelog ==/);' $GITHUB_WORKSPACE/build-woo/src/readme.txt > $GITHUB_WORKSPACE/build-woo/src/readme_mod.txt;
+        mv build-woo/src/readme_mod.txt build-woo/src/readme.txt;
+        mkdir build-woo/$WORDPRESS_ORG_SLUG;
+        rsync -r build-woo/src/ build-woo/$WORDPRESS_ORG_SLUG/;
+
+    - name: Zip & Sniff
+      env:
+        WORDPRESS_ORG_SLUG: ${{ vars.WORDPRESS_ORG_SLUG }}
+        WHITELABEL: ${{ vars.WHITELABEL_NAME }}
+      run: |
+        ls -ltrh;
+        cd $GITHUB_WORKSPACE/build-woo/
+        zip -r $GITHUB_WORKSPACE/$WORDPRESS_ORG_SLUG.zip $WORDPRESS_ORG_SLUG;
+        rm -rf src/docs;
+        ../phpcs/bin/phpcbf -n --standard=WordPress src/ --ignore=/src/$WHITELABEL-sdk || true;
+        ../phpcs/bin/phpcs -n --standard=WordPress src/ --ignore=/src/$WHITELABEL-sdk || true;
+
+    - name: Upload binaries to Github release
+      uses: svenstaro/upload-release-action@v2
+      with:
+        repo_token: ${{ secrets.GITHUB_TOKEN }}
+        file: ${{ vars.WORDPRESS_ORG_SLUG }}.zip
+        asset_name: ${{ vars.WORDPRESS_ORG_SLUG }}
+        tag: ${{ github.ref }}
+
+    - name: WordPress Plugin Deploy
+      id: deploy
+      uses: 10up/action-wordpress-plugin-deploy@stable
+      with:
+        generate-zip: true
+      env:
+        SVN_USERNAME: ${{ secrets.SVN_USERNAME }}
+        SVN_PASSWORD: ${{ secrets.SVN_PASSWORD }}
+        ASSETS_DIR: ${{ vars.WORDPRESS_ORG_SLUG }}/build-woo/src
+        SLUG: ${{ vars.WORDPRESS_ORG_SLUG }}
