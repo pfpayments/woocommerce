@@ -102,11 +102,13 @@ class WC_PostFinanceCheckout_Service_Line_Item extends WC_PostFinanceCheckout_Se
 			$amount = $discount_including_tax;
 			$discount = $amount_including_tax - $discount_including_tax;
 
-			$coupon_discount = apply_filters( 'wc_postfinancecheckout_packages_coupon_percentage_discounts_by_item', $values['key'] );
-			if ( $coupon_discount > 0 ) {
-				//there is some coupon discount applied
-				$amount = $amount_including_tax;
-				$discount = $amount_including_tax - $discount_including_tax - $coupon_discount;
+			if (isset($values['key'])) {
+				$coupon_discount = apply_filters( 'wc_postfinancecheckout_packages_coupon_percentage_discounts_by_item', $values['key'] );
+				if ( $coupon_discount > 0 ) {
+					//there is some coupon discount applied
+					$amount = $amount_including_tax;
+					$discount = $amount_including_tax - $discount_including_tax - $coupon_discount;
+				}
 			}
 
 			$line_item = new \PostFinanceCheckout\Sdk\Model\LineItemCreate();

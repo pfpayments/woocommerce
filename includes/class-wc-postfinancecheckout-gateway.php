@@ -315,9 +315,23 @@ class WC_PostFinanceCheckout_Gateway extends WC_Payment_Gateway {
 			return $this->get_payment_method_configuration()->get_state() == WC_PostFinanceCheckout_Entity_Method_Configuration::STATE_ACTIVE;
 		}
 
+		global $wp;
+		if (is_checkout() && isset($wp->query_vars['order-received'])) {
+			// Sometimes, when the Thank you page is loaded, there are new attemps to get
+			// gateways availability. In this particular case, we retrieve the availability
+			// information from the session, so the plugin does not have to ask the portal
+			// for this information, creating an unused transaction in the process.
+			$gateway_available = WC()->session->get('whitelabel_payment_gateways');
+			if (!empty($gateway_available[$this->pfc_payment_method_configuration_id])) {
+				return $gateway_available[$this->pfc_payment_method_configuration_id];
+			}
+			else {
+				return false;
+			}
+		}
+	
 		if ( apply_filters( 'wc_postfinancecheckout_is_order_pay_endpoint', is_checkout_pay_page() ) ) {
 			// We have to use the order and not the cart for this endpoint.
-			global $wp;
 			$order = WC_Order_Factory::get_order( $wp->query_vars['order-pay'] );
 			if ( ! $order ) {
 				return false;
@@ -367,6 +381,10 @@ class WC_PostFinanceCheckout_Gateway extends WC_Payment_Gateway {
 			return false;
 		}
 
+		// Store the availability information in the session.
+		$gateway_available = WC()->session->get('whitelabel_payment_gateways');
+		$gateway_available[$this->pfc_payment_method_configuration_id] = true;
+		$gateway_available = WC()->session->set('whitelabel_payment_gateways', $gateway_available);
 		return true;
 	}
 
