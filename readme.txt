@@ -3,7 +3,7 @@ Contributors: customwebgmbh
 Tags: woocommerce PostFinance Checkout, woocommerce, PostFinance Checkout, payment, e-commerce, webshop, psp, invoice, packing slips, pdf, customer invoice, processing
 Requires at least: 4.7
 Tested up to: 6.2
-Stable tag: 2.1.18
+Stable tag: 2.1.19
 License: Apache 2
 License URI: http://www.apache.org/licenses/LICENSE-2.0
 
@@ -23,7 +23,7 @@ To use this extension, a PostFinance Checkout account is required. Sign up on [P
 
 == Documentation ==
 
-Additional documentation for this plugin is available [here](https://plugin-documentation.postfinance-checkout.ch/pfpayments/woocommerce/2.1.18/docs/en/documentation.html).
+Additional documentation for this plugin is available [here](https://plugin-documentation.postfinance-checkout.ch/pfpayments/woocommerce/2.1.19/docs/en/documentation.html).
 
 == Support ==
 
@@ -56,13 +56,13 @@ Support queries can be issued on the [PostFinance Checkout support site](https:/
 == Changelog ==
 
  
-* [Features] Support of Wordpress 6.2.1
-* [Features] Support of Wordpress 6.2.2
-* [Features] Support of Woocommerce 7.7.1
-* [BugFix] Fix the fatal error raised when using non-whitelabel payment method
-* [BugFix] Fix the error raised when using the Coupon *Sign Up Fee % Discount*
+= 2.1.19 - June 13, 2023 =
+
+* [Features] Add compatibility with plugin **YITH**
+* [BugFix] Fix the duplication of transaction created in the portal when we make a payment
+* [BugFix] Correct release notes
 
 * [Tested Against] PHP 8.0.28
 * [Tested Against] Wordpress 6.2.0
-* [Tested Against] Woocommerce 7.7.0
+* [Tested Against] Woocommerce 7.7.1
 * [Tested Against] PHP SDK 3.2.0
