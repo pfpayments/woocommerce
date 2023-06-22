@@ -648,3 +648,12 @@ Tested against:
 * [Tested Against] Woocommerce 7.8.0
 * [Tested Against] PHP SDK 3.2.0
 
+= 2.1.21 - June 22, 2023 =
+
+* [BugFix] Make the latest version of the plugin available on the marketplace
+
+* [Tested Against] PHP 8.0.28
+* [Tested Against] Wordpress 6.2.2
+* [Tested Against] Woocommerce 7.8.0
+* [Tested Against] PHP SDK 3.2.0
+
