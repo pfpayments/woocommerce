@@ -435,7 +435,7 @@ jQuery(
 							{
 								type: 'POST',
 								url: window.location.href,
-								data: new URLSearchParams( form[0] ).toString(),
+								data: new URLSearchParams( new FormData( form[0] ) ).toString(),
 								dataType: 'json',
 								success: function( result ) {
 									self.validated = false;

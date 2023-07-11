@@ -657,3 +657,14 @@ Tested against:
 * [Tested Against] Woocommerce 7.8.0
 * [Tested Against] PHP SDK 3.2.0
 
+= 2.1.22 - July 11, 2023 =
+
+* [Features] Support of Woocommerce 7.8.1
+* [Features] Support of Woocommerce 7.8.2
+* [BugFix] Fix the impossibility of changing the payment method of a subscription
+
+* [Tested Against] PHP 8.0.28
+* [Tested Against] Wordpress 6.2.2
+* [Tested Against] Woocommerce 7.8.2
+* [Tested Against] PHP SDK 3.2.0
+
