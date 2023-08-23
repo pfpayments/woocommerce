@@ -668,3 +668,14 @@ Tested against:
 * [Tested Against] Woocommerce 7.8.2
 * [Tested Against] PHP SDK 3.2.0
 
+= 2.1.23 - August 23, 2023 =
+
+* [Features] Support of Wordpress 6.3.0
+* [Features] Support for v8.0.0. Caveat - we dot not support checkout blocks at the current time. If PostFinance Checkout payment methods do not appear on the checkout, replace the blocks with the checkout shortcode.
+* [BugFix] Fix the error caused by an incorrect query statement when attempting to load an attribute ID.
+
+* [Tested Against] PHP 8.0.28
+* [Tested Against] Wordpress 6.3.0
+* [Tested Against] Woocommerce 8.0.0
+* [Tested Against] PHP SDK 3.2.0
+
