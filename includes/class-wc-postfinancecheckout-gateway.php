@@ -420,7 +420,8 @@ class WC_PostFinanceCheckout_Gateway extends WC_Payment_Gateway {
 			}
 			if ( ! wp_script_is( 'postfinancecheckout-remote-checkout-js', 'enqueued' ) ) {
 				$ajax_url = $transaction_service->get_javascript_url_for_transaction( $transaction );
-				if ( get_option( WooCommerce_PostFinanceCheckout::CK_INTEGRATION ) == WC_PostFinanceCheckout_Integration::LIGHTBOX ) {
+				//!isset($wp->query_vars['order-pay'])->If you're not in the "re-pay" checkout.
+				if (( get_option( WooCommerce_PostFinanceCheckout::CK_INTEGRATION ) == WC_PostFinanceCheckout_Integration::LIGHTBOX ) && (is_checkout() && !isset($wp->query_vars['order-pay']))) {
 					$ajax_url = $transaction_service->get_lightbox_url_for_transaction( $transaction );
 				}
 				wp_enqueue_script(

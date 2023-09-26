@@ -291,7 +291,7 @@ class WC_PostFinanceCheckout_Email {
 				return $actions;
 			});
 		}
-
+		
 		$actions = array_merge( $actions, $to_add );
 		return $actions;
 	}

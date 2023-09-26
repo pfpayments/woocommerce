@@ -679,3 +679,13 @@ Tested against:
 * [Tested Against] Woocommerce 8.0.0
 * [Tested Against] PHP SDK 3.2.0
 
+= 2.1.24 - September 26, 2023 =
+
+* [Features] Support of Wordpress 6.3.0
+* [BugFix] Fix an error when users try to re-pay a transaction
+
+* [Tested Against] PHP 8.0.28
+* [Tested Against] Wordpress 6.3.0
+* [Tested Against] Woocommerce 8.0.0
+* [Tested Against] PHP SDK 3.2.0
+
