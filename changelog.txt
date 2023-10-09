@@ -449,7 +449,7 @@ Features:
 - Support of Wordpress 6.1
 - Support of Woocommerce 7.0.1
 Bugfixes:
-- Fix that when 0 manual task are needed, the message ?0 manuelle Tasks ben?tigen Ihre Aufmerksamkeit? is shown.
+- Fix that when 0 manual task are needed, the message ‘0 manuelle Tasks benötigen Ihre Aufmerksamkeit’ is shown.
 Tested against:
 - PHP 7.4.32
 - Wordpress: 6.1
@@ -687,5 +687,14 @@ Tested against:
 * [Tested Against] PHP 8.0.28
 * [Tested Against] Wordpress 6.3.0
 * [Tested Against] Woocommerce 8.0.0
+* [Tested Against] PHP SDK 3.2.0
+
+= 2.1.25 - October 9, 2023 =
+
+* [Features] Increased woocommerce version support to 8.1.1.
+
+* [Tested Against] PHP 8.0.28
+* [Tested Against] Wordpress 6.3.0
+* [Tested Against] Woocommerce 8.1.1
 * [Tested Against] PHP SDK 3.2.0
 
