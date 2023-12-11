@@ -29,7 +29,7 @@ use \PostFinanceCheckout\Sdk\ObjectSerializer;
  * @category    Class
  * @description 
  * @package     PostFinanceCheckout\Sdk
- * @author      customweb GmbH
+ * @author      wallee AG
  * @license     http://www.apache.org/licenses/LICENSE-2.0 Apache License v2
  */
 class WebhookListenerEntity implements ModelInterface, ArrayAccess
@@ -252,7 +252,7 @@ class WebhookListenerEntity implements ModelInterface, ArrayAccess
     /**
      * Sets name
      *
-     * @param map[string,string] $name 
+     * @param map[string,string] $name The name used to identify the webhook listener entity.
      *
      * @return $this
      */
@@ -277,7 +277,7 @@ class WebhookListenerEntity implements ModelInterface, ArrayAccess
     /**
      * Sets technical_name
      *
-     * @param string $technical_name 
+     * @param string $technical_name The name used to programmatically identify the webhook listener entity.
      *
      * @return $this
      */

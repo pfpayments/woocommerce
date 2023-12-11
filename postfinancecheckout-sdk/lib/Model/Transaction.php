@@ -29,7 +29,7 @@ use \PostFinanceCheckout\Sdk\ObjectSerializer;
  * @category    Class
  * @description 
  * @package     PostFinanceCheckout\Sdk
- * @author      customweb GmbH
+ * @author      wallee AG
  * @license     http://www.apache.org/licenses/LICENSE-2.0 Apache License v2
  */
 class Transaction implements ModelInterface, ArrayAccess
@@ -1837,7 +1837,7 @@ class Transaction implements ModelInterface, ArrayAccess
     /**
      * Sets meta_data
      *
-     * @param map[string,string] $meta_data Meta data allow to store additional data along the object.
+     * @param map[string,string] $meta_data Allow to store additional information about the object.
      *
      * @return $this
      */

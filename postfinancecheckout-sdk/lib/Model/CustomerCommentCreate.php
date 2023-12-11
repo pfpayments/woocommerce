@@ -27,7 +27,7 @@ use \PostFinanceCheckout\Sdk\ObjectSerializer;
  * @category    Class
  * @description 
  * @package     PostFinanceCheckout\Sdk
- * @author      customweb GmbH
+ * @author      wallee AG
  * @license     http://www.apache.org/licenses/LICENSE-2.0 Apache License v2
  */
 class CustomerCommentCreate extends AbstractCustomerCommentActive 
@@ -214,7 +214,7 @@ class CustomerCommentCreate extends AbstractCustomerCommentActive
     /**
      * Sets customer
      *
-     * @param int $customer 
+     * @param int $customer The customer that the object belongs to.
      *
      * @return $this
      */

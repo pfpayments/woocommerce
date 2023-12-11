@@ -8,7 +8,7 @@
  *
  * @category Class
  * @package  PostFinanceCheckout
- * @author   wallee AG (http://www.wallee.com/)
+ * @author   postfinancecheckout AG (https://postfinance.ch/en/business/products/e-commerce/postfinance-checkout-all-in-one.html)
  * @license  http://www.apache.org/licenses/LICENSE-2.0 Apache Software License (ASL 2.0)
  */
 
@@ -151,7 +151,7 @@ class WC_PostFinanceCheckout_Customer_Document {
 		}
 
 		// verify woocommerce order.
-		$post_id = isset( $_GET['post'] ) ? esc_url_raw( wp_unslash( intval( $_GET['post'] ) ) ) : false;
+		$post_id = isset( $_GET['post'] ) ? $_GET['post'] : false;
 		$order   = WC_Order_Factory::get_order( $post_id );
 		if ( ! $order ) {
 			wp_die( 'Order not found.' );

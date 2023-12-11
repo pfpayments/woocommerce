@@ -8,7 +8,7 @@
  *
  * @category Class
  * @package  PostFinanceCheckout
- * @author   wallee AG (http://www.wallee.com/)
+ * @author   postfinancecheckout AG (https://postfinance.ch/en/business/products/e-commerce/postfinance-checkout-all-in-one.html)
  * @license  http://www.apache.org/licenses/LICENSE-2.0 Apache Software License (ASL 2.0)
  */
 
@@ -96,24 +96,9 @@ class WC_PostFinanceCheckout_Service_Line_Item extends WC_PostFinanceCheckout_Se
 			 */
 			$product = $values['data'];
 			$amount_including_tax = $values['line_subtotal'] + $values['line_subtotal_tax'];
-			$discount_including_tax = $values['line_total'] + $values['line_tax'];
-
-			//there is no coupon discount applied
-			$amount = $discount_including_tax;
-			$discount = $amount_including_tax - $discount_including_tax;
-
-			if (isset($values['key'])) {
-				$coupon_discount = apply_filters( 'wc_postfinancecheckout_packages_coupon_percentage_discounts_by_item', $values['key'] );
-				if ( $coupon_discount > 0 ) {
-					//there is some coupon discount applied
-					$amount = $amount_including_tax;
-					$discount = $amount_including_tax - $discount_including_tax - $coupon_discount;
-				}
-			}
 
 			$line_item = new \PostFinanceCheckout\Sdk\Model\LineItemCreate();
-			$line_item->setAmountIncludingTax( $this->round_amount( $amount, $currency ) );
-			$line_item->setDiscountIncludingTax( $this->round_amount( $discount, $currency ) );
+			$line_item->setAmountIncludingTax( $this->round_amount( $amount_including_tax, $currency ) );
 			$line_item->setName( $this->fix_length( $product->get_name(), 150 ) );
 
 			$quantity = empty( $values['quantity'] ) ? 1 : $values['quantity'];
@@ -263,19 +248,9 @@ class WC_PostFinanceCheckout_Service_Line_Item extends WC_PostFinanceCheckout_Se
 			return $coupons;
 		}
 
-		//all wp coupons available
-		$wp_coupons = $cart->get_coupons();
-		foreach ( $cart->get_applied_coupons() as $coupon_code ) {
-			//check if there is a coupon with this code
-			if ( empty( $wp_coupons[ $coupon_code ] ) ) {
-				continue;
-			}
-			/** @var WC_Coupon $coupon_applied */
-			$coupon_applied = $wp_coupons[ $coupon_code ];
-			$amount = $this->round_amount( $cart->get_coupon_discount_amount( $coupon_code, false ), $currency );
-			$line_item = $this->create_coupon_line_item( $coupon_applied, $amount );
-			$coupons[] = $this->clean_line_item( $line_item );
-		}
+		$discount =  $cart->get_discount_total() + $cart->get_discount_tax();
+		$line_item = $this->create_coupon_line_item( current($cart->get_coupons()), $discount );
+		$coupons[] = $line_item;
 		return $coupons;
 	}
 
@@ -293,9 +268,7 @@ class WC_PostFinanceCheckout_Service_Line_Item extends WC_PostFinanceCheckout_Se
 
 		$coupon = new WC_Coupon( $coupon->get_code() );
 
-		$currency = get_woocommerce_currency();
-		//convert coupon amount to a negative amount
-		$amount = $this->round_amount( $amount, $currency ) * -1;
+		$amount = $amount * -1;
 		$sku = $this->fix_length( $coupon->get_discount_type(), 150 );
 		$sku = str_replace( array( "\n", "\r", ), '', $sku );
 
@@ -367,21 +340,8 @@ class WC_PostFinanceCheckout_Service_Line_Item extends WC_PostFinanceCheckout_Se
 
 			$line_item = new \PostFinanceCheckout\Sdk\Model\LineItemCreate();
 			$amount_including_tax = $item->get_subtotal() + $item->get_subtotal_tax();
-			$discount_including_tax = $item->get_total() + $item->get_total_tax();
 
-			//there is no coupon discount applied
-			$amount = $discount_including_tax;
-			$discount = $amount_including_tax - $discount_including_tax;
-
-			$coupon_discount = $item->get_meta( '_postfinancecheckout_coupon_discount_line_item_discounts' );
-			if ( $coupon_discount > 0 ) {
-				//there is some coupon discount applied
-				$amount = $amount_including_tax;
-				$discount = abs($amount_including_tax - $discount_including_tax - $coupon_discount);
-			}
-
-			$line_item->setAmountIncludingTax( $this->round_amount( $amount, $currency ) );
-			$line_item->setDiscountIncludingTax( $this->round_amount( $discount, $currency ) );
+			$line_item->setAmountIncludingTax( $this->round_amount( $amount_including_tax, $currency ) );
 			$quantity = empty( $item->get_quantity() ) ? 1 : $item->get_quantity();
 
 			$line_item->setQuantity( $quantity );
@@ -549,11 +509,13 @@ class WC_PostFinanceCheckout_Service_Line_Item extends WC_PostFinanceCheckout_Se
 		}
 
 		//all wp coupons available
+		$discount =  0;
 		foreach ( $order->get_coupons() as $coupon ) {
 			/** @var WC_Order_Item_Coupon $coupon */
-			$line_item = $this->create_coupon_line_item( $coupon, $coupon->get_discount() + $coupon->get_discount_tax() );
-			$coupons[] = $this->clean_line_item( $line_item );
+			$discount += (float)$coupon->get_discount() + (float)$coupon->get_discount_tax();
 		}
+		$line_item = $this->create_coupon_line_item( current($order->get_coupons()), $discount );
+		$coupons[] = $this->clean_line_item( $line_item );
 		return $coupons;
 	}
 

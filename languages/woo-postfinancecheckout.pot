@@ -525,12 +525,12 @@ msgid "https://wordpress.org/plugins/woo-postfinancecheckout"
 msgstr "https://wordpress.org/plugins/woo-postfinancecheckout"
 
 #. Author of the plugin
-msgid "wallee AG"
-msgstr "wallee AG"
+msgid "postfinancecheckout AG"
+msgstr "postfinancecheckout AG"
 
 #. Author URI of the plugin
-msgid "https://www.wallee.com"
-msgstr "https://www.wallee.com"
+msgid "https://postfinance.ch/en/business/products/e-commerce/postfinance-checkout-all-in-one.html"
+msgstr "https://postfinance.ch/en/business/products/e-commerce/postfinance-checkout-all-in-one.html"
 
 
 #: includes/admin/class-wc-postfinancecheckout-admin-settings-page.php:277

@@ -29,7 +29,7 @@ use \PostFinanceCheckout\Sdk\ObjectSerializer;
  * @category    Class
  * @description 
  * @package     PostFinanceCheckout\Sdk
- * @author      customweb GmbH
+ * @author      wallee AG
  * @license     http://www.apache.org/licenses/LICENSE-2.0 Apache License v2
  */
 class RestCountry implements ModelInterface, ArrayAccess
@@ -49,9 +49,9 @@ class RestCountry implements ModelInterface, ArrayAccess
       * @var string[]
       */
     protected static $swaggerTypes = [
-        'iso_code2_letter' => 'string',
-        'iso_code3_letter' => 'string',
         'address_format' => '\PostFinanceCheckout\Sdk\Model\RestAddressFormat',
+        'iso_code2' => 'string',
+        'iso_code3' => 'string',
         'name' => 'string',
         'numeric_code' => 'string',
         'state_codes' => 'string[]'
@@ -63,9 +63,9 @@ class RestCountry implements ModelInterface, ArrayAccess
       * @var string[]
       */
     protected static $swaggerFormats = [
-        'iso_code2_letter' => null,
-        'iso_code3_letter' => null,
         'address_format' => null,
+        'iso_code2' => null,
+        'iso_code3' => null,
         'name' => null,
         'numeric_code' => null,
         'state_codes' => null
@@ -78,9 +78,9 @@ class RestCountry implements ModelInterface, ArrayAccess
      * @var string[]
      */
     protected static $attributeMap = [
-        'iso_code2_letter' => 'ISOCode2Letter',
-        'iso_code3_letter' => 'ISOCode3Letter',
         'address_format' => 'addressFormat',
+        'iso_code2' => 'isoCode2',
+        'iso_code3' => 'isoCode3',
         'name' => 'name',
         'numeric_code' => 'numericCode',
         'state_codes' => 'stateCodes'
@@ -92,9 +92,9 @@ class RestCountry implements ModelInterface, ArrayAccess
      * @var string[]
      */
     protected static $setters = [
-        'iso_code2_letter' => 'setIsoCode2Letter',
-        'iso_code3_letter' => 'setIsoCode3Letter',
         'address_format' => 'setAddressFormat',
+        'iso_code2' => 'setIsoCode2',
+        'iso_code3' => 'setIsoCode3',
         'name' => 'setName',
         'numeric_code' => 'setNumericCode',
         'state_codes' => 'setStateCodes'
@@ -106,9 +106,9 @@ class RestCountry implements ModelInterface, ArrayAccess
      * @var string[]
      */
     protected static $getters = [
-        'iso_code2_letter' => 'getIsoCode2Letter',
-        'iso_code3_letter' => 'getIsoCode3Letter',
         'address_format' => 'getAddressFormat',
+        'iso_code2' => 'getIsoCode2',
+        'iso_code3' => 'getIsoCode3',
         'name' => 'getName',
         'numeric_code' => 'getNumericCode',
         'state_codes' => 'getStateCodes'
@@ -132,11 +132,11 @@ class RestCountry implements ModelInterface, ArrayAccess
     public function __construct(array $data = null)
     {
         
-        $this->container['iso_code2_letter'] = isset($data['iso_code2_letter']) ? $data['iso_code2_letter'] : null;
-        
-        $this->container['iso_code3_letter'] = isset($data['iso_code3_letter']) ? $data['iso_code3_letter'] : null;
-        
         $this->container['address_format'] = isset($data['address_format']) ? $data['address_format'] : null;
+        
+        $this->container['iso_code2'] = isset($data['iso_code2']) ? $data['iso_code2'] : null;
+        
+        $this->container['iso_code3'] = isset($data['iso_code3']) ? $data['iso_code3'] : null;
         
         $this->container['name'] = isset($data['name']) ? $data['name'] : null;
         
@@ -236,56 +236,6 @@ class RestCountry implements ModelInterface, ArrayAccess
     
 
     /**
-     * Gets iso_code2_letter
-     *
-     * @return string
-     */
-    public function getIsoCode2Letter()
-    {
-        return $this->container['iso_code2_letter'];
-    }
-
-    /**
-     * Sets iso_code2_letter
-     *
-     * @param string $iso_code2_letter The ISO code 2 letter identifies the country by two chars as defined in ISO 3166-1 (e.g. US, DE, CH).
-     *
-     * @return $this
-     */
-    public function setIsoCode2Letter($iso_code2_letter)
-    {
-        $this->container['iso_code2_letter'] = $iso_code2_letter;
-
-        return $this;
-    }
-    
-
-    /**
-     * Gets iso_code3_letter
-     *
-     * @return string
-     */
-    public function getIsoCode3Letter()
-    {
-        return $this->container['iso_code3_letter'];
-    }
-
-    /**
-     * Sets iso_code3_letter
-     *
-     * @param string $iso_code3_letter The ISO code 3 letter identifies the country by three chars as defined in ISO 3166-1 (e.g. CHE, USA, GBR).
-     *
-     * @return $this
-     */
-    public function setIsoCode3Letter($iso_code3_letter)
-    {
-        $this->container['iso_code3_letter'] = $iso_code3_letter;
-
-        return $this;
-    }
-    
-
-    /**
      * Gets address_format
      *
      * @return \PostFinanceCheckout\Sdk\Model\RestAddressFormat
@@ -298,13 +248,63 @@ class RestCountry implements ModelInterface, ArrayAccess
     /**
      * Sets address_format
      *
-     * @param \PostFinanceCheckout\Sdk\Model\RestAddressFormat $address_format The address format of the country indicates how an address has to look like for the country.
+     * @param \PostFinanceCheckout\Sdk\Model\RestAddressFormat $address_format Specifies the country's way of formatting addresses.
      *
      * @return $this
      */
     public function setAddressFormat($address_format)
     {
         $this->container['address_format'] = $address_format;
+
+        return $this;
+    }
+    
+
+    /**
+     * Gets iso_code2
+     *
+     * @return string
+     */
+    public function getIsoCode2()
+    {
+        return $this->container['iso_code2'];
+    }
+
+    /**
+     * Sets iso_code2
+     *
+     * @param string $iso_code2 The country's two-letter code (ISO 3166-1 alpha-2 format).
+     *
+     * @return $this
+     */
+    public function setIsoCode2($iso_code2)
+    {
+        $this->container['iso_code2'] = $iso_code2;
+
+        return $this;
+    }
+    
+
+    /**
+     * Gets iso_code3
+     *
+     * @return string
+     */
+    public function getIsoCode3()
+    {
+        return $this->container['iso_code3'];
+    }
+
+    /**
+     * Sets iso_code3
+     *
+     * @param string $iso_code3 The country's three-letter code (ISO 3166-1 alpha-3 format).
+     *
+     * @return $this
+     */
+    public function setIsoCode3($iso_code3)
+    {
+        $this->container['iso_code3'] = $iso_code3;
 
         return $this;
     }
@@ -323,7 +323,7 @@ class RestCountry implements ModelInterface, ArrayAccess
     /**
      * Sets name
      *
-     * @param string $name The name labels the country by a name in English.
+     * @param string $name The name of the country.
      *
      * @return $this
      */
@@ -348,7 +348,7 @@ class RestCountry implements ModelInterface, ArrayAccess
     /**
      * Sets numeric_code
      *
-     * @param string $numeric_code The numeric code identifies the country by a three digit number as defined in ISO 3166-1 (e.g. 840, 826, 756).
+     * @param string $numeric_code The country's three-digit code (ISO 3166-1 numeric format).
      *
      * @return $this
      */
@@ -373,7 +373,7 @@ class RestCountry implements ModelInterface, ArrayAccess
     /**
      * Sets state_codes
      *
-     * @param string[] $state_codes The state codes field is a list of all states associated with this country. The list contains the identifiers of the states. The identifiers corresponds to the ISO 3166-2 subdivision identifier.
+     * @param string[] $state_codes The codes of all regions (e.g. states, provinces) of the country (ISO 3166-2 format).
      *
      * @return $this
      */

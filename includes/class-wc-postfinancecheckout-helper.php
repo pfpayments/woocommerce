@@ -8,7 +8,7 @@
  *
  * @category Class
  * @package  PostFinanceCheckout
- * @author   wallee AG (http://www.wallee.com/)
+ * @author   postfinancecheckout AG (https://postfinance.ch/en/business/products/e-commerce/postfinance-checkout-all-in-one.html)
  * @license  http://www.apache.org/licenses/LICENSE-2.0 Apache Software License (ASL 2.0)
  */
 
@@ -112,7 +112,7 @@ class WC_PostFinanceCheckout_Helper {
 	 * @return string
 	 */
 	public function get_base_gateway_url() {
-		return get_option( 'wc_postfinancecheckout_base_gateway_url', 'https://checkout.postfinance.ch/' );
+		return get_option( 'wc_postfinancecheckout_base_gateway_url', 'https://app-postfinancecheckout.com/' );
 	}
 
 
@@ -239,6 +239,13 @@ class WC_PostFinanceCheckout_Helper {
 		$effective_sum = $this->round_amount( $this->get_total_amount_including_tax( $line_items, $has_coupons ), $currency );
 		$rounded_expected_sum = $this->round_amount( $expected_sum, $currency );
 
+		if ( $has_coupons ) {
+			$result = apply_filters( 'wc_postfinancecheckout_packages_coupon_process_line_items_with_coupons', $line_items, $expected_sum, $currency );
+			$line_items = $result['line_items_cleaned'];
+			$effective_sum = $result['effective_sum'];
+			$rounded_expected_sum = $this->round_amount( $expected_sum, $currency );
+		}
+
 		$inconsistent_amount = $rounded_expected_sum - $effective_sum;
 		if ( 0 != $inconsistent_amount ) {
 			$enforce_consistency = get_option( WooCommerce_PostFinanceCheckout::CK_ENFORCE_CONSISTENCY );
@@ -258,8 +265,7 @@ class WC_PostFinanceCheckout_Helper {
 					throw new WC_PostFinanceCheckout_Exception_Invalid_Transaction_Amount( $effective_sum, $rounded_expected_sum );
 			}
 		}
-		$data = $this->ensure_unique_ids( $line_items );
-		return $data;
+		return $this->ensure_unique_ids( $line_items );
 	}
 
 

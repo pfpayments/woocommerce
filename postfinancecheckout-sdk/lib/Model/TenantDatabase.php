@@ -29,7 +29,7 @@ use \PostFinanceCheckout\Sdk\ObjectSerializer;
  * @category    Class
  * @description 
  * @package     PostFinanceCheckout\Sdk
- * @author      customweb GmbH
+ * @author      wallee AG
  * @license     http://www.apache.org/licenses/LICENSE-2.0 Apache License v2
  */
 class TenantDatabase implements ModelInterface, ArrayAccess
@@ -256,7 +256,7 @@ class TenantDatabase implements ModelInterface, ArrayAccess
     /**
      * Sets name
      *
-     * @param string $name The name of the database.
+     * @param string $name The name used to identify the database.
      *
      * @return $this
      */

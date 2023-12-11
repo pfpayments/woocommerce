@@ -27,7 +27,7 @@ use PostFinanceCheckout\Sdk\ObjectSerializer;
  *
  * @category Class
  * @package  PostFinanceCheckout\Sdk\Http
- * @author   customweb GmbH
+ * @author   wallee AG
  * @license  http://www.apache.org/licenses/LICENSE-2.0 Apache License v2
  */
 final class HttpRequest {
@@ -76,11 +76,11 @@ final class HttpRequest {
 	const HEADER_KEY_ACCEPT = 'accept';
 	
 	/**
-	 * The key of the 'x-wallee-logtoken' header.
+	 * The key of the 'x-postfinancecheckout-logtoken' header.
 	 *
 	 * @var string
 	 */
-	const HEADER_LOG_TOKEN = 'x-wallee-logtoken';
+	const HEADER_LOG_TOKEN = 'x-postfinancecheckout-logtoken';
 
 	/**
 	 * The object serializer.

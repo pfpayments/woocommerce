@@ -23,7 +23,7 @@ jobs:
         echo $WORDPRESS_ORG_SLUG
         ls -ltrh
         git clone https://github.com/squizlabs/PHP_CodeSniffer.git phpcs;
-        git clone -b master https://github.com/WordPress/WordPress-Coding-Standards.git wpcs;
+        git clone -b main https://github.com/WordPress/WordPress-Coding-Standards.git wpcs;
         cd phpcs;
         ./bin/phpcs --config-set installed_paths ../wpcs;
         cd ../;

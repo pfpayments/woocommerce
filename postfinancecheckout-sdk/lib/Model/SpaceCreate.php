@@ -27,7 +27,7 @@ use \PostFinanceCheckout\Sdk\ObjectSerializer;
  * @category    Class
  * @description 
  * @package     PostFinanceCheckout\Sdk
- * @author      customweb GmbH
+ * @author      wallee AG
  * @license     http://www.apache.org/licenses/LICENSE-2.0 Apache License v2
  */
 class SpaceCreate extends AbstractSpaceUpdate 
@@ -218,7 +218,7 @@ class SpaceCreate extends AbstractSpaceUpdate
     /**
      * Sets account
      *
-     * @param int $account The account to which the space belongs to.
+     * @param int $account The account that the space belongs to.
      *
      * @return $this
      */

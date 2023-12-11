@@ -30,7 +30,7 @@ use PostFinanceCheckout\Sdk\Http\HttpClientFactory;
  *
  * @category Class
  * @package  PostFinanceCheckout\Sdk
- * @author   customweb GmbH
+ * @author   wallee AG
  * @license  http://www.apache.org/licenses/LICENSE-2.0 Apache License v2
  */
 final class ApiClient {
@@ -48,7 +48,7 @@ final class ApiClient {
 	 * @var array
 	 */
 	private $defaultHeaders = [
-        'x-meta-sdk-version' => "3.2.0",
+        'x-meta-sdk-version' => "4.0.2",
         'x-meta-sdk-language' => 'php',
         'x-meta-sdk-provider' => "PostFinance Checkout",
     ];
@@ -58,7 +58,7 @@ final class ApiClient {
 	 *
 	 * @var string
 	 */
-	private $userAgent = 'PHP-Client/3.2.0/php';
+	private $userAgent = 'PHP-Client/4.0.2/php';
 
 	/**
 	 * The path to the certificate authority file.
@@ -631,6 +631,18 @@ final class ApiClient {
             $this->bankTransactionService = new \PostFinanceCheckout\Sdk\Service\BankTransactionService($this);
         }
         return $this->bankTransactionService;
+    }
+    
+    protected $cardProcessingService;
+
+    /**
+     * @return \PostFinanceCheckout\Sdk\Service\CardProcessingService
+     */
+    public function getCardProcessingService() {
+        if(is_null($this->cardProcessingService)){
+            $this->cardProcessingService = new \PostFinanceCheckout\Sdk\Service\CardProcessingService($this);
+        }
+        return $this->cardProcessingService;
     }
     
     protected $chargeAttemptService;
@@ -1447,6 +1459,30 @@ final class ApiClient {
             $this->userSpaceRoleService = new \PostFinanceCheckout\Sdk\Service\UserSpaceRoleService($this);
         }
         return $this->userSpaceRoleService;
+    }
+    
+    protected $webAppService;
+
+    /**
+     * @return \PostFinanceCheckout\Sdk\Service\WebAppService
+     */
+    public function getWebAppService() {
+        if(is_null($this->webAppService)){
+            $this->webAppService = new \PostFinanceCheckout\Sdk\Service\WebAppService($this);
+        }
+        return $this->webAppService;
+    }
+    
+    protected $webhookEncryptionService;
+
+    /**
+     * @return \PostFinanceCheckout\Sdk\Service\WebhookEncryptionService
+     */
+    public function getWebhookEncryptionService() {
+        if(is_null($this->webhookEncryptionService)){
+            $this->webhookEncryptionService = new \PostFinanceCheckout\Sdk\Service\WebhookEncryptionService($this);
+        }
+        return $this->webhookEncryptionService;
     }
     
     protected $webhookListenerService;

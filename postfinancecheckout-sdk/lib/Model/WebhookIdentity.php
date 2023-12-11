@@ -29,7 +29,7 @@ use \PostFinanceCheckout\Sdk\ObjectSerializer;
  * @category    Class
  * @description The webhook identity represents a set of keys that will be used to sign the webhook messages.
  * @package     PostFinanceCheckout\Sdk
- * @author      customweb GmbH
+ * @author      wallee AG
  * @license     http://www.apache.org/licenses/LICENSE-2.0 Apache License v2
  */
 class WebhookIdentity implements ModelInterface, ArrayAccess
@@ -302,7 +302,7 @@ class WebhookIdentity implements ModelInterface, ArrayAccess
     /**
      * Sets name
      *
-     * @param string $name The identity name is used internally to identify the webhook identity in administrative interfaces. For example it is used within search fields and hence it should be distinct and descriptive.
+     * @param string $name The name used to identify the webhook identity.
      *
      * @return $this
      */

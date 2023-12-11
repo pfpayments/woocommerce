@@ -27,7 +27,7 @@ use \PostFinanceCheckout\Sdk\ObjectSerializer;
  * @category    Class
  * @description 
  * @package     PostFinanceCheckout\Sdk
- * @author      customweb GmbH
+ * @author      wallee AG
  * @license     http://www.apache.org/licenses/LICENSE-2.0 Apache License v2
  */
 class ApplicationUserCreateWithMacKey extends ApplicationUser 
@@ -211,7 +211,7 @@ class ApplicationUserCreateWithMacKey extends ApplicationUser
     /**
      * Sets mac_key
      *
-     * @param string $mac_key 
+     * @param string $mac_key The user's authentication key securing requests. Only displayed a single time after the user has been created.
      *
      * @return $this
      */

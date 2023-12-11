@@ -24,15 +24,15 @@ use \ArrayAccess;
 use \PostFinanceCheckout\Sdk\ObjectSerializer;
 
 /**
- * DatabaseTranslatedString model
+ * CardholderAuthentication model
  *
  * @category    Class
- * @description 
+ * @description This model holds the cardholder authentication data (e.g. 3-D Secure authentication).
  * @package     PostFinanceCheckout\Sdk
- * @author      customweb GmbH
+ * @author      wallee AG
  * @license     http://www.apache.org/licenses/LICENSE-2.0 Apache License v2
  */
-class DatabaseTranslatedString implements ModelInterface, ArrayAccess
+class CardholderAuthentication implements ModelInterface, ArrayAccess
 {
     const DISCRIMINATOR = null;
 
@@ -41,7 +41,7 @@ class DatabaseTranslatedString implements ModelInterface, ArrayAccess
       *
       * @var string
       */
-    protected static $swaggerModelName = 'DatabaseTranslatedString';
+    protected static $swaggerModelName = 'CardholderAuthentication';
 
     /**
       * Array of property to type mappings. Used for (de)serialization
@@ -49,9 +49,11 @@ class DatabaseTranslatedString implements ModelInterface, ArrayAccess
       * @var string[]
       */
     protected static $swaggerTypes = [
-        'available_languages' => 'string[]',
-        'display_name' => 'string',
-        'items' => '\PostFinanceCheckout\Sdk\Model\DatabaseTranslatedStringItem[]'
+        'authentication_identifier' => 'string',
+        'authentication_response' => '\PostFinanceCheckout\Sdk\Model\CardAuthenticationResponse',
+        'authentication_value' => 'string',
+        'electronic_commerce_indicator' => 'string',
+        'version' => '\PostFinanceCheckout\Sdk\Model\CardAuthenticationVersion'
     ];
 
     /**
@@ -60,9 +62,11 @@ class DatabaseTranslatedString implements ModelInterface, ArrayAccess
       * @var string[]
       */
     protected static $swaggerFormats = [
-        'available_languages' => null,
-        'display_name' => null,
-        'items' => null
+        'authentication_identifier' => null,
+        'authentication_response' => null,
+        'authentication_value' => null,
+        'electronic_commerce_indicator' => null,
+        'version' => null
     ];
 
     /**
@@ -72,9 +76,11 @@ class DatabaseTranslatedString implements ModelInterface, ArrayAccess
      * @var string[]
      */
     protected static $attributeMap = [
-        'available_languages' => 'availableLanguages',
-        'display_name' => 'displayName',
-        'items' => 'items'
+        'authentication_identifier' => 'authenticationIdentifier',
+        'authentication_response' => 'authenticationResponse',
+        'authentication_value' => 'authenticationValue',
+        'electronic_commerce_indicator' => 'electronicCommerceIndicator',
+        'version' => 'version'
     ];
 
     /**
@@ -83,9 +89,11 @@ class DatabaseTranslatedString implements ModelInterface, ArrayAccess
      * @var string[]
      */
     protected static $setters = [
-        'available_languages' => 'setAvailableLanguages',
-        'display_name' => 'setDisplayName',
-        'items' => 'setItems'
+        'authentication_identifier' => 'setAuthenticationIdentifier',
+        'authentication_response' => 'setAuthenticationResponse',
+        'authentication_value' => 'setAuthenticationValue',
+        'electronic_commerce_indicator' => 'setElectronicCommerceIndicator',
+        'version' => 'setVersion'
     ];
 
     /**
@@ -94,9 +102,11 @@ class DatabaseTranslatedString implements ModelInterface, ArrayAccess
      * @var string[]
      */
     protected static $getters = [
-        'available_languages' => 'getAvailableLanguages',
-        'display_name' => 'getDisplayName',
-        'items' => 'getItems'
+        'authentication_identifier' => 'getAuthenticationIdentifier',
+        'authentication_response' => 'getAuthenticationResponse',
+        'authentication_value' => 'getAuthenticationValue',
+        'electronic_commerce_indicator' => 'getElectronicCommerceIndicator',
+        'version' => 'getVersion'
     ];
 
     
@@ -117,11 +127,15 @@ class DatabaseTranslatedString implements ModelInterface, ArrayAccess
     public function __construct(array $data = null)
     {
         
-        $this->container['available_languages'] = isset($data['available_languages']) ? $data['available_languages'] : null;
+        $this->container['authentication_identifier'] = isset($data['authentication_identifier']) ? $data['authentication_identifier'] : null;
         
-        $this->container['display_name'] = isset($data['display_name']) ? $data['display_name'] : null;
+        $this->container['authentication_response'] = isset($data['authentication_response']) ? $data['authentication_response'] : null;
         
-        $this->container['items'] = isset($data['items']) ? $data['items'] : null;
+        $this->container['authentication_value'] = isset($data['authentication_value']) ? $data['authentication_value'] : null;
+        
+        $this->container['electronic_commerce_indicator'] = isset($data['electronic_commerce_indicator']) ? $data['electronic_commerce_indicator'] : null;
+        
+        $this->container['version'] = isset($data['version']) ? $data['version'] : null;
         
     }
 
@@ -215,75 +229,125 @@ class DatabaseTranslatedString implements ModelInterface, ArrayAccess
     
 
     /**
-     * Gets available_languages
-     *
-     * @return string[]
-     */
-    public function getAvailableLanguages()
-    {
-        return $this->container['available_languages'];
-    }
-
-    /**
-     * Sets available_languages
-     *
-     * @param string[] $available_languages 
-     *
-     * @return $this
-     */
-    public function setAvailableLanguages($available_languages)
-    {
-        $this->container['available_languages'] = $available_languages;
-
-        return $this;
-    }
-    
-
-    /**
-     * Gets display_name
+     * Gets authentication_identifier
      *
      * @return string
      */
-    public function getDisplayName()
+    public function getAuthenticationIdentifier()
     {
-        return $this->container['display_name'];
+        return $this->container['authentication_identifier'];
     }
 
     /**
-     * Sets display_name
+     * Sets authentication_identifier
      *
-     * @param string $display_name 
+     * @param string $authentication_identifier The authentication identifier as assigned by authentication system (e.g. XID or DSTransactionID).
      *
      * @return $this
      */
-    public function setDisplayName($display_name)
+    public function setAuthenticationIdentifier($authentication_identifier)
     {
-        $this->container['display_name'] = $display_name;
+        $this->container['authentication_identifier'] = $authentication_identifier;
 
         return $this;
     }
     
 
     /**
-     * Gets items
+     * Gets authentication_response
      *
-     * @return \PostFinanceCheckout\Sdk\Model\DatabaseTranslatedStringItem[]
+     * @return \PostFinanceCheckout\Sdk\Model\CardAuthenticationResponse
      */
-    public function getItems()
+    public function getAuthenticationResponse()
     {
-        return $this->container['items'];
+        return $this->container['authentication_response'];
     }
 
     /**
-     * Sets items
+     * Sets authentication_response
      *
-     * @param \PostFinanceCheckout\Sdk\Model\DatabaseTranslatedStringItem[] $items 
+     * @param \PostFinanceCheckout\Sdk\Model\CardAuthenticationResponse $authentication_response 
      *
      * @return $this
      */
-    public function setItems($items)
+    public function setAuthenticationResponse($authentication_response)
     {
-        $this->container['items'] = $items;
+        $this->container['authentication_response'] = $authentication_response;
+
+        return $this;
+    }
+    
+
+    /**
+     * Gets authentication_value
+     *
+     * @return string
+     */
+    public function getAuthenticationValue()
+    {
+        return $this->container['authentication_value'];
+    }
+
+    /**
+     * Sets authentication_value
+     *
+     * @param string $authentication_value The cardholder authentication value. Also known as Cardholder Authentication Verification Value (CAVV).
+     *
+     * @return $this
+     */
+    public function setAuthenticationValue($authentication_value)
+    {
+        $this->container['authentication_value'] = $authentication_value;
+
+        return $this;
+    }
+    
+
+    /**
+     * Gets electronic_commerce_indicator
+     *
+     * @return string
+     */
+    public function getElectronicCommerceIndicator()
+    {
+        return $this->container['electronic_commerce_indicator'];
+    }
+
+    /**
+     * Sets electronic_commerce_indicator
+     *
+     * @param string $electronic_commerce_indicator The Electronic Commerce Indicator (ECI) value. The ECI is returned by authentication system and indicates the outcome/status of authentication.
+     *
+     * @return $this
+     */
+    public function setElectronicCommerceIndicator($electronic_commerce_indicator)
+    {
+        $this->container['electronic_commerce_indicator'] = $electronic_commerce_indicator;
+
+        return $this;
+    }
+    
+
+    /**
+     * Gets version
+     *
+     * @return \PostFinanceCheckout\Sdk\Model\CardAuthenticationVersion
+     */
+    public function getVersion()
+    {
+        return $this->container['version'];
+    }
+
+    /**
+     * Sets version
+     *
+     * @param \PostFinanceCheckout\Sdk\Model\CardAuthenticationVersion $version 
+     *
+     * @return $this
+     */
+    public function setVersion($version)
+    {
+        $this->container['version'] = $version;
 
         return $this;
     }
