@@ -8,7 +8,7 @@
  *
  * @category Class
  * @package  PostFinanceCheckout
- * @author   postfinancecheckout AG (https://postfinance.ch/en/business/products/e-commerce/postfinance-checkout-all-in-one.html)
+ * @author   wallee AG (https://postfinance.ch/en/business/products/e-commerce/postfinance-checkout-all-in-one.html)
  * @license  http://www.apache.org/licenses/LICENSE-2.0 Apache Software License (ASL 2.0)
  */
 
@@ -112,7 +112,7 @@ class WC_PostFinanceCheckout_Helper {
 	 * @return string
 	 */
 	public function get_base_gateway_url() {
-		return get_option( 'wc_postfinancecheckout_base_gateway_url', 'https://app-postfinancecheckout.com/' );
+		return get_option( 'wc_postfinancecheckout_base_gateway_url', 'https://checkout.postfinance.ch/' );
 	}
 
 
@@ -551,14 +551,14 @@ class WC_PostFinanceCheckout_Helper {
 			do_action( 'wc_postfinancecheckout_restocked_order', $order );
 		}
 	}
-	
+
 	/**
 	 * @return array
 	 */
 	protected static function getDefaultHeaderData()
 	{
 		$version = WC_VERSION;
-		
+
 		$shop_version = str_replace('v', '', $version);
 		list ($major_version, $minor_version) = explode('.', $shop_version, 3);
 		return [

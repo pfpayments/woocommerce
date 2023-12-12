@@ -4,7 +4,7 @@ msgstr ""
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2021-11-30 16:16+0100\n"
 "PO-Revision-Date: 2021-11-30 16:16+0100\n"
-"Last-Translator: postfinancecheckout AG <checkout@postfinance.ch>\n"
+"Last-Translator: wallee AG <checkout@postfinance.ch>\n"
 "Language-Team: German\n"
 "Language: de_DE\n"
 "MIME-Version: 1.0\n"
@@ -566,8 +566,8 @@ msgid "https://wordpress.org/plugins/woo-postfinancecheckout"
 msgstr "https://wordpress.org/plugins/woo-postfinancecheckout"
 
 #. Author of the plugin
-msgid "postfinancecheckout AG"
-msgstr "postfinancecheckout AG"
+msgid "wallee AG"
+msgstr "wallee AG"
 
 #. Author URI of the plugin
 msgid "https://postfinance.ch/en/business/products/e-commerce/postfinance-checkout-all-in-one.html"
