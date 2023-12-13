@@ -283,11 +283,11 @@
 
 = 1.3.11 - October 14, 2020 =
 
-* Update author to wallee AG.
+* Update author to postfinancecheckout AG.
 
 = 1.4 - November 11, 2020 =
 
-* Update author url to wallee AG.
+* Update author url to postfinancecheckout AG.
 * Update postfinancecheckout SDK
 
 = 1.5 - November 27, 2020 =
@@ -711,5 +711,12 @@ Tested against:
 - [Tested Against] PHP 8.0.28
 - [Tested Against] Wordpress 6.3.0
 - [Tested Against] Woocommerce 8.1.1
+- [Tested Against] PHP SDK 4.0.2
+
+= 2.1.28 - December 13, 2023 =
+- [HotFix] Fix incorrectly named css files and paths
+- [Tested Against] PHP 8.0.28
+- [Tested Against] Wordpress 6.3.0
+- [Tested Against] Woocommerce 8.4.0
 - [Tested Against] PHP SDK 4.0.2
 
