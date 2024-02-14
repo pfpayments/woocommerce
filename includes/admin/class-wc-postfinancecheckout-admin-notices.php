@@ -40,34 +40,6 @@ class WC_PostFinanceCheckout_Admin_Notices {
 				'round_subtotal_notices',
 			)
 		);
-		add_action( 'admin_notices',
-		array(
-			__CLASS__,
-			'blocks_warning',
-		) 
-	);
-
-}
-
-	/**
-	 * Warn about blocks incompatibility
-	 */
-	public static function blocks_warning() {
-		$is_blocks_active = defined( 'WC_BLOCKS_IS_FEATURE_PLUGIN' );
-		// it basically is always true but never hurts to be safe
-		$is_wc_active = false;
-		$woocommerce_data = '';
-		if ( is_plugin_active( 'woocommerce/woocommerce.php' ) ) {
-			$is_wc_active = true;
-			$woocommerce_data = get_plugin_data( WP_PLUGIN_DIR . '/woocommerce/woocommerce.php', false, false );
-			$is_wc_version_gt = version_compare( $woocommerce_data['Version'], "8.0.0", '>' );
-		}
-		if ($is_blocks_active || ($is_wc_active && $is_wc_version_gt)) {	
-			$class = 'notice notice-warning';
-			$message = __( 'The PostFinanceCheckout plugin is currently incompatible with the new Woocommerce Blocks Checkout Template (bundled with Woocommerce 8.0.0+). We are working on compatibility. If payment methods do not appear for you when using PostFinanceCheckout with checkout blocks, please replace the checkout page block with the shortcode for the checkout: <pre>[woocommerce_checkout]</pre>', 'sample-text-domain' );
-
-			printf( '<div class="%1$s"><p>%2$s</p></div>', esc_attr( $class ), $message );
-		}
 	}
 
 	/**

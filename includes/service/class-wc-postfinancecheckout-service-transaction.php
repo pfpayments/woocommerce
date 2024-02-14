@@ -412,94 +412,84 @@ class WC_PostFinanceCheckout_Service_Transaction extends WC_PostFinanceCheckout_
 		return null;
 	}
 
+	/**
+	 * Retrieves the possible payment methods based on the transaction source.
+	 *
+	 * This function abstracts the common logic for fetching possible payment methods
+	 * either from a cart or an order. It handles caching and exception management.
+	 *
+	 * @param WC_Order|null $transaction_source The source of the transaction. Pass a WC_Order object for orders, or null for cart.
+	 * @return array|int[]|\PostFinanceCheckout\Sdk\Model\PaymentMethodConfiguration The list of possible payment methods.
+	 * @throws WC_PostFinanceCheckout_Exception_Invalid_Transaction_Amount If the transaction amount is invalid.
+	 * @throws \PostFinanceCheckout\Sdk\ApiException If there is an API exception during the process.
+	 */
+	private function get_possible_payment_methods( $transaction_source ) {
+	    $id = ($transaction_source instanceof WC_Order) ? $transaction_source->get_id() : WC_PostFinanceCheckout_Helper::instance()->get_current_cart_id();
+
+	    if ( ! isset( self::$possible_payment_method_cache[ $id ] ) || is_null( self::$possible_payment_method_cache[ $id ] ) ) {
+	        try {
+	            $transaction = ($transaction_source instanceof WC_Order) ? $this->get_transaction_from_order( $transaction_source ) : $this->get_transaction_from_session();
+
+	            if ( $transaction->getState() != \PostFinanceCheckout\Sdk\Model\TransactionState::PENDING ) {
+	                self::$possible_payment_method_cache[ $id ] = $transaction->getAllowedPaymentMethodConfigurations();
+	                return self::$possible_payment_method_cache[ $id ];
+	            }
+
+	            $integration_method = get_option( WooCommerce_PostFinanceCheckout::CK_INTEGRATION );
+	            $payment_methods = $this->get_transaction_service()->fetchPaymentMethods(
+	                $transaction->getLinkedSpaceId(),
+	                $transaction->getId(),
+	                $integration_method
+	            );
+
+	            $method_configuration_service = WC_PostFinanceCheckout_Service_Method_Configuration::instance();
+	            $possible_methods = array();
+	            foreach ( $payment_methods as $payment_method ) {
+	                $method_configuration_service->update_data( $payment_method );
+	                $possible_methods[] = $payment_method->getId();
+	            }
+
+	            self::$possible_payment_method_cache[ $id ] = $possible_methods;
+	        } catch ( WC_PostFinanceCheckout_Exception_Invalid_Transaction_Amount $e ) {
+	            self::$possible_payment_method_cache[ $id ] = array();
+	            throw $e;
+	        } catch ( \PostFinanceCheckout\Sdk\ApiException $e ) {
+	            self::$possible_payment_method_cache[ $id ] = array();
+	            throw $e;
+	        }
+	    }
+	    return self::$possible_payment_method_cache[ $id ];
+	}
 
 	/**
 	 * Returns the payment methods that can be used with the current cart.
 	 *
-	 * @return array|int[]|\PostFinanceCheckout\Sdk\Model\PaymentMethodConfiguration
-	 * @throws WC_PostFinanceCheckout_Exception_Invalid_Transaction_Amount WC_PostFinanceCheckout_Exception_Invalid_Transaction_Amount.
-	 * @throws \PostFinanceCheckout\Sdk\ApiException ApiException.
+	 * This function serves as a wrapper around the get_possible_payment_methods function,
+	 * specifically handling the case where the transaction source is the current cart.
+	 *
+	 * @return array|int[]|\PostFinanceCheckout\Sdk\Model\PaymentMethodConfiguration The list of possible payment methods for the cart.
+	 * @throws WC_PostFinanceCheckout_Exception_Invalid_Transaction_Amount If the transaction amount is invalid.
+	 * @throws \PostFinanceCheckout\Sdk\ApiException If there is an API exception during the process.
 	 */
 	public function get_possible_payment_methods_for_cart() {
-
-		$current_cart_id = WC_PostFinanceCheckout_Helper::instance()->get_current_cart_id();
-		if ( ! isset( self::$possible_payment_method_cache[ $current_cart_id ] ) || is_null( self::$possible_payment_method_cache[ $current_cart_id ] ) ) {
-			try {
-
-				$transaction = $this->get_transaction_from_session();
-				if ( $transaction->getState() != \PostFinanceCheckout\Sdk\Model\TransactionState::PENDING ) {
-					self::$possible_payment_method_cache[ $current_cart_id ] =
-						$transaction->getAllowedPaymentMethodConfigurations();
-					return self::$possible_payment_method_cache[ $current_cart_id ];
-				}
-				$integration_method = get_option( WooCommerce_PostFinanceCheckout::CK_INTEGRATION );
-				$payment_methods = $this->get_transaction_service()->fetchPaymentMethods(
-					$transaction->getLinkedSpaceId(),
-					$transaction->getId(),
-					$integration_method
-				);
-
-				$method_configuration_service = WC_PostFinanceCheckout_Service_Method_Configuration::instance();
-				$possible_methods = array();
-				foreach ( $payment_methods as $payment_method ) {
-					$method_configuration_service->update_data( $payment_method );
-					$possible_methods[] = $payment_method->getId();
-				}
-				self::$possible_payment_method_cache[ $current_cart_id ] = $possible_methods;
-			} catch ( WC_PostFinanceCheckout_Exception_Invalid_Transaction_Amount $e ) {
-				self::$possible_payment_method_cache[ $current_cart_id ] = array();
-				throw $e;
-			} catch ( \PostFinanceCheckout\Sdk\ApiException $e ) {
-				self::$possible_payment_method_cache[ $current_cart_id ] = array();
-				throw $e;
-			}
-		}
-		return self::$possible_payment_method_cache[ $current_cart_id ];
+	    return $this->get_possible_payment_methods( null );
 	}
-
 
 	/**
-	 * Returns the payment methods that can be used with the current cart.
+	 * Returns the payment methods that can be used with a given order.
 	 *
-	 * @param WC_Order $order order.
-	 * @return array|int[]|\PostFinanceCheckout\Sdk\Model\PaymentMethodConfiguration
-	 * @throws \PostFinanceCheckout\Sdk\ApiException ApiException.
-	 * @throws WC_PostFinanceCheckout_Exception_Invalid_Transaction_Amount WC_PostFinanceCheckout_Exception_Invalid_Transaction_Amount.
+	 * This function serves as a wrapper around the get_possible_payment_methods function,
+	 * specifically handling the case where the transaction source is a WC_Order object.
+	 *
+	 * @param WC_Order $order The order for which to retrieve possible payment methods.
+	 * @return array|int[]|\PostFinanceCheckout\Sdk\Model\PaymentMethodConfiguration The list of possible payment methods for the order.
+	 * @throws WC_PostFinanceCheckout_Exception_Invalid_Transaction_Amount If the transaction amount is invalid.
+	 * @throws \PostFinanceCheckout\Sdk\ApiException If there is an API exception during the process.
 	 */
 	public function get_possible_payment_methods_for_order( WC_Order $order ) {
-
-		if ( ! isset( self::$possible_payment_method_cache[ $order->get_id() ] ) || is_null( self::$possible_payment_method_cache[ $order->get_id() ] ) ) {
-			try {
-				$transaction = $this->get_transaction_from_order( $order );
-				if ( $transaction->getState() != \PostFinanceCheckout\Sdk\Model\TransactionState::PENDING ) {
-					self::$possible_payment_method_cache[ $order->get_id() ] =
-						$transaction->getAllowedPaymentMethodConfigurations();
-					return self::$possible_payment_method_cache[ $order->get_id() ];
-				}
-				$integration_method = get_option( WooCommerce_PostFinanceCheckout::CK_INTEGRATION );
-				$payment_methods = $this->get_transaction_service()->fetchPaymentMethods(
-					$transaction->getLinkedSpaceId(),
-					$transaction->getId(),
-					$integration_method
-				);
-				$method_configuration_service = WC_PostFinanceCheckout_Service_Method_Configuration::instance();
-				$possible_methods = array();
-				foreach ( $payment_methods as $payment_method ) {
-					$method_configuration_service->update_data( $payment_method );
-					$possible_methods[] = $payment_method->getId();
-				}
-
-				self::$possible_payment_method_cache[ $order->get_id() ] = $possible_methods;
-			} catch ( WC_PostFinanceCheckout_Exception_Invalid_Transaction_Amount $e ) {
-				self::$possible_payment_method_cache[ $order->get_id() ] = array();
-				throw $e;
-			} catch ( \PostFinanceCheckout\Sdk\ApiException $e ) {
-				self::$possible_payment_method_cache[ $order->get_id() ] = array();
-				throw $e;
-			}
-		}
-		return self::$possible_payment_method_cache[ $order->get_id() ];
+	    return $this->get_possible_payment_methods( $order );
 	}
+
 
 	/**
 	 * Update the transaction with the given order's data.
@@ -824,8 +814,8 @@ class WC_PostFinanceCheckout_Service_Transaction extends WC_PostFinanceCheckout_
 			}
 			self::$transaction_cache[ $order->get_id() ] = $transaction;
 		}
-			return self::$transaction_cache[ $order->get_id() ];
 
+		return self::$transaction_cache[ $order->get_id() ];
 	}
 
 	/**
@@ -851,6 +841,8 @@ class WC_PostFinanceCheckout_Service_Transaction extends WC_PostFinanceCheckout_
 		$create_transaction = apply_filters( 'wc_postfinancecheckout_modify_order_create_transaction', $create_transaction, $order );
 		$transaction = $this->get_transaction_service()->create( $space_id, $create_transaction );
 		$this->update_transaction_info( $transaction, $order );
+		$this->store_transaction_ids_in_session($transaction);
+
 		return $transaction;
 	}
 

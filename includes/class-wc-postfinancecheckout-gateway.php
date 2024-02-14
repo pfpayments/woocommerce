@@ -80,11 +80,17 @@ class WC_PostFinanceCheckout_Gateway extends WC_Payment_Gateway {
 	private $pfc_image = null;
 
 	/**
+	 * Image base
+	 */
+	private $pfc_image_base = null;
+
+	/**
 	 * Constructor.
 	 *
 	 * @param WC_PostFinanceCheckout_Entity_Method_Configuration $method configuration method.
 	 */
 	public function __construct( WC_PostFinanceCheckout_Entity_Method_Configuration $method ) {
+		$this->payment_method_configuration_id = $method->get_value('configuration_id');
 		$this->pfc_payment_method_configuration_id = $method->get_id();
 		$this->id = 'postfinancecheckout_' . $method->get_id();
 		$this->has_fields = false;
@@ -185,6 +191,15 @@ class WC_PostFinanceCheckout_Gateway extends WC_Payment_Gateway {
 		}
 
 		return apply_filters( 'woocommerce_gateway_icon', $icon, $this->id );
+	}
+
+	/**
+	 * Get the payment configuration id
+	 *
+	 * @return int
+	 */
+	public function get_payment_configuration_id() {
+		return $this->payment_method_configuration_id;
 	}
 
 	/**
@@ -321,7 +336,7 @@ class WC_PostFinanceCheckout_Gateway extends WC_Payment_Gateway {
 			// gateways availability. In this particular case, we retrieve the availability
 			// information from the session, so the plugin does not have to ask the portal
 			// for this information, creating an unused transaction in the process.
-			$gateway_available = WC()->session->get('whitelabel_payment_gateways');
+			$gateway_available = WC()->session->get('postfinancecheckout_payment_gateways');
 			if (!empty($gateway_available[$this->pfc_payment_method_configuration_id])) {
 				return $gateway_available[$this->pfc_payment_method_configuration_id];
 			}
@@ -329,7 +344,7 @@ class WC_PostFinanceCheckout_Gateway extends WC_Payment_Gateway {
 				return false;
 			}
 		}
-	
+
 		if ( apply_filters( 'wc_postfinancecheckout_is_order_pay_endpoint', is_checkout_pay_page() ) ) {
 			// We have to use the order and not the cart for this endpoint.
 			$order = WC_Order_Factory::get_order( $wp->query_vars['order-pay'] );
@@ -382,9 +397,9 @@ class WC_PostFinanceCheckout_Gateway extends WC_Payment_Gateway {
 		}
 
 		// Store the availability information in the session.
-		$gateway_available = WC()->session->get('whitelabel_payment_gateways');
+		$gateway_available = WC()->session->get('postfinancecheckout_payment_gateways');
 		$gateway_available[$this->pfc_payment_method_configuration_id] = true;
-		$gateway_available = WC()->session->set('whitelabel_payment_gateways', $gateway_available);
+		$gateway_available = WC()->session->set('postfinancecheckout_payment_gateways', $gateway_available);
 		return true;
 	}
 
@@ -461,7 +476,7 @@ class WC_PostFinanceCheckout_Gateway extends WC_Payment_Gateway {
 			$transaction_nonce = hash_hmac( 'sha256', $transaction->getLinkedSpaceId() . '-' . $transaction->getId(), NONCE_KEY );
 
 			?>
-		
+
 			<div id="payment-form-<?php echo esc_attr( $this->id ); ?>">
 				<input type="hidden" id="postfinancecheckout-iframe-possible-<?php echo esc_attr( ( $this->id ) ); ?>" name="postfinancecheckout-iframe-possible-<?php echo esc_attr( $this->id ); ?>" value="false" />
 			</div>
@@ -541,31 +556,8 @@ class WC_PostFinanceCheckout_Gateway extends WC_Payment_Gateway {
 
 		try {
 			$transaction_service = WC_PostFinanceCheckout_Service_Transaction::instance();
-			$transaction = $transaction_service->get_transaction( $space_id, $transaction_id );
 
-			$order->add_meta_data( '_postfinancecheckout_pay_for_order', $is_order_pay_endpoint, true );
-			$order->add_meta_data( '_postfinancecheckout_gateway_id', $this->id, true );
-			$order->delete_meta_data( '_postfinancecheckout_confirmed' );
-			$order->save();
-
-			if ( $transaction->getState() == \PostFinanceCheckout\Sdk\Model\TransactionState::PENDING ) {
-				$transaction = $transaction_service->confirm_transaction( $transaction_id, $space_id, $order, $this->get_payment_method_configuration()->get_configuration_id() );
-				$transaction_service->update_transaction_info( $transaction, $order );
-			}
-
-			WC()->session->set( 'order_awaiting_payment', false );
-			WC_PostFinanceCheckout_Helper::instance()->destroy_current_cart_id();
-			WC()->session->set( 'postfinancecheckout_space_id', null );
-			WC()->session->set( 'postfinancecheckout_transaction_id', null );
-
-			//now is mandatory to send the redirect property in the json response
-			$gateway = wc_get_payment_gateway_by_order( $order );
-			$url = apply_filters( 'wc_postfinancecheckout_success_url', $gateway->get_return_url( $order ), $order );
-			$result = array(
-				'result' => 'success',
-				'postfinancecheckout' => 'true',
-				'redirect' => $url
-			);
+			[$result, $transaction] = $this->process_payment_transaction($order, $transaction_id, $space_id, $is_order_pay_endpoint, $transaction_service);
 
 			if ( $no_iframe ) {
 				$result = array(
@@ -598,6 +590,58 @@ class WC_PostFinanceCheckout_Gateway extends WC_Payment_Gateway {
 			return array(
 				'result' => 'failure',
 			);
+		}
+	}
+
+	/**
+ 	 * Processes the payment transaction.
+ 	 *
+ 	 * Handles the transaction processing for an order by interacting with the transaction service. It updates
+ 	 * the order's metadata based on the transaction state and handles the session cleanup post-transaction.
+ 	 * If the transaction is in a PENDING state, it confirms the transaction and updates the transaction info
+ 	 * in the order. It also sets up the redirect URL upon successful payment and returns the result and transaction.
+ 	 *
+ 	 * @param WC_Order $order The WooCommerce order object.
+ 	 * @param int $transaction_id The ID of the transaction.
+ 	 * @param int $space_id The space ID associated with the transaction.
+ 	 * @param bool $is_order_pay_endpoint Flag to determine if the order is being paid for at the order-pay endpoint.
+ 	 * @param WC_PostFinanceCheckout_Service_Transaction $transaction_service The transaction service instance.
+ 	 * @return array An array containing the result of the transaction and the transaction object.
+ 	 *
+ 	 * @throws Throwable Throws an exception if there is an issue processing the transaction.
+ 	 */
+	public function process_payment_transaction($order, $transaction_id, $space_id, $is_order_pay_endpoint, $transaction_service) {
+		try {
+			$transaction = $transaction_service->get_transaction( $space_id, $transaction_id );
+
+			$order->add_meta_data( '_postfinancecheckout_pay_for_order', $is_order_pay_endpoint, true );
+			$order->add_meta_data( '_postfinancecheckout_gateway_id', $this->id, true );
+			$order->delete_meta_data( '_postfinancecheckout_confirmed' );
+			$order->save();
+
+			if ( $transaction->getState() == \PostFinanceCheckout\Sdk\Model\TransactionState::PENDING ) {
+				$transaction = $transaction_service->confirm_transaction( $transaction_id, $space_id, $order, $this->get_payment_method_configuration()->get_configuration_id() );
+				$transaction_service->update_transaction_info( $transaction, $order );
+			}
+
+			WC()->session->set( 'order_awaiting_payment', false );
+			WC_PostFinanceCheckout_Helper::instance()->destroy_current_cart_id();
+			WC()->session->set( 'postfinancecheckout_space_id', null );
+			WC()->session->set( 'postfinancecheckout_transaction_id', null );
+
+			//now is mandatory to send the redirect property in the json response
+			$gateway = wc_get_payment_gateway_by_order( $order );
+			$url = apply_filters( 'wc_postfinancecheckout_success_url', $gateway->get_return_url( $order ), $order );
+			$result = array(
+				'result' => 'success',
+				'postfinancecheckout' => 'true',
+				'redirect' => $url
+			);
+
+			return [$result, $transaction];
+		}
+		catch ( Throwable $e ) {
+			throw $e;
 		}
 	}
 

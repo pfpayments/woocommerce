@@ -3,7 +3,7 @@
  * Plugin Name: PostFinance Checkout
  * Plugin URI: https://wordpress.org/plugins/woo-postfinancecheckout
  * Description: Process WooCommerce payments with PostFinance Checkout.
- * Version: 2.1.28
+ * Version: 3.0.0-rc1
  * License: Apache2
  * License URI: http://www.apache.org/licenses/LICENSE-2.0
  * Author: postfinancecheckout AG
@@ -17,7 +17,7 @@
  * Domain Path: /languages/
  */
 if ( ! defined( 'ABSPATH' ) ) {
-	exit(); // Exit if accessed directly.
+    exit(); // Exit if accessed directly.
 }
 
 if ( ! class_exists( 'WooCommerce_PostFinanceCheckout' ) ) {
@@ -39,14 +39,14 @@ if ( ! class_exists( 'WooCommerce_PostFinanceCheckout' ) ) {
 		const CK_INTEGRATION = 'wc_postfinancecheckout_integration';
 		const CK_ORDER_REFERENCE = 'wc_postfinancecheckout_order_reference';
 		const CK_ENFORCE_CONSISTENCY = 'wc_postfinancecheckout_enforce_consistency';
-		const WC_MAXIMUM_VERSION = '8.1.1';
+		const WC_MAXIMUM_VERSION = '8.5.2';
 
 		/**
 		 * WooCommerce PostFinanceCheckout version.
 		 *
 		 * @var string
 		 */
-		private $version = '2.1.28';
+		private $version = '3.0.0-rc1';
 
 		/**
 		 * The single instance of the class.
@@ -211,6 +211,30 @@ if ( ! class_exists( 'WooCommerce_PostFinanceCheckout' ) ) {
 				20,
 				3
 			);
+
+			// Endpoints needed for supporting Woocommerce Blocks checkout block.
+            add_action(
+                'wp_ajax_is_payment_method_available',
+                ['WC_PostFinanceCheckout_Blocks_Support', 'is_payment_method_available']
+            );
+            add_action(
+                'wp_ajax_nopriv_is_payment_method_available',
+                ['WC_PostFinanceCheckout_Blocks_Support', 'is_payment_method_available']
+            );
+            add_action(
+                'wp_ajax_get_payment_methods',
+                ['WC_PostFinanceCheckout_Blocks_Support', 'get_payment_methods']
+            );
+            add_action(
+                'wp_ajax_nopriv_get_payment_methods',
+                ['WC_PostFinanceCheckout_Blocks_Support', 'get_payment_methods']
+            );
+			add_action(
+				'woocommerce_blocks_enqueue_checkout_block_scripts_after',
+				['WC_PostFinanceCheckout_Blocks_Support', 'enqueue_portal_scripts']
+			);
+			add_action( 'woocommerce_rest_checkout_process_payment_with_context',
+				['WC_PostFinanceCheckout_Blocks_Support', 'process_payment'], 10, 2);
 		}
 
 
@@ -931,7 +955,7 @@ if ( ! class_exists( 'WooCommerce_PostFinanceCheckout' ) ) {
 		 * @param mixed $data data.
 		 * @return void
 		 * @throws Exception Exception.
-		 * 
+		 *
 		 * @see woocommerce_rest_insert_product_attribute
 		 * 	 Edit through REST API is handled in woocommerce_rest_insert_product_attribute, as we can not get the rest request object otherwise.
 		 */
@@ -990,41 +1014,56 @@ if ( ! class_exists( 'WooCommerce_PostFinanceCheckout' ) ) {
 			}
 		}
 
-		/**
-		 * Add cahce no store.
-		 *
-		 * @param mixed $headers headers.
-		 * @return mixed
-		 */
-		public function add_cache_no_store( $headers ) {
-			if ( is_checkout() && isset( $headers['Cache-Control'] ) && stripos( $headers['Cache-Control'], 'no-store' ) === false ) {
-				$headers['Cache-Control'] .= ', no-store ';
-			}
-			return $headers;
-		}
+        /**
+         * Add cache no store.
+         *
+         * @param mixed $headers headers.
+         * @return mixed
+         */
+        public function add_cache_no_store( $headers ) {
+            if ( is_checkout() && isset( $headers['Cache-Control'] ) && stripos( $headers['Cache-Control'], 'no-store' ) === false ) {
+                $headers['Cache-Control'] .= ', no-store ';
+            }
+            return $headers;
+        }
 
 
-		/**
-		 * Woocommerce rest prepare product attribute.
-		 *
-		 * @param mixed $response response.
-		 * @param mixed $item item.
-		 * @param mixed $request request.
-		 * @return mixed
-		 */
-		public function woocommerce_rest_prepare_product_attribute( $response, $item, $request ) {
+        /**
+         * Woocommerce rest prepare product attribute.
+         *
+         * @param mixed $response response.
+         * @param mixed $item item.
+         * @param mixed $request request.
+         * @return mixed
+         */
+        public function woocommerce_rest_prepare_product_attribute( $response, $item, $request ) {
 
-			$context = ! empty( $request['context'] ) ? $request['context'] : 'view';
-			if ( 'view' == $context || 'edit' == $context ) {
-				$data = $response->get_data();
-				$attribute_options = WC_PostFinanceCheckout_Entity_Attribute_Options::load_by_attribute_id( $item->attribute_id );
-				$data['postfinancecheckout_attribute_option_send'] = $attribute_options->get_id() > 0 && $attribute_options->get_send();
-				$response->set_data( $data );
-			}
-			return $response;
-		}
+            $context = ! empty( $request['context'] ) ? $request['context'] : 'view';
+            if ( 'view' == $context || 'edit' == $context ) {
+                $data = $response->get_data();
+                $attribute_options = WC_PostFinanceCheckout_Entity_Attribute_Options::load_by_attribute_id( $item->attribute_id );
+                $data['postfinancecheckout_attribute_option_send'] = $attribute_options->get_id() > 0 && $attribute_options->get_send();
+                $response->set_data( $data );
+            }
+            return $response;
+        }
 
-	}
+    }
+
+    add_action( 'woocommerce_blocks_loaded', 'WC_PostFinanceCheckout_Blocks_Support' );
+
+    function WC_PostFinanceCheckout_Blocks_Support() {
+        if ( class_exists( 'Automattic\WooCommerce\Blocks\Payments\Integrations\AbstractPaymentMethodType' ) ) {
+            require_once dirname( __FILE__ ) . '/includes/class-wc-postfinancecheckout-blocks-support.php';
+
+            add_action(
+                'woocommerce_blocks_payment_method_type_registration',
+                function( Automattic\WooCommerce\Blocks\Payments\PaymentMethodRegistry $payment_method_registry  ) {
+                    $payment_method_registry->register( new WC_PostFinanceCheckout_Blocks_Support );
+                },
+            );
+        }
+    }
 }
 
 WooCommerce_PostFinanceCheckout::instance();

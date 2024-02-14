@@ -1,0 +1,30 @@
+{
+  "name": "woocommerce",
+  "version": "1.0.0",
+  "description": "This JS app adds support for WooCommerce Blocks, implementing the checkout block so it can display payment methods.",
+  "main": "index.js",
+  "scripts": {
+    "build": "wp-scripts build",
+    "check-engines": "wp-scripts check-engines",
+    "check-licenses": "wp-scripts check-licenses",
+    "format:js": "wp-scripts format-js",
+    "lint:css": "wp-scripts lint-style",
+    "lint:js": "wp-scripts lint-js",
+    "lint:md:docs": "wp-scripts lint-md-docs",
+    "lint:md:js": "wp-scripts lint-md-js",
+    "lint:pkg-json": "wp-scripts lint-pkg-json",
+    "packages-update": "wp-scripts packages-update",
+    "start": "wp-scripts start",
+    "test:e2e": "wp-scripts test-e2e",
+    "test:unit": "wp-scripts test-unit-js"
+  },
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "@woocommerce/eslint-plugin": "^2.2.0",
+    "@wordpress/scripts": "^25.3.0"
+  },
+  "dependencies": {
+    "react": "^18.2.0"
+  }
+}

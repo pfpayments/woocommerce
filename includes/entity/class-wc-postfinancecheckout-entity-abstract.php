@@ -57,7 +57,7 @@ abstract class WC_PostFinanceCheckout_Entity_Abstract {
 	 *
 	 * @param mixed $variable_name variable name.
 	 */
-	protected function get_value( $variable_name ) {
+	public function get_value( $variable_name ) {
 		return isset( $this->data[ $variable_name ] ) ? $this->data[ $variable_name ] : null;
 	}
 
