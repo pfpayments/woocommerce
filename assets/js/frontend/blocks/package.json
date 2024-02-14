@@ -22,7 +22,7 @@
   "license": "ISC",
   "devDependencies": {
     "@woocommerce/eslint-plugin": "^2.2.0",
-    "@wordpress/scripts": "^25.3.0"
+    "@wordpress/scripts": "^27.2.0"
   },
   "dependencies": {
     "react": "^18.2.0"
