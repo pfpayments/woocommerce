@@ -27,6 +27,8 @@ This project consists in the following files:
       - index.js: Logic for generating the iframe from the portal
     - lightbox-component
       - index.js: Logic for displaying the Lightbox provided by the portal
+    - label-component
+      - index.js: Logic for displaying the label that is rendered in the checkout's list of payments.
   - package-lock.json: control for project's build dependencies
   - package.json: project's definition as expected by wp-scripts.
   - README.md: this file
