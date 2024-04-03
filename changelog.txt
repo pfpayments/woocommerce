@@ -449,7 +449,7 @@ Features:
 - Support of Wordpress 6.1
 - Support of Woocommerce 7.0.1
 Bugfixes:
-- Fix that when 0 manual task are needed, the message ?0 manuelle Tasks ben?tigen Ihre Aufmerksamkeit? is shown.
+- Fix that when 0 manual task are needed, the message ‘0 manuelle Tasks benötigen Ihre Aufmerksamkeit’ is shown.
 Tested against:
 - PHP 7.4.32
 - Wordpress: 6.1
