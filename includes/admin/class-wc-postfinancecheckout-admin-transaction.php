@@ -41,35 +41,45 @@ class WC_PostFinanceCheckout_Admin_Transaction {
 
 	/**
 	 * Add WC Meta boxes.
-	 * @see: https://woo.com/document/high-performance-order-storage/#section-8
 	 */
 	public static function add_meta_box() {
-		$screen = class_exists( '\Automattic\WooCommerce\Internal\DataStores\Orders\CustomOrdersTableController' )
-			&& wc_get_container()->get( \Automattic\WooCommerce\Internal\DataStores\Orders\CustomOrdersTableController::class )->custom_orders_table_usage_is_enabled()
-			? wc_get_page_screen_id( 'shop-order' )
-			: 'shop_order';
-		add_meta_box(
-			'woocommerce-order-postfinancecheckout-transaction',
-			__( 'PostFinance Checkout Transaction', 'woocommerce-postfinancecheckout' ),
-			array(
-				__CLASS__,
-				'output',
-			),
-			$screen,
-			'normal',
-			'default'
-		);
+		global $post;
+		if ( 'shop_order' != $post->post_type ) {
+			return;
+		}
+		$order  = WC_Order_Factory::get_order( $post->ID );
+		$method = wc_get_payment_gateway_by_order( $order );
+		if ( ! ( $method instanceof WC_PostFinanceCheckout_Gateway ) ) {
+			return;
+		}
+		$transaction_info = WC_PostFinanceCheckout_Entity_Transaction_Info::load_by_order_id( $order->get_id() );
+		if ( $transaction_info->get_id() == null ) {
+			$transaction_info = WC_PostFinanceCheckout_Entity_Transaction_Info::load_newest_by_mapped_order_id( $order->get_id() );
+		}
+		if ( $transaction_info->get_id() != null ) {
+			add_meta_box(
+				'woocommerce-order-postfinancecheckout-transaction',
+				__( 'PostFinance Checkout Transaction', 'woocommerc-postfinancecheckout' ),
+				array(
+					__CLASS__,
+					'output',
+				),
+				'shop_order',
+				'normal',
+				'default'
+			);
+		}
 	}
 
 	/**
 	 * Output the metabox.
 	 *
-	 * @param WP_Post|WP_Order $post_or_order_object
-	 *   This object is provided by woocommerce when using its screen.
+	 * @param WP_Post $post post data.
 	 */
-	public static function output( $post_or_order_object ) {
-		$order = ( $post_or_order_object instanceof WP_Post ) ? wc_get_order( $post_or_order_object->ID ) : $post_or_order_object;
+	public static function output( $post ) {
+		global $post;
 
+		$order  = WC_Order_Factory::get_order( $post->ID );
 		$method = wc_get_payment_gateway_by_order( $order );
 		if ( ! ( $method instanceof WC_PostFinanceCheckout_Gateway ) ) {
 			return;
@@ -119,7 +129,7 @@ class WC_PostFinanceCheckout_Admin_Transaction {
                     <td class="value"><strong><?php esc_html_e( $transaction_info->get_order_id() ); ?></strong></td>
 				</tr>
 			<?php endif; ?>
-
+			
 			<?php if ( $transaction_info->get_failure_reason() != null ) : ?>
 				<tr>
 						<td class="label"><label><?php esc_html_e( 'Failure Reason', 'woo-postfinancecheckout' ); ?></label></td>
@@ -145,7 +155,7 @@ class WC_PostFinanceCheckout_Admin_Transaction {
 				</tbody>
 			</table>
 		</div>
-
+		
 
 		<?php if ( ! empty( $labels_by_group ) ) : ?>
 			<?php foreach ( $labels_by_group as $group ) : ?>
@@ -167,7 +177,7 @@ class WC_PostFinanceCheckout_Admin_Transaction {
 				</table>
 			</div>
 		</div>
-
+		
 	<?php endforeach; ?>
 		<?php endif; ?>
 	</div>

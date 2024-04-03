@@ -727,10 +727,3 @@ Tested against:
 - [Tested Against] Woocommerce 8.5.2
 - [Tested Against] PHP SDK 4.0.2
 
-= 3.0.1 - April 3 2024 =
-- [Feature] Added support to High Performance Order Storage (HPOS).
-- [Tested Against] PHP 8.2
-- [Tested Against] Wordpress 6.5
-- [Tested Against] Woocommerce 8.7.0
-- [Tested Against] PHP SDK 4.0.2
-
