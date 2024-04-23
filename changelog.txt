@@ -742,3 +742,10 @@ Tested against:
 - [Tested Against] Woocommerce 8.7.0
 - [Tested Against] PHP SDK 4.0.2
 
+= 3.0.3 - April 23 2024 =
+- [Hotfix] Version increment for release
+- [Tested Against] PHP 8.2
+- [Tested Against] Wordpress 6.5
+- [Tested Against] Woocommerce 8.7.0
+- [Tested Against] PHP SDK 4.0.2
+
