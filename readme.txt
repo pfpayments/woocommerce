@@ -3,7 +3,7 @@ Contributors: postfinancecheckout AG
 Tags: woocommerce PostFinance Checkout, woocommerce, PostFinance Checkout, payment, e-commerce, webshop, psp, invoice, packing slips, pdf, customer invoice, processing
 Requires at least: 4.7
 Tested up to: 6.2
-Stable tag: 3.0.0
+Stable tag: 3.0.2
 License: Apache 2
 License URI: http://www.apache.org/licenses/LICENSE-2.0
 
@@ -56,9 +56,10 @@ Support queries can be issued on the [PostFinance Checkout support site](https:/
 == Changelog ==
 
  
-= 3.0.0 - February 20 2024 =
-- [Feature] Full version release
-- [Tested Against] PHP 8.0
-- [Tested Against] Wordpress 6.4.3
-- [Tested Against] Woocommerce 8.5.2
+= 3.0.2 - April 22 2024 =
+- [Hotfix] Fixed completion in the backend with coupon.
+- [Hotfix] Fixed tax amount not sent correctly to the portal.
+- [Tested Against] PHP 8.2
+- [Tested Against] Wordpress 6.5
+- [Tested Against] Woocommerce 8.7.0
 - [Tested Against] PHP SDK 4.0.2

@@ -561,12 +561,22 @@ class WC_PostFinanceCheckout_Service_Line_Item extends WC_PostFinanceCheckout_Se
 
 			$line_item = new \PostFinanceCheckout\Sdk\Model\LineItemCreate();
 
-			$tax = 0;
+			$tax = $discounts = 0;
 			if ( isset( $backend_items[ $item_id ]['completion_tax'] ) ) {
 				$tax = array_sum( $backend_items[ $item_id ]['completion_tax'] );
 			}
 
-			$amount_including_tax = $backend_items[ $item_id ]['completion_total'] + $tax;
+			//At this point, if there is a discount applied by coupon, the price already has the discount applied,
+			//and to be able to send the discount to the portal, it is necessary to restore the discounted amount,
+			//the original price must be restored before being applied, otherwise it would be discounting twice in the portal. 
+			$item_data_coupon = $item->get_meta( '_postfinancecheckout_coupon_discount_line_item_discounts' );
+			if ( !empty ( $item_data_coupon ) ) {
+				$discount_tax = $item->get_subtotal_tax() - $item->get_total_tax(); 
+				$discount_amount = $item->get_subtotal() - $item->get_total(); 
+				$discounts = $discount_tax + $discount_amount;
+			}
+
+			$amount_including_tax = $backend_items[ $item_id ]['completion_total'] + $tax + $discounts;
 
 			$line_item->setAmountIncludingTax( $this->round_amount( $amount_including_tax, $currency ) );
 			$quantity = empty( $backend_items[ $item_id ]['qty'] ) ? 1 : $backend_items[ $item_id ]['qty'];

@@ -218,7 +218,7 @@ class WC_PostFinanceCheckout_Helper {
 				//convert negative values to positive in order to be able to subtract it
 				$sum -= abs( $line_item->getAmountIncludingTax() );
 			} else {
-				$sum += $line_item->getAmountIncludingTax();
+				$sum += abs( $line_item->getAmountIncludingTax() );
 			}
 		}
 		return $sum;
@@ -235,7 +235,7 @@ class WC_PostFinanceCheckout_Helper {
 	 */
 	public function cleanup_line_items( array $line_items, $expected_sum, $currency ) {
 		//ensure that the effective sum coincides with the total discounted by the coupons
-		$has_coupons = apply_filters( 'wc_postfinancecheckout_packages_coupon_cart_has_coupon_discounts_applied', $currency );
+		$has_coupons = apply_filters( 'wc_postfinancecheckout_packages_coupon_has_coupon_discounts_applied', $currency );
 		$effective_sum = $this->round_amount( $this->get_total_amount_including_tax( $line_items, $has_coupons ), $currency );
 		$rounded_expected_sum = $this->round_amount( $expected_sum, $currency );
 

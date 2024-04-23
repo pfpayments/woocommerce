@@ -48,10 +48,10 @@ class WC_PostFinanceCheckout_Packages_Coupon_Discount {
 			1
 		);
 		add_filter(
-			'wc_postfinancecheckout_packages_coupon_cart_has_coupon_discounts_applied',
+			'wc_postfinancecheckout_packages_coupon_has_coupon_discounts_applied',
 			array(
 				__CLASS__,
-				'has_cart_coupon_discounts_applied',
+				'has_coupon_discounts_applied',
 			),
 			10,
 			1
@@ -111,8 +111,17 @@ class WC_PostFinanceCheckout_Packages_Coupon_Discount {
 	public static function get_coupons_discount_totals_including_tax( $currency ) {
 		$coupons_discount_total = 0;
 
+		//guard clause if the order doesn't exists, nothing to do here.
+		$order_id = WC()->session->get( 'postfinancecheckout_order_id' );
+		if ( WC()->cart->get_cart_contents_count() == 0 && !is_null( $order_id ) ) {
+			
+			if ( $order = wc_get_order( $order_id ) ) {
+				$coupons_discount_total += $order->get_total_discount();
+			}
+		}
+
 		//guard clause if the cart is empty, nothing to do here. This applies to subscription renewals
-		if ( empty( WC()->cart ) ) {
+		if ( empty( WC()->cart->get_cart_contents_count() ) ) {
 			return $coupons_discount_total;
 		}
 
@@ -129,7 +138,7 @@ class WC_PostFinanceCheckout_Packages_Coupon_Discount {
 	 * @param $currency
 	 * @return bool
 	 */
-	public static function has_cart_coupon_discounts_applied( $currency ) {
+	public static function has_coupon_discounts_applied( $currency ) {
 		$discount = apply_filters( 'wc_postfinancecheckout_packages_coupon_discount_totals_including_tax', $currency );
 		return $discount > 0;
 	}
@@ -184,6 +193,7 @@ class WC_PostFinanceCheckout_Packages_Coupon_Discount {
 	 * @return array<mixed>
 	 */
 	public static function process_line_items_with_coupons( array $line_items, float $expected_sum, string $currency ) {
+		$line_item_coupons = [];
 		$exclude_discounts = true;
 		$amount = WC_PostFinanceCheckout_Helper::instance()->get_total_amount_including_tax( $line_items, $exclude_discounts);
 		$effective_sum = WC_PostFinanceCheckout_Helper::instance()->round_amount( $amount , $currency );
@@ -195,6 +205,7 @@ class WC_PostFinanceCheckout_Packages_Coupon_Discount {
 		foreach ( $line_items as $line_item ) {
 			if ( $line_item->getType() == \PostFinanceCheckout\Sdk\Model\LineItemType::DISCOUNT ) {
 				//if there is a difference, a penny, then the coupon is readjust
+				$line_item_coupons[] = clone $line_item;
 				$item_amount = $line_item->getAmountIncludingTax() + $result_amount;
 				$line_item->setAmountIncludingTax( WC_PostFinanceCheckout_Helper::instance()->round_amount( $item_amount, $currency ) );
 			}
@@ -223,6 +234,7 @@ class WC_PostFinanceCheckout_Packages_Coupon_Discount {
 			//format number with two decimal places
 			'effective_sum' => sprintf("%.2f", $amount_rounded ),
 			'line_items_cleaned' => $line_items,
+			'line_item_coupons' => $line_item_coupons,
 		];
 	}
 

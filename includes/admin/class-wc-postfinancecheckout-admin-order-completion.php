@@ -213,6 +213,9 @@ class WC_PostFinanceCheckout_Admin_Order_Completion {
 		}
 
 		try {
+			//the order id is saved for later use
+			//e.g. use the order id to check if the order has a discount applied to it
+			WC()->session->set( 'postfinancecheckout_order_id', $order_id );
 			self::update_line_items( $current_completion_id );
 			self::send_completion( $current_completion_id );
 
