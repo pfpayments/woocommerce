@@ -133,6 +133,12 @@ jQuery(
 				);
 				self.handle_description_for_empty_iframe( current_method );
 				self.handle_place_order_button_status( current_method );
+
+				// Reload the iframe if it exists, so the iframe's form has all the field data filled by the user
+				let iframe = document.getElementById('payment-form-' + current_method).querySelector('iframe');
+				if (iframe) {
+					iframe.src = iframe.src;
+				}
 			},
 
 			handle_description_for_empty_iframe : function(method_id) {
