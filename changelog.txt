@@ -777,3 +777,9 @@ Tested against:
 - [Tested Against] Woocommerce 8.9.1
 - [Tested Against] PHP SDK 4.2.0
 
+= 3.0.8 - Jul 2 2024 =
+- [Tested Against] PHP 8.0
+- [Tested Against] Wordpress 6.6.rc1
+- [Tested Against] Woocommerce 9.0.2
+- [Tested Against] PHP SDK 4.2.0
+
