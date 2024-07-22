@@ -4,7 +4,7 @@
  * Plugin URI: https://wordpress.org/plugins/woo-postfinancecheckout
  * Description: Process WooCommerce payments with PostFinance Checkout.
  * License: Apache2
- * Version: 3.0.8
+ * Version: 3.0.9
  * License URI: http://www.apache.org/licenses/LICENSE-2.0
  * Author: postfinancecheckout AG
  * Author URI: https://postfinance.ch/en/business/products/e-commerce/postfinance-checkout-all-in-one.html
@@ -46,7 +46,7 @@ if ( ! class_exists( 'WooCommerce_PostFinanceCheckout' ) ) {
 		 *
 		 * @var string
 		 */
-		private $version = '3.0.8';
+		private $version = '3.0.9';
 
 		/**
 		 * The single instance of the class.
@@ -366,6 +366,28 @@ if ( ! class_exists( 'WooCommerce_PostFinanceCheckout' ) ) {
 				),
 				5,
 				0
+			);
+
+			// woocommerce_after_checkout_form is used by the legacy checkout.
+			add_action(
+				'woocommerce_after_checkout_form',
+				array(
+					$this,
+					'show_checkout_error_msg',
+				),
+				5,
+				0
+			);
+
+			// pre_render_block is used by the new Woocomerce Blocks.
+			add_filter(
+				'pre_render_block',
+				array(
+					$this,
+					'pre_render_block',
+				),
+				5,
+				2
 			);
 
 			add_action(
@@ -845,7 +867,7 @@ if ( ! class_exists( 'WooCommerce_PostFinanceCheckout' ) ) {
 		/**
 		 * Register checkout error msg.
 		 *
-		 * @return void
+		 * @return true
 		 */
 		public function register_checkout_error_msg() {
 			$msg = WC()->session->get( 'postfinancecheckout_failure_message', null );
@@ -853,6 +875,8 @@ if ( ! class_exists( 'WooCommerce_PostFinanceCheckout' ) ) {
 				$this->add_notice( (string) $msg, 'error' );
 				WC()->session->set( 'postfinancecheckout_failure_message', null );
 			}
+
+			return ! empty( $msg );
 		}
 
 		/**
@@ -861,8 +885,9 @@ if ( ! class_exists( 'WooCommerce_PostFinanceCheckout' ) ) {
 		 * @return void
 		 */
 		public function show_checkout_error_msg() {
-			$this->register_checkout_error_msg();
-			wc_print_notices();
+			if ($this->register_checkout_error_msg()) {
+				wc_print_notices();
+			}
 		}
 
 		/**
@@ -1056,6 +1081,17 @@ if ( ! class_exists( 'WooCommerce_PostFinanceCheckout' ) ) {
             return $response;
         }
 
+		/**
+		 * Displays error messages, if there are, when rendering the woocommerce/checkout block.
+		 *
+		 * @return void
+		 */
+		public function pre_render_block() {
+			$args = func_get_args();
+			if (count($args) && !empty($args[1]) && !empty($args[1]['blockName']) && $args[1]['blockName'] === 'woocommerce/checkout') {
+				$this->show_checkout_error_msg();
+			}
+		}
     }
 
     add_action( 'woocommerce_blocks_loaded', 'WC_PostFinanceCheckout_Blocks_Support' );

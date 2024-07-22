@@ -112,13 +112,15 @@ class WC_PostFinanceCheckout_Return_Handler {
 		if ( ! empty( $user_message ) ) {
 			WC()->session->set( 'postfinancecheckout_failure_message', $user_message );
 		}
-		if ( $order->get_meta( '_postfinancecheckout_pay_for_order', true, 'edit' ) ) {
-			$url = apply_filters( 'wc_postfinancecheckout_pay_failure_url', $order->get_checkout_payment_url( false ), $order );
-			wp_redirect( $url );
-		} else {
-			$url = apply_filters( 'wc_postfinancecheckout_checkout_failure_url', wc_get_checkout_url(), $order );
-			wp_redirect( $url );
-		}
+
+		// The order-pay functionality does not work currently with our plugin, so we don't
+		// redirect the user there.
+		// Otherwise we would get the url using:
+		// apply_filters( 'wc_postfinancecheckout_pay_failure_url', $order->get_checkout_payment_url( false ), $order )
+
+		$url = apply_filters( 'wc_postfinancecheckout_checkout_failure_url', wc_get_checkout_url(), $order );
+		wp_redirect( $url );
+
 		exit();
 	}
 }

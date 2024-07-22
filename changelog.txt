@@ -783,3 +783,10 @@ Tested against:
 - [Tested Against] Woocommerce 9.0.2
 - [Tested Against] PHP SDK 4.2.0
 
+= 3.0.9 - Jul 22 2024 =
+- [Bugfix] If payment fails, go back to checkout page.
+- [Tested Against] PHP 8.0
+- [Tested Against] Wordpress 6.6
+- [Tested Against] Woocommerce 9.1.2
+- [Tested Against] PHP SDK 4.4.0
+
