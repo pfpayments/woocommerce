@@ -790,3 +790,10 @@ Tested against:
 - [Tested Against] Woocommerce 9.1.2
 - [Tested Against] PHP SDK 4.4.0
 
+= 3.0.10 - Aug 14 2024 =
+- [Bugfix] Fixed syntax issues with older php versions (7.4)
+- [Tested Against] PHP 8.0 and PHP 7.4
+- [Tested Against] Wordpress 6.6
+- [Tested Against] Woocommerce 9.1.4
+- [Tested Against] PHP SDK 4.5.0
+

@@ -1,5 +1,5 @@
 name: Release Plugin
-on:  
+on:
   push:
     tags:
       - '*'
@@ -18,7 +18,10 @@ jobs:
         WHITELABEL: ${{ vars.WHITELABEL_NAME }}
         FAQ_ENTRIES: ${{ vars.FAQ_ENTRIES }}
         FEATURES: ${{ vars.FEATURES }}
+      # sleep 90 is required, because gradle release command takes around 65s, we should start upload zip file after it finishes
+      # zip file is attached when pipeline is finished
       run: |
+        sleep 90 
         echo $GITHUB_WORKSPACE
         echo $WORDPRESS_ORG_SLUG
         ls -ltrh
@@ -58,6 +61,8 @@ jobs:
 
     - name: WordPress Plugin Deploy
       id: deploy
+      # does not deploy if it's testing repo
+      if: ${{ vars.WORDPRESS_ORG_SLUG != 'woo-WhiteLabelGithubOwnerName' }}
       uses: 10up/action-wordpress-plugin-deploy@stable
       with:
         generate-zip: true
