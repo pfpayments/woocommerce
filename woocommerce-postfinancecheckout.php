@@ -4,14 +4,14 @@
  * Plugin URI: https://wordpress.org/plugins/woo-postfinancecheckout
  * Description: Process WooCommerce payments with PostFinance Checkout.
  * License: Apache2
- * Version: 3.0.11
+ * Version: 3.0.12
  * License URI: http://www.apache.org/licenses/LICENSE-2.0
  * Author: postfinancecheckout AG
  * Author URI: https://postfinance.ch/en/business/products/e-commerce/postfinance-checkout-all-in-one.html
  * Requires at least: 6.0
  * Requires PHP: 7.4
  * WC requires at least: 8.0.0
- * WC tested up to: 9.0.2
+ * WC tested up to: 9.2.3
  *
  * Text Domain: postfinancecheckout
  * Domain Path: /languages/
@@ -39,14 +39,14 @@ if ( ! class_exists( 'WooCommerce_PostFinanceCheckout' ) ) {
 		const CK_INTEGRATION = 'wc_postfinancecheckout_integration';
 		const CK_ORDER_REFERENCE = 'wc_postfinancecheckout_order_reference';
 		const CK_ENFORCE_CONSISTENCY = 'wc_postfinancecheckout_enforce_consistency';
-		const WC_MAXIMUM_VERSION = '9.1.4';
+		const WC_MAXIMUM_VERSION = '9.2.3';
 
 		/**
 		 * WooCommerce PostFinanceCheckout version.
 		 *
 		 * @var string
 		 */
-		private $version = '3.0.11';
+		private $version = '3.0.12';
 
 		/**
 		 * The single instance of the class.
@@ -1054,8 +1054,10 @@ if ( ! class_exists( 'WooCommerce_PostFinanceCheckout' ) ) {
          * @return mixed
          */
         public function add_cache_no_store( $headers ) {
-            if ( is_checkout() && isset( $headers['Cache-Control'] ) && stripos( $headers['Cache-Control'], 'no-store' ) === false ) {
-                $headers['Cache-Control'] .= ', no-store ';
+            if ( class_exists( 'WooCommerce' ) ) {
+                if ( is_checkout() && isset( $headers['Cache-Control'] ) && stripos( $headers['Cache-Control'], 'no-store' ) === false ) {
+                    $headers['Cache-Control'] .= ', no-store ';
+                }
             }
             return $headers;
         }

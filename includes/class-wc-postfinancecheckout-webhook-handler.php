@@ -57,32 +57,47 @@ class WC_PostFinanceCheckout_Webhook_Handler {
 	}
 
 	/**
-	 * Process the webhook call.
+	 * Processes incoming webhook calls.
+	 * This method handles both signed and unsigned payloads by determining the presence of a digital signature.
+	 * It sets an initial HTTP 500 status to indicate a failure if the process crashes unexpectedly.
 	 */
 	public static function process() {
-		$webhook_service = WC_PostFinanceCheckout_Service_Webhook::instance();
+		global $wp_filesystem;
+		if ( empty( $wp_filesystem ) ) {
+			require_once ABSPATH . '/wp-admin/includes/file.php';
+			WP_Filesystem();
+		}
 
 		// We set the status to 500, so if we encounter a state where the process crashes the webhook is marked as failed.
 		header( 'HTTP/1.1 500 Internal Server Error' );
-		$request_body = trim( file_get_contents( 'php://input' ) );
+		$raw_post_data = $wp_filesystem->get_contents( 'php://input' );
+		$signature = isset( $_SERVER['HTTP_X_SIGNATURE'] ) ? sanitize_text_field( wp_unslash( $_SERVER['HTTP_X_SIGNATURE'] ) ) : '';
 		set_error_handler( array( __CLASS__, 'handle_webhook_errors' ) );
 		try {
-			$request = new WC_PostFinanceCheckout_Webhook_Request( json_decode( $request_body ) );
-			$webhook_model = $webhook_service->get_webhook_entity_for_id( $request->get_listener_entity_id() );
-			if ( null === $webhook_model ) {
-				WooCommerce_PostFinanceCheckout::instance()->log( sprintf( 'Could not retrieve webhook model for listener entity id: %s', $request->get_listener_entity_id() ), WC_Log_Levels::ERROR );
-			    	// phpcs:ignore
-			    	echo esc_html__( sprintf( 'Could not retrieve webhook model for listener entity id: %s', $request->get_listener_entity_id() ) );
-				exit();
-
+			$clean_data = wp_kses_post( wp_unslash( $raw_post_data ) );
+			$request = new WC_PostFinanceCheckout_Webhook_Request( json_decode( $clean_data ) );
+			$client = WC_Wallee_Helper::instance()->get_api_client();
+			$webhook_service = WC_PostFinanceCheckout_Service_Webhook::instance();
+			
+			// Handling of payloads without a signature (legacy method).
+			// Deprecated since 3.0.12
+			if ( empty( $signature ) ) {
+				$webhook_model = $webhook_service->get_webhook_entity_for_id( $request->get_listener_entity_id() );
+				$webhook_handler_class_name = $webhook_model->get_handler_class_name();
+				$webhook_handler = $webhook_handler_class_name::instance();
+				$webhook_handler->process( $request );
 			}
-			$webhook_handler_class_name = $webhook_model->get_handler_class_name();
-			$webhook_handler = $webhook_handler_class_name::instance();
-			$webhook_handler->process( $request );
+
+			// Handling of payloads with a valid signature.
+			// This payload signed has the transaction state
+			if ( !empty( $signature ) && $client->getWebhookEncryptionService()->isContentValid( $signature, $clean_data ) ) {
+				WC_PostFinanceCheckout_Webhook_Strategy_Manager::instance()->process( $request );
+			}
+			
 			header( 'HTTP/1.1 200 OK' );
 		} catch ( Exception $e ) {
 			WooCommerce_PostFinanceCheckout::instance()->log( $e->getMessage(), WC_Log_Levels::ERROR );
-		    	// phpcs:ignore
+			// phpcs:ignore
 			echo esc_textarea($e->getMessage());
 			exit();
 		}

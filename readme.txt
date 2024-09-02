@@ -3,7 +3,7 @@ Contributors: postfinancecheckout AG
 Tags: woocommerce PostFinance Checkout, woocommerce, PostFinance Checkout, payment, e-commerce, webshop, psp, invoice, packing slips, pdf, customer invoice, processing
 Requires at least: 4.7
 Tested up to: 6.5
-Stable tag: 3.0.11
+Stable tag: 3.0.12
 License: Apache 2
 License URI: http://www.apache.org/licenses/LICENSE-2.0
 
@@ -23,7 +23,7 @@ To use this extension, a PostFinance Checkout account is required. Sign up on [P
 
 == Documentation ==
 
-Additional documentation for this plugin is available [here](https://plugin-documentation.postfinance-checkout.ch/pfpayments/woocommerce/3.0.11/docs/en/documentation.html).
+Additional documentation for this plugin is available [here](https://plugin-documentation.postfinance-checkout.ch/pfpayments/woocommerce/3.0.12/docs/en/documentation.html).
 
 == Support ==
 
@@ -58,8 +58,8 @@ Support queries can be issued on the [PostFinance Checkout support site](https:/
 == Changelog ==
 
  
-= 3.0.11 - Aug 16 2024 =
-- [Bugfix] Fixed errors of undefined payment methods
+= 3.0.12 - Aug 21 2024 =
+- [Feature] Implemented the Webhook Signing Mechanism
 - [Tested Against] PHP 8.0 and PHP 7.4
 - [Tested Against] Wordpress 6.6
 - [Tested Against] Woocommerce 9.1.4

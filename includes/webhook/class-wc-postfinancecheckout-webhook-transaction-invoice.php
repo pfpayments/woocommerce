@@ -17,6 +17,8 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 /**
  * Webhook processor to handle transaction completion state transitions.
+ * @deprecated 3.0.12 No longer used by internal code and not recommended.
+ * @see WC_PostFinanceCheckout_Webhook_Transaction_Invoice_Strategy
  */
 class WC_PostFinanceCheckout_Webhook_Transaction_Invoice extends WC_PostFinanceCheckout_Webhook_Order_Related_Abstract {
 

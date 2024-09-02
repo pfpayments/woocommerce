@@ -249,7 +249,7 @@ class WC_PostFinanceCheckout_Migration {
 	public static function plugin_row_meta( $links, $file ) {
 		if ( WC_POSTFINANCECHECKOUT_PLUGIN_BASENAME === $file ) {
 			$row_meta = array(
-				'docs' => '<a href="https://plugin-documentation.postfinance-checkout.ch/pfpayments/woocommerce/3.0.11/docs/en/documentation.html" aria-label="' . esc_attr__( 'View Documentation', 'woo-postfinancecheckout' ) . '">' . esc_html__( 'Documentation', 'woo-postfinancecheckout' ) . '</a>',
+				'docs' => '<a href="https://plugin-documentation.postfinance-checkout.ch/pfpayments/woocommerce/3.0.12/docs/en/documentation.html" aria-label="' . esc_attr__( 'View Documentation', 'woo-postfinancecheckout' ) . '">' . esc_html__( 'Documentation', 'woo-postfinancecheckout' ) . '</a>',
 			);
 
 			return array_merge( $links, $row_meta );
@@ -584,10 +584,20 @@ class WC_PostFinanceCheckout_Migration {
 	 * @return void
 	 */
 	public static function supported_payments_integration_notice(): void {
+		if (!class_exists( 'WooCommerce' )) {
+			add_action('admin_notices', function() {
+				?>
+				<div class="notice notice-error">
+					<p><?php _e('WooCommerce is not activated. Please activate WooCommerce to use the payment integration.', 'woo-postfinancecheckout'); ?></p>
+				</div>
+				<?php
+				});
+        return;
+		}
 		$woocommerce_data = get_plugin_data( WP_PLUGIN_DIR . '/woocommerce/woocommerce.php', false, false );
 
 		if (version_compare( $woocommerce_data['Version'], WC_POSTFINANCECHECKOUT_REQUIRED_WC_MAXIMUM_VERSION, '>' )) {
-			$notice_id = "postfinancecheckout-{$woocommerce_data['Version']}-not-yet-supported";
+				$notice_id = "postfinancecheckout-{$woocommerce_data['Version']}-not-yet-supported";
 			if (!WC_Admin_Notices::user_has_dismissed_notice($notice_id)) {
 				$message = sprintf(__( 'The plugin PostFinanceCheckout has been tested up to WooCommerce %1$s but you have installed the version %2$s. Please notice that this is not recommended.' , 'woo-postfinancecheckout'), WC_POSTFINANCECHECKOUT_REQUIRED_WC_MAXIMUM_VERSION, $woocommerce_data['Version']);
 				WC_Admin_Notices::add_custom_notice($notice_id, esc_html( $message ));

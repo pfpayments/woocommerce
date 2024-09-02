@@ -69,23 +69,31 @@ class WC_PostFinanceCheckout_Webhook_Request {
 	private $timestamp;
 
 	/**
+	 * Entity state.
+	 *
+	 * @var mixed
+	 */
+	private $state;
+
+	/**
 	 * Constructor.
 	 *
 	 * @param stdClass $model model.
 	 */
 	public function __construct( $model ) {
 		$this->event_id = $model->eventId;
-	       	// phpcs:ignore
+		// phpcs:ignore
 		$this->entity_id = $model->entityId;
-	    	// phpcs:ignore
+		// phpcs:ignore
 		$this->listener_entity_id = $model->listenerEntityId;
-	    	// phpcs:ignore
+		// phpcs:ignore
 		$this->listener_entity_technical_name = $model->listenerEntityTechnicalName;
-	    	// phpcs:ignore
+		// phpcs:ignore
 		$this->space_id = $model->spaceId;
-	    	// phpcs:ignore
+		// phpcs:ignore
 		$this->webhook_listener_id = $model->webhookListenerId;
 		$this->timestamp = $model->timestamp;
+		$this->state = $model->state;
 	}
 
 	/**
@@ -149,5 +157,14 @@ class WC_PostFinanceCheckout_Webhook_Request {
 	 */
 	public function get_timestamp() {
 		return $this->timestamp;
+	}
+
+	/**
+	 * Returns the state of the webhook event's entity.
+	 *
+	 * @return string
+	 */
+	public function get_state() {
+		return $this->state;
 	}
 }

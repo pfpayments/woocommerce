@@ -1,7 +1,6 @@
 <?php
 /**
- *
- * WC_PostFinanceCheckout_Webhook_Transaction_Completion Class
+ * PostFinance Checkout WooCommerce
  *
  * PostFinanceCheckout
  * This plugin will add support for all PostFinanceCheckout payments methods and connect the PostFinanceCheckout servers to your WooCommerce webshop (https://postfinance.ch/en/business/products/e-commerce/postfinance-checkout-all-in-one.html).
@@ -12,68 +11,77 @@
  * @license  http://www.apache.org/licenses/LICENSE-2.0 Apache Software License (ASL 2.0)
  */
 
-if ( ! defined( 'ABSPATH' ) ) {
-	exit();
-}
-/**
- * Webhook processor to handle transaction completion state transitions.
- * @deprecated 3.0.12 No longer used by internal code and not recommended.
- * @see WC_PostFinanceCheckout_Webhook_Transaction_Completion_Strategy
- */
-class WC_PostFinanceCheckout_Webhook_Transaction_Completion extends WC_PostFinanceCheckout_Webhook_Order_Related_Abstract {
+defined( 'ABSPATH' ) || exit;
 
+/**
+ * Class WC_PostFinanceCheckout_Webhook_Transaction_Completion_Strategy
+ * 
+ * Handles strategy for processing transaction completion-related webhook requests.
+ * This class extends the base webhook strategy to manage webhook requests specifically
+ * dealing with transaction completions. It focuses on updating order states based on the transaction completion details
+ * retrieved from the webhook data.
+ */
+class WC_PostFinanceCheckout_Webhook_Transaction_Completion_Strategy extends WC_PostFinanceCheckout_Webhook_Strategy_Base {
+	
+	/**
+	 * @inheritDoc
+	 */
+	public function match( string $webhook_entity_id ) {
+		return WC_PostFinanceCheckout_Service_Webhook::POSTFINANCECHECKOUT_TRANSACTION_COMPLETION == $webhook_entity_id;
+	}
 
 	/**
-	 * Load entity.
-	 *
-	 * @param WC_PostFinanceCheckout_Webhook_Request $request request.
-	 * @return object|\PostFinanceCheckout\Sdk\Model\TransactionCompletion TransactionCompletion.
-	 * @throws \PostFinanceCheckout\Sdk\ApiException ApiException.
-	 * @throws \PostFinanceCheckout\Sdk\Http\ConnectionException ConnectionException.
-	 * @throws \PostFinanceCheckout\Sdk\VersioningException VersioningException.
+	 * @inheritDoc
 	 */
 	protected function load_entity( WC_PostFinanceCheckout_Webhook_Request $request ) {
-		$completion_service = new \PostFinanceCheckout\Sdk\Service\TransactionCompletionService( WC_PostFinanceCheckout_Helper::instance()->get_api_client() );
-		return $completion_service->read( $request->get_space_id(), $request->get_entity_id() );
+		$transaction_invoice_service = new \PostFinanceCheckout\Sdk\Service\TransactionCompletionService( WC_PostFinanceCheckout_Helper::instance()->get_api_client() );
+		return $transaction_invoice_service->read( $request->get_space_id(), $request->get_entity_id() );
 	}
 
 	/**
-	 * Get order id.
-	 *
-	 * @param mixed $completion completion.
-	 * @return int|string
+	 * @inheritDoc
 	 */
-	protected function get_order_id( $completion ) {
-		/* @var \PostFinanceCheckout\Sdk\Model\TransactionCompletion $completion */
-		return WC_PostFinanceCheckout_Entity_Transaction_Info::load_by_transaction( $completion->getLineItemVersion()->getTransaction()->getLinkedSpaceId(), $completion->getLineItemVersion()->getTransaction()->getId() )->get_order_id();
+	protected function get_order_id( $object ) {
+		/* @var \Wallee\Sdk\Model\TransactionCompletion $object */
+		return WC_PostFinanceCheckout_Entity_Transaction_Info::load_by_transaction(
+			$object->getLineItemVersion()->getTransaction()->getLinkedSpaceId(),
+			$object->getLineItemVersion()->getTransaction()->getId()
+		)->get_order_id();
 	}
 
 	/**
-	 * Get transaction id.
+	 * Processes the incoming webhook request pertaining to transaction completions.
 	 *
-	 * @param mixed $completion completion.
-	 * @return int
-	 */
-	protected function get_transaction_id( $completion ) {
-		/* @var \PostFinanceCheckout\Sdk\Model\TransactionCompletion $completion */
-		return $completion->getLinkedTransaction();
-	}
-
-	/**
-	 * Process order realted inner.
+	 * This method retrieves the transaction completion details from the API and updates the associated
+	 * WooCommerce order based on the state of the completion.
 	 *
-	 * @param WC_Order $order order.
-	 * @param mixed    $completion completion.
+	 * @param WC_PostFinanceCheckout_Webhook_Request $request The webhook request object.
 	 * @return void
 	 */
-	protected function process_order_related_inner( WC_Order $order, $completion ) {
+	public function process( WC_PostFinanceCheckout_Webhook_Request $request ) {
 		/* @var \PostFinanceCheckout\Sdk\Model\TransactionCompletion $completion */
-		switch ( $completion->getState() ) {
+		$completion = $this->load_entity( $request );
+		$order = $this->get_order( $completion );
+		if ( false != $order && $order->get_id() ) {
+			$this->process_order_related_inner( $order, $completion, $request );
+		}
+	}
+	
+	/**
+	 * Additional processing on the order based on the state of the transaction completion.
+	 *
+	 * @param WC_Order $order The WooCommerce order linked to the completion.
+	 * @param \PostFinanceCheckout\Sdk\Model\TransactionCompletion $completion The transaction completion object.
+	 * @param WC_PostFinanceCheckout_Webhook_Request $request The webhook request.
+	 * @return void
+	 */
+	protected function process_order_related_inner( WC_Order $order, \PostFinanceCheckout\Sdk\Model\TransactionCompletion $completion, WC_PostFinanceCheckout_Webhook_Request $request ) {
+		switch ( $request->get_state() ) {
 			case \PostFinanceCheckout\Sdk\Model\TransactionCompletionState::FAILED:
-				$this->failed( $completion, $order );
+				$this->failed( $order, $completion );
 				break;
 			case \PostFinanceCheckout\Sdk\Model\TransactionCompletionState::SUCCESSFUL:
-				$this->success( $completion, $order );
+				$this->success( $order, $completion );
 				break;
 			default:
 				// Nothing to do.
@@ -82,14 +90,13 @@ class WC_PostFinanceCheckout_Webhook_Transaction_Completion extends WC_PostFinan
 	}
 
 	/**
-	 * Success.
+	 * Handles successful transaction completion.
 	 *
-	 * @param \PostFinanceCheckout\Sdk\Model\TransactionCompletion $completion completion.
-	 * @param WC_Order                                               $order order.
+	 * @param WC_Order $order The associated WooCommerce order.
+	 * @param \PostFinanceCheckout\Sdk\Model\TransactionCompletion $completion The transaction completion data.
 	 * @return void
-	 * @throws Exception Exception.
 	 */
-	protected function success( \PostFinanceCheckout\Sdk\Model\TransactionCompletion $completion, WC_Order $order ) {
+	protected function success( WC_Order $order, \PostFinanceCheckout\Sdk\Model\TransactionCompletion $completion ) {
 		$completion_job = WC_PostFinanceCheckout_Entity_Completion_Job::load_by_completion( $completion->getLinkedSpaceId(), $completion->getId() );
 		if ( ! $completion_job->get_id() ) {
 			// We have no completion job with this id -> the server could not store the id of the completion after sending the request. (e.g. connection issue or crash)
@@ -238,14 +245,13 @@ class WC_PostFinanceCheckout_Webhook_Transaction_Completion extends WC_PostFinan
 	}
 
 	/**
-	 * Failed.
+	 * Handles failed transaction completion.
 	 *
-	 * @param \PostFinanceCheckout\Sdk\Model\TransactionCompletion $completion completion.
-	 * @param WC_Order                                               $order order.
+	 * @param WC_Order $order The associated WooCommerce order.
+	 * @param \PostFinanceCheckout\Sdk\Model\TransactionCompletion $completion The transaction completion data that failed.
 	 * @return void
-	 * @throws Exception Exception.
 	 */
-	protected function failed( \PostFinanceCheckout\Sdk\Model\TransactionCompletion $completion, WC_Order $order ) {
+	protected function failed( WC_Order $order, \PostFinanceCheckout\Sdk\Model\TransactionCompletion $completion ) {
 		$completion_job = WC_PostFinanceCheckout_Entity_Completion_Job::load_by_completion( $completion->getLinkedSpaceId(), $completion->getId() );
 		if ( ! $completion_job->get_id() ) {
 			$completion_job = WC_PostFinanceCheckout_Entity_Completion_Job::load_running_completion_for_transaction(

@@ -804,3 +804,10 @@ Tested against:
 - [Tested Against] Woocommerce 9.1.4
 - [Tested Against] PHP SDK 4.5.0
 
+= 3.0.12 - Aug 21 2024 =
+- [Feature] Implemented the Webhook Signing Mechanism
+- [Tested Against] PHP 8.0 and PHP 7.4
+- [Tested Against] Wordpress 6.6
+- [Tested Against] Woocommerce 9.1.4
+- [Tested Against] PHP SDK 4.5.0
+

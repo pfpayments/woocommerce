@@ -1,7 +1,6 @@
 <?php
 /**
- *
- * WC_PostFinanceCheckout_Webhook_Transaction_Void Class
+ * PostFinance Checkout WooCommerce
  *
  * PostFinanceCheckout
  * This plugin will add support for all PostFinanceCheckout payments methods and connect the PostFinanceCheckout servers to your WooCommerce webshop (https://postfinance.ch/en/business/products/e-commerce/postfinance-checkout-all-in-one.html).
@@ -12,25 +11,27 @@
  * @license  http://www.apache.org/licenses/LICENSE-2.0 Apache Software License (ASL 2.0)
  */
 
-if ( ! defined( 'ABSPATH' ) ) {
-	exit();
-}
-/**
- * Webhook processor to handle transaction void state transitions.
- * @deprecated 3.0.12 No longer used by internal code and not recommended.
- * @see WC_PostFinanceCheckout_Webhook_Transaction_Void_Strategy
- */
-class WC_PostFinanceCheckout_Webhook_Transaction_Void extends WC_PostFinanceCheckout_Webhook_Order_Related_Abstract {
+defined( 'ABSPATH' ) || exit;
 
+/**
+ * Class WC_PostFinanceCheckout_Webhook_Transaction_Void_Strategy
+ * 
+ * Handles strategy for processing transaction void webhook requests.
+ * This class extends the base webhook strategy to specifically manage webhook requests
+ * that deal with transaction voids. Transaction voids are crucial for reverting transactions
+ * that have been initiated but not yet completed, ensuring accurate financial records and operations.
+ */
+class WC_PostFinanceCheckout_Webhook_Transaction_Void_Strategy extends WC_PostFinanceCheckout_Webhook_Strategy_Base {
 
 	/**
-	 * Load entity.
-	 *
-	 * @param WC_PostFinanceCheckout_Webhook_Request $request request.
-	 * @return object|\PostFinanceCheckout\Sdk\Model\TransactionVoid
-	 * @throws \PostFinanceCheckout\Sdk\ApiException ApiException.
-	 * @throws \PostFinanceCheckout\Sdk\Http\ConnectionException ConnectionException.
-	 * @throws \PostFinanceCheckout\Sdk\VersioningException VersioningException.
+	 * @inheritDoc
+	 */
+	public function match( string $webhook_entity_id ) {
+		return WC_PostFinanceCheckout_Service_Webhook::POSTFINANCECHECKOUT_TRANSACTION_VOID == $webhook_entity_id;
+	}
+
+	/**
+	 * @inheritDoc
 	 */
 	protected function load_entity( WC_PostFinanceCheckout_Webhook_Request $request ) {
 		$void_service = new \PostFinanceCheckout\Sdk\Service\TransactionVoidService( WC_PostFinanceCheckout_Helper::instance()->get_api_client() );
@@ -38,42 +39,50 @@ class WC_PostFinanceCheckout_Webhook_Transaction_Void extends WC_PostFinanceChec
 	}
 
 	/**
-	 * Get order id.
-	 *
-	 * @param mixed $void void.
-	 * @return int|string
+	 * @inheritDoc
 	 */
-	protected function get_order_id( $void ) {
-		/* @var \PostFinanceCheckout\Sdk\Model\TransactionVoid $void */
-		return WC_PostFinanceCheckout_Entity_Transaction_Info::load_by_transaction( $void->getTransaction()->getLinkedSpaceId(), $void->getTransaction()->getId() )->get_order_id();
+	protected function get_order_id( $object ) {
+		/* @var \Wallee\Sdk\Model\TransactionVoid $object */
+		return WC_PostFinanceCheckout_Entity_Transaction_Info::load_by_transaction(
+			$object->getTransaction()->getLinkedSpaceId(),
+			$object->getTransaction()->getId()
+		)->get_order_id();
 	}
 
 	/**
-	 * Get transaction id.
+	 * Processes the incoming webhook request related to transaction voids.
 	 *
-	 * @param mixed $void void.
-	 * @return int
-	 */
-	protected function get_transaction_id( $void ) {
-		/* @var \PostFinanceCheckout\Sdk\Model\TransactionVoid $void */
-		return $void->getLinkedTransaction();
-	}
-
-	/**
-	 * Process order related inner.
+	 * This method checks if the corresponding order exists and if so, it further processes the order
+	 * based on the transaction void state obtained from the webhook request.
 	 *
-	 * @param WC_Order $order order.
-	 * @param mixed    $void void.
+	 * @param WC_PostFinanceCheckout_Webhook_Request $request The webhook request.
 	 * @return void
 	 */
-	protected function process_order_related_inner( WC_Order $order, $void ) {
-		/* @var \PostFinanceCheckout\Sdk\Model\TransactionVoid $void */
-		switch ( $void->getState() ) {
+	public function process( WC_PostFinanceCheckout_Webhook_Request $request ) {
+		/* @var \PostFinanceCheckout\Sdk\Model\TransactionVoid $void_transaction */
+		$void = $this->load_entity( $request );
+		$order = $this->get_order( $void );
+		if ( false != $order && $order->get_id() ) {
+			$this->process_order_related_inner( $order, $void, $request );
+		}
+	}
+	
+	/**
+	 * Processes additional order-related operations based on the transaction void's state.
+	 *
+	 * @param WC_Order $order The WooCommerce order associated with the void request.
+	 * @param \PostFinanceCheckout\Sdk\Model\TransactionVoid $void The transaction void object.
+	 * @param WC_PostFinanceCheckout_Webhook_Request $request The webhook request object.
+	 * @return void
+	 */
+	protected function process_order_related_inner( WC_Order $order, \PostFinanceCheckout\Sdk\Model\TransactionVoid $void, WC_PostFinanceCheckout_Webhook_Request $request ) {
+		
+		switch ( $request->get_state() ) {
 			case \PostFinanceCheckout\Sdk\Model\TransactionVoidState::FAILED:
-				$this->failed( $void, $order );
+				$this->failed( $order, $void );
 				break;
 			case \PostFinanceCheckout\Sdk\Model\TransactionVoidState::SUCCESSFUL:
-				$this->success( $void, $order );
+				$this->success( $order, $void );
 				break;
 			default:
 				// Nothing to do.
@@ -82,14 +91,13 @@ class WC_PostFinanceCheckout_Webhook_Transaction_Void extends WC_PostFinanceChec
 	}
 
 	/**
-	 * Success.
+	 * Successfully processes a transaction void.
 	 *
-	 * @param \PostFinanceCheckout\Sdk\Model\TransactionVoid $void void.
-	 * @param WC_Order                                         $order order.
+	 * @param WC_Order 											$order The order to process.
+	 * @param \PostFinanceCheckout\Sdk\Model\TransactionVoid	$void The transaction void.
 	 * @return void
-	 * @throws Exception Exception.
 	 */
-	protected function success( \PostFinanceCheckout\Sdk\Model\TransactionVoid $void, WC_Order $order ) {
+	protected function success( WC_Order $order, \PostFinanceCheckout\Sdk\Model\TransactionVoid $void ) {
 		$void_job = WC_PostFinanceCheckout_Entity_Void_Job::load_by_void( $void->getLinkedSpaceId(), $void->getId() );
 		if ( ! $void_job->get_id() ) {
 			// We have no void job with this id -> the server could not store the id of the void after sending the request. (e.g. connection issue or crash)
@@ -110,15 +118,15 @@ class WC_PostFinanceCheckout_Webhook_Transaction_Void extends WC_PostFinanceChec
 	}
 
 	/**
-	 * Failed.
+	 * Handles a failed transaction void.
 	 *
-	 * @param \PostFinanceCheckout\Sdk\Model\TransactionVoid $void void.
-	 * @param WC_Order                                         $order order.
+	 * @param WC_Order 											$order The order linked to the failed void.
+	 * @param \PostFinanceCheckout\Sdk\Model\TransactionVoid	$void The transaction void.
 	 * @return void
-	 * @throws Exception Exception.
 	 */
-	protected function failed( \PostFinanceCheckout\Sdk\Model\TransactionVoid $void, WC_Order $order ) {
+	protected function failed( WC_Order $order, \PostFinanceCheckout\Sdk\Model\TransactionVoid $void ) {
 		$void_job = WC_PostFinanceCheckout_Entity_Void_Job::load_by_void( $void->getLinkedSpaceId(), $void->getId() );
+
 		if ( ! $void_job->get_id() ) {
 			// We have no void job with this id -> the server could not store the id of the void after sending the request. (e.g. connection issue or crash)
 			// We only have on running void which was not yet processed successfully and use it as it should be the one the webhook is for.

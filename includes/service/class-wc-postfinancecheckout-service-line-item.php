@@ -241,7 +241,6 @@ class WC_PostFinanceCheckout_Service_Line_Item extends WC_PostFinanceCheckout_Se
 	 */
 	protected function create_coupons_line_items_from_session() {
 		$coupons = array();
-		$currency = get_woocommerce_currency();
 		$cart = WC()->cart;
 
 		if ( empty( $cart->get_applied_coupons() ) ) {
@@ -249,8 +248,10 @@ class WC_PostFinanceCheckout_Service_Line_Item extends WC_PostFinanceCheckout_Se
 		}
 
 		$discount =  $cart->get_discount_total() + $cart->get_discount_tax();
-		$line_item = $this->create_coupon_line_item( current($cart->get_coupons()), $discount );
-		$coupons[] = $line_item;
+		$line_items = $this->create_coupon_line_items( current( $cart->get_coupons() ), $discount );
+		if ( is_array( $line_items ) ) {
+			$coupons = array_merge( $coupons, $line_items );
+		}
 		return $coupons;
 	}
 
@@ -260,27 +261,86 @@ class WC_PostFinanceCheckout_Service_Line_Item extends WC_PostFinanceCheckout_Se
 	 * @param float $amount
 	 * @return \PostFinanceCheckout\Sdk\Model\LineItemCreate|null
 	 */
-	private function create_coupon_line_item( $coupon, float $amount = 0 ) {
-		//check if the coupon is valid
+	private function create_coupon_line_items( $coupon, float $total_discount_amount = 0 ) {
 		if ( !$coupon instanceof WC_Coupon && !$coupon instanceof WC_Order_Item_Coupon ) {
-			return null;
+			return [];
 		}
-
+  
 		$coupon = new WC_Coupon( $coupon->get_code() );
-
-		$amount = $amount * -1;
 		$sku = $this->fix_length( $coupon->get_discount_type(), 150 );
 		$sku = str_replace( array( "\n", "\r", ), '', $sku );
+  
+		// Calculate the proportional discount amounts for each tax rate
+		$discounts = $this->calculate_discount_rates_proportionally( $total_discount_amount );
+  
+		$line_items = [];
+  
+		foreach ( $discounts as $discount ) {
+			$line_item = new \PostFinanceCheckout\Sdk\Model\LineItemCreate();
+			$line_item->setAmountIncludingTax( $discount['amount'] * -1 );
+			$line_item->setName( sprintf( '%s: %s (%s%% tax)', WC_PostFinanceCheckout_Packages_Coupon_Discount::COUPON, $coupon->get_code(), $discount['rate_id']) );
+			$line_item->setQuantity( 1 );
+			$line_item->setShippingRequired( false );
+			$line_item->setSku( $sku, 200 );
+			$line_item->setType( \PostFinanceCheckout\Sdk\Model\LineItemType::DISCOUNT );
+			$line_item->setUniqueId( 'coupon-' . $coupon->get_id() . '-' . $discount['rate_id'] );
+   
+			$tax_rate = new \PostFinanceCheckout\Sdk\Model\TaxCreate([
+				'title' => 'Discount Tax: ' . $discount['rate_id'],
+				'rate' => $discount['rate_id'],
+			]);
+   
+			$line_item->setTaxes( [$tax_rate] );
+   
+			$line_items[] = $line_item;
+		}
+  
+		return $line_items;
+	}
 
-		$line_item = new \PostFinanceCheckout\Sdk\Model\LineItemCreate();
-		$line_item->setAmountIncludingTax( $amount );
-		$line_item->setName( sprintf( '%s: %s', WC_PostFinanceCheckout_Packages_Coupon_Discount::COUPON, $coupon->get_code() ) );
-		$line_item->setQuantity( 1 );
-		$line_item->setShippingRequired( false );
-		$line_item->setSku( $sku, 200 );
-		$line_item->setType( \PostFinanceCheckout\Sdk\Model\LineItemType::DISCOUNT );
-		$line_item->setUniqueId( 'coupon-' . $coupon->get_id() );
-		return $line_item;
+	/**
+	* @param float $total_discount_amount
+	* @return array
+	*/
+	private function calculate_discount_rates_proportionally(float $total_discount_amount): array {
+		$cart = WC()->cart;
+		$tax_totals = [];
+		$total_amount = 0;
+  
+		foreach ( $cart->get_cart() as $cart_item ) {
+			$product = $cart_item['data'];
+			$tax_class = $product->get_tax_class();
+			$tax_rates_class = WC_Tax::get_rates( $tax_class );
+   
+			foreach ( $tax_rates_class as $rate ) {
+				$rate_id = $rate['rate'];
+				$line_total_with_tax = $cart_item['line_total'] + $cart_item['line_tax'];
+    
+				if ( !isset($tax_totals[$rate_id]) ) {
+					$tax_totals[$rate_id] = [
+						'total' => 0,
+						'rate_percentage' => $rate_id
+					];
+				}
+    
+				$tax_totals[$rate_id]['total'] += $line_total_with_tax;
+				$total_amount += $line_total_with_tax;
+			}
+		}
+  
+		$discounts = [];
+  
+		foreach ($tax_totals as $rate_id => $data) {
+				$proportional_discount_amount = $total_discount_amount * ($data['total'] / $total_amount);
+    
+				$discounts[] = [
+					'rate_id' => $rate_id,
+					'amount' => $proportional_discount_amount,
+					'rate_percentage' => $rate_id,
+				];
+		}
+  
+		return $discounts;
 	}
 	/**
 	 * Returns the line items from the given cart
@@ -514,8 +574,11 @@ class WC_PostFinanceCheckout_Service_Line_Item extends WC_PostFinanceCheckout_Se
 			/** @var WC_Order_Item_Coupon $coupon */
 			$discount += (float)$coupon->get_discount() + (float)$coupon->get_discount_tax();
 		}
-		$line_item = $this->create_coupon_line_item( current($order->get_coupons()), $discount );
-		$coupons[] = $this->clean_line_item( $line_item );
+
+		$line_items = $this->create_coupon_line_items( current($order->get_coupons()), $discount );
+		foreach ($line_items as $line_item) {
+			$coupons[] = $this->clean_line_item( $line_item );
+		}
 		return $coupons;
 	}
 
@@ -568,11 +631,11 @@ class WC_PostFinanceCheckout_Service_Line_Item extends WC_PostFinanceCheckout_Se
 
 			//At this point, if there is a discount applied by coupon, the price already has the discount applied,
 			//and to be able to send the discount to the portal, it is necessary to restore the discounted amount,
-			//the original price must be restored before being applied, otherwise it would be discounting twice in the portal. 
+			//the original price must be restored before being applied, otherwise it would be discounting twice in the portal.
 			$item_data_coupon = $item->get_meta( '_postfinancecheckout_coupon_discount_line_item_discounts' );
 			if ( !empty ( $item_data_coupon ) ) {
-				$discount_tax = $item->get_subtotal_tax() - $item->get_total_tax(); 
-				$discount_amount = $item->get_subtotal() - $item->get_total(); 
+				$discount_tax = $item->get_subtotal_tax() - $item->get_total_tax();
+				$discount_amount = $item->get_subtotal() - $item->get_total();
 				$discounts = $discount_tax + $discount_amount;
 			}
 

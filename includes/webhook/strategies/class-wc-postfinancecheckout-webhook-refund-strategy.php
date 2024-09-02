@@ -1,7 +1,6 @@
 <?php
 /**
- *
- * WC_PostFinanceCheckout_Webhook_Refund Class
+ * PostFinance Checkout WooCommerce
  *
  * PostFinanceCheckout
  * This plugin will add support for all PostFinanceCheckout payments methods and connect the PostFinanceCheckout servers to your WooCommerce webshop (https://postfinance.ch/en/business/products/e-commerce/postfinance-checkout-all-in-one.html).
@@ -12,25 +11,27 @@
  * @license  http://www.apache.org/licenses/LICENSE-2.0 Apache Software License (ASL 2.0)
  */
 
-if ( ! defined( 'ABSPATH' ) ) {
-	exit();
-}
-/**
- * Webhook processor to handle refund state transitions.
- * @deprecated 3.0.12 No longer used by internal code and not recommended.
- * @see WC_PostFinanceCheckout_Service_Refund
- */
-class WC_PostFinanceCheckout_Webhook_Refund extends WC_PostFinanceCheckout_Webhook_Order_Related_Abstract {
+defined( 'ABSPATH' ) || exit;
 
+/**
+ * Class WC_PostFinanceCheckout_Webhook_Refund_Strategy
+ * 
+ * Handles strategy for processing refund-related webhook requests.
+ * This class extends the base webhook strategy to specifically manage webhook requests
+ * that deal with refund transactions. This includes updating the status of refund jobs within the system,
+ * processing related order modifications, and handling state transitions for refunds.
+ */
+class WC_PostFinanceCheckout_Webhook_Refund_Strategy extends WC_PostFinanceCheckout_Webhook_Strategy_Base {
+	
+	/**
+	 * @inheritDoc
+	 */
+	public function match( string $webhook_entity_id ) {
+		return WC_PostFinanceCheckout_Service_Webhook::POSTFINANCECHECKOUT_REFUND == $webhook_entity_id;
+	}
 
 	/**
-	 * Load entity.
-	 *
-	 * @param WC_PostFinanceCheckout_Webhook_Request $request request.
-	 * @return object|\PostFinanceCheckout\Sdk\Model\Refund
-	 * @throws \PostFinanceCheckout\Sdk\ApiException ApiException.
-	 * @throws \PostFinanceCheckout\Sdk\Http\ConnectionException ConnectionException.
-	 * @throws \PostFinanceCheckout\Sdk\VersioningException VersioningException.
+	 * @inheritDoc
 	 */
 	protected function load_entity( WC_PostFinanceCheckout_Webhook_Request $request ) {
 		$refund_service = new \PostFinanceCheckout\Sdk\Service\RefundService( WC_PostFinanceCheckout_Helper::instance()->get_api_client() );
@@ -38,37 +39,45 @@ class WC_PostFinanceCheckout_Webhook_Refund extends WC_PostFinanceCheckout_Webho
 	}
 
 	/**
-	 * Get order id.
-	 *
-	 * @param mixed $refund refund.
-	 * @return int|string
+	 * @inheritDoc
 	 */
-	protected function get_order_id( $refund ) {
-		/* @var \PostFinanceCheckout\Sdk\Model\Refund $refund */
-		return WC_PostFinanceCheckout_Entity_Transaction_Info::load_by_transaction( $refund->getTransaction()->getLinkedSpaceId(), $refund->getTransaction()->getId() )->get_order_id();
+	protected function get_order_id( $object ) {
+		/* @var \Wallee\Sdk\Model\Refund $object */
+		return WC_PostFinanceCheckout_Entity_Transaction_Info::load_by_transaction(
+			$object->getTransaction()->getLinkedSpaceId(),
+			$object->getTransaction()->getId()
+		)->get_order_id();
 	}
 
 	/**
-	 * Get transaction id.
+	 * Processes the incoming webhook request related to refunds.
 	 *
-	 * @param mixed $refund refund.
-	 * @return int
-	 */
-	protected function get_transaction_id( $refund ) {
-		/* @var \PostFinanceCheckout\Sdk\Model\Refund $refund */
-		return $refund->getTransaction()->getId();
-	}
-
-	/**
-	 * Process order related inner.
+	 * This method retrieves the refund details from the API and updates the associated order
+	 * based on the refund's state.
 	 *
-	 * @param WC_Order $order order.
-	 * @param mixed    $refund refund.
+	 * @param WC_PostFinanceCheckout_Webhook_Request $request The webhook request object.
 	 * @return void
 	 */
-	protected function process_order_related_inner( WC_Order $order, $refund ) {
+	public function process( WC_PostFinanceCheckout_Webhook_Request $request ) {
 		/* @var \PostFinanceCheckout\Sdk\Model\Refund $refund */
-		switch ( $refund->getState() ) {
+		$refund = $this->load_entity( $request );
+		$order = $this->get_order( $refund );
+		if ( false != $order && $order->get_id() ) {
+			$this->process_order_related_inner( $order, $refund, $request );
+		}
+	}
+
+	/**
+	 * Performs additional order-related processing based on the refund state.
+	 *
+	 * @param WC_Order $order The WooCommerce order associated with the refund.
+	 * @param \PostFinanceCheckout\Sdk\Model\Refund $refund The transaction refund object.
+         * @param WC_PostFinanceCheckout_Webhook_Request $request The webhook request object.
+	 * @return void
+	 */
+	protected function process_order_related_inner( WC_Order $order, \PostFinanceCheckout\Sdk\Model\Refund $refund, WC_PostFinanceCheckout_Webhook_Request $request ) {
+		/* @var \PostFinanceCheckout\Sdk\Model\Refund $refund */
+		switch ( $request->get_state() ) {
 			case \PostFinanceCheckout\Sdk\Model\RefundState::FAILED:
 				// fallback.
 				$this->failed( $refund, $order );
@@ -83,7 +92,7 @@ class WC_PostFinanceCheckout_Webhook_Refund extends WC_PostFinanceCheckout_Webho
 	}
 
 	/**
-	 * Failed.
+	 * Handles actions to be performed when a refund transaction fails.
 	 *
 	 * @param \PostFinanceCheckout\Sdk\Model\Refund $refund refund.
 	 * @param WC_Order                                $order order.
@@ -110,7 +119,7 @@ class WC_PostFinanceCheckout_Webhook_Refund extends WC_PostFinanceCheckout_Webho
 	}
 
 	/**
-	 * Refunded.
+	 * Handles actions to be performed when a refund transaction is successful.
 	 *
 	 * @param \PostFinanceCheckout\Sdk\Model\Refund $refund refund.
 	 * @param WC_Order                                $order order.

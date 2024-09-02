@@ -52,7 +52,8 @@ class WC_PostFinanceCheckout_Autoloader {
 	 * @return string
 	 */
 	private function get_file_name_from_class( $class ) {
-		return 'class-' . str_replace( '_', '-', $class ) . '.php';
+		$class = preg_replace( '/(?<!^)[A-Z]/', '-$0', $class );
+		return 'class-' . str_replace( '_', '-', strtolower( $class ) ) . '.php';
 	}
 
 	/**
@@ -91,7 +92,11 @@ class WC_PostFinanceCheckout_Autoloader {
 		} elseif ( strpos( $class, 'wc_postfinancecheckout_provider' ) === 0 ) {
 			$path = $this->include_path . 'provider/';
 		} elseif ( strpos( $class, 'wc_postfinancecheckout_webhook' ) === 0 ) {
-			$path = $this->include_path . 'webhook/';
+			if (strpos($class, 'strategy') !== false) {
+				$path = $this->include_path . 'webhook/strategies/';
+			} else {
+				$path = $this->include_path . 'webhook/';
+			}
 		} elseif ( strpos( $class, 'wc_postfinancecheckout_exception' ) === 0 ) {
 			$path = $this->include_path . 'exception/';
 		} elseif ( strpos( $class, 'wc_postfinancecheckout_admin' ) === 0 ) {
@@ -101,8 +106,6 @@ class WC_PostFinanceCheckout_Autoloader {
 		if ( empty( $path ) || ! $this->load_file( $path . $file ) ) {
 			$this->load_file( $this->include_path . $file );
 		}
-
-		$this->load_file( $this->include_path . $file );
 	}
 }
 

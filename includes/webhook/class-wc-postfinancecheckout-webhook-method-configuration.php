@@ -17,6 +17,8 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 /**
  * Webhook processor to handle payment method configuration state transitions.
+ * @deprecated 3.0.12 No longer used by internal code and not recommended.
+ * @see WC_PostFinanceCheckout_Webhook_Method_Configuration_Strategy
  */
 class WC_PostFinanceCheckout_Webhook_Method_Configuration extends WC_PostFinanceCheckout_Webhook_Abstract {
 

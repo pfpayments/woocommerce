@@ -111,6 +111,7 @@ class WC_PostFinanceCheckout_Webhook_Entity {
 	 * Get Handler class name.
 	 *
 	 * @return mixed
+	 * @deprecated This method will be deprecated in a future version as it is no longer necessary for webhook strategies.
 	 */
 	public function get_handler_class_name() {
 		return $this->handler_class_name;
