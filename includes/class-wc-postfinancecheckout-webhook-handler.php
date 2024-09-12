@@ -1,7 +1,9 @@
 <?php
 /**
- *
- * WC_PostFinanceCheckout_Unique_Id Class
+ * Plugin Name: PostFinanceCheckout
+ * Author: postfinancecheckout AG
+ * Text Domain: postfinancecheckout
+ * Domain Path: /languages/
  *
  * PostFinanceCheckout
  * This plugin will add support for all PostFinanceCheckout payments methods and connect the PostFinanceCheckout servers to your WooCommerce webshop (https://postfinance.ch/en/business/products/e-commerce/postfinance-checkout-all-in-one.html).
@@ -12,16 +14,13 @@
  * @license  http://www.apache.org/licenses/LICENSE-2.0 Apache Software License (ASL 2.0)
  */
 
-if ( ! defined( 'ABSPATH' ) ) {
-	exit();
-}
+defined( 'ABSPATH' ) || exit;
+
 /**
  * Class WC_PostFinanceCheckout_Unique_Id.
+ * This class handles the webhooks of PostFinanceCheckout
  *
  * @class WC_PostFinanceCheckout_Unique_Id
- */
-/**
- * This class handles the webhooks of PostFinanceCheckout
  */
 class WC_PostFinanceCheckout_Webhook_Handler {
 
@@ -51,7 +50,7 @@ class WC_PostFinanceCheckout_Webhook_Handler {
 	public static function handle_webhook_errors( $errno, $errstr, $errfile, $errline ) {
 		$fatal = E_ERROR | E_CORE_ERROR | E_COMPILE_ERROR | E_USER_ERROR | E_RECOVERABLE_ERROR | E_PARSE;
 		if ( $errno & $fatal ) {
-			throw new ErrorException( $errstr, $errno, E_ERROR, $errfile, $errline );
+			throw new ErrorException( esc_html( $errstr ), esc_html( $errno ), esc_html( E_ERROR ), esc_html( $errfile ), esc_html( $errline ) );
 		}
 		return false;
 	}
@@ -76,11 +75,11 @@ class WC_PostFinanceCheckout_Webhook_Handler {
 		try {
 			$clean_data = wp_kses_post( wp_unslash( $raw_post_data ) );
 			$request = new WC_PostFinanceCheckout_Webhook_Request( json_decode( $clean_data ) );
-			$client = WC_Wallee_Helper::instance()->get_api_client();
+			$client = WC_PostFinanceCheckout_Helper::instance()->get_api_client();
 			$webhook_service = WC_PostFinanceCheckout_Service_Webhook::instance();
-			
+
 			// Handling of payloads without a signature (legacy method).
-			// Deprecated since 3.0.12
+			// Deprecated since 3.0.12.
 			if ( empty( $signature ) ) {
 				$webhook_model = $webhook_service->get_webhook_entity_for_id( $request->get_listener_entity_id() );
 				$webhook_handler_class_name = $webhook_model->get_handler_class_name();
@@ -89,16 +88,16 @@ class WC_PostFinanceCheckout_Webhook_Handler {
 			}
 
 			// Handling of payloads with a valid signature.
-			// This payload signed has the transaction state
-			if ( !empty( $signature ) && $client->getWebhookEncryptionService()->isContentValid( $signature, $clean_data ) ) {
+			// This payload signed has the transaction state.
+			if ( ! empty( $signature ) && $client->getWebhookEncryptionService()->isContentValid( $signature, $clean_data ) ) {
 				WC_PostFinanceCheckout_Webhook_Strategy_Manager::instance()->process( $request );
 			}
-			
+
 			header( 'HTTP/1.1 200 OK' );
 		} catch ( Exception $e ) {
 			WooCommerce_PostFinanceCheckout::instance()->log( $e->getMessage(), WC_Log_Levels::ERROR );
 			// phpcs:ignore
-			echo esc_textarea($e->getMessage());
+			echo esc_textarea( $e->getMessage() );
 			exit();
 		}
 		exit();

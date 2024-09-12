@@ -811,3 +811,14 @@ Tested against:
 - [Tested Against] Woocommerce 9.1.4
 - [Tested Against] PHP SDK 4.5.0
 
+= 3.1.0 - Sept 12 2024 =
+- [Feature] Add privacy policy URL
+- [Feature] Adhere to WP code standards
+- [Feature] Add Support for WC 9.2.x
+- [Bugfix] Fix for error when renewing subscriptions
+- [Bugfix] Fix for deferred payments status being incorrect
+- [Tested Against] PHP 8.2 and PHP 7.4
+- [Tested Against] Wordpress 6.6
+- [Tested Against] Woocommerce 9.1.4 & Woocommerce 9.2.1
+- [Tested Against] PHP SDK 4.5.0
+

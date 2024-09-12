@@ -1,7 +1,9 @@
 <?php
 /**
- *
- * WC_PostFinanceCheckout_Entity_Token_Info Class
+ * Plugin Name: PostFinanceCheckout
+ * Author: postfinancecheckout AG
+ * Text Domain: postfinancecheckout
+ * Domain Path: /languages/
  *
  * PostFinanceCheckout
  * This plugin will add support for all PostFinanceCheckout payments methods and connect the PostFinanceCheckout servers to your WooCommerce webshop (https://postfinance.ch/en/business/products/e-commerce/postfinance-checkout-all-in-one.html).
@@ -12,9 +14,8 @@
  * @license  http://www.apache.org/licenses/LICENSE-2.0 Apache Software License (ASL 2.0)
  */
 
-if ( ! defined( 'ABSPATH' ) ) {
-	exit();
-}
+defined( 'ABSPATH' ) || exit;
+
 /**
  * This entity holds data about a token on the gateway.
  *
@@ -43,13 +44,13 @@ class WC_PostFinanceCheckout_Entity_Token_Info extends WC_PostFinanceCheckout_En
 	 */
 	protected static function get_field_definition() {
 		return array(
-			'token_id' => WC_PostFinanceCheckout_Entity_Resource_Type::INTEGER,
-			'state' => WC_PostFinanceCheckout_Entity_Resource_Type::STRING,
-			'space_id' => WC_PostFinanceCheckout_Entity_Resource_Type::INTEGER,
-			'name' => WC_PostFinanceCheckout_Entity_Resource_Type::STRING,
-			'customer_id' => WC_PostFinanceCheckout_Entity_Resource_Type::INTEGER,
-			'payment_method_id' => WC_PostFinanceCheckout_Entity_Resource_Type::INTEGER,
-			'connector_id' => WC_PostFinanceCheckout_Entity_Resource_Type::INTEGER,
+			'token_id' => WC_PostFinanceCheckout_Entity_Resource_Type::POSTFINANCECHECKOUT_INTEGER,
+			'state' => WC_PostFinanceCheckout_Entity_Resource_Type::POSTFINANCECHECKOUT_STRING,
+			'space_id' => WC_PostFinanceCheckout_Entity_Resource_Type::POSTFINANCECHECKOUT_INTEGER,
+			'name' => WC_PostFinanceCheckout_Entity_Resource_Type::POSTFINANCECHECKOUT_STRING,
+			'customer_id' => WC_PostFinanceCheckout_Entity_Resource_Type::POSTFINANCECHECKOUT_INTEGER,
+			'payment_method_id' => WC_PostFinanceCheckout_Entity_Resource_Type::POSTFINANCECHECKOUT_INTEGER,
+			'connector_id' => WC_PostFinanceCheckout_Entity_Resource_Type::POSTFINANCECHECKOUT_INTEGER,
 		);
 	}
 
@@ -59,7 +60,7 @@ class WC_PostFinanceCheckout_Entity_Token_Info extends WC_PostFinanceCheckout_En
 	 * @return string
 	 */
 	protected static function get_table_name() {
-		return 'wc_postfinancecheckout_token_info';
+		return 'postfinancecheckout_token_info';
 	}
 
 	/**
@@ -71,15 +72,17 @@ class WC_PostFinanceCheckout_Entity_Token_Info extends WC_PostFinanceCheckout_En
 	 */
 	public static function load_by_token( $space_id, $token_id ) {
 		global $wpdb;
+		$table = $wpdb->prefix . self::get_table_name();
+		// phpcs:disable WordPress.DB.DirectDatabaseQuery.SchemaChange, WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching, WordPress.DB.PreparedSQL.InterpolatedNotPrepared, WordPress.DB.PreparedSQLPlaceholders.UnfinishedPrepare -- Values are escaped in $wpdb->prepare.
 		$result = $wpdb->get_row(
 			$wpdb->prepare(
-				'SELECT * FROM %1$s WHERE space_id = %2$d AND token_id = %3$d',
-				$wpdb->prefix . self::get_table_name(),
+				"SELECT * FROM $table WHERE space_id = %d AND token_id = %d",
 				$space_id,
 				$token_id
 			),
 			ARRAY_A
 		);
+		// phpcs:disable WordPress.DB.DirectDatabaseQuery.SchemaChange, WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching, WordPress.DB.PreparedSQL.InterpolatedNotPrepared, WordPress.DB.PreparedSQLPlaceholders.UnfinishedPrepare -- Values are escaped in $wpdb->prepare.
 		if ( null !== $result ) {
 			return new self( $result );
 		}

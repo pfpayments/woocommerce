@@ -1,6 +1,9 @@
 <?php
 /**
- * PostFinance Checkout WooCommerce
+ * Plugin Name: PostFinanceCheckout
+ * Author: postfinancecheckout AG
+ * Text Domain: postfinancecheckout
+ * Domain Path: /languages/
  *
  * PostFinanceCheckout
  * This plugin will add support for all PostFinanceCheckout payments methods and connect the PostFinanceCheckout servers to your WooCommerce webshop (https://postfinance.ch/en/business/products/e-commerce/postfinance-checkout-all-in-one.html).
@@ -15,23 +18,29 @@ defined( 'ABSPATH' ) || exit;
 
 /**
  * Class WC_PostFinanceCheckout_Webhook_Transaction_Completion_Strategy
- * 
+ *
  * Handles strategy for processing transaction completion-related webhook requests.
  * This class extends the base webhook strategy to manage webhook requests specifically
  * dealing with transaction completions. It focuses on updating order states based on the transaction completion details
  * retrieved from the webhook data.
  */
 class WC_PostFinanceCheckout_Webhook_Transaction_Completion_Strategy extends WC_PostFinanceCheckout_Webhook_Strategy_Base {
-	
+
 	/**
+	 * Match function.
+	 *
 	 * @inheritDoc
+	 * @param string $webhook_entity_id The webhook entity id.
 	 */
 	public function match( string $webhook_entity_id ) {
 		return WC_PostFinanceCheckout_Service_Webhook::POSTFINANCECHECKOUT_TRANSACTION_COMPLETION == $webhook_entity_id;
 	}
 
 	/**
+	 * Load the entity
+	 *
 	 * @inheritDoc
+	 * @param WC_PostFinanceCheckout_Webhook_Request $request The webhook request.
 	 */
 	protected function load_entity( WC_PostFinanceCheckout_Webhook_Request $request ) {
 		$transaction_invoice_service = new \PostFinanceCheckout\Sdk\Service\TransactionCompletionService( WC_PostFinanceCheckout_Helper::instance()->get_api_client() );
@@ -39,10 +48,13 @@ class WC_PostFinanceCheckout_Webhook_Transaction_Completion_Strategy extends WC_
 	}
 
 	/**
+	 * Get the order ID.
+	 *
 	 * @inheritDoc
+	 * @param object $object The webhook request.
 	 */
 	protected function get_order_id( $object ) {
-		/* @var \Wallee\Sdk\Model\TransactionCompletion $object */
+		/* @var \PostFinanceCheckout\Sdk\Model\TransactionCompletion $object */
 		return WC_PostFinanceCheckout_Entity_Transaction_Info::load_by_transaction(
 			$object->getLineItemVersion()->getTransaction()->getLinkedSpaceId(),
 			$object->getLineItemVersion()->getTransaction()->getId()
@@ -66,7 +78,7 @@ class WC_PostFinanceCheckout_Webhook_Transaction_Completion_Strategy extends WC_
 			$this->process_order_related_inner( $order, $completion, $request );
 		}
 	}
-	
+
 	/**
 	 * Additional processing on the order based on the state of the transaction completion.
 	 *
@@ -111,7 +123,7 @@ class WC_PostFinanceCheckout_Webhook_Transaction_Completion_Strategy extends WC_
 			}
 			$completion_job->set_completion_id( $completion->getId() );
 		}
-		$completion_job->set_state( WC_PostFinanceCheckout_Entity_Completion_Job::STATE_DONE );
+		$completion_job->set_state( WC_PostFinanceCheckout_Entity_Completion_Job::POSTFINANCECHECKOUT_STATE_DONE );
 
 		if ( $completion_job->get_restock() ) {
 			$this->restock_non_completed_items( (array) $completion_job->get_items(), $order );
@@ -123,7 +135,7 @@ class WC_PostFinanceCheckout_Webhook_Transaction_Completion_Strategy extends WC_
 	/**
 	 * Restock non completed items.
 	 *
-	 * @param array    $completed_items completed items.
+	 * @param array $completed_items completed items.
 	 * @param WC_Order $order order.
 	 * @return void
 	 */
@@ -156,7 +168,7 @@ class WC_PostFinanceCheckout_Webhook_Transaction_Completion_Strategy extends WC_
 	/**
 	 * Adapt order items.
 	 *
-	 * @param array    $completed_items completed items.
+	 * @param array $completed_items completed items.
 	 * @param WC_Order $order order.
 	 * @return void
 	 */
@@ -266,7 +278,7 @@ class WC_PostFinanceCheckout_Webhook_Transaction_Completion_Strategy extends WC_
 		if ( $completion->getFailureReason() != null ) {
 			$completion_job->set_failure_reason( $completion->getFailureReason()->getDescription() );
 		}
-		$completion_job->set_state( WC_PostFinanceCheckout_Entity_Completion_Job::STATE_DONE );
+		$completion_job->set_state( WC_PostFinanceCheckout_Entity_Completion_Job::POSTFINANCECHECKOUT_STATE_DONE );
 		$completion_job->save();
 	}
 }

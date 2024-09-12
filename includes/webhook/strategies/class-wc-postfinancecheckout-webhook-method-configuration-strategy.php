@@ -1,6 +1,9 @@
 <?php
 /**
- * PostFinance Checkout WooCommerce
+ * Plugin Name: PostFinanceCheckout
+ * Author: postfinancecheckout AG
+ * Text Domain: postfinancecheckout
+ * Domain Path: /languages/
  *
  * PostFinanceCheckout
  * This plugin will add support for all PostFinanceCheckout payments methods and connect the PostFinanceCheckout servers to your WooCommerce webshop (https://postfinance.ch/en/business/products/e-commerce/postfinance-checkout-all-in-one.html).
@@ -21,9 +24,12 @@ defined( 'ABSPATH' ) || exit;
  * with the latest changes indicated by incoming webhook requests.
  */
 class WC_PostFinanceCheckout_Webhook_Method_Configuration_Strategy extends WC_PostFinanceCheckout_Webhook_Strategy_Base {
-	
+
 	/**
+	 * Match function.
+	 *
 	 * @inheritDoc
+	 * @param string $webhook_entity_id The webhook entity id.
 	 */
 	public function match( string $webhook_entity_id ) {
 		return WC_PostFinanceCheckout_Service_Webhook::POSTFINANCECHECKOUT_PAYMENT_METHOD_CONFIGURATION == $webhook_entity_id;

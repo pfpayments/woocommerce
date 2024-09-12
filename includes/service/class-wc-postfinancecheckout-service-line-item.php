@@ -1,7 +1,9 @@
 <?php
 /**
- *
- * WC_PostFinanceCheckout_Service_Line_Item Class
+ * Plugin Name: PostFinanceCheckout
+ * Author: postfinancecheckout AG
+ * Text Domain: postfinancecheckout
+ * Domain Path: /languages/
  *
  * PostFinanceCheckout
  * This plugin will add support for all PostFinanceCheckout payments methods and connect the PostFinanceCheckout servers to your WooCommerce webshop (https://postfinance.ch/en/business/products/e-commerce/postfinance-checkout-all-in-one.html).
@@ -12,9 +14,8 @@
  * @license  http://www.apache.org/licenses/LICENSE-2.0 Apache Software License (ASL 2.0)
  */
 
-if ( ! defined( 'ABSPATH' ) ) {
-	exit();
-}
+defined( 'ABSPATH' ) || exit;
+
 /**
  * This service provides methods to handle line items.
  */
@@ -56,9 +57,15 @@ class WC_PostFinanceCheckout_Service_Line_Item extends WC_PostFinanceCheckout_Se
 		if ( empty( $items ) ) {
 			return array();
 		}
-		global $trp_language;
+
 		$translations = array();
 		$strings = array();
+		$postfinancecheckout_trp_language = '';
+
+		// TRP_LANGUAGE is a global variable that belongs to the plugin "Translate Multilingual sites – TranslatePress".
+		if ( isset( $GLOBALS['TRP_LANGUAGE'] ) ) {
+			$postfinancecheckout_trp_language = $GLOBALS['TRP_LANGUAGE'];
+		}
 
 		// have to get all the item names so we can search for them in the TRP query.
 		// items can be cart products or order items.
@@ -66,10 +73,10 @@ class WC_PostFinanceCheckout_Service_Line_Item extends WC_PostFinanceCheckout_Se
 			$strings[] = $item->get_name();
 		}
 
-		$trp = TRP_Translate_Press::get_trp_instance();
+		$query = TRP_Translate_Press::get_trp_instance()->get_component( 'query' );
 		$query = $trp->get_component( 'query' );
 		// we get the translations from the dictionary.
-		$dictionary = $query->get_string_rows( '', $strings, $trp_language );
+		$dictionary = $query->get_string_rows( '', $strings, $postfinancecheckout_trp_language ); //phpcs:ignore
 		if ( is_array( $dictionary ) ) {
 			foreach ( $dictionary as $row ) {
 				$translations[ $row->original ] = $row->translated;
@@ -138,7 +145,7 @@ class WC_PostFinanceCheckout_Service_Line_Item extends WC_PostFinanceCheckout_Se
 				$line_item->setAttributes( $attributes );
 			}
 
-			$items[] = apply_filters( 'wc_postfinancecheckout_modify_line_item_product_session', $this->clean_line_item( $line_item ), $values );
+			$items[] = apply_filters( 'wc_postfinancecheckout_modify_line_item_product_session', $this->clean_line_item( $line_item ), $values ); //phpcs:ignore
 		}
 		return $items;
 	}
@@ -183,7 +190,7 @@ class WC_PostFinanceCheckout_Service_Line_Item extends WC_PostFinanceCheckout_Se
 				$line_item->setType( \PostFinanceCheckout\Sdk\Model\LineItemType::FEE );
 				$line_item->setUniqueId( 'fee-' . $fee->id );
 			}
-			$fees[] = apply_filters( 'wc_postfinancecheckout_modify_line_item_fee_session', $this->clean_line_item( $line_item ), $fee );
+			$fees[] = apply_filters( 'wc_postfinancecheckout_modify_line_item_fee_session', $this->clean_line_item( $line_item ), $fee ); //phpcs:ignore
 		}
 		return $fees;
 	}
@@ -228,7 +235,7 @@ class WC_PostFinanceCheckout_Service_Line_Item extends WC_PostFinanceCheckout_Se
 				$line_item->setType( \PostFinanceCheckout\Sdk\Model\LineItemType::SHIPPING );
 				$line_item->setUniqueId( WC_PostFinanceCheckout_Unique_Id::get_uuid() );
 
-				$shippings[] = apply_filters( 'wc_postfinancecheckout_modify_line_item_shipping_session', $this->clean_line_item( $line_item ), $shipping_rate );
+				$shippings[] = apply_filters( 'wc_postfinancecheckout_modify_line_item_shipping_session', $this->clean_line_item( $line_item ), $shipping_rate ); //phpcs:ignore
 			}
 		}
 		return $shippings;
@@ -247,7 +254,7 @@ class WC_PostFinanceCheckout_Service_Line_Item extends WC_PostFinanceCheckout_Se
 			return $coupons;
 		}
 
-		$discount =  $cart->get_discount_total() + $cart->get_discount_tax();
+		$discount = $cart->get_discount_total() + $cart->get_discount_tax();
 		$line_items = $this->create_coupon_line_items( current( $cart->get_coupons() ), $discount );
 		if ( is_array( $line_items ) ) {
 			$coupons = array_merge( $coupons, $line_items );
@@ -257,89 +264,93 @@ class WC_PostFinanceCheckout_Service_Line_Item extends WC_PostFinanceCheckout_Se
 
 	/**
 	 * Create coupon line item
-	 * @param WC_Coupon|WC_Order_Item_Coupon $coupon
-	 * @param float $amount
-	 * @return \PostFinanceCheckout\Sdk\Model\LineItemCreate|null
+	 *
+	 * @param WC_Coupon|WC_Order_Item_Coupon $coupon The coupon object.
+	 * @param float $total_discount_amount The amount of the coupon.
+	 * @return \PostFinanceCheckout\Sdk\Model\LineItemCreate|null The line item created or null if the coupon is not valid.
 	 */
 	private function create_coupon_line_items( $coupon, float $total_discount_amount = 0 ) {
-		if ( !$coupon instanceof WC_Coupon && !$coupon instanceof WC_Order_Item_Coupon ) {
-			return [];
+		if ( ! $coupon instanceof WC_Coupon && ! $coupon instanceof WC_Order_Item_Coupon ) {
+			return array();
 		}
-  
+
 		$coupon = new WC_Coupon( $coupon->get_code() );
 		$sku = $this->fix_length( $coupon->get_discount_type(), 150 );
-		$sku = str_replace( array( "\n", "\r", ), '', $sku );
-  
-		// Calculate the proportional discount amounts for each tax rate
+		$sku = str_replace( array( "\n", "\r" ), '', $sku );
+
+		// Calculate the proportional discount amounts for each tax rate.
 		$discounts = $this->calculate_discount_rates_proportionally( $total_discount_amount );
-  
-		$line_items = [];
-  
+
+		$line_items = array();
+
 		foreach ( $discounts as $discount ) {
 			$line_item = new \PostFinanceCheckout\Sdk\Model\LineItemCreate();
 			$line_item->setAmountIncludingTax( $discount['amount'] * -1 );
-			$line_item->setName( sprintf( '%s: %s (%s%% tax)', WC_PostFinanceCheckout_Packages_Coupon_Discount::COUPON, $coupon->get_code(), $discount['rate_id']) );
+			$line_item->setName( sprintf( '%s: %s (%s%% tax)', WC_PostFinanceCheckout_Packages_Coupon_Discount::POSTFINANCECHECKOUT_COUPON, $coupon->get_code(), $discount['rate_id'] ) );
 			$line_item->setQuantity( 1 );
 			$line_item->setShippingRequired( false );
 			$line_item->setSku( $sku, 200 );
 			$line_item->setType( \PostFinanceCheckout\Sdk\Model\LineItemType::DISCOUNT );
 			$line_item->setUniqueId( 'coupon-' . $coupon->get_id() . '-' . $discount['rate_id'] );
-   
-			$tax_rate = new \PostFinanceCheckout\Sdk\Model\TaxCreate([
-				'title' => 'Discount Tax: ' . $discount['rate_id'],
-				'rate' => $discount['rate_id'],
-			]);
-   
-			$line_item->setTaxes( [$tax_rate] );
-   
+
+			$tax_rate = new \PostFinanceCheckout\Sdk\Model\TaxCreate(
+				array(
+					'title' => 'Discount Tax: ' . $discount['rate_id'],
+					'rate' => $discount['rate_id'],
+				)
+			);
+
+			$line_item->setTaxes( array( $tax_rate ) );
 			$line_items[] = $line_item;
 		}
-  
+
 		return $line_items;
 	}
 
 	/**
-	* @param float $total_discount_amount
-	* @return array
-	*/
-	private function calculate_discount_rates_proportionally(float $total_discount_amount): array {
+	 * Calculate discount rates
+	 *
+	 * @param float $total_discount_amount total_discount_amount.
+	 * @return array
+	 */
+	private function calculate_discount_rates_proportionally( float $total_discount_amount ): array {
 		$cart = WC()->cart;
-		$tax_totals = [];
+		$tax_totals = array();
 		$total_amount = 0;
-  
+
 		foreach ( $cart->get_cart() as $cart_item ) {
 			$product = $cart_item['data'];
 			$tax_class = $product->get_tax_class();
 			$tax_rates_class = WC_Tax::get_rates( $tax_class );
-   
+
 			foreach ( $tax_rates_class as $rate ) {
 				$rate_id = $rate['rate'];
 				$line_total_with_tax = $cart_item['line_total'] + $cart_item['line_tax'];
-    
-				if ( !isset($tax_totals[$rate_id]) ) {
-					$tax_totals[$rate_id] = [
+
+				if ( ! isset( $tax_totals[ $rate_id ] ) ) {
+					$tax_totals[ $rate_id ] = array(
 						'total' => 0,
-						'rate_percentage' => $rate_id
-					];
+						'rate_percentage' => $rate_id,
+					);
 				}
-    
-				$tax_totals[$rate_id]['total'] += $line_total_with_tax;
+
+				$tax_totals[ $rate_id ]['total'] += $line_total_with_tax;
 				$total_amount += $line_total_with_tax;
 			}
 		}
-  
-		$discounts = [];
-  
-		foreach ($tax_totals as $rate_id => $data) {
-				$proportional_discount_amount = $total_discount_amount * ($data['total'] / $total_amount);
-    
-				$discounts[] = [
+
+		$discounts = array();
+
+		foreach ( $tax_totals as $rate_id => $data ) {
+				$proportional_discount_amount = $total_discount_amount * ( $data['total'] / $total_amount );
+
+				$discounts[] = array(
 					'rate_id' => $rate_id,
 					'amount' => $proportional_discount_amount,
 					'rate_percentage' => $rate_id,
-				];
+				);
 		}
-  
+
 		return $discounts;
 	}
 	/**
@@ -351,8 +362,8 @@ class WC_PostFinanceCheckout_Service_Line_Item extends WC_PostFinanceCheckout_Se
 	 */
 	public function get_items_from_order( WC_Order $order ) {
 		$raw = $this->get_raw_items_from_order( $order );
-		$items = apply_filters( 'wc_postfinancecheckout_modify_line_item_order', $raw, $order );
-		$total = apply_filters( 'wc_postfinancecheckout_modify_total_to_check_order', $order->get_total(), $order );
+		$items = apply_filters( 'wc_postfinancecheckout_modify_line_item_order', $raw, $order ); //phpcs:ignore
+		$total = apply_filters( 'wc_postfinancecheckout_modify_total_to_check_order', $order->get_total(), $order ); //phpcs:ignore
 		return WC_PostFinanceCheckout_Helper::instance()->cleanup_line_items( $items, $total, $order->get_currency() );
 	}
 
@@ -458,7 +469,7 @@ class WC_PostFinanceCheckout_Service_Line_Item extends WC_PostFinanceCheckout_Se
 				}
 			}
 
-			$items[] = apply_filters( 'wc_postfinancecheckout_modify_line_item_product_order', $this->clean_line_item( $line_item ), $item );
+			$items[] = apply_filters( 'wc_postfinancecheckout_modify_line_item_product_order', $this->clean_line_item( $line_item ), $item ); //phpcs:ignore
 		}
 		return $items;
 	}
@@ -511,7 +522,7 @@ class WC_PostFinanceCheckout_Service_Line_Item extends WC_PostFinanceCheckout_Se
 
 			$line_item->setUniqueId( $fee->get_meta( '_postfinancecheckout_unique_line_item_id', true ) );
 
-			$fees[] = apply_filters( 'wc_postfinancecheckout_modify_line_item_fee_order', $this->clean_line_item( $line_item ), $fee );
+			$fees[] = apply_filters( 'wc_postfinancecheckout_modify_line_item_fee_order', $this->clean_line_item( $line_item ), $fee ); //phpcs:ignore
 		}
 		return $fees;
 	}
@@ -557,26 +568,32 @@ class WC_PostFinanceCheckout_Service_Line_Item extends WC_PostFinanceCheckout_Se
 			$line_item->setType( \PostFinanceCheckout\Sdk\Model\LineItemType::SHIPPING );
 			$line_item->setUniqueId( $shipping->get_meta( '_postfinancecheckout_unique_line_item_id', true ) );
 
-			$shippings[] = apply_filters( 'wc_postfinancecheckout_modify_line_item_shipping_order', $this->clean_line_item( $line_item ), $shipping );
+			$shippings[] = apply_filters( 'wc_postfinancecheckout_modify_line_item_shipping_order', $this->clean_line_item( $line_item ), $shipping ); //phpcs:ignore
 		}
 		return $shippings;
 	}
 
+	/**
+	 * Creates line items for coupons from the order.
+	 *
+	 * @param WC_Order $order The order object.
+	 * @return array An array of coupon line items.
+	 */
 	protected function create_coupons_line_items_from_order( WC_Order $order ) {
 		$coupons = array();
 		if ( empty( $order->get_coupons() ) ) {
 			return $coupons;
 		}
 
-		//all wp coupons available
-		$discount =  0;
+		// all wp coupons available.
+		$discount = 0;
 		foreach ( $order->get_coupons() as $coupon ) {
-			/** @var WC_Order_Item_Coupon $coupon */
-			$discount += (float)$coupon->get_discount() + (float)$coupon->get_discount_tax();
+			/** @var WC_Order_Item_Coupon $coupon */ //phpcs:ignore
+			$discount += (float) $coupon->get_discount() + (float) $coupon->get_discount_tax();
 		}
 
-		$line_items = $this->create_coupon_line_items( current($order->get_coupons()), $discount );
-		foreach ($line_items as $line_item) {
+		$line_items = $this->create_coupon_line_items( current( $order->get_coupons() ), $discount );
+		foreach ( $line_items as $line_item ) {
 			$coupons[] = $this->clean_line_item( $line_item );
 		}
 		return $coupons;
@@ -585,8 +602,8 @@ class WC_PostFinanceCheckout_Service_Line_Item extends WC_PostFinanceCheckout_Se
 	/**
 	 * Get items from backend.
 	 *
-	 * @param array    $backend_items backend items.
-	 * @param mixed    $amount amount.
+	 * @param array $backend_items backend items.
+	 * @param mixed $amount amount.
 	 * @param WC_Order $order order.
 	 * @return \PostFinanceCheckout\Sdk\Model\LineItemCreate[]
 	 * @throws WC_PostFinanceCheckout_Exception_Invalid_Transaction_Amount WC_PostFinanceCheckout_Exception_Invalid_Transaction_Amount.
@@ -604,7 +621,7 @@ class WC_PostFinanceCheckout_Service_Line_Item extends WC_PostFinanceCheckout_Se
 	/**
 	 * Creates the line items for the products
 	 *
-	 * @param array    $backend_items backend items.
+	 * @param array $backend_items backend items.
 	 * @param WC_Order $order order.
 	 * @return \PostFinanceCheckout\Sdk\Model\LineItemCreate[]
 	 * @throws Exception Exception.
@@ -624,16 +641,17 @@ class WC_PostFinanceCheckout_Service_Line_Item extends WC_PostFinanceCheckout_Se
 
 			$line_item = new \PostFinanceCheckout\Sdk\Model\LineItemCreate();
 
-			$tax = $discounts = 0;
+			$tax = 0;
+			$discounts = 0;
 			if ( isset( $backend_items[ $item_id ]['completion_tax'] ) ) {
 				$tax = array_sum( $backend_items[ $item_id ]['completion_tax'] );
 			}
 
-			//At this point, if there is a discount applied by coupon, the price already has the discount applied,
-			//and to be able to send the discount to the portal, it is necessary to restore the discounted amount,
-			//the original price must be restored before being applied, otherwise it would be discounting twice in the portal.
+			// At this point, if there is a discount applied by coupon, the price already has the discount applied,
+			// and to be able to send the discount to the portal, it is necessary to restore the discounted amount,
+			// the original price must be restored before being applied, otherwise it would be discounting twice in the portal.
 			$item_data_coupon = $item->get_meta( '_postfinancecheckout_coupon_discount_line_item_discounts' );
-			if ( !empty ( $item_data_coupon ) ) {
+			if ( ! empty( $item_data_coupon ) ) {
 				$discount_tax = $item->get_subtotal_tax() - $item->get_total_tax();
 				$discount_amount = $item->get_subtotal() - $item->get_total();
 				$discounts = $discount_tax + $discount_amount;
@@ -687,7 +705,7 @@ class WC_PostFinanceCheckout_Service_Line_Item extends WC_PostFinanceCheckout_Se
 				$line_item->setAttributes( $attributes );
 			}
 
-			$items[] = apply_filters( 'wc_postfinancecheckout_modify_line_item_product_backend', $this->clean_line_item( $line_item ), $item );
+			$items[] = apply_filters( 'wc_postfinancecheckout_modify_line_item_product_backend', $this->clean_line_item( $line_item ), $item ); //phpcs:ignore
 		}
 		return $items;
 	}
@@ -696,7 +714,7 @@ class WC_PostFinanceCheckout_Service_Line_Item extends WC_PostFinanceCheckout_Se
 	/**
 	 * Returns the line items for fees.
 	 *
-	 * @param array    $backend_items backend items.
+	 * @param array $backend_items backend items.
 	 * @param WC_Order $order order.
 	 * @return array
 	 */
@@ -755,7 +773,7 @@ class WC_PostFinanceCheckout_Service_Line_Item extends WC_PostFinanceCheckout_Se
 
 			$line_item->setUniqueId( $fee->get_meta( '_postfinancecheckout_unique_line_item_id', true ) );
 
-			$fees[] = apply_filters( 'wc_postfinancecheckout_modify_line_item_fee_backend', $this->clean_line_item( $line_item ), $fee );
+			$fees[] = apply_filters( 'wc_postfinancecheckout_modify_line_item_fee_backend', $this->clean_line_item( $line_item ), $fee ); //phpcs:ignore
 		}
 		return $fees;
 	}
@@ -764,7 +782,7 @@ class WC_PostFinanceCheckout_Service_Line_Item extends WC_PostFinanceCheckout_Se
 	/**
 	 * Returns the line items for the shipping costs.
 	 *
-	 * @param array    $backend_items backend items.
+	 * @param array $backend_items backend items.
 	 * @param WC_Order $order order.
 	 * @return array
 	 */
@@ -814,7 +832,7 @@ class WC_PostFinanceCheckout_Service_Line_Item extends WC_PostFinanceCheckout_Se
 			$line_item->setType( \PostFinanceCheckout\Sdk\Model\LineItemType::SHIPPING );
 			$line_item->setUniqueId( $shipping->get_meta( '_postfinancecheckout_unique_line_item_id', true ) );
 
-			$shippings[] = apply_filters( 'wc_postfinancecheckout_modify_line_item_shipping_backend', $this->clean_line_item( $line_item ), $shipping );
+			$shippings[] = apply_filters( 'wc_postfinancecheckout_modify_line_item_shipping_backend', $this->clean_line_item( $line_item ), $shipping ); //phpcs:ignore
 		}
 		return $shippings;
 	}

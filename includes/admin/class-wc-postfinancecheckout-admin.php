@@ -1,7 +1,9 @@
 <?php
 /**
- *
- * WC_PostFinanceCheckout_Admin Class
+ * Plugin Name: PostFinanceCheckout
+ * Author: postfinancecheckout AG
+ * Text Domain: postfinancecheckout
+ * Domain Path: /languages/
  *
  * PostFinanceCheckout
  * This plugin will add support for all PostFinanceCheckout payments methods and connect the PostFinanceCheckout servers to your WooCommerce webshop (https://postfinance.ch/en/business/products/e-commerce/postfinance-checkout-all-in-one.html).
@@ -12,16 +14,13 @@
  * @license  http://www.apache.org/licenses/LICENSE-2.0 Apache Software License (ASL 2.0)
  */
 
-if ( ! defined( 'ABSPATH' ) ) {
-	exit();
-}
+defined( 'ABSPATH' ) || exit;
+
 /**
  * Class WC_PostFinanceCheckout_Admin.
+ * WC PostFinanceCheckout Admin class
  *
  * @class WC_PostFinanceCheckout_Admin
- */
-/**
- * WC PostFinanceCheckout Admin class
  */
 class WC_PostFinanceCheckout_Admin {
 
@@ -30,7 +29,7 @@ class WC_PostFinanceCheckout_Admin {
 	 *
 	 * @var WC_PostFinanceCheckout_Admin
 	 */
-	protected static $_instance = null;
+	protected static $instance = null;
 
 	/**
 	 * Main WooCommerce PostFinanceCheckout Admin Instance.
@@ -40,10 +39,10 @@ class WC_PostFinanceCheckout_Admin {
 	 * @return WC_PostFinanceCheckout_Admin - Main instance.
 	 */
 	public static function instance() {
-		if ( null === self::$_instance ) {
-			self::$_instance = new self();
+		if ( null === self::$instance ) {
+			self::$instance = new self();
 		}
-		return self::$_instance;
+		return self::$instance;
 	}
 
 	/**
@@ -158,7 +157,6 @@ class WC_PostFinanceCheckout_Admin {
 			10,
 			0
 		);
-
 	}
 
 	/**
@@ -168,7 +166,6 @@ class WC_PostFinanceCheckout_Admin {
 		// WooCommerce plugin not activated.
 		if ( ! is_plugin_active( 'woocommerce/woocommerce.php' ) ) {
 			// Deactivate myself.
-			deactivate_plugins( WC_POSTFINANCECHECKOUT_PLUGIN_BASENAME );
 			add_action(
 				'admin_notices',
 				array(
@@ -188,7 +185,7 @@ class WC_PostFinanceCheckout_Admin {
 		$gateway = wc_get_payment_gateway_by_order( $order );
 		if ( $gateway instanceof WC_PostFinanceCheckout_Gateway ) {
 			$transaction_info = WC_PostFinanceCheckout_Entity_Transaction_Info::load_by_order_id( $order->get_id() );
-			if ( $transaction_info->get_state() == \PostFinanceCheckout\Sdk\Model\TransactionState::AUTHORIZED ) {
+			if ( $transaction_info->get_state() === \PostFinanceCheckout\Sdk\Model\TransactionState::AUTHORIZED ) {
 				if ( WC_PostFinanceCheckout_Entity_Completion_Job::count_running_completion_for_transaction(
 					$transaction_info->get_space_id(),
 					$transaction_info->get_transaction_id()
@@ -200,8 +197,7 @@ class WC_PostFinanceCheckout_Admin {
 					echo '<button type="button" class="button postfinancecheckout-update-order">' . esc_html__( 'Update', 'woo-postfinancecheckout' ) . '</button>';
 				} else {
 					echo '<button type="button" class="button postfinancecheckout-void-show">' . esc_html__( 'Void', 'woo-postfinancecheckout' ) . '</button>';
-					echo '<button type="button" class="button button-primary postfinancecheckout-completion-show">' . esc_html__( 'Completion', 'woo-postfinancecheckout' ) .
-							 '</button>';
+					echo '<button type="button" class="button button-primary postfinancecheckout-completion-show">' . esc_html__( 'Completion', 'woo-postfinancecheckout' ) . '</button>';
 				}
 			}
 		}
@@ -210,7 +206,7 @@ class WC_PostFinanceCheckout_Admin {
 	/**
 	 * Remove unwanted order actions
 	 *
-	 * @param array    $actions actions.
+	 * @param array $actions actions.
 	 * @param WC_Order $order order.
 	 * @return array
 	 */
@@ -242,14 +238,14 @@ class WC_PostFinanceCheckout_Admin {
 	 * Enqueue the script and css files
 	 */
 	public function enque_script_and_css() {
-		$screen    = get_current_screen();
+		$screen = get_current_screen();
 		$post_type = $screen ? $screen->post_type : '';
 		if ( 'shop_order' == $post_type ) {
 			wp_enqueue_style(
 				'woo-postfinancecheckout-admin-styles',
 				WooCommerce_PostFinanceCheckout::instance()->plugin_url() . '/assets/css/admin.css',
 				array(),
-				1
+				true
 			);
 			wp_enqueue_script(
 				'postfinancecheckout-admin-js',
@@ -258,12 +254,13 @@ class WC_PostFinanceCheckout_Admin {
 					'jquery',
 					'wc-admin-meta-boxes',
 				),
-				1
+				true,
+				true
 			);
 
 			$localize = array(
-				'i18n_do_void'       => __( 'Are you sure you wish to process this void? This action cannot be undone.', 'woo-postfinancecheckout' ),
-				'i18n_do_completion' => __( 'Are you sure you wish to process this completion? This action cannot be undone.', 'woo-postfinancecheckout' ),
+				'i18n_do_void'  => esc_html__( 'Are you sure you wish to process this void? This action cannot be undone.', 'woo-postfinancecheckout' ),
+				'i18n_do_completion' => esc_html__( 'Are you sure you wish to process this completion? This action cannot be undone.', 'woo-postfinancecheckout' ),
 			);
 			wp_localize_script( 'postfinancecheckout-admin-js', 'postfinancecheckout_admin_js_params', $localize );
 		}
@@ -291,17 +288,15 @@ class WC_PostFinanceCheckout_Admin {
 
 		check_ajax_referer( 'order-item', 'security' );
 
-		if ( ! current_user_can( 'edit_shop_orders' ) ) {
+		if ( ! current_user_can( 'edit_shop_orders' ) ) {// phpcs:ignore
 			wp_die( -1 );
 		}
 
 		if ( ! isset( $_POST['order_id'] ) ) {
 			return;
-		} else {
-			$order_id = sanitize_key( wp_unslash( $_POST['order_id'] ) );
 		}
-		$order_id = absint( $order_id );
-		$order    = WC_Order_Factory::get_order( $order_id );
+		$order_id = absint( sanitize_key( wp_unslash( $_POST['order_id'] ) ) );
+		$order = WC_Order_Factory::get_order( $order_id );
 		try {
 			do_action( 'postfinancecheckout_update_running_jobs', $order );
 		} catch ( Exception $e ) {
@@ -334,7 +329,7 @@ class WC_PostFinanceCheckout_Admin {
 	public function plugin_action_links( $links ) {
 		$action_links = array(
 			'settings' => '<a href="' . admin_url( 'admin.php?page=wc-settings&tab=postfinancecheckout' ) . '" aria-label="' .
-					esc_attr__( 'View Settings', 'woo-postfinancecheckout' ) . '">' . esc_html__( 'Settings', 'woo-postfinancecheckout' ) . '</a>',
+					esc_html__( 'View Settings', 'woo-postfinancecheckout' ) . '">' . esc_html__( 'Settings', 'woo-postfinancecheckout' ) . '</a>',
 		);
 
 		return array_merge( $action_links, $links );
@@ -346,7 +341,7 @@ class WC_PostFinanceCheckout_Admin {
 	 * @param mixed $product product.
 	 * @param mixed $data_storage data storage.
 	 */
-	public function store_attribute_options( $product, $data_storage ) {
+	public function store_attribute_options( $product, $data_storage ) { //phpcs:ignore
 		global $postfinancecheckout_attributes_options;
 		if ( ! empty( $postfinancecheckout_attributes_options ) ) {
 			$product->add_meta_data( '_postfinancecheckout_attribute_options', $postfinancecheckout_attributes_options, true );
@@ -357,39 +352,52 @@ class WC_PostFinanceCheckout_Admin {
 	 * Display attribute options edit screen
 	 */
 	public function display_attribute_options_edit() {
-		if ( ! isset( $_GET['edit'] ) ) {
+		if ( ! isset( $_GET['edit'] ) ) {// phpcs:ignore
 			return;
 		} else {
-			$edit = esc_url_raw( wp_unslash( $_GET['edit'] ) );
+			$edit = esc_url_raw( wp_unslash( $_GET['edit'] ) );// phpcs:ignore
 		}
-		$edit              = absint( $edit );
-		$checked           = false;
+		$edit = absint( $edit );
+		$checked = false;
 		$attribute_options = WC_PostFinanceCheckout_Entity_Attribute_Options::load_by_attribute_id( $edit );
 		if ( $attribute_options->get_id() > 0 && $attribute_options->get_send() ) {
 			$checked = true;
 		}
-		echo '<tr class="form-field form-required">
+		echo esc_html(
+			'<tr class="form-field form-required">
 					<th scope="row" valign="top">
-							<label for="postfinancecheckout_attribute_option_send">' . esc_html__( 'Send attribute to PostFinance Checkout.', 'woo-postfinancecheckout' ) . '</label>
+							<label for="postfinancecheckout_attribute_option_send">'
+			) . esc_html__( 'Send attribute to PostFinance Checkout.', 'woo-postfinancecheckout' ) . esc_html(
+						'</label>
 					</th>
 						<td>
-								<input name="postfinancecheckout_attribute_option_send" id="postfinancecheckout_attribute_option_send" type="checkbox" value="1" ' . esc_attr( checked( $checked, true, false ) ) . '/>
-								<p class="description">' . esc_html__( 'Should this product attribute be sent to PostFinance Checkout as line item attribute?', 'woo-postfinancecheckout' ) . '</p>
+								<input name="postfinancecheckout_attribute_option_send" id="postfinancecheckout_attribute_option_send" type="checkbox" value="1" '
+			) . esc_attr( checked( $checked, true, false ) ) . esc_html(
+							'/>
+							<p class="description">'
+			) . esc_html__( 'Should this product attribute be sent to PostFinance Checkout as line item attribute?', 'woo-postfinancecheckout' ) . esc_html(
+							'</p>
 						</td>
-				</tr>';
+				</tr>'
+			);
 	}
 
 	/**
 	 * Display attribute options add screen
 	 */
 	public function display_attribute_options_add() {
-		echo '<div class="form-field">
-    				<label for="postfinancecheckout_attribute_option_send"><input name="postfinancecheckout_attribute_option_send" id="postfinancecheckout_attribute_option_send" type="checkbox" value="1">' . esc_html__( 'Send attribute to PostFinance Checkout.', 'woo-postfinancecheckout' ) . '</label>
-       				<p class="description">' . esc_html__( 'Should this product attribute be sent to PostFinance Checkout as line item attribute?', 'woo-postfinancecheckout' ) . '</p>
-    			</div>';
+		echo esc_html(
+			'<div class="form-field">
+				<label for="postfinancecheckout_attribute_option_send"><input name="postfinancecheckout_attribute_option_send" id="postfinancecheckout_attribute_option_send" type="checkbox" value="1">'
+		) . esc_html__( 'Send attribute to PostFinance Checkout.', 'woo-postfinancecheckout' ) . esc_html(
+				'</label>
+				<p class="description">'
+		) . esc_html__( 'Should this product attribute be sent to PostFinance Checkout as line item attribute?', 'woo-postfinancecheckout' ) .
+		esc_html(
+				'</p>
+			</div>'
+		);
 	}
-
-
 }
 
 WC_PostFinanceCheckout_Admin::instance();

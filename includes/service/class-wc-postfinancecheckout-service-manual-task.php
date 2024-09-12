@@ -1,7 +1,9 @@
 <?php
 /**
- *
- * WC_PostFinanceCheckout_Service_Manual_Task Class
+ * Plugin Name: PostFinanceCheckout
+ * Author: postfinancecheckout AG
+ * Text Domain: postfinancecheckout
+ * Domain Path: /languages/
  *
  * PostFinanceCheckout
  * This plugin will add support for all PostFinanceCheckout payments methods and connect the PostFinanceCheckout servers to your WooCommerce webshop (https://postfinance.ch/en/business/products/e-commerce/postfinance-checkout-all-in-one.html).
@@ -12,14 +14,13 @@
  * @license  http://www.apache.org/licenses/LICENSE-2.0 Apache Software License (ASL 2.0)
  */
 
-if ( ! defined( 'ABSPATH' ) ) {
-	exit();
-}
+defined( 'ABSPATH' ) || exit;
+
 /**
  * This service provides methods to handle manual tasks.
  */
 class WC_PostFinanceCheckout_Service_Manual_Task extends WC_PostFinanceCheckout_Service_Abstract {
-	const CONFIG_KEY = 'wc_postfinancecheckout_manual_task';
+	const POSTFINANCECHECKOUT_CONFIG_KEY = 'wc_postfinancecheckout_manual_task';
 
 	/**
 	 * Returns the number of open manual tasks.
@@ -27,7 +28,7 @@ class WC_PostFinanceCheckout_Service_Manual_Task extends WC_PostFinanceCheckout_
 	 * @return int
 	 */
 	public function get_number_of_manual_tasks() {
-		return get_option( self::CONFIG_KEY, 0 );
+		return get_option( self::POSTFINANCECHECKOUT_CONFIG_KEY, 0 );
 	}
 
 	/**
@@ -39,13 +40,13 @@ class WC_PostFinanceCheckout_Service_Manual_Task extends WC_PostFinanceCheckout_
 		$number_of_manual_tasks = 0;
 		$manual_task_service = new \PostFinanceCheckout\Sdk\Service\ManualTaskService( WC_PostFinanceCheckout_Helper::instance()->get_api_client() );
 
-		$space_id = get_option( WooCommerce_PostFinanceCheckout::CK_SPACE_ID );
+		$space_id = get_option( WooCommerce_PostFinanceCheckout::POSTFINANCECHECKOUT_CK_SPACE_ID );
 		if ( ! empty( $space_id ) ) {
 			$number_of_manual_tasks = $manual_task_service->count(
 				$space_id,
 				$this->create_entity_filter( 'state', \PostFinanceCheckout\Sdk\Model\ManualTaskState::OPEN )
 			);
-			update_option( self::CONFIG_KEY, $number_of_manual_tasks );
+			update_option( self::POSTFINANCECHECKOUT_CONFIG_KEY, $number_of_manual_tasks );
 		}
 
 		return $number_of_manual_tasks;

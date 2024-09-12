@@ -1,7 +1,9 @@
 <?php
 /**
- *
- * WC_PostFinanceCheckout_Entity_Refund_Job Class
+ * Plugin Name: PostFinanceCheckout
+ * Author: postfinancecheckout AG
+ * Text Domain: postfinancecheckout
+ * Domain Path: /languages/
  *
  * PostFinanceCheckout
  * This plugin will add support for all PostFinanceCheckout payments methods and connect the PostFinanceCheckout servers to your WooCommerce webshop (https://postfinance.ch/en/business/products/e-commerce/postfinance-checkout-all-in-one.html).
@@ -12,9 +14,8 @@
  * @license  http://www.apache.org/licenses/LICENSE-2.0 Apache Software License (ASL 2.0)
  */
 
-if ( ! defined( 'ABSPATH' ) ) {
-	exit();
-}
+defined( 'ABSPATH' ) || exit;
+
 /**
  * This entity holds data about a transaction on the gateway.
  *
@@ -36,11 +37,11 @@ if ( ! defined( 'ABSPATH' ) ) {
  * @method void set_failure_reason(map[string,string] $reasons)
  */
 class WC_PostFinanceCheckout_Entity_Refund_Job extends WC_PostFinanceCheckout_Entity_Abstract {
-	const STATE_CREATED = 'created';
-	const STATE_SENT    = 'sent';
-	const STATE_PENDING = 'pending';
-	const STATE_SUCCESS = 'success';
-	const STATE_FAILURE = 'failure';
+	const POSTFINANCECHECKOUT_STATE_CREATED = 'created';
+	const POSTFINANCECHECKOUT_STATE_SENT = 'sent';
+	const POSTFINANCECHECKOUT_STATE_PENDING = 'pending';
+	const POSTFINANCECHECKOUT_STATE_SUCCESS = 'success';
+	const POSTFINANCECHECKOUT_STATE_FAILURE = 'failure';
 
 	/**
 	 * Get field definition.
@@ -49,14 +50,14 @@ class WC_PostFinanceCheckout_Entity_Refund_Job extends WC_PostFinanceCheckout_En
 	 */
 	protected static function get_field_definition() {
 		return array(
-			'external_id'    => WC_PostFinanceCheckout_Entity_Resource_Type::STRING,
-			'state'          => WC_PostFinanceCheckout_Entity_Resource_Type::STRING,
-			'space_id'       => WC_PostFinanceCheckout_Entity_Resource_Type::INTEGER,
-			'transaction_id' => WC_PostFinanceCheckout_Entity_Resource_Type::INTEGER,
-			'order_id'       => WC_PostFinanceCheckout_Entity_Resource_Type::INTEGER,
-			'wc_refund_id'   => WC_PostFinanceCheckout_Entity_Resource_Type::INTEGER,
-			'refund'         => WC_PostFinanceCheckout_Entity_Resource_Type::OBJECT,
-			'failure_reason' => WC_PostFinanceCheckout_Entity_Resource_Type::OBJECT,
+			'external_id' => WC_PostFinanceCheckout_Entity_Resource_Type::POSTFINANCECHECKOUT_STRING,
+			'state' => WC_PostFinanceCheckout_Entity_Resource_Type::POSTFINANCECHECKOUT_STRING,
+			'space_id' => WC_PostFinanceCheckout_Entity_Resource_Type::POSTFINANCECHECKOUT_INTEGER,
+			'transaction_id' => WC_PostFinanceCheckout_Entity_Resource_Type::POSTFINANCECHECKOUT_INTEGER,
+			'order_id' => WC_PostFinanceCheckout_Entity_Resource_Type::POSTFINANCECHECKOUT_INTEGER,
+			'wc_refund_id' => WC_PostFinanceCheckout_Entity_Resource_Type::POSTFINANCECHECKOUT_INTEGER,
+			'refund' => WC_PostFinanceCheckout_Entity_Resource_Type::POSTFINANCECHECKOUT_OBJECT,
+			'failure_reason' => WC_PostFinanceCheckout_Entity_Resource_Type::POSTFINANCECHECKOUT_OBJECT,
 		);
 	}
 
@@ -66,7 +67,7 @@ class WC_PostFinanceCheckout_Entity_Refund_Job extends WC_PostFinanceCheckout_En
 	 * @return string
 	 */
 	protected static function get_table_name() {
-		return 'wc_postfinancecheckout_refund_job';
+		return 'postfinancecheckout_refund_job';
 	}
 
 
@@ -94,15 +95,18 @@ class WC_PostFinanceCheckout_Entity_Refund_Job extends WC_PostFinanceCheckout_En
 	 */
 	public static function load_by_external_id( $space_id, $external_id ) {
 		global $wpdb;
+
+		$table = $wpdb->prefix . self::get_table_name();
+		// phpcs:disable WordPress.DB.DirectDatabaseQuery.SchemaChange, WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching, WordPress.DB.PreparedSQL.InterpolatedNotPrepared, WordPress.DB.PreparedSQLPlaceholders.UnfinishedPrepare -- Values are escaped in $wpdb->prepare.
 		$result = $wpdb->get_row(
 			$wpdb->prepare(
-				'SELECT * FROM %1$s WHERE space_id = %2$d AND external_id = "%3$s"',
-				$wpdb->prefix . self::get_table_name(),
+				"SELECT * FROM {$table} WHERE space_id = %d AND external_id = %s",
 				$space_id,
 				$external_id
 			),
 			ARRAY_A
 		);
+		// phpcs:enable WordPress.DB.DirectDatabaseQuery.SchemaChange, WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching, WordPress.DB.PreparedSQL.InterpolatedNotPrepared, WordPress.DB.PreparedSQLPlaceholders.UnfinishedPrepare.
 		if ( null !== $result ) {
 			return new self( $result );
 		}
@@ -119,16 +123,18 @@ class WC_PostFinanceCheckout_Entity_Refund_Job extends WC_PostFinanceCheckout_En
 	public static function count_running_refund_for_transaction( $space_id, $transaction_id ) {
 		global $wpdb;
 
-		$result = $wpdb->get_var(
+		$table = $wpdb->prefix . self::get_table_name();
+		// phpcs:disable WordPress.DB.DirectDatabaseQuery.SchemaChange, WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching, WordPress.DB.PreparedSQL.InterpolatedNotPrepared, WordPress.DB.PreparedSQLPlaceholders.UnfinishedPrepare -- Values are escaped in $wpdb->prepare.
+		$result = $wpdb->get_var( //phpcs:ignore
 			$wpdb->prepare(
-				'SELECT COUNT(*) FROM %1$s WHERE space_id = %2$d AND transaction_id = %3$d AND state != "%4$s" AND state != "%5$s"',
-				$wpdb->prefix . self::get_table_name(),
+				"SELECT COUNT(*) FROM $table WHERE space_id = %d AND transaction_id = %d AND state != %s AND state != %s",
 				$space_id,
 				$transaction_id,
-				self::STATE_SUCCESS,
-				self::STATE_FAILURE
+				self::POSTFINANCECHECKOUT_STATE_SUCCESS,
+				self::POSTFINANCECHECKOUT_STATE_FAILURE
 			)
 		);
+		// phpcs:enable WordPress.DB.DirectDatabaseQuery.SchemaChange, WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching, WordPress.DB.PreparedSQL.InterpolatedNotPrepared, WordPress.DB.PreparedSQLPlaceholders.UnfinishedPrepare.
 		return $result;
 	}
 
@@ -141,17 +147,19 @@ class WC_PostFinanceCheckout_Entity_Refund_Job extends WC_PostFinanceCheckout_En
 	 */
 	public static function load_running_refund_for_transaction( $space_id, $transaction_id ) {
 		global $wpdb;
-		$result = $wpdb->get_row(
+		$table = $wpdb->prefix . self::get_table_name();
+		// phpcs:disable WordPress.DB.DirectDatabaseQuery.SchemaChange, WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching, WordPress.DB.PreparedSQL.InterpolatedNotPrepared, WordPress.DB.PreparedSQLPlaceholders.UnfinishedPrepare -- Values are escaped in $wpdb->prepare.
+		$result = $wpdb->get_row( //phpcs:ignore
 			$wpdb->prepare(
-				'SELECT * FROM %1$s WHERE space_id = %2$d AND transaction_id = %3$d AND state != "%4$s" AND state != "%5$s"',
-				$wpdb->prefix . self::get_table_name(),
+				"SELECT * FROM $table WHERE space_id = %d AND transaction_id = %d AND state != %s AND state != %s",
 				$space_id,
 				$transaction_id,
-				self::STATE_SUCCESS,
-				self::STATE_FAILURE
+				self::POSTFINANCECHECKOUT_STATE_SUCCESS,
+				self::POSTFINANCECHECKOUT_STATE_FAILURE
 			),
 			ARRAY_A
 		);
+		// phpcs:enable WordPress.DB.DirectDatabaseQuery.SchemaChange, WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching, WordPress.DB.PreparedSQL.InterpolatedNotPrepared, WordPress.DB.PreparedSQLPlaceholders.UnfinishedPrepare.
 		if ( null !== $result ) {
 			return new self( $result );
 		}
@@ -166,16 +174,17 @@ class WC_PostFinanceCheckout_Entity_Refund_Job extends WC_PostFinanceCheckout_En
 	 */
 	public static function load_refunds_for_order( $order_id ) {
 		global $wpdb;
-
-		$db_results = $wpdb->get_results(
+		$table = $wpdb->prefix . self::get_table_name();
+		// phpcs:disable WordPress.DB.DirectDatabaseQuery.SchemaChange, WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching, WordPress.DB.PreparedSQL.InterpolatedNotPrepared, WordPress.DB.PreparedSQLPlaceholders.UnfinishedPrepare -- Values are escaped in $wpdb->prepare.
+		$db_results = $wpdb->get_results( //phpcs:ignore
 			$wpdb->prepare(
-				'SELECT * FROM %1$s WHERE order_id = %2$d',
-				$wpdb->prefix . self::get_table_name(),
+				"SELECT * FROM $table WHERE order_id = %d",
 				$order_id
 			),
 			ARRAY_A
 		);
-		$result     = array();
+		// phpcs:enable WordPress.DB.DirectDatabaseQuery.SchemaChange, WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching, WordPress.DB.PreparedSQL.InterpolatedNotPrepared, WordPress.DB.PreparedSQLPlaceholders.UnfinishedPrepare.
+		$result = array();
 		if ( is_array( $db_results ) ) {
 			foreach ( $db_results as $object_values ) {
 				$result[] = new self( $object_values );
@@ -193,16 +202,18 @@ class WC_PostFinanceCheckout_Entity_Refund_Job extends WC_PostFinanceCheckout_En
 		global $wpdb;
 		$time = new DateTime();
 		$time->sub( new DateInterval( 'PT10M' ) );
-		$db_results = $wpdb->get_results(
+		$table = $wpdb->prefix . self::get_table_name();
+		// phpcs:disable WordPress.DB.DirectDatabaseQuery.SchemaChange, WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching, WordPress.DB.PreparedSQL.InterpolatedNotPrepared, WordPress.DB.PreparedSQLPlaceholders.UnfinishedPrepare -- Values are escaped in $wpdb->prepare.
+		$db_results = $wpdb->get_results( //phpcs:ignore
 			$wpdb->prepare(
-				'SELECT id FROM %1$s WHERE state = "%2$s" AND updated_at < "%3$s"',
-				$wpdb->prefix . self::get_table_name(),
-				self::STATE_CREATED,
+				"SELECT id FROM $table WHERE state = %s AND updated_at < %s",
+				self::POSTFINANCECHECKOUT_STATE_CREATED,
 				$time->format( 'Y-m-d H:i:s' )
 			),
 			ARRAY_A
 		);
-		$result     = array();
+		// phpcs:enable WordPress.DB.DirectDatabaseQuery.SchemaChange, WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching, WordPress.DB.PreparedSQL.InterpolatedNotPrepared, WordPress.DB.PreparedSQLPlaceholders.UnfinishedPrepare.
+		$result = array();
 		if ( is_array( $db_results ) ) {
 			foreach ( $db_results as $object_values ) {
 				$result[] = $object_values['id'];

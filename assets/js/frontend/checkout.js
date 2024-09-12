@@ -33,7 +33,7 @@ jQuery(
 			/**
 			 * This function gets interesting info for testing
 			 */
-			info : function() {
+			info : function () {
 				var versions = window.postfinancecheckout_js_params.versions || {};
 				var info = [
 					{library: 'integration', version: window.postfinancecheckout_js_params.integration},
@@ -42,10 +42,10 @@ jQuery(
 					{library: 'woocommerce', version: versions.woocommerce || null},
 					{library: 'woo-postfinancecheckout', version: versions.postfinancecheckout || null},
 				];
-				console.table(info, []);
+				console.table( info, [] );
 			},
 
-			init : function() {
+			init : function () {
 				// Payment methods.
 				this.$checkout_form.off( 'click.woo-postfinancecheckout' ).on(
 					'click.woo-postfinancecheckout',
@@ -83,15 +83,15 @@ jQuery(
 				window.wc_postfinancecheckout_checkout = this;
 			},
 
-			check_form_data_change : function() {
+			check_form_data_change : function () {
 				var $required_inputs = this.$checkout_form.find( '.address-field.validate-required' ).find( 'input, select' );
 				var current = '';
 				var complete = true;
 				if ( $required_inputs.length ) {
 					$required_inputs.each(
-						function() {
+						function () {
 							if ( ! $( this ).is( ':visible' )) {
-								 return true;
+								return true;
 							}
 							if ( ! $( this ).val()) {
 								complete = false;
@@ -118,7 +118,7 @@ jQuery(
 
 			},
 
-			payment_method_click : function(event) {
+			payment_method_click : function (event) {
 				var self = event.data.self;
 				var current_method = self.get_selected_payment_method();
 				if ( ! self.is_supported_method( current_method )) {
@@ -141,7 +141,7 @@ jQuery(
 				}
 			},
 
-			handle_description_for_empty_iframe : function(method_id) {
+			handle_description_for_empty_iframe : function (method_id) {
 
 				var current_method = this.get_selected_payment_method();
 				if ( ! this.is_supported_method( current_method )) {
@@ -167,10 +167,10 @@ jQuery(
 
 				if ( required_inputs.length ) {
 					required_inputs.each(
-						function() {
+						function () {
 							if ( $( this ).find( ':input' ).val() === '' ) {
-								  has_full_address = false;
-								  return false;
+								has_full_address = false;
+								return false;
 							}
 						}
 					);
@@ -194,7 +194,7 @@ jQuery(
 				}
 			},
 
-			handle_place_order_button_status: function(method_id){
+			handle_place_order_button_status: function (method_id) {
 				if ( ! this.payment_methods[method_id].button_active) {
 					this.disable_place_order_button();
 				} else {
@@ -202,12 +202,12 @@ jQuery(
 				}
 			},
 
-			enable_place_order_button: function(){
+			enable_place_order_button: function () {
 				this.$order_button.removeAttr( 'disabled' );
 				this.$order_button.removeClass( 'postfinancecheckout-disabled' );
 			},
 
-			disable_place_order_button: function(){
+			disable_place_order_button: function () {
 				this.$order_button.prop( 'disabled', true );
 				this.$order_button.addClass( 'postfinancecheckout-disabled' );
 			},
@@ -216,15 +216,15 @@ jQuery(
 			 * This function handle the success function of Place Order in WooCommerce
 			 * @version <=7.4.1
 			 */
-			register_ajax_prefilter : function() {
+			register_ajax_prefilter : function () {
 				var self = this;
 
 				$.ajaxPrefilter(
 					"json",
-					function(options, originalOptions, jqXHR) {
+					function (options, originalOptions, jqXHR) {
 						if (options.url === wc_checkout_params.checkout_url && self.is_supported_method( self.get_selected_payment_method() )) {
 							var original_success = options.success;
-							options.success = function(data, textStatus, jqXHR) {
+							options.success = function (data, textStatus, jqXHR) {
 								$( window ).unbind( "beforeunload" );
 								if ('success' === data.result) {
 									if (self.process_order_created( data, textStatus, jqXHR )) {
@@ -235,9 +235,9 @@ jQuery(
 									original_success( data, textStatus,jqXHR );
 								} else if (typeof original_success != "undefined" && original_success.constructor === Array) {
 									original_success.forEach(
-										function(original_function) {
+										function (original_function) {
 											if (typeof original_function == 'function') {
-												original_function( data, textStatus, jqXHR );
+												original_function ( data, textStatus, jqXHR );
 											}
 										}
 									);
@@ -248,7 +248,7 @@ jQuery(
 				);
 
 				$.ajaxPrefilter(
-					function(options, originalOptions, jqXHR) {
+					function (options, originalOptions, jqXHR) {
 						var target = wc_checkout_params.wc_ajax_url.toString().replace( '%%endpoint%%', 'update_order_review' );
 						if (options.url === target) {
 							// no updates on invalid fields.
@@ -268,7 +268,7 @@ jQuery(
 			 * This function handle the success function of Place Order in WooCommerce
 			 * @version >=7.5.0
 			 */
-			register_window_fetch_prefilter : function() {
+			register_window_fetch_prefilter : function () {
 				var {fetch: origFetch} = window;
 				var self = this;
 
@@ -276,16 +276,20 @@ jQuery(
 					var response = await origFetch(url, options);
 
 					/* work with the cloned response in a separate promise chain -- could use the same chain with `await`. */
-					if (url === wc_checkout_params.checkout_url && self.is_supported_method( self.get_selected_payment_method() )) {
-						response
-							.clone()
-							.json()
-							.then(body => {
-								if (body.result !== undefined && 'success' === body.result){
-									self.process_order_created(body);
-								}
-							})
-							.catch(err => console.error(err));
+					if (url === wc_checkout_params.checkout_url
+						&& self.is_supported_method( self.get_selected_payment_method() )) {
+							response
+								.clone()
+								.json()
+								.then(
+									body => {
+										if (body.result !== undefined && 'success' === body.result) {
+											self.process_order_created( body );
+										}
+									}
+								)
+								.catch( err => console.error( err ) );
+
 					}
 
 					/* the original response can be resolved unmodified: */
@@ -293,15 +297,15 @@ jQuery(
 				};
 			},
 
-			is_supported_method : function(method_id) {
+			is_supported_method : function (method_id) {
 				return method_id && (method_id.indexOf( 'postfinancecheckout_' ) === 0);
 			},
 
-			get_selected_payment_method : function() {
+			get_selected_payment_method : function () {
 				return this.$checkout_form.find( 'input[name="payment_method"]:checked' ).val();
 			},
 
-			register_method : function(method_id, configuration_id, container_id) {
+			register_method : function (method_id, configuration_id, container_id) {
 				if (typeof window.IframeCheckoutHandler == 'undefined') {
 					this.payment_methods[method_id] = {
 						height : 0,
@@ -333,36 +337,36 @@ jQuery(
 					configuration_id : configuration_id,
 					container_id : tmp_container_id,
 					handler : window.IframeCheckoutHandler( configuration_id ),
-					button_active :  true,
+					button_active : true,
 					height : 0
 				};
 				this.payment_methods[method_id].handler.setValidationCallback(
-					function(validation_result) {
+					function (validation_result) {
 						self.process_validation( method_id, validation_result );
 					}
 				);
 				this.payment_methods[method_id].handler.setHeightChangeCallback(
-					function(height) {
+					function (height) {
 						self.payment_methods[method_id].height = height;
 						self.handle_description_for_empty_iframe( method_id );
 					}
 				);
 
 				this.payment_methods[method_id].handler.setInitializeCallback(
-					function(){
+					function () {
 						self.$checkout_form.unblock();
 					}
 				);
 
 				this.payment_methods[method_id].handler.setEnableSubmitCallback(
-					function(){
+					function () {
 						self.payment_methods[method_id].button_active = true;
 						self.handle_place_order_button_status( method_id );
 					}
 				);
 
 				this.payment_methods[method_id].handler.setDisableSubmitCallback(
-					function(){
+					function () {
 						self.payment_methods[method_id].button_active = false;
 						self.handle_place_order_button_status( method_id );
 					}
@@ -379,7 +383,7 @@ jQuery(
 					this.$checkout_form.off( 'submit.postfinancecheckout' )
 					.on(
 						'submit.postfinancecheckout',
-						function(){
+						function () {
 							var method_id = self.get_selected_payment_method();
 							return self.process_submit( method_id );
 						}
@@ -388,14 +392,14 @@ jQuery(
 					this.$checkout_form.off( 'checkout_place_order_' + method_id + '.postfinancecheckout' )
 					.on(
 						'checkout_place_order_' + method_id + '.postfinancecheckout',
-						function(){
+						function () {
 							return self.process_submit( method_id );
 						}
 					);
 				}
 			},
 
-			process_submit : function(method_id){
+			process_submit : function (method_id) {
 				if ( ! this.is_supported_method( method_id )) {
 					return true;
 				}
@@ -406,10 +410,10 @@ jQuery(
 
 				if ( required_inputs.length ) {
 					required_inputs.each(
-						function() {
+						function () {
 							if ( $( this ).find( ':input' ).val() === '' ) {
-								  has_full_address = false;
-								  return false;
+								has_full_address = false;
+								return false;
 							}
 						}
 					);
@@ -443,7 +447,7 @@ jQuery(
 								url: window.location.href,
 								data: new URLSearchParams( new FormData( form[0] ) ).toString(),
 								dataType: 'json',
-								success: function( result ) {
+								success: function ( result ) {
 									self.validated = false;
 									if (typeof result.postfinancecheckout == 'undefined') {
 										window.location.reload();
@@ -452,7 +456,7 @@ jQuery(
 									self.payment_methods[self.get_selected_payment_method()].handler.submit();
 									return true;
 								},
-								error: function( jqXHR, textStatus, errorThrown ) {
+								error: function ( jqXHR, textStatus, errorThrown ) {
 									window.location.reload();
 								}
 							}
@@ -463,7 +467,7 @@ jQuery(
 				}
 			},
 
-			process_order_created : function(data, textStatus, jqXHR) {
+			process_order_created : function (data, textStatus, jqXHR) {
 				var self = this;
 				// handle lightbox integration.
 				if (postfinancecheckout_js_params.integration && postfinancecheckout_js_params.integration === self.integrations.LIGHTBOX ) {
@@ -508,7 +512,7 @@ jQuery(
 				}
 			},
 
-			process_validation : function(method_id, validation_result) {
+			process_validation : function (method_id, validation_result) {
 				if (validation_result.success) {
 					this.validated = true;
 					this.$checkout_form.submit();
@@ -533,7 +537,7 @@ jQuery(
 			},
 
 			// We emulate the woocommerce submit_error function, as it is not callable from outside.
-			submit_error: function( error_message ) {
+			submit_error: function ( error_message ) {
 				var self = this;
 				var formatted_message = '<div class="woocommerce-error">' + this.format_error_messages( error_message ) + '</div>';
 				$( '.woocommerce-NoticeGroup-checkout, .woocommerce-error, .woocommerce-message' ).remove();
@@ -549,7 +553,7 @@ jQuery(
 				$( document.body ).trigger( 'checkout_error' );
 			},
 
-			format_error_messages : function(messages) {
+			format_error_messages : function (messages) {
 				var formatted_message;
 				if (typeof messages == 'object') {
 					formatted_message = messages.join( "\n" );

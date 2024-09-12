@@ -1,7 +1,9 @@
 <?php
 /**
- *
- * WC_PostFinanceCheckout_Service_Token Class
+ * Plugin Name: PostFinanceCheckout
+ * Author: postfinancecheckout AG
+ * Text Domain: postfinancecheckout
+ * Domain Path: /languages/
  *
  * PostFinanceCheckout
  * This plugin will add support for all PostFinanceCheckout payments methods and connect the PostFinanceCheckout servers to your WooCommerce webshop (https://postfinance.ch/en/business/products/e-commerce/postfinance-checkout-all-in-one.html).
@@ -14,9 +16,8 @@
 
 use PostFinanceCheckout\Sdk\Model\TokenVersion;
 
-if ( ! defined( 'ABSPATH' ) ) {
-	exit(); // Exit if accessed directly.
-}
+defined( 'ABSPATH' ) || exit;
+
 /**
  * This service provides functions to deal with PostFinance Checkout tokens.
  *

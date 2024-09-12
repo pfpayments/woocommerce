@@ -1,6 +1,9 @@
 <?php
 /**
- * PostFinance Checkout WooCommerce
+ * Plugin Name: PostFinanceCheckout
+ * Author: postfinancecheckout AG
+ * Text Domain: postfinancecheckout
+ * Domain Path: /languages/
  *
  * PostFinanceCheckout
  * This plugin will add support for all PostFinanceCheckout payments methods and connect the PostFinanceCheckout servers to your WooCommerce webshop (https://postfinance.ch/en/business/products/e-commerce/postfinance-checkout-all-in-one.html).
@@ -15,23 +18,29 @@ defined( 'ABSPATH' ) || exit;
 
 /**
  * Class WC_PostFinanceCheckout_Webhook_Refund_Strategy
- * 
+ *
  * Handles strategy for processing refund-related webhook requests.
  * This class extends the base webhook strategy to specifically manage webhook requests
  * that deal with refund transactions. This includes updating the status of refund jobs within the system,
  * processing related order modifications, and handling state transitions for refunds.
  */
 class WC_PostFinanceCheckout_Webhook_Refund_Strategy extends WC_PostFinanceCheckout_Webhook_Strategy_Base {
-	
+
 	/**
+	 * Match function.
+	 *
 	 * @inheritDoc
+	 * @param string $webhook_entity_id The webhook entity id.
 	 */
 	public function match( string $webhook_entity_id ) {
 		return WC_PostFinanceCheckout_Service_Webhook::POSTFINANCECHECKOUT_REFUND == $webhook_entity_id;
 	}
 
 	/**
+	 * Load entity.
+	 *
 	 * @inheritDoc
+	 * @param WC_PostFinanceCheckout_Webhook_Request $request The webhook request.
 	 */
 	protected function load_entity( WC_PostFinanceCheckout_Webhook_Request $request ) {
 		$refund_service = new \PostFinanceCheckout\Sdk\Service\RefundService( WC_PostFinanceCheckout_Helper::instance()->get_api_client() );
@@ -39,10 +48,12 @@ class WC_PostFinanceCheckout_Webhook_Refund_Strategy extends WC_PostFinanceCheck
 	}
 
 	/**
+	 * Get the order id.
+	 *
 	 * @inheritDoc
+	 * @param \PostFinanceCheckout\Sdk\Model\Refund $object The refund object.
 	 */
 	protected function get_order_id( $object ) {
-		/* @var \Wallee\Sdk\Model\Refund $object */
 		return WC_PostFinanceCheckout_Entity_Transaction_Info::load_by_transaction(
 			$object->getTransaction()->getLinkedSpaceId(),
 			$object->getTransaction()->getId()
@@ -72,7 +83,7 @@ class WC_PostFinanceCheckout_Webhook_Refund_Strategy extends WC_PostFinanceCheck
 	 *
 	 * @param WC_Order $order The WooCommerce order associated with the refund.
 	 * @param \PostFinanceCheckout\Sdk\Model\Refund $refund The transaction refund object.
-         * @param WC_PostFinanceCheckout_Webhook_Request $request The webhook request object.
+		 * @param WC_PostFinanceCheckout_Webhook_Request $request The webhook request object.
 	 * @return void
 	 */
 	protected function process_order_related_inner( WC_Order $order, \PostFinanceCheckout\Sdk\Model\Refund $refund, WC_PostFinanceCheckout_Webhook_Request $request ) {
@@ -95,7 +106,7 @@ class WC_PostFinanceCheckout_Webhook_Refund_Strategy extends WC_PostFinanceCheck
 	 * Handles actions to be performed when a refund transaction fails.
 	 *
 	 * @param \PostFinanceCheckout\Sdk\Model\Refund $refund refund.
-	 * @param WC_Order                                $order order.
+	 * @param WC_Order $order order.
 	 * @return void
 	 * @throws Exception Exception.
 	 */
@@ -122,7 +133,7 @@ class WC_PostFinanceCheckout_Webhook_Refund_Strategy extends WC_PostFinanceCheck
 	 * Handles actions to be performed when a refund transaction is successful.
 	 *
 	 * @param \PostFinanceCheckout\Sdk\Model\Refund $refund refund.
-	 * @param WC_Order                                $order order.
+	 * @param WC_Order $order order.
 	 * @return void
 	 * @throws Exception Exception.
 	 */

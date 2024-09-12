@@ -1,6 +1,9 @@
 <?php
 /**
- * PostFinance Checkout WooCommerce
+ * Plugin Name: PostFinanceCheckout
+ * Author: postfinancecheckout AG
+ * Text Domain: postfinancecheckout
+ * Domain Path: /languages/
  *
  * PostFinanceCheckout
  * This plugin will add support for all PostFinanceCheckout payments methods and connect the PostFinanceCheckout servers to your WooCommerce webshop (https://postfinance.ch/en/business/products/e-commerce/postfinance-checkout-all-in-one.html).
@@ -56,7 +59,7 @@ abstract class WC_PostFinanceCheckout_Webhook_Strategy_Base implements WC_PostFi
 	 * This method fetches the order ID by using the transaction information available in the webhook request.
 	 * It is typically used to link the transaction data retrieved via API to a specific WooCommerce order.
 	 *
-	 * @param WC_PostFinanceCheckout_Webhook_Request|mixed $object.
+	 * @param WC_PostFinanceCheckout_Webhook_Request|mixed $object The webhook request or transaction that containing data needed to identify the order..
 	 * @return int|string
 	 */
 	protected function get_order_id( $object ) {

@@ -1,5 +1,8 @@
 /**
- * PostFinance Checkout WooCommerce
+ * Plugin Name: PostFinanceCheckout
+ * Author: postfinancecheckout AG
+ * Text Domain: postfinancecheckout
+ * Domain Path: /languages/
  *
  * PostFinanceCheckout
  * This plugin will add support for all PostFinanceCheckout payments methods and connect the PostFinanceCheckout servers to your WooCommerce webshop (https://postfinance.ch/en/business/products/e-commerce/postfinance-checkout-all-in-one.html).
@@ -11,15 +14,15 @@
  */
 /* Icons for status */
 @font-face {
-  font-family: 'woocommerce-postfinancecheckout';
-  src: url('../font/woocommerce-postfinancecheckout.eot?8310684');
-  src: url('../font/woocommerce-postfinancecheckout.eot?8310684#iefix') format('embedded-opentype'),
-	   url('../font/woocommerce-postfinancecheckout.woff2?8310684') format('woff2'),
-	   url('../font/woocommerce-postfinancecheckout.woff?8310684') format('woff'),
-	   url('../font/woocommerce-postfinancecheckout.ttf?8310684') format('truetype'),
-	   url('../font/woocommerce-postfinancecheckout.svg?8310684#woocommerce-postfinancecheckout') format('svg');
-  font-weight: normal;
-  font-style: normal;
+	font-family: 'woocommerce-postfinancecheckout';
+	src: url('../font/woocommerce-postfinancecheckout.eot?8310684');
+	src: url('../font/woocommerce-postfinancecheckout.eot?8310684#iefix') format('embedded-opentype'),
+		url('../font/woocommerce-postfinancecheckout.woff2?8310684') format('woff2'),
+		url('../font/woocommerce-postfinancecheckout.woff?8310684') format('woff'),
+		url('../font/woocommerce-postfinancecheckout.ttf?8310684') format('truetype'),
+		url('../font/woocommerce-postfinancecheckout.svg?8310684#woocommerce-postfinancecheckout') format('svg');
+	font-weight: normal;
+	font-style: normal;
 }
 
 /* Status Icons */

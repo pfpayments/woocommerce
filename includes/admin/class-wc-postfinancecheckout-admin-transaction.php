@@ -1,7 +1,9 @@
 <?php
 /**
- *
- * WC_PostFinanceCheckout_Admin_Transaction Class
+ * Plugin Name: PostFinanceCheckout
+ * Author: postfinancecheckout AG
+ * Text Domain: postfinancecheckout
+ * Domain Path: /languages/
  *
  * PostFinanceCheckout
  * This plugin will add support for all PostFinanceCheckout payments methods and connect the PostFinanceCheckout servers to your WooCommerce webshop (https://postfinance.ch/en/business/products/e-commerce/postfinance-checkout-all-in-one.html).
@@ -12,16 +14,13 @@
  * @license  http://www.apache.org/licenses/LICENSE-2.0 Apache Software License (ASL 2.0)
  */
 
-if ( ! defined( 'ABSPATH' ) ) {
-	exit();
-}
+defined( 'ABSPATH' ) || exit;
+
 /**
  * Class WC_PostFinanceCheckout_Admin_Transaction.
+ * WC PostFinanceCheckout Admin Transaction class
  *
  * @class WC_PostFinanceCheckout_Admin_Transaction
- */
-/**
- * WC PostFinanceCheckout Admin Transaction class
  */
 class WC_PostFinanceCheckout_Admin_Transaction {
 
@@ -41,9 +40,13 @@ class WC_PostFinanceCheckout_Admin_Transaction {
 
 	/**
 	 * Add WC Meta boxes.
+	 *
 	 * @see: https://woo.com/document/high-performance-order-storage/#section-8
 	 */
 	public static function add_meta_box() {
+		if ( empty( $post ) || ! ( $post instanceof WP_Post ) || empty( $post->ID ) || 'shop_order' != $post->post_type ) {
+			return;
+		}
 		$screen = class_exists( '\Automattic\WooCommerce\Internal\DataStores\Orders\CustomOrdersTableController' )
 			&& wc_get_container()->get( \Automattic\WooCommerce\Internal\DataStores\Orders\CustomOrdersTableController::class )->custom_orders_table_usage_is_enabled()
 			? wc_get_page_screen_id( 'shop-order' )
@@ -64,8 +67,8 @@ class WC_PostFinanceCheckout_Admin_Transaction {
 	/**
 	 * Output the metabox.
 	 *
-	 * @param WP_Post|WP_Order $post_or_order_object
-	 *   This object is provided by woocommerce when using its screen.
+	 * @param WP_Post|WP_Order $post_or_order_object the post or order object.
+	 * This object is provided by woocommerce when using its screen.
 	 */
 	public static function output( $post_or_order_object ) {
 		$order = ( $post_or_order_object instanceof WP_Post ) ? wc_get_order( $post_or_order_object->ID ) : $post_or_order_object;
@@ -99,43 +102,43 @@ class WC_PostFinanceCheckout_Admin_Transaction {
 						</td>
 					</tr>
 			<?php if ( ! empty( $transaction_info->get_image() ) ) : ?>
-				 <tr>
+					<tr>
 						<td class="label"></td>
 						<td class="value"><img
 							src="<?php echo esc_url( $helper->get_resource_url( $transaction_info->get_image_base(), $transaction_info->get_image(), $transaction_info->get_language(), $transaction_info->get_space_id(), $transaction_info->get_space_view_id() ) ); ?>"
 							width="50" /><br /></td>
 					</tr>
 			<?php endif; ?>
-				<tr>
+					<tr>
 						<td class="label"><label><?php esc_html_e( 'Transaction State', 'woo-postfinancecheckout' ); ?></label></td>
-        		    <?php // phpcs:ignore ?>
-                    <td class="value"><strong><?php esc_html_e( self::get_transaction_state( $transaction_info ) ); ?></strong></td>
+						<?php // phpcs:ignore ?>
+						<td class="value"><strong><?php echo esc_html( self::get_transaction_state( $transaction_info ) ); ?></strong></td>
 					</tr>
 
 			<?php if ( $transaction_info->get_order_id() != null ) : ?>
-				<tr>
-					<td class="label"><label><?php esc_html_e( 'Merchant Reference', 'woo-postfinancecheckout' ); ?></label></td>
-        		    <?php // phpcs:ignore ?>
-                    <td class="value"><strong><?php esc_html_e( $transaction_info->get_order_id() ); ?></strong></td>
-				</tr>
+					<tr>
+						<td class="label"><label><?php esc_html_e( 'Merchant Reference', 'woo-postfinancecheckout' ); ?></label></td>
+						<?php // phpcs:ignore ?>
+						<td class="value"><strong><?php echo esc_html( $transaction_info->get_order_id() ); ?></strong></td>
+					</tr>
 			<?php endif; ?>
 
 			<?php if ( $transaction_info->get_failure_reason() != null ) : ?>
-				<tr>
+					<tr>
 						<td class="label"><label><?php esc_html_e( 'Failure Reason', 'woo-postfinancecheckout' ); ?></label></td>
-            		    <?php // phpcs:ignore ?>
-                        <td class="value"><strong><?php esc_html_e( $transaction_info->get_failure_reason() ); ?></strong></td>
+						<?php // phpcs:ignore ?>
+						<td class="value"><strong><?php echo esc_html( $transaction_info->get_failure_reason() ); ?></strong></td>
 					</tr>
 			<?php endif; ?>
-				<tr>
+					<tr>
 						<td class="label"><label><?php esc_html_e( 'Authorization Amount', 'woo-postfinancecheckout' ); ?></label></td>
 						<?php // phpcs:ignore ?>
-						<td class="value"><strong><?php echo wc_price( $transaction_info->get_authorization_amount(), array( 'currency' => $transaction_info->get_currency() ) ); ?></strong></td>
+						<td class="value"><strong><?php echo (float) wc_price( $transaction_info->get_authorization_amount(), array( 'currency' => $transaction_info->get_currency() ) ); ?></strong></td>
 					</tr>
 					<tr>
 						<td class="label"><label><?php esc_html_e( 'Transaction', 'woo-postfinancecheckout' ); ?></label></td>
 						<td class="value"><strong> <a
-								href="<?php echo esc_url( self::get_transaction_url( $transaction_info ) ); ?>"
+								href="<?php printf( '%s', esc_url( self::get_transaction_url( $transaction_info ) ) ); ?>"
 								target="_blank">
 						<?php esc_html_e( 'View in PostFinance Checkout', 'woo-postfinancecheckout' ); ?>
 					</a>
@@ -184,25 +187,25 @@ class WC_PostFinanceCheckout_Admin_Transaction {
 	protected static function get_transaction_state( WC_PostFinanceCheckout_Entity_Transaction_Info $transaction_info ) {
 		switch ( $transaction_info->get_state() ) {
 			case \PostFinanceCheckout\Sdk\Model\TransactionState::AUTHORIZED:
-				return __( 'Authorized', 'woo-postfinancecheckout' );
+				return esc_html__( 'Authorized', 'woo-postfinancecheckout' );
 			case \PostFinanceCheckout\Sdk\Model\TransactionState::COMPLETED:
-				return __( 'Completed', 'woo-postfinancecheckout' );
+				return esc_html__( 'Completed', 'woo-postfinancecheckout' );
 			case \PostFinanceCheckout\Sdk\Model\TransactionState::CONFIRMED:
-				return __( 'Confirmed', 'woo-postfinancecheckout' );
+				return esc_html__( 'Confirmed', 'woo-postfinancecheckout' );
 			case \PostFinanceCheckout\Sdk\Model\TransactionState::DECLINE:
-				return __( 'Decline', 'woo-postfinancecheckout' );
+				return esc_html__( 'Decline', 'woo-postfinancecheckout' );
 			case \PostFinanceCheckout\Sdk\Model\TransactionState::FAILED:
-				return __( 'Failed', 'woo-postfinancecheckout' );
+				return esc_html__( 'Failed', 'woo-postfinancecheckout' );
 			case \PostFinanceCheckout\Sdk\Model\TransactionState::FULFILL:
-				return __( 'Fulfill', 'woo-postfinancecheckout' );
+				return esc_html__( 'Fulfill', 'woo-postfinancecheckout' );
 			case \PostFinanceCheckout\Sdk\Model\TransactionState::PENDING:
-				return __( 'Pending', 'woo-postfinancecheckout' );
+				return esc_html__( 'Pending', 'woo-postfinancecheckout' );
 			case \PostFinanceCheckout\Sdk\Model\TransactionState::PROCESSING:
-				return __( 'Processing', 'woo-postfinancecheckout' );
+				return esc_html__( 'Processing', 'woo-postfinancecheckout' );
 			case \PostFinanceCheckout\Sdk\Model\TransactionState::VOIDED:
-				return __( 'Voided', 'woo-postfinancecheckout' );
+				return esc_html__( 'Voided', 'woo-postfinancecheckout' );
 			default:
-				return __( 'Unknown State', 'woo-postfinancecheckout' );
+				return esc_html__( 'Unknown State', 'woo-postfinancecheckout' );
 		}
 	}
 
@@ -225,7 +228,7 @@ class WC_PostFinanceCheckout_Admin_Transaction {
 	 */
 	protected static function get_grouped_charge_attempt_labels( WC_PostFinanceCheckout_Entity_Transaction_Info $info ) {
 		try {
-			$label_description_provider       = WC_PostFinanceCheckout_Provider_Label_Description::instance();
+			$label_description_provider = WC_PostFinanceCheckout_Provider_Label_Description::instance();
 			$label_description_group_provider = WC_PostFinanceCheckout_Provider_Label_Description_Group::instance();
 
 			$labels_by_group_id = array();
@@ -234,7 +237,7 @@ class WC_PostFinanceCheckout_Admin_Transaction {
 				if ( $descriptor && $descriptor->getCategory() == \PostFinanceCheckout\Sdk\Model\LabelDescriptorCategory::HUMAN ) {
 					$labels_by_group_id[ $descriptor->getGroup() ][] = array(
 						'descriptor' => $descriptor,
-						'value'      => $value,
+						'value' => $value,
 					);
 				}
 			}

@@ -1,7 +1,9 @@
 <?php
 /**
- *
- * WC_PostFinanceCheckout_Admin_Refund Class
+ * Plugin Name: PostFinanceCheckout
+ * Author: postfinancecheckout AG
+ * Text Domain: postfinancecheckout
+ * Domain Path: /languages/
  *
  * PostFinanceCheckout
  * This plugin will add support for all PostFinanceCheckout payments methods and connect the PostFinanceCheckout servers to your WooCommerce webshop (https://postfinance.ch/en/business/products/e-commerce/postfinance-checkout-all-in-one.html).
@@ -12,16 +14,13 @@
  * @license  http://www.apache.org/licenses/LICENSE-2.0 Apache Software License (ASL 2.0)
  */
 
-if ( ! defined( 'ABSPATH' ) ) {
-	exit();
-}
+defined( 'ABSPATH' ) || exit;
+
 /**
  * Class WC_PostFinanceCheckout_Admin_Refund.
+ * WC PostFinanceCheckout Admin Refund class
  *
  * @class WC_PostFinanceCheckout_Admin_Refund
- */
-/**
- * WC PostFinanceCheckout Admin Refund class
  */
 class WC_PostFinanceCheckout_Admin_Refund {
 	/**
@@ -96,7 +95,7 @@ class WC_PostFinanceCheckout_Admin_Refund {
 		$gateway = wc_get_payment_gateway_by_order( $order );
 		if ( $gateway instanceof WC_PostFinanceCheckout_Gateway ) {
 			$transaction_info = WC_PostFinanceCheckout_Entity_Transaction_Info::load_by_order_id( $order->get_id() );
-			if ( ! in_array( $transaction_info->get_state(), self::$refundable_states ) ) {
+			if ( ! in_array( $transaction_info->get_state(), self::$refundable_states, true ) ) {
 				echo '<span id="postfinancecheckout-remove-refund" style="display:none;"></span>';
 			} else {
 				$existing_refund_job = WC_PostFinanceCheckout_Entity_Refund_Job::load_running_refund_for_transaction(
@@ -104,11 +103,11 @@ class WC_PostFinanceCheckout_Admin_Refund {
 					$transaction_info->get_transaction_id()
 				);
 				if ( $existing_refund_job->get_id() > 0 ) {
-					echo '<span class="postfinancecheckout-action-in-progress">' . esc_html( __( 'There is a refund in progress.', 'woo-postfinancecheckout' ) ) . '</span>';
-					echo '<button type="button" class="button postfinancecheckout-update-order">' . esc_html( __( 'Update', 'woo-postfinancecheckout' ) ) . '</button>';
-					echo '<span id="postfinancecheckout-remove-refund" style="display:none;"></span>';
+					printf( '<span class="postfinancecheckout-action-in-progress">%s</span>', esc_html( esc_html__( 'There is a refund in progress.', 'woo-postfinancecheckout' ) ) );
+					printf( '<button type="button" class="button postfinancecheckout-update-order">%s</button>', esc_html( esc_html__( 'Update', 'woo-postfinancecheckout' ) ) );
+					printf( '<span id="postfinancecheckout-remove-refund" style="display:none;"></span>' );
 				}
-				echo '<span id="postfinancecheckout-refund-restrictions" style="display:none;"></span>';
+				printf( '<span id="postfinancecheckout-refund-restrictions" style="display:none;"></span>' );
 			}
 		}
 	}
@@ -139,27 +138,27 @@ class WC_PostFinanceCheckout_Admin_Refund {
 	 * @return void
 	 */
 	public static function store_refund_in_globals( $refund, $request_args ) {
-		$GLOBALS['postfinancecheckout_refund_id']           = $refund->get_id();
+		$GLOBALS['postfinancecheckout_refund_id'] = $refund->get_id();
 		$GLOBALS['postfinancecheckout_refund_request_args'] = $request_args;
 	}
 
 	/**
 	 * Executes refund.
 	 *
-	 * @param WC_Order        $order  wc_order.
+	 * @param WC_Order $order wc_order.
 	 * @param WC_Order_Refund $refund refund.
 	 * @return void
 	 * @throws Exception Exception.
 	 */
 	public static function execute_refund( WC_Order $order, WC_Order_Refund $refund ) {
 		$current_refund_job_id = null;
-		$transaction_info      = null;
-		$refund_service        = WC_PostFinanceCheckout_Service_Refund::instance();
+		$transaction_info = null;
+		$refund_service = WC_PostFinanceCheckout_Service_Refund::instance();
 		try {
 			WC_PostFinanceCheckout_Helper::instance()->start_database_transaction();
 			$transaction_info = WC_PostFinanceCheckout_Entity_Transaction_Info::load_by_order_id( $order->get_id() );
 			if ( ! $transaction_info->get_id() ) {
-				throw new Exception( __( 'Could not load corresponding transaction', 'woo-postfinancecheckout' ) );
+				throw new Exception( esc_html__( 'Could not load corresponding transaction', 'woo-postfinancecheckout' ) );
 			}
 
 			WC_PostFinanceCheckout_Helper::instance()->lock_by_transaction_id( $transaction_info->get_space_id(), $transaction_info->get_transaction_id() );
@@ -168,10 +167,10 @@ class WC_PostFinanceCheckout_Admin_Refund {
 				$transaction_info->get_space_id(),
 				$transaction_info->get_transaction_id()
 			) > 0 ) {
-				throw new Exception( __( 'Please wait until the pending refund is processed.', 'woo-postfinancecheckout' ) );
+				throw new Exception( esc_html__( 'Please wait until the pending refund is processed.', 'woo-postfinancecheckout' ) );
 			}
-			$refund_create         = $refund_service->create( $order, $refund );
-			$refund_job            = self::create_refund_job( $order, $refund, $refund_create );
+			$refund_create = $refund_service->create( $order, $refund );
+			$refund_job = self::create_refund_job( $order, $refund, $refund_create );
 			$current_refund_job_id = $refund_job->get_id();
 
 			$refund->add_meta_data( '_postfinancecheckout_refund_job_id', $refund_job->get_id() );
@@ -199,7 +198,7 @@ class WC_PostFinanceCheckout_Admin_Refund {
 		// Reload void job.
 		$refund_job = WC_PostFinanceCheckout_Entity_Refund_Job::load_by_id( $refund_job_id );
 
-		if ( $refund_job->get_state() != WC_PostFinanceCheckout_Entity_Refund_Job::STATE_CREATED ) {
+		if ( $refund_job->get_state() != WC_PostFinanceCheckout_Entity_Refund_Job::POSTFINANCECHECKOUT_STATE_CREATED ) {
 			// Already sent in the meantime.
 			WC_PostFinanceCheckout_Helper::instance()->rollback_database_transaction();
 			return;
@@ -207,36 +206,38 @@ class WC_PostFinanceCheckout_Admin_Refund {
 		try {
 			$refund_service  = WC_PostFinanceCheckout_Service_Refund::instance();
 			$executed_refund = $refund_service->refund( $refund_job->get_space_id(), $refund_job->get_refund() );
-			$refund_job->set_state( WC_PostFinanceCheckout_Entity_Refund_Job::STATE_SENT );
+			$refund_job->set_state( WC_PostFinanceCheckout_Entity_Refund_Job::POSTFINANCECHECKOUT_STATE_SENT );
 
 			if ( $executed_refund->getState() == \PostFinanceCheckout\Sdk\Model\RefundState::PENDING ) {
-				$refund_job->set_state( WC_PostFinanceCheckout_Entity_Refund_Job::STATE_PENDING );
+				$refund_job->set_state( WC_PostFinanceCheckout_Entity_Refund_Job::POSTFINANCECHECKOUT_STATE_PENDING );
 			}
 			$refund_job->save();
 			WC_PostFinanceCheckout_Helper::instance()->commit_database_transaction();
 		} catch ( \PostFinanceCheckout\Sdk\ApiException $e ) {
+			$error_message = $e->getMessage();
 			if ( $e->getResponseObject() instanceof \PostFinanceCheckout\Sdk\Model\ClientError ) {
 				$refund_job->set_failure_reason(
 					array(
 						'en-US' => $e->getResponseObject()->getMessage(),
 					)
 				);
-				$refund_job->set_state( WC_PostFinanceCheckout_Entity_Refund_Job::STATE_FAILURE );
+				$refund_job->set_state( WC_PostFinanceCheckout_Entity_Refund_Job::POSTFINANCECHECKOUT_STATE_FAILURE );
 				$refund_job->save();
 				WC_PostFinanceCheckout_Helper::instance()->commit_database_transaction();
 			} else {
 				$refund_job->save();
 				WC_PostFinanceCheckout_Helper::instance()->commit_database_transaction();
-				WooCommerce_PostFinanceCheckout::instance()->log( 'Error sending refund. ' . $e->getMessage(), WC_Log_Levels::INFO );
+				WooCommerce_PostFinanceCheckout::instance()->log( 'Error sending refund. ' . $error_message, WC_Log_Levels::INFO );
 				/* translators: %s: message */
-				throw new Exception( sprintf( __( 'There has been an error while sending the refund to the gateway. Error: %s', 'woo-postfinancecheckout' ), $e->getMessage() ) );
+				throw new Exception( sprintf( esc_html__( 'There has been an error while sending the refund to the gateway. Error: %s', 'woo-postfinancecheckout' ), esc_html( $error_message ) ) );
 			}
 		} catch ( Exception $e ) {
 			$refund_job->save();
+			$error_message = $e->getMessage();
 			WC_PostFinanceCheckout_Helper::instance()->commit_database_transaction();
-			WooCommerce_PostFinanceCheckout::instance()->log( 'Error sending refund. ' . $e->getMessage(), WC_Log_Levels::INFO );
+			WooCommerce_PostFinanceCheckout::instance()->log( 'Error sending refund. ' . $error_message, WC_Log_Levels::INFO );
 			/* translators: %s: message */
-			throw new Exception( sprintf( __( 'There has been an error while sending the refund to the gateway. Error: %s', 'woo-postfinancecheckout' ), $e->getMessage() ) );
+			throw new Exception( sprintf( esc_html__( 'There has been an error while sending the refund to the gateway. Error: %s', 'woo-postfinancecheckout' ), esc_html( $error_message ) ) );
 		}
 	}
 
@@ -249,9 +250,9 @@ class WC_PostFinanceCheckout_Admin_Refund {
 	public static function update_for_order( WC_Order $order ) {
 
 		$transaction_info = WC_PostFinanceCheckout_Entity_Transaction_Info::load_by_order_id( $order->get_id() );
-		$refund_job       = WC_PostFinanceCheckout_Entity_Refund_Job::load_running_refund_for_transaction( $transaction_info->get_space_id(), $transaction_info->get_transaction_id() );
+		$refund_job = WC_PostFinanceCheckout_Entity_Refund_Job::load_running_refund_for_transaction( $transaction_info->get_space_id(), $transaction_info->get_transaction_id() );
 
-		if ( $refund_job->get_state() == WC_PostFinanceCheckout_Entity_Refund_Job::STATE_CREATED ) {
+		if ( $refund_job->get_state() == WC_PostFinanceCheckout_Entity_Refund_Job::POSTFINANCECHECKOUT_STATE_CREATED ) {
 			self::send_refund( $refund_job->get_id() );
 		}
 	}
@@ -267,8 +268,8 @@ class WC_PostFinanceCheckout_Admin_Refund {
 			try {
 				self::send_refund( $id );
 			} catch ( Exception $e ) {
-				/* translators: %1$d: id, %2$s: message */
-				$message = sprintf( __( 'Error updating refund job with id %1$d: %2$s', 'woo-postfinancecheckout' ), $id, $e->getMessage() );
+				/* translators: %d: id, %s: message */
+				$message = sprintf( esc_html__( 'Error updating refund job with id %1$d: %2$s', 'woo-postfinancecheckout' ), $id, $e->getMessage() );
 				WooCommerce_PostFinanceCheckout::instance()->log( $message, WC_Log_Levels::ERROR );
 			}
 		}
@@ -277,15 +278,15 @@ class WC_PostFinanceCheckout_Admin_Refund {
 	/**
 	 * Creates a new refund job for the given order and refund.
 	 *
-	 * @param WC_Order                                      $order wc_order.
-	 * @param WC_Order_Refund                               $refund refund.
+	 * @param WC_Order $order wc_order.
+	 * @param WC_Order_Refund $refund refund.
 	 * @param \PostFinanceCheckout\Sdk\Model\RefundCreate $refund_create refund_create.
 	 * @return WC_PostFinanceCheckout_Entity_Refund_Job
 	 */
 	private static function create_refund_job( WC_Order $order, WC_Order_Refund $refund, \PostFinanceCheckout\Sdk\Model\RefundCreate $refund_create ) {
 		$transaction_info = WC_PostFinanceCheckout_Entity_Transaction_Info::load_by_order_id( $order->get_id() );
-		$refund_job       = new WC_PostFinanceCheckout_Entity_Refund_Job();
-		$refund_job->set_state( WC_PostFinanceCheckout_Entity_Refund_Job::STATE_CREATED );
+		$refund_job = new WC_PostFinanceCheckout_Entity_Refund_Job();
+		$refund_job->set_state( WC_PostFinanceCheckout_Entity_Refund_Job::POSTFINANCECHECKOUT_STATE_CREATED );
 		$refund_job->set_wc_refund_id( $refund->get_id() );
 		$refund_job->set_order_id( $order->get_id() );
 		$refund_job->set_space_id( $transaction_info->get_space_id() );

@@ -2,8 +2,8 @@
 Contributors: postfinancecheckout AG
 Tags: woocommerce PostFinance Checkout, woocommerce, PostFinance Checkout, payment, e-commerce, webshop, psp, invoice, packing slips, pdf, customer invoice, processing
 Requires at least: 4.7
-Tested up to: 6.5
-Stable tag: 3.0.12
+Tested up to: 6.6
+Stable tag: 3.1.0
 License: Apache 2
 License URI: http://www.apache.org/licenses/LICENSE-2.0
 
@@ -14,29 +14,35 @@ Accept payments in WooCommerce with PostFinance Checkout.
 Website: [https://postfinance.ch/en/business/products/e-commerce/postfinance-checkout-all-in-one.html](https://postfinance.ch/en/business/products/e-commerce/postfinance-checkout-all-in-one.html)
 
 The plugin offers an easy and convenient way to accept credit cards and all
-other payment methods listed below fast and securely. The payment forms will be fully integrated in your checkout 
-and for credit cards there is no redirection to a payment page needed anymore. The pages are by default mobile optimized but 
-the look and feel can be changed according the merchants needs. 
+other payment methods listed below fast and securely. The payment forms will be fully integrated in your checkout
+and for credit cards there is no redirection to a payment page needed anymore. The pages are by default mobile optimized but
+the look and feel can be changed according the merchants needs.
 
 This plugin will add support for all PostFinance Checkout payments methods and connect the PostFinance Checkout servers to your WooCommerce webshop.
 To use this extension, a PostFinance Checkout account is required. Sign up on [PostFinance Checkout](https://checkout.postfinance.ch/en-ch/user/signup).
 
 == Documentation ==
 
-Additional documentation for this plugin is available [here](https://plugin-documentation.postfinance-checkout.ch/pfpayments/woocommerce/3.0.12/docs/en/documentation.html).
+Additional documentation for this plugin is available [here](https://plugin-documentation.postfinance-checkout.ch/pfpayments/woocommerce/3.1.0/docs/en/documentation.html).
 
 == Support ==
 
 Support queries can be issued on the [PostFinance Checkout support site](https://www.postfinance.ch/en/business/support.html).
+
+== Privacy Policy ==
+
+Enquiries about our privacy policy can be made on the [PostFinance Checkout privacy policies site](https://www.postfinance.ch/en/detail/data-protection/general-privacy-policy.html).
+
+== Terms of use ==
+
+Enquiries about our terms of use can be made on the [PostFinance Checkout terms of use site](https://www.postfinance.ch/content/dam/pfch/doc/0_399/00201_en.pdf).
 
 == Installation ==
 
 = Minimum Requirements =
 
 * PHP version 5.6 or greater
-* WordPress 4.7 up to 6.5.3
-* WooCommerce 3.0.0 up to 8.9.1
-* WordPress 4.7 up to 6.5.3
+* WordPress 4.7 up to 6.6
 * WooCommerce 3.0.0 up to 8.9.1
 
 = Automatic installation =
@@ -57,10 +63,14 @@ Support queries can be issued on the [PostFinance Checkout support site](https:/
 
 == Changelog ==
 
- 
-= 3.0.12 - Aug 21 2024 =
-- [Feature] Implemented the Webhook Signing Mechanism
-- [Tested Against] PHP 8.0 and PHP 7.4
+
+= 3.1.0 - Sept 12 2024 =
+- [Feature] Add privacy policy URL
+- [Feature] Adhere to WP code standards
+- [Feature] Add Support for WC 9.2.x
+- [Bugfix] Fix for error when renewing subscriptions
+- [Bugfix] Fix for deferred payments status being incorrect
+- [Tested Against] PHP 8.2 and PHP 7.4
 - [Tested Against] Wordpress 6.6
-- [Tested Against] Woocommerce 9.1.4
+- [Tested Against] Woocommerce 9.1.4 & Woocommerce 9.2.1
 - [Tested Against] PHP SDK 4.5.0

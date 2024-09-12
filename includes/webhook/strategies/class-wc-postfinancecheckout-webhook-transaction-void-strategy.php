@@ -1,6 +1,9 @@
 <?php
 /**
- * PostFinance Checkout WooCommerce
+ * Plugin Name: PostFinanceCheckout
+ * Author: postfinancecheckout AG
+ * Text Domain: postfinancecheckout
+ * Domain Path: /languages/
  *
  * PostFinanceCheckout
  * This plugin will add support for all PostFinanceCheckout payments methods and connect the PostFinanceCheckout servers to your WooCommerce webshop (https://postfinance.ch/en/business/products/e-commerce/postfinance-checkout-all-in-one.html).
@@ -15,7 +18,7 @@ defined( 'ABSPATH' ) || exit;
 
 /**
  * Class WC_PostFinanceCheckout_Webhook_Transaction_Void_Strategy
- * 
+ *
  * Handles strategy for processing transaction void webhook requests.
  * This class extends the base webhook strategy to specifically manage webhook requests
  * that deal with transaction voids. Transaction voids are crucial for reverting transactions
@@ -24,14 +27,22 @@ defined( 'ABSPATH' ) || exit;
 class WC_PostFinanceCheckout_Webhook_Transaction_Void_Strategy extends WC_PostFinanceCheckout_Webhook_Strategy_Base {
 
 	/**
+	 * Match function
+	 *
 	 * @inheritDoc
+	 *
+	 * @param string $webhook_entity_id The webhook entity.
 	 */
 	public function match( string $webhook_entity_id ) {
 		return WC_PostFinanceCheckout_Service_Webhook::POSTFINANCECHECKOUT_TRANSACTION_VOID == $webhook_entity_id;
 	}
 
 	/**
+	 * Loads the entity
+	 *
 	 * @inheritDoc
+	 *
+	 * @param WC_PostFinanceCheckout_Webhook_Request $request The webhook request.
 	 */
 	protected function load_entity( WC_PostFinanceCheckout_Webhook_Request $request ) {
 		$void_service = new \PostFinanceCheckout\Sdk\Service\TransactionVoidService( WC_PostFinanceCheckout_Helper::instance()->get_api_client() );
@@ -39,10 +50,14 @@ class WC_PostFinanceCheckout_Webhook_Transaction_Void_Strategy extends WC_PostFi
 	}
 
 	/**
+	 * Get order id
+	 *
 	 * @inheritDoc
+	 *
+	 * @param object $object The order object.
 	 */
 	protected function get_order_id( $object ) {
-		/* @var \Wallee\Sdk\Model\TransactionVoid $object */
+		/* @var \PostFinanceCheckout\Sdk\Model\TransactionVoid $object */
 		return WC_PostFinanceCheckout_Entity_Transaction_Info::load_by_transaction(
 			$object->getTransaction()->getLinkedSpaceId(),
 			$object->getTransaction()->getId()
@@ -66,7 +81,7 @@ class WC_PostFinanceCheckout_Webhook_Transaction_Void_Strategy extends WC_PostFi
 			$this->process_order_related_inner( $order, $void, $request );
 		}
 	}
-	
+
 	/**
 	 * Processes additional order-related operations based on the transaction void's state.
 	 *
@@ -76,7 +91,7 @@ class WC_PostFinanceCheckout_Webhook_Transaction_Void_Strategy extends WC_PostFi
 	 * @return void
 	 */
 	protected function process_order_related_inner( WC_Order $order, \PostFinanceCheckout\Sdk\Model\TransactionVoid $void, WC_PostFinanceCheckout_Webhook_Request $request ) {
-		
+
 		switch ( $request->get_state() ) {
 			case \PostFinanceCheckout\Sdk\Model\TransactionVoidState::FAILED:
 				$this->failed( $order, $void );
@@ -93,8 +108,8 @@ class WC_PostFinanceCheckout_Webhook_Transaction_Void_Strategy extends WC_PostFi
 	/**
 	 * Successfully processes a transaction void.
 	 *
-	 * @param WC_Order 											$order The order to process.
-	 * @param \PostFinanceCheckout\Sdk\Model\TransactionVoid	$void The transaction void.
+	 * @param WC_Order $order The order to process.
+	 * @param \PostFinanceCheckout\Sdk\Model\TransactionVoid $void The transaction void.
 	 * @return void
 	 */
 	protected function success( WC_Order $order, \PostFinanceCheckout\Sdk\Model\TransactionVoid $void ) {
@@ -120,8 +135,8 @@ class WC_PostFinanceCheckout_Webhook_Transaction_Void_Strategy extends WC_PostFi
 	/**
 	 * Handles a failed transaction void.
 	 *
-	 * @param WC_Order 											$order The order linked to the failed void.
-	 * @param \PostFinanceCheckout\Sdk\Model\TransactionVoid	$void The transaction void.
+	 * @param WC_Order $order The order linked to the failed void.
+	 * @param \PostFinanceCheckout\Sdk\Model\TransactionVoid $void The transaction void.
 	 * @return void
 	 */
 	protected function failed( WC_Order $order, \PostFinanceCheckout\Sdk\Model\TransactionVoid $void ) {

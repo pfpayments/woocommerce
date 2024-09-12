@@ -1,7 +1,9 @@
 <?php
 /**
- *
- * WC_PostFinanceCheckout_Webhook_Transaction_Completion Class
+ * Plugin Name: PostFinanceCheckout
+ * Author: postfinancecheckout AG
+ * Text Domain: postfinancecheckout
+ * Domain Path: /languages/
  *
  * PostFinanceCheckout
  * This plugin will add support for all PostFinanceCheckout payments methods and connect the PostFinanceCheckout servers to your WooCommerce webshop (https://postfinance.ch/en/business/products/e-commerce/postfinance-checkout-all-in-one.html).
@@ -12,11 +14,11 @@
  * @license  http://www.apache.org/licenses/LICENSE-2.0 Apache Software License (ASL 2.0)
  */
 
-if ( ! defined( 'ABSPATH' ) ) {
-	exit();
-}
+defined( 'ABSPATH' ) || exit;
+
 /**
  * Webhook processor to handle transaction completion state transitions.
+ *
  * @deprecated 3.0.12 No longer used by internal code and not recommended.
  * @see WC_PostFinanceCheckout_Webhook_Transaction_Completion_Strategy
  */
@@ -44,7 +46,7 @@ class WC_PostFinanceCheckout_Webhook_Transaction_Completion extends WC_PostFinan
 	 * @return int|string
 	 */
 	protected function get_order_id( $completion ) {
-		/* @var \PostFinanceCheckout\Sdk\Model\TransactionCompletion $completion */
+		/* @var \PostFinanceCheckout\Sdk\Model\TransactionCompletion $completion */ //phpcs:ignore
 		return WC_PostFinanceCheckout_Entity_Transaction_Info::load_by_transaction( $completion->getLineItemVersion()->getTransaction()->getLinkedSpaceId(), $completion->getLineItemVersion()->getTransaction()->getId() )->get_order_id();
 	}
 
@@ -55,7 +57,7 @@ class WC_PostFinanceCheckout_Webhook_Transaction_Completion extends WC_PostFinan
 	 * @return int
 	 */
 	protected function get_transaction_id( $completion ) {
-		/* @var \PostFinanceCheckout\Sdk\Model\TransactionCompletion $completion */
+		/* @var \PostFinanceCheckout\Sdk\Model\TransactionCompletion $completion */ //phpcs:ignore
 		return $completion->getLinkedTransaction();
 	}
 
@@ -63,11 +65,11 @@ class WC_PostFinanceCheckout_Webhook_Transaction_Completion extends WC_PostFinan
 	 * Process order realted inner.
 	 *
 	 * @param WC_Order $order order.
-	 * @param mixed    $completion completion.
+	 * @param mixed $completion completion.
 	 * @return void
 	 */
 	protected function process_order_related_inner( WC_Order $order, $completion ) {
-		/* @var \PostFinanceCheckout\Sdk\Model\TransactionCompletion $completion */
+		/* @var \PostFinanceCheckout\Sdk\Model\TransactionCompletion $completion */ //phpcs:ignore
 		switch ( $completion->getState() ) {
 			case \PostFinanceCheckout\Sdk\Model\TransactionCompletionState::FAILED:
 				$this->failed( $completion, $order );
@@ -85,14 +87,14 @@ class WC_PostFinanceCheckout_Webhook_Transaction_Completion extends WC_PostFinan
 	 * Success.
 	 *
 	 * @param \PostFinanceCheckout\Sdk\Model\TransactionCompletion $completion completion.
-	 * @param WC_Order                                               $order order.
+	 * @param WC_Order $order order.
 	 * @return void
 	 * @throws Exception Exception.
 	 */
 	protected function success( \PostFinanceCheckout\Sdk\Model\TransactionCompletion $completion, WC_Order $order ) {
 		$completion_job = WC_PostFinanceCheckout_Entity_Completion_Job::load_by_completion( $completion->getLinkedSpaceId(), $completion->getId() );
 		if ( ! $completion_job->get_id() ) {
-			// We have no completion job with this id -> the server could not store the id of the completion after sending the request. (e.g. connection issue or crash)
+			// We have no completion job with this id -> the server could not store the id of the completion after sending the request. (e.g. connection issue or crash).
 			// We only have on running completion which was not yet processed successfully and use it as it should be the one the webhook is for.
 			$completion_job = WC_PostFinanceCheckout_Entity_Completion_Job::load_running_completion_for_transaction(
 				$completion->getLinkedSpaceId(),
@@ -104,7 +106,7 @@ class WC_PostFinanceCheckout_Webhook_Transaction_Completion extends WC_PostFinan
 			}
 			$completion_job->set_completion_id( $completion->getId() );
 		}
-		$completion_job->set_state( WC_PostFinanceCheckout_Entity_Completion_Job::STATE_DONE );
+		$completion_job->set_state( WC_PostFinanceCheckout_Entity_Completion_Job::POSTFINANCECHECKOUT_STATE_DONE );
 
 		if ( $completion_job->get_restock() ) {
 			$this->restock_non_completed_items( (array) $completion_job->get_items(), $order );
@@ -116,7 +118,7 @@ class WC_PostFinanceCheckout_Webhook_Transaction_Completion extends WC_PostFinan
 	/**
 	 * Restock non completed items.
 	 *
-	 * @param array    $completed_items completed items.
+	 * @param array $completed_items completed items.
 	 * @param WC_Order $order order.
 	 * @return void
 	 */
@@ -136,8 +138,8 @@ class WC_PostFinanceCheckout_Webhook_Transaction_Completion extends WC_PostFinan
 						$old_stock = $new_stock - $changed_qty;
 
 						$order->add_order_note(
-							/* translators: %1$s, %2$s, %3$s are replaced with "string" */
-							sprintf( __( '%1$s stock increased from %2$s to %3$s.', 'woo-postfinancecheckout' ), $item_name, $old_stock, $new_stock )
+							/* translators: %s, %s, %s are replaced with "string" */
+							sprintf( esc_html__( '%1$s stock increased from %2$s to %3$s.', 'woo-postfinancecheckout' ), $item_name, $old_stock, $new_stock )
 						);
 						do_action( 'wc_postfinancecheckout_restock_not_completed_item', $product->get_id(), $old_stock, $new_stock, $order, $product );
 					}
@@ -149,14 +151,14 @@ class WC_PostFinanceCheckout_Webhook_Transaction_Completion extends WC_PostFinan
 	/**
 	 * Adapt order items.
 	 *
-	 * @param array    $completed_items completed items.
+	 * @param array $completed_items completed items.
 	 * @param WC_Order $order order.
 	 * @return void
 	 */
 	private function adapt_order_items( array $completed_items, WC_Order $order ) {
 		foreach ( $order->get_items() as $item_id => $item ) {
 			if ( ! isset( $completed_items[ $item_id ] ) ||
-					 $completed_items[ $item_id ]['completion_total'] + array_sum( $completed_items[ $item_id ]['completion_tax'] ) == 0 ) {
+					$completed_items[ $item_id ]['completion_total'] + array_sum( $completed_items[ $item_id ]['completion_tax'] ) == 0 ) {
 				$order_item = $order->get_item( $item_id );
 				$order_item->delete( true );
 				continue;
@@ -164,7 +166,7 @@ class WC_PostFinanceCheckout_Webhook_Transaction_Completion extends WC_PostFinan
 			$old_total = $item->get_total();
 			$subtotal = $item->get_subtotal();
 			$ratio = $old_total / $completed_items[ $item_id ]['completion_total'];
-			if ( 0 != $ratio ) {
+			if ( 0 !== $ratio ) {
 				$subtotal = $subtotal / $ratio;
 			}
 			$old_taxes = $item->get_taxes();
@@ -197,7 +199,7 @@ class WC_PostFinanceCheckout_Webhook_Transaction_Completion extends WC_PostFinan
 		}
 		foreach ( $order->get_fees() as $fee_id => $fee ) {
 			if ( ! isset( $completed_items[ $fee_id ] ) ||
-					 $completed_items[ $fee_id ]['completion_total'] + array_sum( $completed_items[ $fee_id ]['completion_tax'] ) == 0 ) {
+					$completed_items[ $fee_id ]['completion_total'] + array_sum( $completed_items[ $fee_id ]['completion_tax'] ) == 0 ) {
 				$order_fee = $order->get_item( $fee_id );
 				$order_fee->delete();
 				continue;
@@ -215,7 +217,7 @@ class WC_PostFinanceCheckout_Webhook_Transaction_Completion extends WC_PostFinan
 		foreach ( $order->get_shipping_methods() as $shipping_id => $shipping ) {
 
 			if ( ! isset( $completed_items[ $shipping_id ] ) ||
-					 $completed_items[ $shipping_id ]['completion_total'] + array_sum( $completed_items[ $shipping_id ]['completion_tax'] ) == 0 ) {
+					$completed_items[ $shipping_id ]['completion_total'] + array_sum( $completed_items[ $shipping_id ]['completion_tax'] ) == 0 ) {
 				$order_shipping = $order->get_item( $shipping_id );
 				$order_shipping->delete();
 				continue;
@@ -241,7 +243,7 @@ class WC_PostFinanceCheckout_Webhook_Transaction_Completion extends WC_PostFinan
 	 * Failed.
 	 *
 	 * @param \PostFinanceCheckout\Sdk\Model\TransactionCompletion $completion completion.
-	 * @param WC_Order                                               $order order.
+	 * @param WC_Order $order order.
 	 * @return void
 	 * @throws Exception Exception.
 	 */
@@ -260,7 +262,7 @@ class WC_PostFinanceCheckout_Webhook_Transaction_Completion extends WC_PostFinan
 		if ( $completion->getFailureReason() != null ) {
 			$completion_job->set_failure_reason( $completion->getFailureReason()->getDescription() );
 		}
-		$completion_job->set_state( WC_PostFinanceCheckout_Entity_Completion_Job::STATE_DONE );
+		$completion_job->set_state( WC_PostFinanceCheckout_Entity_Completion_Job::POSTFINANCECHECKOUT_STATE_DONE );
 		$completion_job->save();
 	}
 }

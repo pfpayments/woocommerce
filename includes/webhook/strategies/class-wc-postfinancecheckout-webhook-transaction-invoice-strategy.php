@@ -1,6 +1,9 @@
 <?php
 /**
- * PostFinance Checkout WooCommerce
+ * Plugin Name: PostFinanceCheckout
+ * Author: postfinancecheckout AG
+ * Text Domain: postfinancecheckout
+ * Domain Path: /languages/
  *
  * PostFinanceCheckout
  * This plugin will add support for all PostFinanceCheckout payments methods and connect the PostFinanceCheckout servers to your WooCommerce webshop (https://postfinance.ch/en/business/products/e-commerce/postfinance-checkout-all-in-one.html).
@@ -15,23 +18,29 @@ defined( 'ABSPATH' ) || exit;
 
 /**
  * Class WC_PostFinanceCheckout_Webhook_Refund_Strategy
- * 
+ *
  * Handles strategy for processing transaction invoice-related webhook requests.
  * This class extends the base webhook strategy to manage webhook requests specifically
  * dealing with transaction invoices. It focuses on updating order states based on the invoice details
  * retrieved from the webhook data.
  */
 class WC_PostFinanceCheckout_Webhook_Transaction_Invoice_Strategy extends WC_PostFinanceCheckout_Webhook_Strategy_Base {
-	
+
 	/**
+	 * Match function.
+	 *
 	 * @inheritDoc
+	 * @param string $webhook_entity_id The webhook entity id.
 	 */
 	public function match( string $webhook_entity_id ) {
 		return WC_PostFinanceCheckout_Service_Webhook::POSTFINANCECHECKOUT_TRANSACTION_INVOICE == $webhook_entity_id;
 	}
 
 	/**
+	 * Load the entity.
+	 *
 	 * @inheritDoc
+	 * @param WC_PostFinanceCheckout_Webhook_Request $request webhook request.
 	 */
 	protected function load_entity( WC_PostFinanceCheckout_Webhook_Request $request ) {
 		$transaction_invoice_service = new \PostFinanceCheckout\Sdk\Service\TransactionInvoiceService( WC_PostFinanceCheckout_Helper::instance()->get_api_client() );
@@ -39,10 +48,13 @@ class WC_PostFinanceCheckout_Webhook_Transaction_Invoice_Strategy extends WC_Pos
 	}
 
 	/**
+	 * Get the order ID from the object.
+	 *
 	 * @inheritDoc
+	 * @param object $object transaction entity object.
 	 */
 	protected function get_order_id( $object ) {
-		/* @var \Wallee\Sdk\Model\TransactionInvoice $object */
+		/* @var \PostFinanceCheckout\Sdk\Model\TransactionInvoice $object */
 		return WC_PostFinanceCheckout_Entity_Transaction_Info::load_by_transaction(
 			$object->getLinkedSpaceId(),
 			$object->getCompletion()->getLineItemVersion()->getTransaction()->getId()
