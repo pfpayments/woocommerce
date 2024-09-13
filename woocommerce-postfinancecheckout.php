@@ -3,7 +3,7 @@
  * Plugin Name: PostFinance Checkout
  * Plugin URI: https://wordpress.org/plugins/woo-postfinance-checkout
  * Description: Process WooCommerce payments with PostFinance Checkout.
- * Version: 3.1.0
+ * Version: 3.1.1
  * Author: postfinancecheckout AG
  * Author URI: https://postfinance.ch/en/business/products/e-commerce/postfinance-checkout-all-in-one.html
  * Text Domain: postfinancecheckout
@@ -38,6 +38,7 @@ if ( ! class_exists( 'WooCommerce_PostFinanceCheckout' ) ) {
 		const POSTFINANCECHECKOUT_CK_INTEGRATION = 'wc_postfinancecheckout_integration';
 		const POSTFINANCECHECKOUT_CK_ORDER_REFERENCE = 'wc_postfinancecheckout_order_reference';
 		const POSTFINANCECHECKOUT_CK_ENFORCE_CONSISTENCY = 'wc_postfinancecheckout_enforce_consistency';
+		const POSTFINANCECHECKOUT_UPGRADE_VERSION = '3.1.1';
 		const WC_MAXIMUM_VERSION = '9.2.3';
 
 		/**
@@ -45,7 +46,7 @@ if ( ! class_exists( 'WooCommerce_PostFinanceCheckout' ) ) {
 		 *
 		 * @var string
 		 */
-		private $version = '3.1.0';
+		private $version = '3.1.1';
 
 		/**
 		 * The single instance of the class.
@@ -138,6 +139,14 @@ if ( ! class_exists( 'WooCommerce_PostFinanceCheckout' ) ) {
 			register_activation_hook(
 				__FILE__,
 				array(
+					'WooCommerce_PostFinanceCheckout',
+					'migrate_plugin_data_on_activation'
+				)
+			);
+
+			register_activation_hook(
+				__FILE__,
+				array(
 					$this,
 					'plugin_activate',
 				)
@@ -176,6 +185,17 @@ if ( ! class_exists( 'WooCommerce_PostFinanceCheckout' ) ) {
 					'WC_PostFinanceCheckout_Cron',
 					'deactivate',
 				)
+			);
+
+			// Hook to run migration after plugin update.
+			add_action(
+				'upgrader_process_complete',
+				array(
+					$this,
+					'migrate_plugin_data_after_update',
+				),
+				10,
+				2
 			);
 
 			add_action(
@@ -277,7 +297,7 @@ if ( ! class_exists( 'WooCommerce_PostFinanceCheckout' ) ) {
 		 * Activation hook.
 		 * Fired when the plugin is activated.
 		 */
-		public function plugin_activate() {
+		public static function plugin_activate() {
 			// Clear the permalinks after the post type has been registered.
 			flush_rewrite_rules();
 		}
@@ -286,7 +306,28 @@ if ( ! class_exists( 'WooCommerce_PostFinanceCheckout' ) ) {
 		 * Deactivation hook.
 		 * Fired when the plugin is deactivated.
 		 */
-		public function plugin_deactivate() {
+		public static function plugin_deactivate() {
+			// Get the plugin version.
+			$old_plugin_prefix = WC_PostFinanceCheckout_Migration::POSTFINANCECHECKOUT_DEPRECATED_PLUGIN_PREFIX;
+			$plugin_current_version = self::get_installed_plugin_version( $old_plugin_prefix . 'postfinancecheckout' ); // The slug of the old plugin.
+
+			// Check if the plugin version is lower than 3.1.0.
+			if ( version_compare( $plugin_current_version, self::POSTFINANCECHECKOUT_UPGRADE_VERSION, '<' ) ) {
+				// Start output buffering to prevent "headers already sent" errors.
+				ob_start();
+			}
+
+			// Hook to run migration after plugin update.
+			add_action(
+				'upgrader_process_complete',
+				array(
+					'WooCommerce_PostFinanceCheckout',
+					'migrate_plugin_data_after_update',
+				),
+				10,
+				2
+			);
+
 			// Clear the permalinks to remove our post type's rules from the database.
 			flush_rewrite_rules();
 		}
@@ -298,6 +339,27 @@ if ( ! class_exists( 'WooCommerce_PostFinanceCheckout' ) ) {
 		public static function plugin_uninstall() {
 			// code to run on plugin uninstall.
 			// delete the registered options.
+		}
+
+		/**
+		 * Function to get the installed version of a plugin.
+		 *
+		 * @param string $plugin_slug The slug of the plugin.
+		 * @return string|null The version of the plugin or null if not found.
+		 */
+		public static function get_installed_plugin_version( $plugin_slug ) {
+			if (!function_exists( 'get_plugins' ) ) {
+				require_once ABSPATH . 'wp-admin/includes/plugin.php';
+			}
+		
+			$all_plugins = get_plugins();
+			foreach ( $all_plugins as $plugin_path => $plugin_info ) {
+				if ( strpos( $plugin_path, $plugin_slug ) !== false ) {
+					return $plugin_info[ 'Version' ];
+				}
+			}
+		
+			return null;
 		}
 
 		/**
@@ -321,6 +383,90 @@ if ( ! class_exists( 'WooCommerce_PostFinanceCheckout' ) ) {
 				}
 			}
 		}
+
+		/**
+		 * Migrates settings from the old plugin version to the new version 4.0.0.
+		 *
+		 * This function checks if the settings from the old plugin version exist.
+		 * If they do, it transfers these settings to the new plugin's options
+		 * and deletes the old settings from the database.
+		 *
+		 * This ensures that users retain their configurations when updating
+		 * from the old plugin version to the new version.
+		 *
+		 * @return void
+		 */
+		public static function migrate_plugin_data_on_activation() {
+			$old_option_prefix = WC_PostFinanceCheckout_Migration::POSTFINANCECHECKOUT_DEPRECATED_TABLE_PREFIX;
+			$old_plugin_prefix = WC_PostFinanceCheckout_Migration::POSTFINANCECHECKOUT_DEPRECATED_PLUGIN_PREFIX;
+
+			$plugin_slug = $old_plugin_prefix . 'postfinancecheckout'; // The slug of the old plugin.
+			$installed_version = self::get_installed_plugin_version( $plugin_slug );
+
+			/**
+			 * Check if the installed version is 3.1.1 or higher.
+			 * If the version is 3.1.1 or higher, do not run the migration.
+			 */
+			if ( version_compare( $installed_version, self::POSTFINANCECHECKOUT_UPGRADE_VERSION, '>=' ) ) {
+				return;
+			}
+
+			global $wpdb;
+			$options_to_migrate = [
+				$old_option_prefix . WC_PostFinanceCheckout_Migration::POSTFINANCECHECKOUT_CK_DB_VERSION,
+				$old_option_prefix . WC_PostFinanceCheckout_Service_Manual_Task::POSTFINANCECHECKOUT_CONFIG_KEY,
+				$old_option_prefix . self::POSTFINANCECHECKOUT_CK_SPACE_ID,
+				$old_option_prefix . self::POSTFINANCECHECKOUT_CK_SPACE_VIEW_ID,
+				$old_option_prefix . self::POSTFINANCECHECKOUT_CK_APP_USER_ID,
+				$old_option_prefix . self::POSTFINANCECHECKOUT_CK_APP_USER_KEY,
+				$old_option_prefix . self::POSTFINANCECHECKOUT_CK_CUSTOMER_INVOICE,
+				$old_option_prefix . self::POSTFINANCECHECKOUT_CK_CUSTOMER_PACKING,
+				$old_option_prefix . self::POSTFINANCECHECKOUT_CK_SHOP_EMAIL,
+				$old_option_prefix . self::POSTFINANCECHECKOUT_CK_INTEGRATION,
+				$old_option_prefix . self::POSTFINANCECHECKOUT_CK_ORDER_REFERENCE,
+				$old_option_prefix . self::POSTFINANCECHECKOUT_CK_ENFORCE_CONSISTENCY,
+				$old_option_prefix . self::POSTFINANCECHECKOUT_WC_MAXIMUM_VERSION,
+			];
+
+			// If the old plugin options exist, perform the migration
+			foreach ( $options_to_migrate as $option_name ) {
+				$option_value = get_option( $option_name );
+				if ( $option_value !== false ) {
+					// Rename the options to the new prefix 'postfinancecheckout_'.
+					$new_option_name = str_replace( $old_option_prefix . 'postfinancecheckout_', 'postfinancecheckout_', $option_name );
+					if ( get_option( $new_option_name ) !== false ) {
+						// Update the option if it already exists.
+						update_option( $new_option_name, $option_value );
+					} else {
+						// Add the option if it doesn't exist.
+						add_option( $new_option_name, $option_value );
+					}
+					// Delete the old option.
+					//delete_option( $option_name );.
+				}
+			}
+		}
+
+		/**
+		 * Function to migrate plugin data after update
+		 * This function is triggered after the plugin is updated
+		 *
+		 * @param object $upgrader_object The upgrader object.
+		 * @param array $options The options array.
+		 */
+		public static function migrate_plugin_data_after_update( $upgrader_object, $options ) {
+			// Check if the plugin was just updated.
+			if ( $options['action'] == 'update' && $options['type'] == 'plugin' ) {
+				$plugin_basename = plugin_basename( __FILE__ );
+				foreach ( $options['plugins'] as $plugin ) {
+					if ( $plugin == $plugin_basename ) {
+						self::migrate_plugin_data_on_activation();
+						break;
+					}
+				}
+			}
+		}
+
 
 		/**
 		 * Load Localization files.

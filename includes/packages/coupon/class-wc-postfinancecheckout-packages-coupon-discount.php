@@ -110,15 +110,16 @@ class WC_PostFinanceCheckout_Packages_Coupon_Discount {
 	public static function get_coupons_discount_totals_including_tax( $currency ) {
 		$coupons_discount_total = 0;
 
-		//guard clause if the order doesn't exists, nothing to do here.
+		// guard clause if the order doesn't exists, nothing to do here.
 		$session = WC()->session;
-		if ( ! class_exists('WC_Session' ) || ! ( $session instanceof WC_Session ) ) {
+		if ( ! class_exists( 'WC_Session' ) || ! ( $session instanceof WC_Session ) ) {
 			return $coupons_discount_total;
 		}
 
 		$order_id = $session->get( 'postfinancecheckout_order_id' );
-		if ( WC()->cart->get_cart_contents_count() == 0 && !is_null( $order_id ) ) {
-			if ( $order = wc_get_order( $order_id ) ) {
+		if ( WC()->cart->get_cart_contents_count() == 0 && ! is_null( $order_id ) ) {
+			$order = wc_get_order( $order_id );
+			if ( $order ) {
 				$coupons_discount_total += $order->get_total_discount();
 			}
 		}

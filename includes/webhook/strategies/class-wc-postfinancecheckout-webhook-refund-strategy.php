@@ -113,7 +113,7 @@ class WC_PostFinanceCheckout_Webhook_Refund_Strategy extends WC_PostFinanceCheck
 	protected function failed( \PostFinanceCheckout\Sdk\Model\Refund $refund, WC_Order $order ) {
 		$refund_job = WC_PostFinanceCheckout_Entity_Refund_Job::load_by_external_id( $refund->getLinkedSpaceId(), $refund->getExternalId() );
 		if ( $refund_job->get_id() ) {
-			$refund_job->set_state( WC_PostFinanceCheckout_Entity_Refund_Job::STATE_FAILURE );
+			$refund_job->set_state( WC_PostFinanceCheckout_Entity_Refund_Job::POSTFINANCECHECKOUT_STATE_FAILURE );
 			if ( $refund->getFailureReason() != null ) {
 				$refund_job->set_failure_reason( $refund->getFailureReason()->getDescription() );
 			}
@@ -141,7 +141,7 @@ class WC_PostFinanceCheckout_Webhook_Refund_Strategy extends WC_PostFinanceCheck
 		$refund_job = WC_PostFinanceCheckout_Entity_Refund_Job::load_by_external_id( $refund->getLinkedSpaceId(), $refund->getExternalId() );
 
 		if ( $refund_job->get_id() ) {
-			$refund_job->set_state( WC_PostFinanceCheckout_Entity_Refund_Job::STATE_SUCCESS );
+			$refund_job->set_state( WC_PostFinanceCheckout_Entity_Refund_Job::POSTFINANCECHECKOUT_STATE_SUCCESS );
 			$refund_job->save();
 			$refunds = $order->get_refunds();
 			foreach ( $refunds as $wc_refund ) {

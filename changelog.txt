@@ -822,3 +822,10 @@ Tested against:
 - [Tested Against] Woocommerce 9.1.4 & Woocommerce 9.2.1
 - [Tested Against] PHP SDK 4.5.0
 
+= 3.1.1 - Sept 13 2024 =
+- [Bugfix] Added migrations for 3.1.0 changes.
+- [Tested Against] PHP 8.2
+- [Tested Against] Wordpress 6.6
+- [Tested Against] Woocommerce 9.3.1
+- [Tested Against] PHP SDK 4.5.0
+

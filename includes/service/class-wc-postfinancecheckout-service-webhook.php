@@ -304,7 +304,7 @@ class WC_PostFinanceCheckout_Service_Webhook extends WC_PostFinanceCheckout_Serv
 				return null;
 			}
 		} catch ( \Exception $e ) {
-			PostFinanceCheckout_WooCommerce::instance()->log( $e->getMessage(), WC_Log_Levels::ERROR );
+			WooCommerce_PostFinanceCheckout::instance()->log( $e->getMessage(), WC_Log_Levels::ERROR );
 		}
 	}
 

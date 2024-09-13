@@ -190,7 +190,7 @@ final class WC_PostFinanceCheckout_Blocks_Support extends AbstractPaymentMethodT
 				true
 			);
 		} catch ( Exception $e ) {
-			PostFinanceCheckout_WooCommerce::instance()->log( $e->getMessage(), WC_Log_Levels::DEBUG );
+			WooCommerce_PostFinanceCheckout::instance()->log( $e->getMessage(), WC_Log_Levels::DEBUG );
 		}
 	}
 

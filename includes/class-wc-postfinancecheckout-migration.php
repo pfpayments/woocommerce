@@ -27,6 +27,20 @@ class WC_PostFinanceCheckout_Migration {
 	const POSTFINANCECHECKOUT_CK_DB_VERSION = 'wc_postfinancecheckout_db_version';
 
 	/**
+	 * Deprecated table prefix.
+	 *
+	 * This constant holds the deprecated table prefix. It is necessary to avoid using this prefix
+	 * to stay aligned with the WordPress coding standards. The WordPress coding standards recommend
+	 * using table names without custom prefixes to ensure compatibility and standardization.
+	 *
+	 * @deprecated Avoid using this prefix to comply with WordPress coding standards.
+	 */
+	const POSTFINANCECHECKOUT_DEPRECATED_TABLE_PREFIX = 'wc_';
+	const POSTFINANCECHECKOUT_DEPRECATED_PLUGIN_PREFIX = 'woo-';
+
+	// const POSTFINANCECHECKOUT_CK_DB_VERSION = 'wc_postfinancecheckout_db_version';
+
+	/**
 	 * Database migrations.
 	 *
 	 * @var $db_migrations database migrations.
@@ -39,6 +53,7 @@ class WC_PostFinanceCheckout_Migration {
 		'1.0.4' => 'update_1_0_4_failure_msg_and_attribute',
 		'1.0.5' => 'update_1_0_5_clear_provider_transients',
 		'1.0.6' => 'update_1_0_6_shorten_table_names',
+		'1.0.7' => 'update_1_0_7_migrate_plugin_name_and_tables',
 	);
 
 	/**
@@ -254,7 +269,8 @@ class WC_PostFinanceCheckout_Migration {
 	public static function plugin_row_meta( $links, $file ) {
 		if ( WC_POSTFINANCECHECKOUT_PLUGIN_BASENAME === $file ) {
 			$row_meta = array(
-				'docs' => '<a href="https://plugin-documentation.postfinance-checkout.ch/pfpayments/woocommerce/3.1.0/docs/en/documentation.html" aria-label="' . esc_html__( 'View Documentation', 'woo-postfinancecheckout' ) . '">' . esc_html__( 'Documentation', 'woo-postfinancecheckout' ) . '</a>',
+				'docs' => '<a href="https://plugin-documentation.postfinance-checkout.ch/pfpayments/woocommerce/3.1.1
+/docs/en/documentation.html" aria-label="' . esc_html__( 'View Documentation', 'woo-postfinancecheckout' ) . '">' . esc_html__( 'Documentation', 'woo-postfinancecheckout' ) . '</a>',
 			);
 
 			return array_merge( $links, $row_meta );
@@ -375,7 +391,7 @@ class WC_PostFinanceCheckout_Migration {
 				`updated_at` datetime NOT NULL,
 				`restock` varchar(1) COLLATE utf8_unicode_ci,
 				`items` longtext COLLATE utf8_unicode_ci,
-				`failure_reason` longtext COLLATE utf8_unicode_ci,			
+				`failure_reason` longtext COLLATE utf8_unicode_ci,
 				PRIMARY KEY (`id`),
 				KEY `idx_transaction_id_space_id` (`transaction_id`,`space_id`),
 				KEY `idx_completion_id_space_id` (`completion_id`,`space_id`)
@@ -543,7 +559,7 @@ class WC_PostFinanceCheckout_Migration {
 		if ( 0 === $result ) {
 			// phpcs:disable WordPress.DB.DirectDatabaseQuery.SchemaChange, WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching, WordPress.DB.PreparedSQL.InterpolatedNotPrepared, WordPress.DB.PreparedSQLPlaceholders.UnfinishedPrepare -- Values are escaped in $wpdb->prepare.
 			$result = $wpdb->query( "ALTER TABLE $table_transaction_info ADD COLUMN `image_base` VARCHAR(2047) CHARACTER SET utf8 COLLATE utf8_unicode_ci NULL DEFAULT NULL AFTER image" );
-			// phpcs:enable WordPress.DB.DirectDatabaseQuery.SchemaChange, WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching, WordPress.DB.PreparedSQL.InterpolatedNotPrepared, WordPress.DB.PreparedSQLPlaceholders.UnfinishedPrepare.	
+			// phpcs:enable WordPress.DB.DirectDatabaseQuery.SchemaChange, WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching, WordPress.DB.PreparedSQL.InterpolatedNotPrepared, WordPress.DB.PreparedSQLPlaceholders.UnfinishedPrepare.
 
 			if ( false === $result ) {
 				throw new Exception( esc_html( $wpdb->last_error ) );
@@ -562,21 +578,21 @@ class WC_PostFinanceCheckout_Migration {
 		$table_transaction_info = $wpdb->prefix . 'postfinancecheckout_transaction_info'; //phpcs:ignore
 		$table_attribute_options = $wpdb->prefix . 'postfinancecheckout_attribute_options'; //phpcs:ignore
 
-		// phpcs:disable WordPress.DB.DirectDatabaseQuery.SchemaChange, WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching, WordPress.DB.PreparedSQL.InterpolatedNotPrepared, WordPress.DB.PreparedSQLPlaceholders.UnfinishedPrepare -- Values are escaped in $wpdb->prepare.		
+		// phpcs:disable WordPress.DB.DirectDatabaseQuery.SchemaChange, WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching, WordPress.DB.PreparedSQL.InterpolatedNotPrepared, WordPress.DB.PreparedSQLPlaceholders.UnfinishedPrepare -- Values are escaped in $wpdb->prepare.
 		$result = $wpdb->query( $wpdb->prepare( "SHOW COLUMNS FROM $table_transaction_info LIKE %s", 'user_failure_message' ) );
 		// phpcs:enable WordPress.DB.DirectDatabaseQuery.SchemaChange, WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching, WordPress.DB.PreparedSQL.InterpolatedNotPrepared, WordPress.DB.PreparedSQLPlaceholders.UnfinishedPrepare.
 
 		if ( 0 === $result ) {
-			// phpcs:disable WordPress.DB.DirectDatabaseQuery.SchemaChange, WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching, WordPress.DB.PreparedSQL.InterpolatedNotPrepared, WordPress.DB.PreparedSQLPlaceholders.UnfinishedPrepare -- Values are escaped in $wpdb->prepare.		
+			// phpcs:disable WordPress.DB.DirectDatabaseQuery.SchemaChange, WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching, WordPress.DB.PreparedSQL.InterpolatedNotPrepared, WordPress.DB.PreparedSQLPlaceholders.UnfinishedPrepare -- Values are escaped in $wpdb->prepare.
 			$result = $wpdb->query( "ALTER TABLE $table_transaction_info ADD COLUMN `user_failure_message` VARCHAR(2047) CHARACTER SET utf8 COLLATE utf8_unicode_ci NULL DEFAULT NULL AFTER failure_reason" );
-			// phpcs:enable WordPress.DB.DirectDatabaseQuery.SchemaChange, WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching, WordPress.DB.PreparedSQL.InterpolatedNotPrepared, WordPress.DB.PreparedSQLPlaceholders.UnfinishedPrepare.	
+			// phpcs:enable WordPress.DB.DirectDatabaseQuery.SchemaChange, WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching, WordPress.DB.PreparedSQL.InterpolatedNotPrepared, WordPress.DB.PreparedSQLPlaceholders.UnfinishedPrepare.
 
 			if ( false === $result ) {
 				throw new Exception( esc_html( $wpdb->last_error ) );
 			}
 		}
 		// Do not use foreign keys to reference attribute to cascade deletion, as some shop still run with MyISAM enginge as default.
-		// phpcs:disable WordPress.DB.DirectDatabaseQuery.SchemaChange, WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching, WordPress.DB.PreparedSQL.InterpolatedNotPrepared, WordPress.DB.PreparedSQLPlaceholders.UnfinishedPrepare -- Values are escaped in $wpdb->prepare.		
+		// phpcs:disable WordPress.DB.DirectDatabaseQuery.SchemaChange, WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching, WordPress.DB.PreparedSQL.InterpolatedNotPrepared, WordPress.DB.PreparedSQLPlaceholders.UnfinishedPrepare -- Values are escaped in $wpdb->prepare.
 		$result = $wpdb->query(
 			"CREATE TABLE IF NOT EXISTS $table_attribute_options(
 				`id` int(10) unsigned NOT NULL AUTO_INCREMENT,
@@ -586,7 +602,7 @@ class WC_PostFinanceCheckout_Migration {
 				UNIQUE `unq_attribute_id` (`attribute_id`)
 			) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci"
 		);
-		// phpcs:enable WordPress.DB.DirectDatabaseQuery.SchemaChange, WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching, WordPress.DB.PreparedSQL.InterpolatedNotPrepared, WordPress.DB.PreparedSQLPlaceholders.UnfinishedPrepare.	
+		// phpcs:enable WordPress.DB.DirectDatabaseQuery.SchemaChange, WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching, WordPress.DB.PreparedSQL.InterpolatedNotPrepared, WordPress.DB.PreparedSQLPlaceholders.UnfinishedPrepare.
 
 		if ( false == $result ) {
 			throw new Exception( esc_html( $wpdb->last_error ) );
@@ -608,54 +624,44 @@ class WC_PostFinanceCheckout_Migration {
 	public static function update_1_0_6_shorten_table_names() {
 		global $wpdb;
 		// old table names format => new table names format.
+		$table_prefix = self::POSTFINANCECHECKOUT_DEPRECATED_TABLE_PREFIX;
 		$table_rename_map = array(
-			"{$wpdb->prefix}woocommerce_postfinancecheckout_attribute_options" => "{$wpdb->prefix}postfinancecheckout_attribute_options",
-			"{$wpdb->prefix}woocommerce_postfinancecheckout_completion_job" => "{$wpdb->prefix}postfinancecheckout_completion_job",
-			"{$wpdb->prefix}woocommerce_postfinancecheckout_method_configuration" => "{$wpdb->prefix}postfinancecheckout_method_config",
-			"{$wpdb->prefix}woocommerce_postfinancecheckout_refund_job" => "{$wpdb->prefix}postfinancecheckout_refund_job",
-			"{$wpdb->prefix}woocommerce_postfinancecheckout_token_info" => "{$wpdb->prefix}postfinancecheckout_token_info",
-			"{$wpdb->prefix}woocommerce_postfinancecheckout_transaction_info" => "{$wpdb->prefix}postfinancecheckout_transaction_info",
-			"{$wpdb->prefix}woocommerce_postfinancecheckout_void_job" => "{$wpdb->prefix}postfinancecheckout_void_job",
+			"{$wpdb->prefix}{$table_prefix}woocommerce_postfinancecheckout_attribute_options" => "{$wpdb->prefix}{$table_prefix}postfinancecheckout_attribute_options",
+			"{$wpdb->prefix}{$table_prefix}woocommerce_postfinancecheckout_completion_job" => "{$wpdb->prefix}{$table_prefix}postfinancecheckout_completion_job",
+			"{$wpdb->prefix}{$table_prefix}woocommerce_postfinancecheckout_method_configuration" => "{$wpdb->prefix}{$table_prefix}postfinancecheckout_method_config",
+			"{$wpdb->prefix}{$table_prefix}woocommerce_postfinancecheckout_refund_job" => "{$wpdb->prefix}{$table_prefix}postfinancecheckout_refund_job",
+			"{$wpdb->prefix}{$table_prefix}woocommerce_postfinancecheckout_token_info" => "{$wpdb->prefix}{$table_prefix}postfinancecheckout_token_info",
+			"{$wpdb->prefix}{$table_prefix}woocommerce_postfinancecheckout_transaction_info" => "{$wpdb->prefix}{$table_prefix}postfinancecheckout_transaction_info",
+			"{$wpdb->prefix}{$table_prefix}woocommerce_postfinancecheckout_void_job" => "{$wpdb->prefix}{$table_prefix}postfinancecheckout_void_job",
 		);
 
-		// rollback table rename if there are issues.
-		// phpcs:disable WordPress.DB.DirectDatabaseQuery.SchemaChange, WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching, WordPress.DB.PreparedSQL.InterpolatedNotPrepared, WordPress.DB.PreparedSQLPlaceholders.UnfinishedPrepare -- Values are escaped in $wpdb->prepare.
-		$wpdb->query( 'START TRANSACTION' ); //phpcs:ignore
-		// phpcs:enable WordPress.DB.DirectDatabaseQuery.SchemaChange, WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching, WordPress.DB.PreparedSQL.InterpolatedNotPrepared, WordPress.DB.PreparedSQLPlaceholders.UnfinishedPrepare.
+		self::rename_tables( $table_rename_map );
+	}
 
-		$table_statement = 'Tables_in_' . $wpdb->dbname;
 
-		foreach ( $table_rename_map as $key => $value ) {
-			// check old table exists.
-			// phpcs:ignore
-			// phpcs:disable WordPress.DB.DirectDatabaseQuery.SchemaChange, WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching, WordPress.DB.PreparedSQL.InterpolatedNotPrepared, WordPress.DB.PreparedSQLPlaceholders.UnfinishedPrepare -- Values are escaped in $wpdb->prepare.
-			$old_table_result = $wpdb->get_row(
-				$wpdb->prepare( "SHOW TABLES WHERE $table_statement = %s", $key )
-			);
-			// phpcs:enable WordPress.DB.DirectDatabaseQuery.SchemaChange, WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching, WordPress.DB.PreparedSQL.InterpolatedNotPrepared, WordPress.DB.PreparedSQLPlaceholders.UnfinishedPrepare.
 
-			if ( $old_table_result ) {
-				// check new table doesn't exist, if it does there's a problem!
-				// phpcs:disable WordPress.DB.DirectDatabaseQuery.SchemaChange, WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching, WordPress.DB.PreparedSQL.InterpolatedNotPrepared, WordPress.DB.PreparedSQLPlaceholders.UnfinishedPrepare -- Values are escaped in $wpdb->prepare.
-				$new_table_result = $wpdb->get_row(
-					$wpdb->prepare( "SHOW TABLES WHERE $table_statement = %s", $value )
-				);
-				// phpcs:enable WordPress.DB.DirectDatabaseQuery.SchemaChange, WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching, WordPress.DB.PreparedSQL.InterpolatedNotPrepared, WordPress.DB.PreparedSQLPlaceholders.UnfinishedPrepare.
-
-				if ( ! $new_table_result ) {
-					// phpcs:ignore
-					// phpcs:disable WordPress.DB.DirectDatabaseQuery.SchemaChange, WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching, WordPress.DB.PreparedSQL.InterpolatedNotPrepared, WordPress.DB.PreparedSQLPlaceholders.UnfinishedPrepare -- Values are escaped in $wpdb->prepare.
-					$result = $wpdb->query( "RENAME TABLE $key TO $value" );
-					// phpcs:enable WordPress.DB.DirectDatabaseQuery.SchemaChange, WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching, WordPress.DB.PreparedSQL.InterpolatedNotPrepared, WordPress.DB.PreparedSQLPlaceholders.UnfinishedPrepare.
-
-					if ( false === $result ) {
-						throw new Exception( esc_html( $wpdb->last_error ) );
-					}
-				}
-			}
-		}
-
-		$wpdb->query( 'COMMIT' ); //phpcs:ignore
+	/**
+	 * Rename plugin tables and update plugin name.
+	 *
+	 * This function renames the tables and updates the plugin name
+	 * to ensure a smooth upgrade without duplicating the plugin installation, version 4.0.0.
+	 *
+	 * @throws Exception Exception.
+	 */
+	public static function update_1_0_7_migrate_plugin_name_and_tables() {
+		global $wpdb;
+		// old table names format => new table names format.
+		$table_prefix = self::POSTFINANCECHECKOUT_DEPRECATED_TABLE_PREFIX;
+		$table_rename_map = array(
+			"{$wpdb->prefix}{$table_prefix}postfinancecheckout_attribute_options" => "{$wpdb->prefix}postfinancecheckout_attribute_options",
+			"{$wpdb->prefix}{$table_prefix}postfinancecheckout_completion_job" => "{$wpdb->prefix}postfinancecheckout_completion_job",
+			"{$wpdb->prefix}{$table_prefix}postfinancecheckout_method_config" => "{$wpdb->prefix}postfinancecheckout_method_config",
+			"{$wpdb->prefix}{$table_prefix}postfinancecheckout_refund_job" => "{$wpdb->prefix}postfinancecheckout_refund_job",
+			"{$wpdb->prefix}{$table_prefix}postfinancecheckout_token_info" => "{$wpdb->prefix}postfinancecheckout_token_info",
+			"{$wpdb->prefix}{$table_prefix}postfinancecheckout_transaction_info" => "{$wpdb->prefix}postfinancecheckout_transaction_info",
+			"{$wpdb->prefix}{$table_prefix}postfinancecheckout_void_job" => "{$wpdb->prefix}postfinancecheckout_void_job",
+		);
+		self::rename_tables( $table_rename_map );
 	}
 
 	/**
@@ -698,6 +704,51 @@ class WC_PostFinanceCheckout_Migration {
 			}
 		}
 	}
+
+	/**
+	 * Rename tables based on the mapping.
+	 *
+	 * @param array $table_rename_map Array of old table names => new table names.
+	 * @throws Exception Exception.
+	 */
+	private static function rename_tables( $table_rename_map ) {
+		global $wpdb;
+		// rollback table rename if there are issues.
+		// phpcs:disable WordPress.DB.DirectDatabaseQuery.SchemaChange, WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching, WordPress.DB.PreparedSQL.InterpolatedNotPrepared, WordPress.DB.PreparedSQLPlaceholders.UnfinishedPrepare -- Values are escaped in $wpdb->prepare.
+		$wpdb->query( 'START TRANSACTION' ); //phpcs:ignore
+		// phpcs:enable WordPress.DB.DirectDatabaseQuery.SchemaChange, WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching, WordPress.DB.PreparedSQL.InterpolatedNotPrepared, WordPress.DB.PreparedSQLPlaceholders.UnfinishedPrepare.
+		$table_stament = 'Tables_in_' . $wpdb->dbname;
+
+		foreach ( $table_rename_map as $old_table_name => $new_table_name ) {
+			// check old table exists.
+			// phpcs:disable WordPress.DB.DirectDatabaseQuery.SchemaChange, WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching, WordPress.DB.PreparedSQL.InterpolatedNotPrepared, WordPress.DB.PreparedSQLPlaceholders.UnfinishedPrepare -- Values are escaped in $wpdb->prepare.
+			$old_table_result = $wpdb->get_row(
+				$wpdb->prepare( "SHOW TABLES WHERE $table_stament = %s", $old_table_name )
+			);
+			// phpcs:enable WordPress.DB.DirectDatabaseQuery.SchemaChange, WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching, WordPress.DB.PreparedSQL.InterpolatedNotPrepared, WordPress.DB.PreparedSQLPlaceholders.UnfinishedPrepare.
+
+			if ( $old_table_result ) {
+				// check new table doesn't exist, if it does there's a problem!.
+				// phpcs:disable WordPress.DB.DirectDatabaseQuery.SchemaChange, WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching, WordPress.DB.PreparedSQL.InterpolatedNotPrepared, WordPress.DB.PreparedSQLPlaceholders.UnfinishedPrepare -- Values are escaped in $wpdb->prepare.
+				$new_table_result = $wpdb->get_row(
+					$wpdb->prepare( "SHOW TABLES WHERE $table_stament = %s", $new_table_name )
+				);
+				// phpcs:enable WordPress.DB.DirectDatabaseQuery.SchemaChange, WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching, WordPress.DB.PreparedSQL.InterpolatedNotPrepared, WordPress.DB.PreparedSQLPlaceholders.UnfinishedPrepare.
+
+				if ( ! $new_table_result ) {
+					// phpcs:disable WordPress.DB.DirectDatabaseQuery.SchemaChange, WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching, WordPress.DB.PreparedSQL.InterpolatedNotPrepared, WordPress.DB.PreparedSQLPlaceholders.UnfinishedPrepare -- Values are escaped in $wpdb->prepare.
+					$result = $wpdb->query( "RENAME TABLE $old_table_name TO $new_table_name" );
+					// phpcs:enable WordPress.DB.DirectDatabaseQuery.SchemaChange, WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching, WordPress.DB.PreparedSQL.InterpolatedNotPrepared, WordPress.DB.PreparedSQLPlaceholders.UnfinishedPrepare.
+					if ( false === $result ) {
+						throw new Exception( esc_html( $wpdb->last_error ) );
+					}
+				}
+			}
+		}
+
+		$wpdb->query( 'COMMIT' ); //phpcs:ignore
+	}
+
 }
 
 WC_PostFinanceCheckout_Migration::init();

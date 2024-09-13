@@ -124,7 +124,7 @@ class WC_PostFinanceCheckout_Webhook_Transaction_Void_Strategy extends WC_PostFi
 			}
 			$void_job->set_void_id( $void->getId() );
 		}
-		$void_job->set_state( WC_PostFinanceCheckout_Entity_Void_Job::STATE_DONE );
+		$void_job->set_state( WC_PostFinanceCheckout_Entity_Void_Job::POSTFINANCECHECKOUT_STATE_DONE );
 
 		if ( $void_job->get_restock() ) {
 			WC_PostFinanceCheckout_Helper::instance()->maybe_restock_items_for_order( $order );
@@ -155,7 +155,7 @@ class WC_PostFinanceCheckout_Webhook_Transaction_Void_Strategy extends WC_PostFi
 		if ( $void_job->getFailureReason() != null ) {
 			$void_job->set_failure_reason( $void->getFailureReason()->getDescription() );
 		}
-		$void_job->set_state( WC_PostFinanceCheckout_Entity_Void_Job::STATE_DONE );
+		$void_job->set_state( WC_PostFinanceCheckout_Entity_Void_Job::POSTFINANCECHECKOUT_STATE_DONE );
 		$void_job->save();
 	}
 }
