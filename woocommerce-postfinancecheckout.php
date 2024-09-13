@@ -3,7 +3,7 @@
  * Plugin Name: PostFinance Checkout
  * Plugin URI: https://wordpress.org/plugins/woo-postfinance-checkout
  * Description: Process WooCommerce payments with PostFinance Checkout.
- * Version: 3.1.1
+ * Version: 3.1.2
  * Author: postfinancecheckout AG
  * Author URI: https://postfinance.ch/en/business/products/e-commerce/postfinance-checkout-all-in-one.html
  * Text Domain: postfinancecheckout
@@ -38,7 +38,7 @@ if ( ! class_exists( 'WooCommerce_PostFinanceCheckout' ) ) {
 		const POSTFINANCECHECKOUT_CK_INTEGRATION = 'wc_postfinancecheckout_integration';
 		const POSTFINANCECHECKOUT_CK_ORDER_REFERENCE = 'wc_postfinancecheckout_order_reference';
 		const POSTFINANCECHECKOUT_CK_ENFORCE_CONSISTENCY = 'wc_postfinancecheckout_enforce_consistency';
-		const POSTFINANCECHECKOUT_UPGRADE_VERSION = '3.1.1';
+		const POSTFINANCECHECKOUT_UPGRADE_VERSION = '3.1.2';
 		const WC_MAXIMUM_VERSION = '9.2.3';
 
 		/**
@@ -46,7 +46,7 @@ if ( ! class_exists( 'WooCommerce_PostFinanceCheckout' ) ) {
 		 *
 		 * @var string
 		 */
-		private $version = '3.1.1';
+		private $version = '3.1.2';
 
 		/**
 		 * The single instance of the class.
@@ -425,7 +425,7 @@ if ( ! class_exists( 'WooCommerce_PostFinanceCheckout' ) ) {
 				$old_option_prefix . self::POSTFINANCECHECKOUT_CK_INTEGRATION,
 				$old_option_prefix . self::POSTFINANCECHECKOUT_CK_ORDER_REFERENCE,
 				$old_option_prefix . self::POSTFINANCECHECKOUT_CK_ENFORCE_CONSISTENCY,
-				$old_option_prefix . self::POSTFINANCECHECKOUT_WC_MAXIMUM_VERSION,
+				$old_option_prefix . self::WC_MAXIMUM_VERSION,
 			];
 
 			// If the old plugin options exist, perform the migration
