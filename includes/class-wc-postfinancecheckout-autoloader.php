@@ -1,9 +1,7 @@
 <?php
 /**
- * Plugin Name: PostFinanceCheckout
- * Author: postfinancecheckout AG
- * Text Domain: postfinancecheckout
- * Domain Path: /languages/
+ *
+ * WC_PostFinanceCheckout_Autoloader Class
  *
  * PostFinanceCheckout
  * This plugin will add support for all PostFinanceCheckout payments methods and connect the PostFinanceCheckout servers to your WooCommerce webshop (https://postfinance.ch/en/business/products/e-commerce/postfinance-checkout-all-in-one.html).
@@ -14,13 +12,16 @@
  * @license  http://www.apache.org/licenses/LICENSE-2.0 Apache Software License (ASL 2.0)
  */
 
-defined( 'ABSPATH' ) || exit;
-
+if ( ! defined( 'ABSPATH' ) ) {
+	exit();
+}
 /**
  * Class WC_PostFinanceCheckout_Autoloader.
- * This is the autoloader for PostFinance Checkout classes.
  *
  * @class WC_PostFinanceCheckout_Autoloader
+ */
+/**
+ * This is the autoloader for PostFinance Checkout classes.
  */
 class WC_PostFinanceCheckout_Autoloader {
 
@@ -47,12 +48,11 @@ class WC_PostFinanceCheckout_Autoloader {
 	/**
 	 * Take a class name and turn it into a file name.
 	 *
-	 * @param  string $class_file class.
+	 * @param  string $class class.
 	 * @return string
 	 */
-	private function get_file_name_from_class( $class_file ) {
-		$class = preg_replace( '/(?<!^)[A-Z]/', '-$0', $class_file );
-		return 'class-' . str_replace( '_', '-', strtolower( $class ) ) . '.php';
+	private function get_file_name_from_class( $class ) {
+		return 'class-' . str_replace( '_', '-', $class ) . '.php';
 	}
 
 	/**
@@ -72,10 +72,10 @@ class WC_PostFinanceCheckout_Autoloader {
 	/**
 	 * Auto-load WC PostFinanceCheckout classes on demand to reduce memory consumption.
 	 *
-	 * @param string $class_file class.
+	 * @param string $class class.
 	 */
-	public function autoload( $class_file ) {
-		$class = strtolower( $class_file );
+	public function autoload( $class ) {
+		$class = strtolower( $class );
 
 		if ( 0 !== strpos( $class, 'wc_postfinancecheckout' ) ) {
 			return;
@@ -91,11 +91,7 @@ class WC_PostFinanceCheckout_Autoloader {
 		} elseif ( strpos( $class, 'wc_postfinancecheckout_provider' ) === 0 ) {
 			$path = $this->include_path . 'provider/';
 		} elseif ( strpos( $class, 'wc_postfinancecheckout_webhook' ) === 0 ) {
-			if ( strpos( $class, 'strategy' ) !== false ) {
-				$path = $this->include_path . 'webhook/strategies/';
-			} else {
-				$path = $this->include_path . 'webhook/';
-			}
+			$path = $this->include_path . 'webhook/';
 		} elseif ( strpos( $class, 'wc_postfinancecheckout_exception' ) === 0 ) {
 			$path = $this->include_path . 'exception/';
 		} elseif ( strpos( $class, 'wc_postfinancecheckout_admin' ) === 0 ) {
@@ -105,6 +101,8 @@ class WC_PostFinanceCheckout_Autoloader {
 		if ( empty( $path ) || ! $this->load_file( $path . $file ) ) {
 			$this->load_file( $this->include_path . $file );
 		}
+
+		$this->load_file( $this->include_path . $file );
 	}
 }
 

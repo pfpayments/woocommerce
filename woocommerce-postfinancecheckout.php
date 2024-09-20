@@ -1,13 +1,13 @@
 <?php
 /**
  * Plugin Name: PostFinance Checkout
- * Plugin URI: https://wordpress.org/plugins/woo-postfinance-checkout
+ * Plugin URI: https://wordpress.org/plugins/woo-postfinancecheckout
  * Description: Process WooCommerce payments with PostFinance Checkout.
+ * License: Apache2
  * Version: 3.1.3
+ * License URI: http://www.apache.org/licenses/LICENSE-2.0
  * Author: postfinancecheckout AG
  * Author URI: https://postfinance.ch/en/business/products/e-commerce/postfinance-checkout-all-in-one.html
- * Text Domain: postfinancecheckout
- * Domain Path: /languages/
  * Requires at least: 6.0
  * Requires PHP: 7.4
  * WC requires at least: 8.0.0
@@ -17,7 +17,7 @@
  * Domain Path: /languages/
  */
 if ( ! defined( 'ABSPATH' ) ) {
-	exit(); // Exit if accessed directly.
+    exit(); // Exit if accessed directly.
 }
 
 if ( ! class_exists( 'WooCommerce_PostFinanceCheckout' ) ) {
@@ -53,7 +53,7 @@ if ( ! class_exists( 'WooCommerce_PostFinanceCheckout' ) ) {
 		 *
 		 * @var WooCommerce_PostFinanceCheckout
 		 */
-		protected static $instance = null;
+		protected static $_instance = null;
 
 		/**
 		 * Logger.
@@ -70,10 +70,10 @@ if ( ! class_exists( 'WooCommerce_PostFinanceCheckout' ) ) {
 		 * @return WooCommerce_PostFinanceCheckout - Main instance.
 		 */
 		public static function instance() {
-			if ( is_null( self::$instance ) ) {
-				self::$instance = new self();
+			if ( null === self::$_instance ) {
+				self::$_instance = new self();
 			}
-			return self::$instance;
+			return self::$_instance;
 		}
 
 		/**
@@ -97,7 +97,7 @@ if ( ! class_exists( 'WooCommerce_PostFinanceCheckout' ) ) {
 		 */
 		protected function define_constants() {
 			$this->define( 'WC_POSTFINANCECHECKOUT_PLUGIN_FILE', __FILE__ );
-			$this->define( 'WC_POSTFINANCECHECKOUT_ABSPATH', __DIR__ . '/' );
+			$this->define( 'WC_POSTFINANCECHECKOUT_ABSPATH', dirname( __FILE__ ) . '/' );
 			$this->define( 'WC_POSTFINANCECHECKOUT_PLUGIN_BASENAME', plugin_basename( __FILE__ ) );
 			$this->define( 'WC_POSTFINANCECHECKOUT_VERSION', $this->version );
 			$this->define( 'WC_POSTFINANCECHECKOUT_REQUIRED_PHP_VERSION', '5.6' );
@@ -113,20 +113,20 @@ if ( ! class_exists( 'WooCommerce_PostFinanceCheckout' ) ) {
 			/**
 			 * Class autoloader.
 			 */
-			require_once WC_POSTFINANCECHECKOUT_ABSPATH . 'includes/class-wc-postfinancecheckout-autoloader.php';
-			require_once WC_POSTFINANCECHECKOUT_ABSPATH . 'postfinancecheckout-sdk/autoload.php';
+			require_once( WC_POSTFINANCECHECKOUT_ABSPATH . 'includes/class-wc-postfinancecheckout-autoloader.php' );
+			require_once( WC_POSTFINANCECHECKOUT_ABSPATH . 'postfinancecheckout-sdk/autoload.php' );
 
-			require_once WC_POSTFINANCECHECKOUT_ABSPATH . 'includes/class-wc-postfinancecheckout-migration.php';
-			require_once WC_POSTFINANCECHECKOUT_ABSPATH . 'includes/class-wc-postfinancecheckout-email.php';
-			require_once WC_POSTFINANCECHECKOUT_ABSPATH . 'includes/class-wc-postfinancecheckout-return-handler.php';
-			require_once WC_POSTFINANCECHECKOUT_ABSPATH . 'includes/class-wc-postfinancecheckout-webhook-handler.php';
-			require_once WC_POSTFINANCECHECKOUT_ABSPATH . 'includes/class-wc-postfinancecheckout-unique-id.php';
-			require_once WC_POSTFINANCECHECKOUT_ABSPATH . 'includes/class-wc-postfinancecheckout-customer-document.php';
-			require_once WC_POSTFINANCECHECKOUT_ABSPATH . 'includes/class-wc-postfinancecheckout-cron.php';
-			require_once WC_POSTFINANCECHECKOUT_ABSPATH . 'includes/packages/coupon/class-wc-postfinancecheckout-packages-coupon-discount.php';
+			require_once( WC_POSTFINANCECHECKOUT_ABSPATH . 'includes/class-wc-postfinancecheckout-migration.php' );
+			require_once( WC_POSTFINANCECHECKOUT_ABSPATH . 'includes/class-wc-postfinancecheckout-email.php' );
+			require_once( WC_POSTFINANCECHECKOUT_ABSPATH . 'includes/class-wc-postfinancecheckout-return-handler.php' );
+			require_once( WC_POSTFINANCECHECKOUT_ABSPATH . 'includes/class-wc-postfinancecheckout-webhook-handler.php' );
+			require_once( WC_POSTFINANCECHECKOUT_ABSPATH . 'includes/class-wc-postfinancecheckout-unique-id.php' );
+			require_once( WC_POSTFINANCECHECKOUT_ABSPATH . 'includes/class-wc-postfinancecheckout-customer-document.php' );
+			require_once( WC_POSTFINANCECHECKOUT_ABSPATH . 'includes/class-wc-postfinancecheckout-cron.php' );
+			require_once( WC_POSTFINANCECHECKOUT_ABSPATH . 'includes/packages/coupon/class-wc-postfinancecheckout-packages-coupon-discount.php' );
 
 			if ( is_admin() ) {
-				require_once WC_POSTFINANCECHECKOUT_ABSPATH . 'includes/admin/class-wc-postfinancecheckout-admin.php';
+				require_once( WC_POSTFINANCECHECKOUT_ABSPATH . 'includes/admin/class-wc-postfinancecheckout-admin.php' );
 			}
 		}
 
@@ -136,35 +136,6 @@ if ( ! class_exists( 'WooCommerce_PostFinanceCheckout' ) ) {
 		 * @return void
 		 */
 		protected function init_hooks() {
-			register_activation_hook(
-				__FILE__,
-				array(
-					'WooCommerce_PostFinanceCheckout',
-					'migrate_plugin_data_on_activation'
-				)
-			);
-
-			register_activation_hook(
-				__FILE__,
-				array(
-					$this,
-					'plugin_activate',
-				)
-			);
-			register_deactivation_hook(
-				__FILE__,
-				array(
-					$this,
-					'plugin_deactivate',
-				)
-			);
-			register_uninstall_hook(
-				__FILE__,
-				array(
-					'WooCommerce_PostFinanceCheckout',
-					'plugin_uninstall',
-				)
-			);
 			register_activation_hook(
 				__FILE__,
 				array(
@@ -187,16 +158,13 @@ if ( ! class_exists( 'WooCommerce_PostFinanceCheckout' ) ) {
 				)
 			);
 
-			// Hook to run migration after plugin update.
-			add_action(
-				'upgrader_process_complete',
+			/*add_action(
+				'woocommerce_thankyou',
 				array(
 					$this,
-					'migrate_plugin_data_after_update',
-				),
-				10,
-				2
-			);
+					'secure_redirect_order_confirmed',
+					)
+			);*/
 
 			add_action(
 				'plugins_loaded',
@@ -245,228 +213,52 @@ if ( ! class_exists( 'WooCommerce_PostFinanceCheckout' ) ) {
 			);
 
 			// Endpoints needed for supporting Woocommerce Blocks checkout block.
-			add_action(
-				'wp_ajax_is_payment_method_available',
-				array(
-					'WC_PostFinanceCheckout_Blocks_Support',
-					'is_payment_method_available',
-				)
-			);
-			add_action(
-				'wp_ajax_nopriv_is_payment_method_available',
-				array(
-					'WC_PostFinanceCheckout_Blocks_Support',
-					'is_payment_method_available',
-				)
-			);
-			add_action(
-				'wp_ajax_get_payment_methods',
-				array(
-					'WC_PostFinanceCheckout_Blocks_Support',
-					'get_payment_methods',
-				)
-			);
-			add_action(
-				'wp_ajax_nopriv_get_payment_methods',
-				array(
-					'WC_PostFinanceCheckout_Blocks_Support',
-					'get_payment_methods',
-				)
-			);
+            add_action(
+                'wp_ajax_is_payment_method_available',
+                ['WC_PostFinanceCheckout_Blocks_Support', 'is_payment_method_available']
+            );
+            add_action(
+                'wp_ajax_nopriv_is_payment_method_available',
+                ['WC_PostFinanceCheckout_Blocks_Support', 'is_payment_method_available']
+            );
+            add_action(
+                'wp_ajax_get_payment_methods',
+                ['WC_PostFinanceCheckout_Blocks_Support', 'get_payment_methods']
+            );
+            add_action(
+                'wp_ajax_nopriv_get_payment_methods',
+                ['WC_PostFinanceCheckout_Blocks_Support', 'get_payment_methods']
+            );
 			add_action(
 				'woocommerce_blocks_enqueue_checkout_block_scripts_after',
-				array(
-					'WC_PostFinanceCheckout_Blocks_Support',
-					'enqueue_portal_scripts',
-				)
+				['WC_PostFinanceCheckout_Blocks_Support', 'enqueue_portal_scripts']
 			);
-			add_action(
-				'woocommerce_rest_checkout_process_payment_with_context',
-				array(
-					'WC_PostFinanceCheckout_Blocks_Support',
-					'process_payment',
-				),
-				10,
-				2
-			);
-
-			// Clear the permalinks after the post type has been registered.
+			add_action( 'woocommerce_rest_checkout_process_payment_with_context',
+				['WC_PostFinanceCheckout_Blocks_Support', 'process_payment'], 10, 2);
 		}
 
-		/**
-		 * Activation hook.
-		 * Fired when the plugin is activated.
-		 */
-		public static function plugin_activate() {
-			// Clear the permalinks after the post type has been registered.
-			flush_rewrite_rules();
-		}
 
 		/**
-		 * Deactivation hook.
-		 * Fired when the plugin is deactivated.
-		 */
-		public static function plugin_deactivate() {
-			// Get the plugin version.
-			$old_plugin_prefix = WC_PostFinanceCheckout_Migration::POSTFINANCECHECKOUT_DEPRECATED_PLUGIN_PREFIX;
-			$plugin_current_version = self::get_installed_plugin_version( $old_plugin_prefix . 'postfinancecheckout' ); // The slug of the old plugin.
-
-			// Check if the plugin version is lower than 3.1.0.
-			if ( version_compare( $plugin_current_version, self::POSTFINANCECHECKOUT_UPGRADE_VERSION, '<' ) ) {
-				// Start output buffering to prevent "headers already sent" errors.
-				ob_start();
-			}
-
-			// Hook to run migration after plugin update.
-			add_action(
-				'upgrader_process_complete',
-				array(
-					'WooCommerce_PostFinanceCheckout',
-					'migrate_plugin_data_after_update',
-				),
-				10,
-				2
-			);
-
-			// Clear the permalinks to remove our post type's rules from the database.
-			flush_rewrite_rules();
-		}
-
-		/**
-		 * Uninstall hook.
-		 * Fired when the plugin is uninstalled.
-		 */
-		public static function plugin_uninstall() {
-			// code to run on plugin uninstall.
-			// delete the registered options.
-		}
-
-		/**
-		 * Function to get the installed version of a plugin.
-		 *
-		 * @param string $plugin_slug The slug of the plugin.
-		 * @return string|null The version of the plugin or null if not found.
-		 */
-		public static function get_installed_plugin_version( $plugin_slug ) {
-			if (!function_exists( 'get_plugins' ) ) {
-				require_once ABSPATH . 'wp-admin/includes/plugin.php';
-			}
-		
-			$all_plugins = get_plugins();
-			foreach ( $all_plugins as $plugin_path => $plugin_info ) {
-				if ( strpos( $plugin_path, $plugin_slug ) !== false ) {
-					return $plugin_info[ 'Version' ];
-				}
-			}
-		
-			return null;
-		}
-
-		/**
-		 * Security check in the thank you page.
+		 * Secirity check in the thank you page.
 		 *
 		 * Note: If for some reason order status is still pending, it will redirect you to the payment form.
 		 *
-		 * @param int $order_id Order id.
 		 */
-		public function secure_redirect_order_confirmed( $order_id ) {
+
+		 public function secure_redirect_order_confirmed($order_id) {
 			$order = wc_get_order( $order_id );
 			$wc_service_transaction = WC_PostFinanceCheckout_Service_Transaction::instance();
-			$sdk_service_transaction = new \PostFinanceCheckout\Sdk\Service\TransactionService( WC_PostFinanceCheckout_Helper::instance()->get_api_client() );
-			$wc_transaction_info = WC_PostFinanceCheckout_Entity_Transaction_Info::load_by_order_id( $order_id );
+			$sdk_service_transaction = new \PostFinanceCheckout\Sdk\Service\TransactionService(WC_PostFinanceCheckout_Helper::instance()->get_api_client());
+			$wc_transaction_info = WC_PostFinanceCheckout_Entity_Transaction_Info::load_by_order_id($order_id);
 
-			if ( property_exists( $wc_transaction_info, 'get_transaction_id' ) ) {
-				$state = $sdk_service_transaction->read( get_option( self::POSTFINANCECHECKOUT_CK_SPACE_ID ), $wc_transaction_info->get_transaction_id() )->getState();
-				if ( \PostFinanceCheckout\Sdk\Model\TransactionState::CONFIRMED === $state ) {
-					wp_redirect($wc_service_transaction->get_payment_page_url(get_option(self::POSTFINANCECHECKOUT_CK_SPACE_ID), $wc_transaction_info->get_transaction_id())); //phpcs:ignore
-					exit;
-				}
+			if (property_exists($wc_transaction_info,'get_transaction_id')) {
+			  $state = $sdk_service_transaction->read(get_option(self::CK_SPACE_ID), $wc_transaction_info->get_transaction_id())->getState();
+			  if ($state == \PostFinanceCheckout\Sdk\Model\TransactionState::CONFIRMED) {
+				  wp_redirect($wc_service_transaction->get_payment_page_url(get_option(self::CK_SPACE_ID), $wc_transaction_info->get_transaction_id()));
+				  exit;
+			  }
 			}
 		}
-
-		/**
-		 * Migrates settings from the old plugin version to the new version 4.0.0.
-		 *
-		 * This function checks if the settings from the old plugin version exist.
-		 * If they do, it transfers these settings to the new plugin's options
-		 * and deletes the old settings from the database.
-		 *
-		 * This ensures that users retain their configurations when updating
-		 * from the old plugin version to the new version.
-		 *
-		 * @return void
-		 */
-		public static function migrate_plugin_data_on_activation() {
-			$old_option_prefix = WC_PostFinanceCheckout_Migration::POSTFINANCECHECKOUT_DEPRECATED_TABLE_PREFIX;
-			$old_plugin_prefix = WC_PostFinanceCheckout_Migration::POSTFINANCECHECKOUT_DEPRECATED_PLUGIN_PREFIX;
-
-			$plugin_slug = $old_plugin_prefix . 'postfinancecheckout'; // The slug of the old plugin.
-			$installed_version = self::get_installed_plugin_version( $plugin_slug );
-
-			/**
-			 * Check if the installed version is 3.1.1 or higher.
-			 * If the version is 3.1.1 or higher, do not run the migration.
-			 */
-			if ( version_compare( $installed_version, self::POSTFINANCECHECKOUT_UPGRADE_VERSION, '>=' ) ) {
-				return;
-			}
-
-			global $wpdb;
-			$options_to_migrate = [
-				$old_option_prefix . WC_PostFinanceCheckout_Migration::POSTFINANCECHECKOUT_CK_DB_VERSION,
-				$old_option_prefix . WC_PostFinanceCheckout_Service_Manual_Task::POSTFINANCECHECKOUT_CONFIG_KEY,
-				$old_option_prefix . self::POSTFINANCECHECKOUT_CK_SPACE_ID,
-				$old_option_prefix . self::POSTFINANCECHECKOUT_CK_SPACE_VIEW_ID,
-				$old_option_prefix . self::POSTFINANCECHECKOUT_CK_APP_USER_ID,
-				$old_option_prefix . self::POSTFINANCECHECKOUT_CK_APP_USER_KEY,
-				$old_option_prefix . self::POSTFINANCECHECKOUT_CK_CUSTOMER_INVOICE,
-				$old_option_prefix . self::POSTFINANCECHECKOUT_CK_CUSTOMER_PACKING,
-				$old_option_prefix . self::POSTFINANCECHECKOUT_CK_SHOP_EMAIL,
-				$old_option_prefix . self::POSTFINANCECHECKOUT_CK_INTEGRATION,
-				$old_option_prefix . self::POSTFINANCECHECKOUT_CK_ORDER_REFERENCE,
-				$old_option_prefix . self::POSTFINANCECHECKOUT_CK_ENFORCE_CONSISTENCY,
-				$old_option_prefix . self::WC_MAXIMUM_VERSION,
-			];
-
-			// If the old plugin options exist, perform the migration
-			foreach ( $options_to_migrate as $option_name ) {
-				$option_value = get_option( $option_name );
-				if ( $option_value !== false ) {
-					// Rename the options to the new prefix 'postfinancecheckout_'.
-					$new_option_name = str_replace( $old_option_prefix . 'postfinancecheckout_', 'postfinancecheckout_', $option_name );
-					if ( get_option( $new_option_name ) !== false ) {
-						// Update the option if it already exists.
-						update_option( $new_option_name, $option_value );
-					} else {
-						// Add the option if it doesn't exist.
-						add_option( $new_option_name, $option_value );
-					}
-					// Delete the old option.
-					//delete_option( $option_name );.
-				}
-			}
-		}
-
-		/**
-		 * Function to migrate plugin data after update
-		 * This function is triggered after the plugin is updated
-		 *
-		 * @param object $upgrader_object The upgrader object.
-		 * @param array $options The options array.
-		 */
-		public static function migrate_plugin_data_after_update( $upgrader_object, $options ) {
-			// Check if the plugin was just updated.
-			if ( $options['action'] == 'update' && $options['type'] == 'plugin' ) {
-				$plugin_basename = plugin_basename( __FILE__ );
-				foreach ( $options['plugins'] as $plugin ) {
-					if ( $plugin == $plugin_basename ) {
-						self::migrate_plugin_data_on_activation();
-						break;
-					}
-				}
-			}
-		}
-
 
 		/**
 		 * Load Localization files.
@@ -474,14 +266,14 @@ if ( ! class_exists( 'WooCommerce_PostFinanceCheckout' ) ) {
 		 * Note: the first-loaded translation file overrides any following ones if the same translation is present.
 		 *
 		 * Locales found in:
-		 * - WP_LANG_DIR/woo-postfinancecheckout/woo-postfinancecheckout-LOCALE.mo
+		 *      - WP_LANG_DIR/woo-postfinancecheckout/woo-postfinancecheckout-LOCALE.mo
 		 */
 		public function load_plugin_textdomain() {
 			$locale = is_admin() && function_exists( 'get_user_locale' ) ? get_user_locale() : get_locale();
 			$locale = apply_filters( 'plugin_locale', $locale, 'woo-postfinancecheckout' );
 
 			load_textdomain( 'woo-postfinancecheckout', WP_LANG_DIR . '/woo-postfinancecheckout/woo-postfinancecheckout' . $locale . '.mo' );
-			load_plugin_textdomain( 'woo-postfinancecheckout', false, plugin_basename( __DIR__ ) . '/languages' );
+			load_plugin_textdomain( 'woo-postfinancecheckout', false, plugin_basename( dirname( __FILE__ ) ) . '/languages' );
 		}
 
 		/**
@@ -678,14 +470,13 @@ if ( ! class_exists( 'WooCommerce_PostFinanceCheckout' ) ) {
 				2
 			);
 
-			add_action(
-				'before_woocommerce_init',
-				function () {
-					if ( class_exists( \Automattic\WooCommerce\Utilities\FeaturesUtil::class ) ) {
-						\Automattic\WooCommerce\Utilities\FeaturesUtil::declare_compatibility( 'custom_order_tables', __FILE__, true );
-					}
+
+			add_action( 'before_woocommerce_init', function() {
+				if ( class_exists( \Automattic\WooCommerce\Utilities\FeaturesUtil::class ) ) {
+					\Automattic\WooCommerce\Utilities\FeaturesUtil::declare_compatibility( 'custom_order_tables', __FILE__, true );
 				}
-			);
+			} );
+
 		}
 
 		/**
@@ -733,7 +524,7 @@ if ( ! class_exists( 'WooCommerce_PostFinanceCheckout' ) ) {
 					'show_in_admin_all_list' => true,
 					'show_in_admin_status_list' => true,
 					/* translators: %s: replaces string */
-					'label_count' => _n_noop( 'PostFinance Checkout Processing <span class="count">(%s)</span>', 'PostFinance Checkout Processing <span class="count">(%s)</span>', 'woo-postfinancecheckout' ),
+					'label_count' => _n_noop( 'PostFinance Checkout Processing <span class="count">(%s)</span>', 'PostFinance Checkout Processing <span class="count">(%s)</span>' ),
 				)
 			);
 			register_post_status(
@@ -745,7 +536,7 @@ if ( ! class_exists( 'WooCommerce_PostFinanceCheckout' ) ) {
 					'show_in_admin_all_list' => true,
 					'show_in_admin_status_list' => true,
 					/* translators: %s: replaces string */
-					'label_count' => _n_noop( 'Waiting <span class="count">(%s)</span>', 'Waiting <span class="count">(%s)</span>', 'woo-postfinancecheckout' ),
+					'label_count' => _n_noop( 'Waiting <span class="count">(%s)</span>', 'Waiting <span class="count">(%s)</span>' ),
 				)
 			);
 			register_post_status(
@@ -757,7 +548,7 @@ if ( ! class_exists( 'WooCommerce_PostFinanceCheckout' ) ) {
 					'show_in_admin_all_list' => true,
 					'show_in_admin_status_list' => true,
 					/* translators: %s: replaces string */
-					'label_count' => _n_noop( 'Manual Decision <span class="count">(%s)</span>', 'Manual Decision <span class="count">(%s)</span>', 'woo-postfinancecheckout' ),
+					'label_count' => _n_noop( 'Manual Decision <span class="count">(%s)</span>', 'Manual Decision <span class="count">(%s)</span>' ),
 				)
 			);
 		}
@@ -783,7 +574,7 @@ if ( ! class_exists( 'WooCommerce_PostFinanceCheckout' ) ) {
 		 * @param mixed $order order.
 		 * @return mixed
 		 */
-		public function valid_order_statuses_for_payment( $statuses, $order = null ) { //phpcs:ignore
+		public function valid_order_statuses_for_payment( $statuses, $order = null ) {
 			$statuses[] = 'postfi-redirected';
 
 			return $statuses;
@@ -810,10 +601,10 @@ if ( ! class_exists( 'WooCommerce_PostFinanceCheckout' ) ) {
 		 * @param mixed $src src.
 		 * @return array|mixed|string|string[]
 		 */
-		public function set_js_async( $tag, $handle, $src ) { //phpcs:ignore
+		public function set_js_async( $tag, $handle, $src ) {
 			$async_script_handles = array( 'postfinancecheckout-device-id-js' );
 			foreach ( $async_script_handles as $async_handle ) {
-				if ( $async_handle === $handle ) {
+				if ( $async_handle == $handle ) {
 					return str_replace( ' src', ' async="async" src', $tag );
 				}
 			}
@@ -829,7 +620,7 @@ if ( ! class_exists( 'WooCommerce_PostFinanceCheckout' ) ) {
 		public function enqueue_javascript_script() {
 			if ( is_cart() || is_checkout() ) {
 				$unique_id = isset( $_COOKIE['wc_postfinancecheckout_device_id'] ) ? sanitize_text_field( wp_unslash( $_COOKIE['wc_postfinancecheckout_device_id'] ) ) : null;
-				$space_id = get_option( self::POSTFINANCECHECKOUT_CK_SPACE_ID );
+				$space_id = get_option( self::CK_SPACE_ID );
 				$script_url = WC_PostFinanceCheckout_Helper::instance()->get_base_gateway_url() . 's/' .
 						$space_id . '/payment/device.js?sessionIdentifier=' .
 						$unique_id;
@@ -856,7 +647,7 @@ if ( ! class_exists( 'WooCommerce_PostFinanceCheckout' ) ) {
 		 * @return false|mixed
 		 */
 		public function order_editable_check( $allowed, WC_Order $order = null ) {
-			if ( is_null( $order ) ) {
+			if ( null == $order ) {
 				return $allowed;
 			}
 			if ( $order->get_meta( '_postfinancecheckout_authorized', true ) ) {
@@ -872,7 +663,7 @@ if ( ! class_exists( 'WooCommerce_PostFinanceCheckout' ) ) {
 		 * @param WC_Order|null $order order.
 		 * @return mixed
 		 */
-		public function valid_order_status_for_completion( $statuses, WC_Order $order = null ) { //phpcs:ignore
+		public function valid_order_status_for_completion( $statuses, WC_Order $order = null ) {
 			$statuses[] = 'postfi-waiting';
 			$statuses[] = 'postfi-manual';
 			$statuses[] = 'postfi-redirected';
@@ -886,7 +677,7 @@ if ( ! class_exists( 'WooCommerce_PostFinanceCheckout' ) ) {
 		 * @param mixed $cart cart.
 		 * @return void
 		 */
-		public function before_calculate_totals( $cart ) { //phpcs:ignore
+		public function before_calculate_totals( $cart ) {
 			$GLOBALS['_wc_postfinancecheckout_calculating'] = true;
 		}
 
@@ -896,7 +687,7 @@ if ( ! class_exists( 'WooCommerce_PostFinanceCheckout' ) ) {
 		 * @param mixed $cart cart.
 		 * @return void
 		 */
-		public function after_calculate_totals( $cart ) { //phpcs:ignore
+		public function after_calculate_totals( $cart ) {
 			unset( $GLOBALS['_wc_postfinancecheckout_calculating'] );
 		}
 
@@ -908,12 +699,12 @@ if ( ! class_exists( 'WooCommerce_PostFinanceCheckout' ) ) {
 		 * @return mixed
 		 */
 		public function add_gateways( $methods ) {
-			$space_id = get_option( self::POSTFINANCECHECKOUT_CK_SPACE_ID );
+			$space_id = get_option( self::CK_SPACE_ID );
 			$method_configurations = WC_PostFinanceCheckout_Entity_Method_Configuration::load_by_states_and_space_id(
 				$space_id,
 				array(
-					WC_PostFinanceCheckout_Entity_Method_Configuration::POSTFINANCECHECKOUT_STATE_ACTIVE,
-					WC_PostFinanceCheckout_Entity_Method_Configuration::POSTFINANCECHECKOUT_STATE_INACTIVE,
+					WC_PostFinanceCheckout_Entity_Method_Configuration::STATE_ACTIVE,
+					WC_PostFinanceCheckout_Entity_Method_Configuration::STATE_INACTIVE,
 				)
 			);
 			try {
@@ -924,7 +715,7 @@ if ( ! class_exists( 'WooCommerce_PostFinanceCheckout' ) ) {
 			} catch ( \PostFinanceCheckout\Sdk\ApiException $e ) {
 				if ( $e->getCode() === 401 ) {
 					// Ignore it because we simply are not allowed to access the API.
-					return $methods;
+						return $methods;
 				} else {
 					$this->log( $e->getMessage(), WC_Log_Levels::CRITICAL );
 				}
@@ -940,26 +731,26 @@ if ( ! class_exists( 'WooCommerce_PostFinanceCheckout' ) ) {
 		 * @param mixed $value calue.
 		 * @return array
 		 */
-		public function modify_form_fields_args( $arguments, $key, $value = null ) { //phpcs:ignore
-			if ( 'billing_company' === $key ) {
+		public function modify_form_fields_args( $arguments, $key, $value = null ) {
+			if ( 'billing_company' == $key ) {
 				$arguments['class'][] = 'address-field';
 			}
-			if ( 'billing_email' === $key ) {
+			if ( 'billing_email' == $key ) {
 				$arguments['class'][] = 'address-field';
 			}
-			if ( 'billing_phone' === $key ) {
+			if ( 'billing_phone' == $key ) {
 				$arguments['class'][] = 'address-field';
 			}
-			if ( 'billing_first_name' === $key ) {
+			if ( 'billing_first_name' == $key ) {
 				$arguments['class'][] = 'address-field';
 			}
-			if ( 'billing_last_name' === $key ) {
+			if ( 'billing_last_name' == $key ) {
 				$arguments['class'][] = 'address-field';
 			}
-			if ( 'shipping_first_name' === $key ) {
+			if ( 'shipping_first_name' == $key ) {
 				$arguments['class'][] = 'address-field';
 			}
-			if ( 'shipping_last_name' === $key ) {
+			if ( 'shipping_last_name' == $key ) {
 				$arguments['class'][] = 'address-field';
 			}
 
@@ -988,7 +779,7 @@ if ( ! class_exists( 'WooCommerce_PostFinanceCheckout' ) ) {
 				)
 			);
 
-			if ( wc_ship_to_billing_address_only() || ! isset( $post_data['ship_to_different_address'] ) || '0' === $post_data['ship_to_different_address'] ) {
+			if ( wc_ship_to_billing_address_only() || ! isset( $post_data['ship_to_different_address'] ) || '0' == $post_data['ship_to_different_address'] ) {
 				WC()->customer->set_props(
 					array(
 						'shipping_first_name' => isset( $post_data['billing_first_name'] ) ? sanitize_text_field( wp_unslash( $post_data['billing_first_name'] ) ) : null,
@@ -1094,7 +885,7 @@ if ( ! class_exists( 'WooCommerce_PostFinanceCheckout' ) ) {
 		 * @return void
 		 */
 		public function show_checkout_error_msg() {
-			if ( $this->register_checkout_error_msg() ) {
+			if ($this->register_checkout_error_msg()) {
 				wc_print_notices();
 			}
 		}
@@ -1102,8 +893,8 @@ if ( ! class_exists( 'WooCommerce_PostFinanceCheckout' ) ) {
 		/**
 		 * Define constant if not already set.
 		 *
-		 * @param string      $name name.
-		 * @param string|bool $value value.
+		 * @param  string      $name name.
+		 * @param  string|bool $value value.
 		 */
 		protected function define( $name, $value ) {
 			if ( ! defined( $name ) ) {
@@ -1119,7 +910,7 @@ if ( ! class_exists( 'WooCommerce_PostFinanceCheckout' ) ) {
 		 * @return void
 		 */
 		public function log( $message, $level = WC_Log_Levels::WARNING ) {
-			if ( is_null( $this->logger ) ) {
+			if ( null == $this->logger ) {
 				$this->logger = new WC_Logger();
 			}
 
@@ -1132,7 +923,7 @@ if ( ! class_exists( 'WooCommerce_PostFinanceCheckout' ) ) {
 			);
 
 			if ( defined( 'WP_DEBUG' ) && WP_DEBUG ) {
-				error_log( 'Woocommerce PostFinanceCheckout: ' . $message ); //phpcs:ignore
+				error_log( 'Woocommerce PostFinanceCheckout: ' . $message );
 			}
 		}
 
@@ -1151,8 +942,7 @@ if ( ! class_exists( 'WooCommerce_PostFinanceCheckout' ) ) {
 					'notice',
 					'error',
 					'success',
-				),
-				true
+				)
 			) ? $type : 'notice';
 			wc_add_notice( $message, $type );
 		}
@@ -1200,9 +990,9 @@ if ( ! class_exists( 'WooCommerce_PostFinanceCheckout' ) ) {
 		 * @throws Exception Exception.
 		 *
 		 * @see woocommerce_rest_insert_product_attribute
-		 * Edit through REST API is handled in woocommerce_rest_insert_product_attribute, as we can not get the rest request object otherwise.
+		 * 	 Edit through REST API is handled in woocommerce_rest_insert_product_attribute, as we can not get the rest request object otherwise.
 		 */
-		public function woocommerce_attribute_added( $attribute_id, $data ) { //phpcs:ignore
+		public function woocommerce_attribute_added( $attribute_id, $data ) {
 			if ( did_action( 'product_page_product_attributes' ) ) {
 				// edit through backend form, check POST data.
 				$option_set = isset( $_POST['postfinancecheckout_attribute_option_send'] );
@@ -1221,7 +1011,7 @@ if ( ! class_exists( 'WooCommerce_PostFinanceCheckout' ) ) {
 		 * @return void
 		 * @throws Exception Exception.
 		 */
-		public function woocommerce_attribute_updated( $attribute_id, $data, $old_slug ) { //phpcs:ignore
+		public function woocommerce_attribute_updated( $attribute_id, $data, $old_slug ) {
 			$this->woocommerce_attribute_added( $attribute_id, $data );
 		}
 
@@ -1233,7 +1023,7 @@ if ( ! class_exists( 'WooCommerce_PostFinanceCheckout' ) ) {
 		 * @param mixed $taxonomy_name taxonomy name.
 		 * @return void
 		 */
-		public function woocommerce_attribute_deleted( $attribute_id, $name, $taxonomy_name ) { //phpcs:ignore
+		public function woocommerce_attribute_deleted( $attribute_id, $name, $taxonomy_name ) {
 			$attribute_options = WC_PostFinanceCheckout_Entity_Attribute_Options::load_by_attribute_id( $attribute_id );
 			$attribute_options->delete();
 		}
@@ -1247,7 +1037,7 @@ if ( ! class_exists( 'WooCommerce_PostFinanceCheckout' ) ) {
 		 * @return void
 		 * @throws Exception Exception.
 		 */
-		public function woocommerce_rest_insert_product_attribute( $attribute, $request, $create ) { //phpcs:ignore
+		public function woocommerce_rest_insert_product_attribute( $attribute, $request, $create ) {
 			if ( isset( $request['postfinancecheckout_attribute_option_send'] ) ) {
 				if ( $request['postfinancecheckout_attribute_option_send'] ) {
 					$this->update_attribute_options( $attribute->attribute_id, true );
@@ -1257,41 +1047,39 @@ if ( ! class_exists( 'WooCommerce_PostFinanceCheckout' ) ) {
 			}
 		}
 
-		/**
-		 * Add cache no store.
-		 *
-		 * @param mixed $headers headers.
-		 * @return mixed
-		 */
-		public function add_cache_no_store( $headers ) {
-			if ( class_exists( 'WooCommerce' ) ) {
-				if ( is_checkout() && isset( $headers['Cache-Control'] ) && stripos( $headers['Cache-Control'], 'no-store' ) === false ) {
-					$headers['Cache-Control'] .= ', no-store ';
-				}
-			}
-			return $headers;
-		}
+        /**
+         * Add cache no store.
+         *
+         * @param mixed $headers headers.
+         * @return mixed
+         */
+        public function add_cache_no_store( $headers ) {
+            if ( is_checkout() && isset( $headers['Cache-Control'] ) && stripos( $headers['Cache-Control'], 'no-store' ) === false ) {
+                $headers['Cache-Control'] .= ', no-store ';
+            }
+            return $headers;
+        }
 
 
-		/**
-		 * Woocommerce rest prepare product attribute.
-		 *
-		 * @param mixed $response response.
-		 * @param mixed $item item.
-		 * @param mixed $request request.
-		 * @return mixed
-		 */
-		public function woocommerce_rest_prepare_product_attribute( $response, $item, $request ) {
+        /**
+         * Woocommerce rest prepare product attribute.
+         *
+         * @param mixed $response response.
+         * @param mixed $item item.
+         * @param mixed $request request.
+         * @return mixed
+         */
+        public function woocommerce_rest_prepare_product_attribute( $response, $item, $request ) {
 
-			$context = ! empty( $request['context'] ) ? $request['context'] : 'view';
-			if ( 'view' === $context || 'edit' === $context ) {
-				$data = $response->get_data();
-				$attribute_options = WC_PostFinanceCheckout_Entity_Attribute_Options::load_by_attribute_id( $item->attribute_id );
-				$data['postfinancecheckout_attribute_option_send'] = $attribute_options->get_id() > 0 && $attribute_options->get_send();
-				$response->set_data( $data );
-			}
-			return $response;
-		}
+            $context = ! empty( $request['context'] ) ? $request['context'] : 'view';
+            if ( 'view' == $context || 'edit' == $context ) {
+                $data = $response->get_data();
+                $attribute_options = WC_PostFinanceCheckout_Entity_Attribute_Options::load_by_attribute_id( $item->attribute_id );
+                $data['postfinancecheckout_attribute_option_send'] = $attribute_options->get_id() > 0 && $attribute_options->get_send();
+                $response->set_data( $data );
+            }
+            return $response;
+        }
 
 		/**
 		 * Displays error messages, if there are, when rendering the woocommerce/checkout block.
@@ -1300,30 +1088,26 @@ if ( ! class_exists( 'WooCommerce_PostFinanceCheckout' ) ) {
 		 */
 		public function pre_render_block() {
 			$args = func_get_args();
-			if ( count( $args )
-				&& ! empty( $args[1] )
-				&& ! empty( $args[1]['blockName'] )
-				&& 'woocommerce/checkout' === wp_unslash( $args[1]['blockName'] )
-			) {
+			if (count($args) && !empty($args[1]) && !empty($args[1]['blockName']) && $args[1]['blockName'] === 'woocommerce/checkout') {
 				$this->show_checkout_error_msg();
 			}
 		}
-	}
+    }
 
-	add_action( 'woocommerce_blocks_loaded', 'WC_PostFinanceCheckout_Blocks_Support' );
+    add_action( 'woocommerce_blocks_loaded', 'WC_PostFinanceCheckout_Blocks_Support' );
 
-	function WC_PostFinanceCheckout_Blocks_Support() { //phpcs:ignore
-		if ( class_exists( 'Automattic\WooCommerce\Blocks\Payments\Integrations\AbstractPaymentMethodType' ) ) {
-			require_once __DIR__ . '/includes/class-wc-postfinancecheckout-blocks-support.php';
+    function WC_PostFinanceCheckout_Blocks_Support() {
+        if ( class_exists( 'Automattic\WooCommerce\Blocks\Payments\Integrations\AbstractPaymentMethodType' ) ) {
+            require_once dirname( __FILE__ ) . '/includes/class-wc-postfinancecheckout-blocks-support.php';
 
-			add_action(
-				'woocommerce_blocks_payment_method_type_registration',
-				function ( Automattic\WooCommerce\Blocks\Payments\PaymentMethodRegistry $payment_method_registry ) {
-					$payment_method_registry->register( new WC_PostFinanceCheckout_Blocks_Support() );
-				},
-			);
-		}
-	}
+            add_action(
+                'woocommerce_blocks_payment_method_type_registration',
+                function( Automattic\WooCommerce\Blocks\Payments\PaymentMethodRegistry $payment_method_registry  ) {
+                    $payment_method_registry->register( new WC_PostFinanceCheckout_Blocks_Support );
+                },
+            );
+        }
+    }
 }
 
 WooCommerce_PostFinanceCheckout::instance();

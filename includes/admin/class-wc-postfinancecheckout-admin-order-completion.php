@@ -1,9 +1,7 @@
 <?php
 /**
- * Plugin Name: PostFinanceCheckout
- * Author: postfinancecheckout AG
- * Text Domain: postfinancecheckout
- * Domain Path: /languages/
+ *
+ * WC_PostFinanceCheckout_Admin_Order_Completion Class
  *
  * PostFinanceCheckout
  * This plugin will add support for all PostFinanceCheckout payments methods and connect the PostFinanceCheckout servers to your WooCommerce webshop (https://postfinance.ch/en/business/products/e-commerce/postfinance-checkout-all-in-one.html).
@@ -16,7 +14,9 @@
 
 use PostFinanceCheckout\Sdk\Model\TransactionState;
 
-defined( 'ABSPATH' ) || exit;
+if ( ! defined( 'ABSPATH' ) ) {
+	exit();
+}
 
 /**
  * WC PostFinanceCheckout Admin Order Completion class
@@ -96,18 +96,18 @@ class WC_PostFinanceCheckout_Admin_Order_Completion {
 
 		check_ajax_referer( 'order-item', 'security' );
 
-		if ( ! current_user_can( 'edit_shop_orders' ) ) { // phpcs:ignore
+		if ( ! current_user_can( 'edit_shop_orders' ) ) {
 			wp_die( -1 );
 		}
 
-		$order_id = isset( $_POST['order_id'] ) ? absint( sanitize_key( wp_unslash( $_POST['order_id'] ) ) ) : 0;
-		$completion_amount  = isset( $_POST['completion_amount'] ) ? wc_format_decimal( sanitize_text_field( wp_unslash( $_POST['completion_amount'] ) ), wc_get_price_decimals() ) : 0;
+		$order_id               	 = isset( $_POST['order_id'] ) ? absint( $_POST['order_id'] ) : 0;
+		$completion_amount           = isset( $_POST['completion_amount'] ) ? wc_format_decimal( sanitize_text_field( wp_unslash( $_POST['completion_amount'] ) ), wc_get_price_decimals() ) : 0;
 		// phpcs:ignore
-		$line_item_qtys = isset( $_POST['line_item_qtys'] ) ? json_decode( sanitize_text_field( wp_unslash( $_POST['line_item_qtys'] ) ), true ) : array();
+		$line_item_qtys         	 = isset( $_POST['line_item_qtys'] ) ? json_decode( sanitize_text_field( wp_unslash( $_POST['line_item_qtys'] ) ), true ) : array();
 		// phpcs:ignore
-		$line_item_totals = isset( $_POST['line_item_totals'] ) ? json_decode( sanitize_text_field( wp_unslash( $_POST['line_item_totals'] ) ), true ) : array();
+		$line_item_totals       	 = isset( $_POST['line_item_totals'] ) ? json_decode( sanitize_text_field( wp_unslash( $_POST['line_item_totals'] ) ), true ) : array();
 		// phpcs:ignore
-		$line_item_tax_totals = isset( $_POST['line_item_tax_totals'] ) ? json_decode( sanitize_text_field( wp_unslash( $_POST['line_item_tax_totals'] ) ), true ) : array();
+		$line_item_tax_totals   	 = isset( $_POST['line_item_tax_totals'] ) ? json_decode( sanitize_text_field( wp_unslash( $_POST['line_item_tax_totals'] ) ), true ) : array();
 		$restock_not_completed_items = isset( $_POST['restock_not_completed_items'] ) && 'true' === sanitize_text_field( wp_unslash( $_POST['restock_not_completed_items'] ) );
 		try {
 
@@ -116,9 +116,9 @@ class WC_PostFinanceCheckout_Admin_Order_Completion {
 			$item_ids   = array_unique( array_merge( array_keys( $line_item_qtys ), array_keys( $line_item_totals ) ) );
 			foreach ( $item_ids as $item_id ) {
 				$line_items[ $item_id ] = array(
-					'qty' => 0,
+					'qty'              => 0,
 					'completion_total' => 0,
-					'completion_tax' => array(),
+					'completion_tax'   => array(),
 				);
 			}
 			foreach ( $line_item_qtys as $item_id => $qty ) {
@@ -146,7 +146,7 @@ class WC_PostFinanceCheckout_Admin_Order_Completion {
 					foreach ( $item['completion_tax'] as $rate_id => $amount ) {
 
 						$percent = WC_Tax::get_rate_percent( $rate_id );
-						$rate = rtrim( $percent, '%' );
+						$rate    = rtrim( $percent, '%' );
 
 						$tax_amount = $item['completion_total'] * $rate / 100;
 						if ( wc_format_decimal( $tax_amount, wc_get_price_decimals() ) !== wc_format_decimal( $amount, wc_get_price_decimals() ) ) {
@@ -196,7 +196,7 @@ class WC_PostFinanceCheckout_Admin_Order_Completion {
 			$completion_job->set_restock( $restock_not_completed_items );
 			$completion_job->set_space_id( $transaction_info->get_space_id() );
 			$completion_job->set_transaction_id( $transaction_info->get_transaction_id() );
-			$completion_job->set_state( WC_PostFinanceCheckout_Entity_Completion_Job::POSTFINANCECHECKOUT_STATE_CREATED );
+			$completion_job->set_state( WC_PostFinanceCheckout_Entity_Completion_Job::STATE_CREATED );
 			$completion_job->set_order_id( $order_id );
 			$completion_job->set_amount( $completion_amount );
 			$completion_job->save();
@@ -213,8 +213,8 @@ class WC_PostFinanceCheckout_Admin_Order_Completion {
 		}
 
 		try {
-			// the order id is saved for later use
-			// e.g. use the order id to check if the order has a discount applied to it.
+			//the order id is saved for later use
+			//e.g. use the order id to check if the order has a discount applied to it
 			WC()->session->set( 'postfinancecheckout_order_id', $order_id );
 			self::update_line_items( $current_completion_id );
 			self::send_completion( $current_completion_id );
@@ -248,7 +248,7 @@ class WC_PostFinanceCheckout_Admin_Order_Completion {
 		// Reload void job.
 		$completion_job = WC_PostFinanceCheckout_Entity_Completion_Job::load_by_id( $completion_job_id );
 
-		if ( $completion_job->get_state() !== WC_PostFinanceCheckout_Entity_Completion_Job::POSTFINANCECHECKOUT_STATE_CREATED ) {
+		if ( $completion_job->get_state() !== WC_PostFinanceCheckout_Entity_Completion_Job::STATE_CREATED ) {
 			// Already updated in the meantime.
 			WC_PostFinanceCheckout_Helper::instance()->rollback_database_transaction();
 			return;
@@ -264,12 +264,12 @@ class WC_PostFinanceCheckout_Admin_Order_Completion {
 				$completion_job->get_transaction_id(),
 				$line_items
 			);
-			$completion_job->set_state( WC_PostFinanceCheckout_Entity_Completion_Job::POSTFINANCECHECKOUT_STATE_ITEMS_UPDATED );
+			$completion_job->set_state( WC_PostFinanceCheckout_Entity_Completion_Job::STATE_ITEMS_UPDATED );
 			$completion_job->save();
 			WC_PostFinanceCheckout_Helper::instance()->commit_database_transaction();
 		} catch ( \PostFinanceCheckout\Sdk\ApiException $e ) {
 			if ( $e->getResponseObject() instanceof \PostFinanceCheckout\Sdk\Model\ClientError ) {
-				$completion_job->set_state( WC_PostFinanceCheckout_Entity_Completion_Job::POSTFINANCECHECKOUT_STATE_DONE );
+				$completion_job->set_state( WC_PostFinanceCheckout_Entity_Completion_Job::STATE_DONE );
 				$completion_job->save();
 				WC_PostFinanceCheckout_Helper::instance()->commit_database_transaction();
 			} else {
@@ -302,7 +302,7 @@ class WC_PostFinanceCheckout_Admin_Order_Completion {
 		// Reload void job.
 		$completion_job = WC_PostFinanceCheckout_Entity_Completion_Job::load_by_id( $completion_job_id );
 
-		if ( $completion_job->get_state() !== WC_PostFinanceCheckout_Entity_Completion_Job::POSTFINANCECHECKOUT_STATE_ITEMS_UPDATED ) {
+		if ( $completion_job->get_state() !== WC_PostFinanceCheckout_Entity_Completion_Job::STATE_ITEMS_UPDATED ) {
 			// Already sent in the meantime.
 			WC_PostFinanceCheckout_Helper::instance()->rollback_database_transaction();
 			return;
@@ -315,12 +315,12 @@ class WC_PostFinanceCheckout_Admin_Order_Completion {
 				$completion_job->get_transaction_id()
 			);
 			$completion_job->set_completion_id( $completion->getId() );
-			$completion_job->set_state( WC_PostFinanceCheckout_Entity_Completion_Job::POSTFINANCECHECKOUT_STATE_SENT );
+			$completion_job->set_state( WC_PostFinanceCheckout_Entity_Completion_Job::STATE_SENT );
 			$completion_job->save();
 			WC_PostFinanceCheckout_Helper::instance()->commit_database_transaction();
 		} catch ( \PostFinanceCheckout\Sdk\ApiException $e ) {
 			if ( $e->getResponseObject() instanceof \PostFinanceCheckout\Sdk\Model\ClientError ) {
-				$completion_job->set_state( WC_PostFinanceCheckout_Entity_Completion_Job::POSTFINANCECHECKOUT_STATE_DONE );
+				$completion_job->set_state( WC_PostFinanceCheckout_Entity_Completion_Job::STATE_DONE );
 				$completion_job->save();
 				WC_PostFinanceCheckout_Helper::instance()->commit_database_transaction();
 			} else {
@@ -351,10 +351,10 @@ class WC_PostFinanceCheckout_Admin_Order_Completion {
 		$transaction_info = WC_PostFinanceCheckout_Entity_Transaction_Info::load_by_order_id( $order->get_id() );
 		$completion_job   = WC_PostFinanceCheckout_Entity_Completion_Job::load_running_completion_for_transaction( $transaction_info->get_space_id(), $transaction_info->get_transaction_id() );
 
-		if ( $completion_job->get_state() === WC_PostFinanceCheckout_Entity_Completion_Job::POSTFINANCECHECKOUT_STATE_CREATED ) {
+		if ( $completion_job->get_state() === WC_PostFinanceCheckout_Entity_Completion_Job::STATE_CREATED ) {
 			self::update_line_items( $completion_job->get_id() );
 			self::send_completion( $completion_job->get_id() );
-		} elseif ( $completion_job->get_state() === WC_PostFinanceCheckout_Entity_Completion_Job::POSTFINANCECHECKOUT_STATE_ITEMS_UPDATED ) {
+		} elseif ( $completion_job->get_state() === WC_PostFinanceCheckout_Entity_Completion_Job::STATE_ITEMS_UPDATED ) {
 			self::send_completion( $completion_job->get_id() );
 		}
 	}
@@ -371,7 +371,7 @@ class WC_PostFinanceCheckout_Admin_Order_Completion {
 				self::update_line_items( $id );
 				self::send_completion( $id );
 			} catch ( Exception $e ) {
-				/* translators: %d: id of transaction, %s: error message */
+				/* translators: %1$d: id of transaction, %2$s: error message */
 				$message = sprintf( __( 'Error updating completion job with id %1$d: %2$s', 'woo-postfinancecheckout' ), $id, $e->getMessage() );
 				WooCommerce_PostFinanceCheckout::instance()->log( $message, WC_Log_Levels::ERROR );
 			}

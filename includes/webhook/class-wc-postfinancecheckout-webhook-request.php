@@ -1,9 +1,7 @@
 <?php
 /**
- * Plugin Name: PostFinanceCheckout
- * Author: postfinancecheckout AG
- * Text Domain: postfinancecheckout
- * Domain Path: /languages/
+ *
+ * WC_PostFinanceCheckout_Webhook_Request Class
  *
  * PostFinanceCheckout
  * This plugin will add support for all PostFinanceCheckout payments methods and connect the PostFinanceCheckout servers to your WooCommerce webshop (https://postfinance.ch/en/business/products/e-commerce/postfinance-checkout-all-in-one.html).
@@ -14,8 +12,9 @@
  * @license  http://www.apache.org/licenses/LICENSE-2.0 Apache Software License (ASL 2.0)
  */
 
-defined( 'ABSPATH' ) || exit;
-
+if ( ! defined( 'ABSPATH' ) ) {
+	exit();
+}
 /**
  * Webhook request.
  */
@@ -70,32 +69,23 @@ class WC_PostFinanceCheckout_Webhook_Request {
 	private $timestamp;
 
 	/**
-	 * Entity state.
-	 *
-	 * @var mixed
-	 */
-	private $state;
-
-	/**
 	 * Constructor.
 	 *
 	 * @param stdClass $model model.
 	 */
 	public function __construct( $model ) {
-		// phpcs:ignore
 		$this->event_id = $model->eventId;
-		// phpcs:ignore
+	       	// phpcs:ignore
 		$this->entity_id = $model->entityId;
-		// phpcs:ignore
+	    	// phpcs:ignore
 		$this->listener_entity_id = $model->listenerEntityId;
-		// phpcs:ignore
+	    	// phpcs:ignore
 		$this->listener_entity_technical_name = $model->listenerEntityTechnicalName;
-		// phpcs:ignore
+	    	// phpcs:ignore
 		$this->space_id = $model->spaceId;
-		// phpcs:ignore
+	    	// phpcs:ignore
 		$this->webhook_listener_id = $model->webhookListenerId;
 		$this->timestamp = $model->timestamp;
-		$this->state = $model->state;
 	}
 
 	/**
@@ -159,14 +149,5 @@ class WC_PostFinanceCheckout_Webhook_Request {
 	 */
 	public function get_timestamp() {
 		return $this->timestamp;
-	}
-
-	/**
-	 * Returns the state of the webhook event's entity.
-	 *
-	 * @return string
-	 */
-	public function get_state() {
-		return $this->state;
 	}
 }

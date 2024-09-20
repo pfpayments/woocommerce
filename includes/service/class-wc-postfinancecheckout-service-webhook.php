@@ -1,9 +1,7 @@
 <?php
 /**
- * Plugin Name: PostFinanceCheckout
- * Author: postfinancecheckout AG
- * Text Domain: postfinancecheckout
- * Domain Path: /languages/
+ *
+ * WC_PostFinanceCheckout_Service_Webhook Class
  *
  * PostFinanceCheckout
  * This plugin will add support for all PostFinanceCheckout payments methods and connect the PostFinanceCheckout servers to your WooCommerce webshop (https://postfinance.ch/en/business/products/e-commerce/postfinance-checkout-all-in-one.html).
@@ -14,23 +12,13 @@
  * @license  http://www.apache.org/licenses/LICENSE-2.0 Apache Software License (ASL 2.0)
  */
 
-defined( 'ABSPATH' ) || exit;
-
+if ( ! defined( 'ABSPATH' ) ) {
+	exit();
+}
 /**
  * This service handles webhooks.
  */
 class WC_PostFinanceCheckout_Service_Webhook extends WC_PostFinanceCheckout_Service_Abstract {
-
-	const POSTFINANCECHECKOUT_MANUAL_TASK = 1487165678181;
-	const POSTFINANCECHECKOUT_PAYMENT_METHOD_CONFIGURATION = 1472041857405;
-	const POSTFINANCECHECKOUT_TRANSACTION = 1472041829003;
-	const POSTFINANCECHECKOUT_DELIVERY_INDICATION = 1472041819799;
-	const POSTFINANCECHECKOUT_TRANSACTION_INVOICE = 1472041816898;
-	const POSTFINANCECHECKOUT_TRANSACTION_COMPLETION = 1472041831364;
-	const POSTFINANCECHECKOUT_TRANSACTION_VOID = 1472041867364;
-	const POSTFINANCECHECKOUT_REFUND = 1472041839405;
-	const POSTFINANCECHECKOUT_TOKEN = 1472041806455;
-	const POSTFINANCECHECKOUT_TOKEN_VERSION = 1472041811051;
 
 	/**
 	 * The webhook listener API service.
@@ -60,15 +48,8 @@ class WC_PostFinanceCheckout_Service_Webhook extends WC_PostFinanceCheckout_Serv
 	 * Constructor to register the webhook entites.
 	 */
 	public function __construct() {
-		$this->init_webhook_entities();
-	}
-
-	/**
-	 * Initializes webhook entities with their specific configurations.
-	 */
-	private function init_webhook_entities() {
-		$this->webhook_entities[ self::POSTFINANCECHECKOUT_MANUAL_TASK ] = new WC_PostFinanceCheckout_Webhook_Entity(
-			self::POSTFINANCECHECKOUT_MANUAL_TASK,
+		$this->webhook_entities[1487165678181] = new WC_PostFinanceCheckout_Webhook_Entity(
+			1487165678181,
 			'Manual Task',
 			array(
 				\PostFinanceCheckout\Sdk\Model\ManualTaskState::DONE,
@@ -77,8 +58,8 @@ class WC_PostFinanceCheckout_Service_Webhook extends WC_PostFinanceCheckout_Serv
 			),
 			'WC_PostFinanceCheckout_Webhook_Manual_Task'
 		);
-		$this->webhook_entities[ self::POSTFINANCECHECKOUT_PAYMENT_METHOD_CONFIGURATION ] = new WC_PostFinanceCheckout_Webhook_Entity(
-			self::POSTFINANCECHECKOUT_PAYMENT_METHOD_CONFIGURATION,
+		$this->webhook_entities[1472041857405] = new WC_PostFinanceCheckout_Webhook_Entity(
+			1472041857405,
 			'Payment Method Configuration',
 			array(
 				\PostFinanceCheckout\Sdk\Model\CreationEntityState::ACTIVE,
@@ -89,8 +70,8 @@ class WC_PostFinanceCheckout_Service_Webhook extends WC_PostFinanceCheckout_Serv
 			'WC_PostFinanceCheckout_Webhook_Method_Configuration',
 			true
 		);
-		$this->webhook_entities[ self::POSTFINANCECHECKOUT_TRANSACTION ] = new WC_PostFinanceCheckout_Webhook_Entity(
-			self::POSTFINANCECHECKOUT_TRANSACTION,
+		$this->webhook_entities[1472041829003] = new WC_PostFinanceCheckout_Webhook_Entity(
+			1472041829003,
 			'Transaction',
 			array(
 				\PostFinanceCheckout\Sdk\Model\TransactionState::CONFIRMED,
@@ -104,8 +85,8 @@ class WC_PostFinanceCheckout_Service_Webhook extends WC_PostFinanceCheckout_Serv
 			),
 			'WC_PostFinanceCheckout_Webhook_Transaction'
 		);
-		$this->webhook_entities[ self::POSTFINANCECHECKOUT_DELIVERY_INDICATION ] = new WC_PostFinanceCheckout_Webhook_Entity(
-			self::POSTFINANCECHECKOUT_DELIVERY_INDICATION,
+		$this->webhook_entities[1472041819799] = new WC_PostFinanceCheckout_Webhook_Entity(
+			1472041819799,
 			'Delivery Indication',
 			array(
 				\PostFinanceCheckout\Sdk\Model\DeliveryIndicationState::MANUAL_CHECK_REQUIRED,
@@ -113,8 +94,8 @@ class WC_PostFinanceCheckout_Service_Webhook extends WC_PostFinanceCheckout_Serv
 			'WC_PostFinanceCheckout_Webhook_Delivery_Indication'
 		);
 
-		$this->webhook_entities[ self::POSTFINANCECHECKOUT_TRANSACTION_INVOICE ] = new WC_PostFinanceCheckout_Webhook_Entity(
-			self::POSTFINANCECHECKOUT_TRANSACTION_INVOICE,
+		$this->webhook_entities[1472041816898] = new WC_PostFinanceCheckout_Webhook_Entity(
+			1472041816898,
 			'Transaction Invoice',
 			array(
 				\PostFinanceCheckout\Sdk\Model\TransactionInvoiceState::NOT_APPLICABLE,
@@ -124,8 +105,8 @@ class WC_PostFinanceCheckout_Service_Webhook extends WC_PostFinanceCheckout_Serv
 			'WC_PostFinanceCheckout_Webhook_Transaction_Invoice'
 		);
 
-		$this->webhook_entities[ self::POSTFINANCECHECKOUT_TRANSACTION_COMPLETION ] = new WC_PostFinanceCheckout_Webhook_Entity(
-			self::POSTFINANCECHECKOUT_TRANSACTION_COMPLETION,
+		$this->webhook_entities[1472041831364] = new WC_PostFinanceCheckout_Webhook_Entity(
+			1472041831364,
 			'Transaction Completion',
 			array(
 				\PostFinanceCheckout\Sdk\Model\TransactionCompletionState::FAILED,
@@ -134,8 +115,8 @@ class WC_PostFinanceCheckout_Service_Webhook extends WC_PostFinanceCheckout_Serv
 			'WC_PostFinanceCheckout_Webhook_Transaction_Completion'
 		);
 
-		$this->webhook_entities[ self::POSTFINANCECHECKOUT_TRANSACTION_VOID ] = new WC_PostFinanceCheckout_Webhook_Entity(
-			self::POSTFINANCECHECKOUT_TRANSACTION_VOID,
+		$this->webhook_entities[1472041867364] = new WC_PostFinanceCheckout_Webhook_Entity(
+			1472041867364,
 			'Transaction Void',
 			array(
 				\PostFinanceCheckout\Sdk\Model\TransactionVoidState::FAILED,
@@ -144,8 +125,8 @@ class WC_PostFinanceCheckout_Service_Webhook extends WC_PostFinanceCheckout_Serv
 			'WC_PostFinanceCheckout_Webhook_Transaction_Void'
 		);
 
-		$this->webhook_entities[ self::POSTFINANCECHECKOUT_REFUND ] = new WC_PostFinanceCheckout_Webhook_Entity(
-			self::POSTFINANCECHECKOUT_REFUND,
+		$this->webhook_entities[1472041839405] = new WC_PostFinanceCheckout_Webhook_Entity(
+			1472041839405,
 			'Refund',
 			array(
 				\PostFinanceCheckout\Sdk\Model\RefundState::FAILED,
@@ -153,8 +134,8 @@ class WC_PostFinanceCheckout_Service_Webhook extends WC_PostFinanceCheckout_Serv
 			),
 			'WC_PostFinanceCheckout_Webhook_Refund'
 		);
-		$this->webhook_entities[ self::POSTFINANCECHECKOUT_TOKEN ] = new WC_PostFinanceCheckout_Webhook_Entity(
-			self::POSTFINANCECHECKOUT_TOKEN,
+		$this->webhook_entities[1472041806455] = new WC_PostFinanceCheckout_Webhook_Entity(
+			1472041806455,
 			'Token',
 			array(
 				\PostFinanceCheckout\Sdk\Model\CreationEntityState::ACTIVE,
@@ -164,8 +145,8 @@ class WC_PostFinanceCheckout_Service_Webhook extends WC_PostFinanceCheckout_Serv
 			),
 			'WC_PostFinanceCheckout_Webhook_Token'
 		);
-		$this->webhook_entities[ self::POSTFINANCECHECKOUT_TOKEN_VERSION ] = new WC_PostFinanceCheckout_Webhook_Entity(
-			self::POSTFINANCECHECKOUT_TOKEN_VERSION,
+		$this->webhook_entities[1472041811051] = new WC_PostFinanceCheckout_Webhook_Entity(
+			1472041811051,
 			'Token Version',
 			array(
 				\PostFinanceCheckout\Sdk\Model\TokenVersionState::ACTIVE,
@@ -179,7 +160,7 @@ class WC_PostFinanceCheckout_Service_Webhook extends WC_PostFinanceCheckout_Serv
 	 * Installs the necessary webhooks in PostFinance Checkout.
 	 */
 	public function install() {
-		$space_id = get_option( WooCommerce_PostFinanceCheckout::POSTFINANCECHECKOUT_CK_SPACE_ID );
+		$space_id = get_option( WooCommerce_PostFinanceCheckout::CK_SPACE_ID );
 		if ( ! empty( $space_id ) ) {
 			$webhook_url = $this->get_webhook_url( $space_id );
 			if ( null == $webhook_url ) {
@@ -187,7 +168,7 @@ class WC_PostFinanceCheckout_Service_Webhook extends WC_PostFinanceCheckout_Serv
 			}
 			$existing_listeners = $this->get_webhook_listeners( $space_id, $webhook_url );
 			foreach ( $this->webhook_entities as $webhook_entity ) {
-				/* @var WC_PostFinanceCheckout_Webhook_Entity $webhook_entity */ //phpcs:ignore
+				/* @var WC_PostFinanceCheckout_Webhook_Entity $webhook_entity */
 				$exists = false;
 				foreach ( $existing_listeners as $existing_listener ) {
 					if ( $existing_listener->getEntity() == $webhook_entity->get_id() ) {
@@ -202,24 +183,23 @@ class WC_PostFinanceCheckout_Service_Webhook extends WC_PostFinanceCheckout_Serv
 	}
 
 	/**
-	 * Get the webhook entity for a specific ID or throws an exception if not found.
+	 * Get webhook entity for id.
 	 *
-	 * @param mixed $id The ID of the webhook entity to retrieve.
-	 * @return WC_PostFinanceCheckout_Webhook_Entity The webhook entity associated with the given ID.
-	 * @throws Exception If the webhook entity cannot be found.
+	 * @param int|string $id id.
+	 * @return WC_PostFinanceCheckout_Webhook_Entity
 	 */
 	public function get_webhook_entity_for_id( $id ) {
-		if ( ! isset( $this->webhook_entities[ $id ] ) ) {
-			throw new Exception( sprintf( 'Could not retrieve webhook model for listener entity id: %s', esc_attr( $id ) ) );
+		if ( isset( $this->webhook_entities[ $id ] ) ) {
+			return $this->webhook_entities[ $id ];
 		}
-		return $this->webhook_entities[ $id ];
+		return null;
 	}
 
 	/**
 	 * Create a webhook listener.
 	 *
-	 * @param WC_PostFinanceCheckout_Webhook_Entity $entity entity.
-	 * @param int $space_id space id.
+	 * @param WC_PostFinanceCheckout_Webhook_Entity     $entity entity.
+	 * @param int                                         $space_id space id.
 	 * @param \PostFinanceCheckout\Sdk\Model\WebhookUrl $webhook_url webhook url.
 	 *
 	 * @return \PostFinanceCheckout\Sdk\Model\WebhookListenerCreate
@@ -233,14 +213,13 @@ class WC_PostFinanceCheckout_Service_Webhook extends WC_PostFinanceCheckout_Serv
 		$webhook_listener->setState( \PostFinanceCheckout\Sdk\Model\CreationEntityState::ACTIVE );
 		$webhook_listener->setUrl( $webhook_url->getId() );
 		$webhook_listener->setNotifyEveryChange( $entity->is_notify_every_change() );
-		$webhook_listener->setEnablePayloadSignatureAndState( true );
 		return $this->get_webhook_listener_service()->create( $space_id, $webhook_listener );
 	}
 
 	/**
 	 * Returns the existing webhook listeners.
 	 *
-	 * @param int $space_id space id.
+	 * @param int                                         $space_id space id.
 	 * @param \PostFinanceCheckout\Sdk\Model\WebhookUrl $webhook_url webhook url.
 	 *
 	 * @return \PostFinanceCheckout\Sdk\Model\WebhookListener[]
@@ -296,15 +275,11 @@ class WC_PostFinanceCheckout_Service_Webhook extends WC_PostFinanceCheckout_Serv
 		);
 		$query->setFilter( $filter );
 		$query->setNumberOfEntities( 1 );
-		try {
-			$result = $this->get_webhook_url_service()->search( $space_id, $query );
-			if ( ! empty( $result ) ) {
-				return $result[0];
-			} else {
-				return null;
-			}
-		} catch ( \Exception $e ) {
-			WooCommerce_PostFinanceCheckout::instance()->log( $e->getMessage(), WC_Log_Levels::ERROR );
+		$result = $this->get_webhook_url_service()->search( $space_id, $query );
+		if ( ! empty( $result ) ) {
+			return $result[0];
+		} else {
+			return null;
 		}
 	}
 

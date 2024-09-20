@@ -1,9 +1,7 @@
 <?php
 /**
- * Plugin Name: PostFinanceCheckout
- * Author: postfinancecheckout AG
- * Text Domain: postfinancecheckout
- * Domain Path: /languages/
+ *
+ * WC_PostFinanceCheckout_Provider_Abstract Class
  *
  * PostFinanceCheckout
  * This plugin will add support for all PostFinanceCheckout payments methods and connect the PostFinanceCheckout servers to your WooCommerce webshop (https://postfinance.ch/en/business/products/e-commerce/postfinance-checkout-all-in-one.html).
@@ -14,8 +12,9 @@
  * @license  http://www.apache.org/licenses/LICENSE-2.0 Apache Software License (ASL 2.0)
  */
 
-defined( 'ABSPATH' ) || exit;
-
+if ( ! defined( 'ABSPATH' ) ) {
+	exit();
+}
 /**
  * Abstract implementation of a provider.
  */
@@ -77,7 +76,7 @@ abstract class WC_PostFinanceCheckout_Provider_Abstract {
 	 * @param mixed $entry entry.
 	 * @return string
 	 */
-	abstract protected function get_id( $entry );
+	abstract protected function get_id( $entry);
 
 	/**
 	 * Returns a single entry by id.

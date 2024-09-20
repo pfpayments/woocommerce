@@ -1,9 +1,7 @@
 <?php
 /**
- * Plugin Name: PostFinanceCheckout
- * Author: postfinancecheckout AG
- * Text Domain: postfinancecheckout
- * Domain Path: /languages/
+ *
+ * WC_PostFinanceCheckout_Customer_Document Class
  *
  * PostFinanceCheckout
  * This plugin will add support for all PostFinanceCheckout payments methods and connect the PostFinanceCheckout servers to your WooCommerce webshop (https://postfinance.ch/en/business/products/e-commerce/postfinance-checkout-all-in-one.html).
@@ -14,13 +12,16 @@
  * @license  http://www.apache.org/licenses/LICENSE-2.0 Apache Software License (ASL 2.0)
  */
 
-defined( 'ABSPATH' ) || exit;
-
+if ( ! defined( 'ABSPATH' ) ) {
+	exit();
+}
 /**
  * Class WC_PostFinanceCheckout_Customer_Document.
- * This class handles the customer document downloads
  *
  * @class WC_PostFinanceCheckout_Customer_Document
+ */
+/**
+ * This class handles the customer document downloads
  */
 class WC_PostFinanceCheckout_Customer_Document {
 
@@ -63,27 +64,24 @@ class WC_PostFinanceCheckout_Customer_Document {
 		}
 		$packing = false;
 		$invoice = false;
-		if ( get_option( WooCommerce_PostFinanceCheckout::POSTFINANCECHECKOUT_CK_CUSTOMER_INVOICE ) == 'yes' && in_array(
+		if ( get_option( WooCommerce_PostFinanceCheckout::CK_CUSTOMER_INVOICE ) == 'yes' && in_array(
 			$transaction_info->get_state(),
 			array(
 				\PostFinanceCheckout\Sdk\Model\TransactionState::COMPLETED,
 				\PostFinanceCheckout\Sdk\Model\TransactionState::FULFILL,
 				\PostFinanceCheckout\Sdk\Model\TransactionState::DECLINE,
-			),
-			true
+			)
 		) ) {
 			$invoice = true;
 		}
-		if ( get_option( WooCommerce_PostFinanceCheckout::POSTFINANCECHECKOUT_CK_CUSTOMER_PACKING ) == 'yes'
-			&& $transaction_info->get_state() == \PostFinanceCheckout\Sdk\Model\TransactionState::FULFILL
-		) {
+		if ( get_option( WooCommerce_PostFinanceCheckout::CK_CUSTOMER_PACKING ) == 'yes' && $transaction_info->get_state() == \PostFinanceCheckout\Sdk\Model\TransactionState::FULFILL ) {
 			$packing = true;
 		}
 		if ( $invoice || $packing ) {
 			?>
 <section class="woocommerce-order-postfinancecheckout-documents">
 	<h2><?php esc_html_e( 'Order Documents', 'woo-postfinancecheckout' ); ?></h2>
-				<?php if ( $invoice ) : ?>
+				 <?php if ( $invoice ) : ?>
 					<span><a
 		href="
 						<?php
@@ -142,8 +140,8 @@ class WC_PostFinanceCheckout_Customer_Document {
 		}
 
 		// verify nonce.
-		$action = isset( $_GET['postfinancecheckout_action'] ) ? sanitize_key( wp_unslash( $_GET['postfinancecheckout_action'] ) ) : false;
-		$nonce = isset( $_GET['nonce'] ) ? sanitize_key( wp_unslash( $_GET['nonce'] ) ) : false;
+		$action = isset( $_GET['postfinancecheckout_action'] ) ? sanitize_key( $_GET['postfinancecheckout_action'] ) : false;
+		$nonce = isset( $_GET['nonce'] ) ? sanitize_key( $_GET['nonce'] ) : false;
 		if ( ! wp_verify_nonce( $nonce, $action ) ) {
 			wp_die( 'Invalid request.' );
 		}
@@ -153,7 +151,7 @@ class WC_PostFinanceCheckout_Customer_Document {
 		}
 
 		// verify woocommerce order.
-		$post_id = isset( $_GET['post'] ) ? absint( sanitize_key( wp_unslash( $_GET['post'] ) ) ) : false;
+		$post_id = isset( $_GET['post'] ) ? $_GET['post'] : false;
 		$order   = WC_Order_Factory::get_order( $post_id );
 		if ( ! $order ) {
 			wp_die( 'Order not found.' );
@@ -163,20 +161,20 @@ class WC_PostFinanceCheckout_Customer_Document {
 		$user             = wp_get_current_user();
 		$order_id         = $order->get_id();
 		$customer_user_id = $order->get_customer_id();
-		if ( $user->ID != $customer_user_id ) {
+		if ( $user->ID !== $customer_user_id ) {
 			wp_die( 'Access denied' );
 		}
 		try {
 
 			switch ( $action ) {
 				case 'download_invoice':
-					if ( get_option( WooCommerce_PostFinanceCheckout::POSTFINANCECHECKOUT_CK_CUSTOMER_INVOICE ) != 'yes' ) {
+					if ( get_option( WooCommerce_PostFinanceCheckout::CK_CUSTOMER_INVOICE ) != 'yes' ) {
 						wp_die( 'Access denied' );
 					}
 					WC_PostFinanceCheckout_Download_Helper::download_invoice( $order_id );
 					break;
 				case 'download_packing':
-					if ( get_option( WooCommerce_PostFinanceCheckout::POSTFINANCECHECKOUT_CK_CUSTOMER_PACKING ) != 'yes' ) {
+					if ( get_option( WooCommerce_PostFinanceCheckout::CK_CUSTOMER_PACKING ) != 'yes' ) {
 						wp_die( 'Access denied' );
 					}
 					WC_PostFinanceCheckout_Download_Helper::download_packing_slip( $order_id );
@@ -185,7 +183,7 @@ class WC_PostFinanceCheckout_Customer_Document {
 		} catch ( Exception $e ) {
 			wc_add_notice( __( 'There was an error downloading the document.', 'woo-postfinancecheckout' ), 'error' );
 		}
-		wp_redirect( wc_get_endpoint_url( 'my-account/view-order', $order_id, wc_get_page_permalink( 'my-account' ) ) ); //phpcs:ignore
+		wp_redirect( wc_get_endpoint_url( 'my-account/view-order', $order_id, wc_get_page_permalink( 'my-account' ) ) );
 		exit();
 	}
 }

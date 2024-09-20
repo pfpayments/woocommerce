@@ -1,9 +1,7 @@
 <?php
 /**
- * Plugin Name: PostFinanceCheckout
- * Author: postfinancecheckout AG
- * Text Domain: postfinancecheckout
- * Domain Path: /languages/
+ *
+ * WC_PostFinanceCheckout_Webhook_Transaction Class
  *
  * PostFinanceCheckout
  * This plugin will add support for all PostFinanceCheckout payments methods and connect the PostFinanceCheckout servers to your WooCommerce webshop (https://postfinance.ch/en/business/products/e-commerce/postfinance-checkout-all-in-one.html).
@@ -14,15 +12,14 @@
  * @license  http://www.apache.org/licenses/LICENSE-2.0 Apache Software License (ASL 2.0)
  */
 
-defined( 'ABSPATH' ) || exit;
-
+if ( ! defined( 'ABSPATH' ) ) {
+	exit();
+}
 /**
  * Webhook processor to handle transaction state transitions.
- *
- * @deprecated 3.0.12 No longer used by internal code and not recommended.
- * @see WC_PostFinanceCheckout_Webhook_Transaction_Strategy
  */
 class WC_PostFinanceCheckout_Webhook_Transaction extends WC_PostFinanceCheckout_Webhook_Order_Related_Abstract {
+
 
 	/**
 	 * Load entity.
@@ -45,7 +42,7 @@ class WC_PostFinanceCheckout_Webhook_Transaction extends WC_PostFinanceCheckout_
 	 * @return int|string
 	 */
 	protected function get_order_id( $transaction ) {
-		/* @var \PostFinanceCheckout\Sdk\Model\Transaction $transaction */ //phpcs:ignore
+		/* @var \PostFinanceCheckout\Sdk\Model\Transaction $transaction */
 		return WC_PostFinanceCheckout_Entity_Transaction_Info::load_by_transaction( $transaction->getLinkedSpaceId(), $transaction->getId() )->get_order_id();
 	}
 
@@ -56,7 +53,7 @@ class WC_PostFinanceCheckout_Webhook_Transaction extends WC_PostFinanceCheckout_
 	 * @return int
 	 */
 	protected function get_transaction_id( $transaction ) {
-		/* @var \PostFinanceCheckout\Sdk\Model\Transaction $transaction */ //phpcs:ignore
+		/* @var \PostFinanceCheckout\Sdk\Model\Transaction $transaction */
 		return $transaction->getId();
 	}
 
@@ -64,13 +61,13 @@ class WC_PostFinanceCheckout_Webhook_Transaction extends WC_PostFinanceCheckout_
 	 * Process order related inner.
 	 *
 	 * @param WC_Order $order order.
-	 * @param mixed $transaction transaction.
+	 * @param mixed    $transaction transaction.
 	 * @return void
 	 * @throws Exception Exception.
 	 */
 	protected function process_order_related_inner( WC_Order $order, $transaction ) {
 
-		/* @var \PostFinanceCheckout\Sdk\Model\Transaction $transaction */ //phpcs:ignore
+		/* @var \PostFinanceCheckout\Sdk\Model\Transaction $transaction */
 		$transaction_info = WC_PostFinanceCheckout_Entity_Transaction_Info::load_by_order_id( $order->get_id() );
 		if ( $transaction->getState() != $transaction_info->get_state() ) {
 			switch ( $transaction->getState() ) {
@@ -111,7 +108,7 @@ class WC_PostFinanceCheckout_Webhook_Transaction extends WC_PostFinanceCheckout_
 	 * Confirm.
 	 *
 	 * @param \PostFinanceCheckout\Sdk\Model\Transaction $transaction transaction.
-	 * @param WC_Order $order order.
+	 * @param WC_Order                                     $order order.
 	 * @return void
 	 */
 	protected function confirm( \PostFinanceCheckout\Sdk\Model\Transaction $transaction, WC_Order $order ) {
@@ -128,7 +125,7 @@ class WC_PostFinanceCheckout_Webhook_Transaction extends WC_PostFinanceCheckout_
 	 * Authorize.
 	 *
 	 * @param \PostFinanceCheckout\Sdk\Model\Transaction $transaction transaction.
-	 * @param \WC_Order $order order.
+	 * @param \WC_Order                                    $order order.
 	 */
 	protected function authorize( \PostFinanceCheckout\Sdk\Model\Transaction $transaction, WC_Order $order ) {
 		if ( ! $order->get_meta( '_postfinancecheckout_authorized', true ) ) {
@@ -147,7 +144,7 @@ class WC_PostFinanceCheckout_Webhook_Transaction extends WC_PostFinanceCheckout_
 	 * Waiting.
 	 *
 	 * @param \PostFinanceCheckout\Sdk\Model\Transaction $transaction transaction.
-	 * @param WC_Order $order order.
+	 * @param WC_Order                                     $order order.
 	 * @return void
 	 */
 	protected function waiting( \PostFinanceCheckout\Sdk\Model\Transaction $transaction, WC_Order $order ) {
@@ -162,7 +159,7 @@ class WC_PostFinanceCheckout_Webhook_Transaction extends WC_PostFinanceCheckout_
 	 * Decline.
 	 *
 	 * @param \PostFinanceCheckout\Sdk\Model\Transaction $transaction transaction.
-	 * @param WC_Order $order order.
+	 * @param WC_Order                                     $order order.
 	 * @return void
 	 */
 	protected function decline( \PostFinanceCheckout\Sdk\Model\Transaction $transaction, WC_Order $order ) {
@@ -176,7 +173,7 @@ class WC_PostFinanceCheckout_Webhook_Transaction extends WC_PostFinanceCheckout_
 	 * Failed.
 	 *
 	 * @param \PostFinanceCheckout\Sdk\Model\Transaction $transaction transaction.
-	 * @param WC_Order $order order.
+	 * @param WC_Order                                     $order order.
 	 * @return void
 	 */
 	protected function failed( \PostFinanceCheckout\Sdk\Model\Transaction $transaction, WC_Order $order ) {
@@ -192,20 +189,21 @@ class WC_PostFinanceCheckout_Webhook_Transaction extends WC_PostFinanceCheckout_
 	 * Fulfill.
 	 *
 	 * @param \PostFinanceCheckout\Sdk\Model\Transaction $transaction transaction.
-	 * @param WC_Order $order order.
+	 * @param WC_Order                                     $order order.
 	 * @return void
 	 */
 	protected function fulfill( \PostFinanceCheckout\Sdk\Model\Transaction $transaction, WC_Order $order ) {
 		do_action( 'wc_postfinancecheckout_fulfill', $transaction, $order );
 		// Sets the status to procesing or complete depending on items.
 		$order->payment_complete( $transaction->getId() );
+
 	}
 
 	/**
 	 * Voided.
 	 *
 	 * @param \PostFinanceCheckout\Sdk\Model\Transaction $transaction transaction.
-	 * @param WC_Order $order order.
+	 * @param WC_Order                                     $order order.
 	 * @return void
 	 */
 	protected function voided( \PostFinanceCheckout\Sdk\Model\Transaction $transaction, WC_Order $order ) {

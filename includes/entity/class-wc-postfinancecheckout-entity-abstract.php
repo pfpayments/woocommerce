@@ -1,9 +1,7 @@
 <?php
 /**
- * Plugin Name: PostFinanceCheckout
- * Author: postfinancecheckout AG
- * Text Domain: postfinancecheckout
- * Domain Path: /languages/
+ *
+ * WC_PostFinanceCheckout_Entity_Abstract Class
  *
  * PostFinanceCheckout
  * This plugin will add support for all PostFinanceCheckout payments methods and connect the PostFinanceCheckout servers to your WooCommerce webshop (https://postfinance.ch/en/business/products/e-commerce/postfinance-checkout-all-in-one.html).
@@ -14,13 +12,16 @@
  * @license  http://www.apache.org/licenses/LICENSE-2.0 Apache Software License (ASL 2.0)
  */
 
-defined( 'ABSPATH' ) || exit;
-
+if ( ! defined( 'ABSPATH' ) ) {
+	exit();
+}
 /**
  * Class WC_PostFinanceCheckout_Entity_Abstract.
- * Abstract implementation of a entity
  *
  * @class WC_PostFinanceCheckout_Entity_Abstract
+ */
+/**
+ * Abstract implementation of a entity
  */
 abstract class WC_PostFinanceCheckout_Entity_Abstract {
 	/**
@@ -35,9 +36,9 @@ abstract class WC_PostFinanceCheckout_Entity_Abstract {
 	 */
 	protected static function get_base_fields() {
 		return array(
-			'id' => WC_PostFinanceCheckout_Entity_Resource_Type::POSTFINANCECHECKOUT_INTEGER,
-			'created_at' => WC_PostFinanceCheckout_Entity_Resource_Type::POSTFINANCECHECKOUT_DATETIME,
-			'updated_at' => WC_PostFinanceCheckout_Entity_Resource_Type::POSTFINANCECHECKOUT_DATETIME,
+			'id' => WC_PostFinanceCheckout_Entity_Resource_Type::INTEGER,
+			'created_at' => WC_PostFinanceCheckout_Entity_Resource_Type::DATETIME,
+			'updated_at' => WC_PostFinanceCheckout_Entity_Resource_Type::DATETIME,
 		);
 	}
 
@@ -122,26 +123,26 @@ abstract class WC_PostFinanceCheckout_Entity_Abstract {
 			if ( isset( $db_values[ $key ] ) ) {
 				$value = $db_values[ $key ];
 				switch ( $type ) {
-					case WC_PostFinanceCheckout_Entity_Resource_Type::POSTFINANCECHECKOUT_STRING:
+					case WC_PostFinanceCheckout_Entity_Resource_Type::STRING:
 						// Do nothing.
 						break;
-					case WC_PostFinanceCheckout_Entity_Resource_Type::POSTFINANCECHECKOUT_BOOLEAN:
+					case WC_PostFinanceCheckout_Entity_Resource_Type::BOOLEAN:
 						$value = 'Y' === $value;
 						break;
-					case WC_PostFinanceCheckout_Entity_Resource_Type::POSTFINANCECHECKOUT_INTEGER:
+					case WC_PostFinanceCheckout_Entity_Resource_Type::INTEGER:
 						$value = intval( $value );
 						break;
 
-					case WC_PostFinanceCheckout_Entity_Resource_Type::POSTFINANCECHECKOUT_DECIMAL:
+					case WC_PostFinanceCheckout_Entity_Resource_Type::DECIMAL:
 						$value = (float) $value;
 						break;
 
-					case WC_PostFinanceCheckout_Entity_Resource_Type::POSTFINANCECHECKOUT_DATETIME:
+					case WC_PostFinanceCheckout_Entity_Resource_Type::DATETIME:
 						$value = new DateTime( $value );
 						break;
 
-					case WC_PostFinanceCheckout_Entity_Resource_Type::POSTFINANCECHECKOUT_OBJECT:
-						$value = unserialize( $value ); //phpcs:ignore
+					case WC_PostFinanceCheckout_Entity_Resource_Type::OBJECT:
+						$value = unserialize( $value );
 						break;
 					default:
 						throw new Exception( 'Unsupported variable type' );
@@ -164,31 +165,31 @@ abstract class WC_PostFinanceCheckout_Entity_Abstract {
 		foreach ( $this->get_field_definition() as $key => $type ) {
 			$value = $this->get_value( $key );
 			switch ( $type ) {
-				case WC_PostFinanceCheckout_Entity_Resource_Type::POSTFINANCECHECKOUT_STRING:
+				case WC_PostFinanceCheckout_Entity_Resource_Type::STRING:
 					$type_array[] = '%s';
 					break;
 
-				case WC_PostFinanceCheckout_Entity_Resource_Type::POSTFINANCECHECKOUT_BOOLEAN:
+				case WC_PostFinanceCheckout_Entity_Resource_Type::BOOLEAN:
 					$value = $value ? 'Y' : 'N';
 					$type_array[] = '%s';
 					break;
 
-				case WC_PostFinanceCheckout_Entity_Resource_Type::POSTFINANCECHECKOUT_INTEGER:
+				case WC_PostFinanceCheckout_Entity_Resource_Type::INTEGER:
 					$type_array[] = '%d';
 					break;
 
-				case WC_PostFinanceCheckout_Entity_Resource_Type::POSTFINANCECHECKOUT_DATETIME:
+				case WC_PostFinanceCheckout_Entity_Resource_Type::DATETIME:
 					if ( $value instanceof DateTime ) {
 						$value = $value->format( 'Y-m-d H:i:s' );
 					}
 					$type_array[] = '%s';
 					break;
-				case WC_PostFinanceCheckout_Entity_Resource_Type::POSTFINANCECHECKOUT_OBJECT:
-					$value = serialize( $value ); //phpcs:ignore
+				case WC_PostFinanceCheckout_Entity_Resource_Type::OBJECT:
+					$value = serialize( $value );
 					$type_array[] = '%s';
 					break;
 
-				case WC_PostFinanceCheckout_Entity_Resource_Type::POSTFINANCECHECKOUT_DECIMAL:
+				case WC_PostFinanceCheckout_Entity_Resource_Type::DECIMAL:
 					$value = number_format( $value, 8, '.', '' );
 					$type_array[] = '%s';
 					break;
@@ -201,10 +202,10 @@ abstract class WC_PostFinanceCheckout_Entity_Abstract {
 		$this->prepare_base_fields_for_storage( $data_array, $type_array );
 
 		if ( $this->get_id() === null ) {
-			$wpdb->insert( $wpdb->prefix . $this->get_table_name(), $data_array, $type_array ); //phpcs:ignore
+			$wpdb->insert( $wpdb->prefix . $this->get_table_name(), $data_array, $type_array );
 			$this->set_id( $wpdb->insert_id );
 		} else {
-			$wpdb->update( //phpcs:ignore
+			$wpdb->update(
 				$wpdb->prefix . $this->get_table_name(),
 				$data_array,
 				array(
@@ -244,7 +245,7 @@ abstract class WC_PostFinanceCheckout_Entity_Abstract {
 	public static function load_by_id( $id ) {
 		global $wpdb;
 		// phpcs:ignore
-		$result = $wpdb->get_row( $wpdb->prepare( 'SELECT * FROM ' . $wpdb->prefix . static::get_table_name() . ' WHERE id = %d', $id ), ARRAY_A ); //phpcs:ignore
+		$result = $wpdb->get_row( $wpdb->prepare( 'SELECT * FROM ' . $wpdb->prefix . static::get_table_name() . ' WHERE id = %d', $id ), ARRAY_A );
 		if ( null !== $result ) {
 			return new static( $result );
 		}
@@ -260,7 +261,7 @@ abstract class WC_PostFinanceCheckout_Entity_Abstract {
 		global $wpdb;
 		// Returns empty array.
 		// phpcs:ignore
-		$db_results = $wpdb->get_results( "SELECT * FROM ". $wpdb->prefix . static::get_table_name() , ARRAY_A );//phpcs:ignore
+		$db_results = $wpdb->get_results( 'SELECT * FROM ' . $wpdb->prefix . static::get_table_name(), ARRAY_A );
 		$result = array();
 		foreach ( $db_results as $object_values ) {
 			$result[] = new static( $object_values );
@@ -273,7 +274,7 @@ abstract class WC_PostFinanceCheckout_Entity_Abstract {
 	 */
 	public function delete() {
 		global $wpdb;
-		$wpdb->delete( //phpcs:ignore
+		$wpdb->delete(
 			$wpdb->prefix . $this->get_table_name(),
 			array(
 				'id' => $this->get_id(),

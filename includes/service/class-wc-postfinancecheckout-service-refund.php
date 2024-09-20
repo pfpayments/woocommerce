@@ -1,9 +1,7 @@
 <?php
 /**
- * Plugin Name: PostFinanceCheckout
- * Author: postfinancecheckout AG
- * Text Domain: postfinancecheckout
- * Domain Path: /languages/
+ *
+ * WC_PostFinanceCheckout_Service_Refund Class
  *
  * PostFinanceCheckout
  * This plugin will add support for all PostFinanceCheckout payments methods and connect the PostFinanceCheckout servers to your WooCommerce webshop (https://postfinance.ch/en/business/products/e-commerce/postfinance-checkout-all-in-one.html).
@@ -14,8 +12,9 @@
  * @license  http://www.apache.org/licenses/LICENSE-2.0 Apache Software License (ASL 2.0)
  */
 
-defined( 'ABSPATH' ) || exit;
-
+if ( ! defined( 'ABSPATH' ) ) {
+	exit();
+}
 /**
  * This service provides functions to deal with PostFinanceCheckout refunds.
  */
@@ -123,13 +122,8 @@ class WC_PostFinanceCheckout_Service_Refund extends WC_PostFinanceCheckout_Servi
 	 * @throws Exception Exception.
 	 * @return \PostFinanceCheckout\Sdk\Model\LineItemReductionCreate[]
 	 */
-	private function distribute_rounding_difference(
-		array $reductions,
-		$index,
-		$remainder,
-		array $base_line_items,
-		$currency_code
-	) {
+	private function distribute_rounding_difference( array $reductions, $index, $remainder, array $base_line_items,
+		$currency_code ) {
 		$digits = $this->get_currency_fraction_digits( $currency_code );
 
 		$current_reduction = $reductions[ $index ];
@@ -138,7 +132,7 @@ class WC_PostFinanceCheckout_Service_Refund extends WC_PostFinanceCheckout_Servi
 		$positive = $delta > 0;
 		$new_reduction = null;
 		$applied_delta = null;
-		if ( $current_reduction->getUnitPriceReduction() != 0 && $current_reduction->getQuantityReduction() === 0 ) {
+		if ( $current_reduction->getUnitPriceReduction() != 0 && $current_reduction->getQuantityReduction() == 0 ) {
 			$line_item = $this->get_line_item_by_unique_id( $base_line_items, $current_reduction->getLineItemUniqueId() );
 			if ( null != $line_item ) {
 				while ( 0 != $delta ) {
@@ -184,10 +178,13 @@ class WC_PostFinanceCheckout_Service_Refund extends WC_PostFinanceCheckout_Servi
 				$base_line_items,
 				$currency_code
 			);
-		} elseif ( $new_remainder > pow( 0.1, $digits + 1 ) ) {
-			throw new Exception( esc_html__( 'Could not distribute the rounding difference.', 'woo-postfinancecheckout' ) );
 		} else {
-			return $reductions;
+			if ( $new_remainder > pow( 0.1, $digits + 1 ) ) {
+				throw new Exception( __( 'Could not distribute the rounding difference.', 'woo-postfinancecheckout' ) );
+			} else {
+
+				return $reductions;
+			}
 		}
 	}
 

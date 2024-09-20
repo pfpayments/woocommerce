@@ -25,7 +25,6 @@
     "@wordpress/scripts": "^25.3.0"
   },
   "dependencies": {
-    "react": "^18.2.0",
-    "util": "^0.12.5"
+    "react": "^18.2.0"
   }
 }

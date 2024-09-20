@@ -1,9 +1,7 @@
 <?php
 /**
- * Plugin Name: PostFinanceCheckout
- * Author: postfinancecheckout AG
- * Text Domain: postfinancecheckout
- * Domain Path: /languages/
+ *
+ * WC_PostFinanceCheckout_Entity_Void_Job Class
  *
  * PostFinanceCheckout
  * This plugin will add support for all PostFinanceCheckout payments methods and connect the PostFinanceCheckout servers to your WooCommerce webshop (https://postfinance.ch/en/business/products/e-commerce/postfinance-checkout-all-in-one.html).
@@ -14,8 +12,9 @@
  * @license  http://www.apache.org/licenses/LICENSE-2.0 Apache Software License (ASL 2.0)
  */
 
-defined( 'ABSPATH' ) || exit;
-
+if ( ! defined( 'ABSPATH' ) ) {
+	exit();
+}
 /**
  * This entity holds data about a transaction on the gateway.
  *
@@ -35,9 +34,9 @@ defined( 'ABSPATH' ) || exit;
  * @method void set_failure_reason(map[string,string] $reasons)
  */
 class WC_PostFinanceCheckout_Entity_Void_Job extends WC_PostFinanceCheckout_Entity_Abstract {
-	const POSTFINANCECHECKOUT_STATE_CREATED = 'created';
-	const POSTFINANCECHECKOUT_STATE_SENT = 'sent';
-	const POSTFINANCECHECKOUT_STATE_DONE = 'done';
+	const STATE_CREATED = 'created';
+	const STATE_SENT = 'sent';
+	const STATE_DONE = 'done';
 
 	/**
 	 * Get field definition.
@@ -46,13 +45,13 @@ class WC_PostFinanceCheckout_Entity_Void_Job extends WC_PostFinanceCheckout_Enti
 	 */
 	protected static function get_field_definition() {
 		return array(
-			'void_id' => WC_PostFinanceCheckout_Entity_Resource_Type::POSTFINANCECHECKOUT_INTEGER,
-			'state' => WC_PostFinanceCheckout_Entity_Resource_Type::POSTFINANCECHECKOUT_STRING,
-			'space_id' => WC_PostFinanceCheckout_Entity_Resource_Type::POSTFINANCECHECKOUT_INTEGER,
-			'transaction_id' => WC_PostFinanceCheckout_Entity_Resource_Type::POSTFINANCECHECKOUT_INTEGER,
-			'order_id' => WC_PostFinanceCheckout_Entity_Resource_Type::POSTFINANCECHECKOUT_INTEGER,
-			'restock' => WC_PostFinanceCheckout_Entity_Resource_Type::POSTFINANCECHECKOUT_BOOLEAN,
-			'failure_reason' => WC_PostFinanceCheckout_Entity_Resource_Type::POSTFINANCECHECKOUT_OBJECT,
+			'void_id' => WC_PostFinanceCheckout_Entity_Resource_Type::INTEGER,
+			'state' => WC_PostFinanceCheckout_Entity_Resource_Type::STRING,
+			'space_id' => WC_PostFinanceCheckout_Entity_Resource_Type::INTEGER,
+			'transaction_id' => WC_PostFinanceCheckout_Entity_Resource_Type::INTEGER,
+			'order_id' => WC_PostFinanceCheckout_Entity_Resource_Type::INTEGER,
+			'restock' => WC_PostFinanceCheckout_Entity_Resource_Type::BOOLEAN,
+			'failure_reason' => WC_PostFinanceCheckout_Entity_Resource_Type::OBJECT,
 
 		);
 	}
@@ -63,7 +62,7 @@ class WC_PostFinanceCheckout_Entity_Void_Job extends WC_PostFinanceCheckout_Enti
 	 * @return string
 	 */
 	protected static function get_table_name() {
-		return 'postfinancecheckout_void_job';
+		return 'wc_postfinancecheckout_void_job';
 	}
 
 
@@ -91,17 +90,15 @@ class WC_PostFinanceCheckout_Entity_Void_Job extends WC_PostFinanceCheckout_Enti
 	 */
 	public static function load_by_void( $space_id, $void_id ) {
 		global $wpdb;
-		$table = $wpdb->prefix . self::get_table_name();
-		// phpcs:disable WordPress.DB.DirectDatabaseQuery.SchemaChange, WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching, WordPress.DB.PreparedSQL.InterpolatedNotPrepared, WordPress.DB.PreparedSQLPlaceholders.UnfinishedPrepare -- Values are escaped in $wpdb->prepare.
-		$result = $wpdb->get_row( //phpcs:ignore
+		$result = $wpdb->get_row(
 			$wpdb->prepare(
-				"SELECT * FROM $table WHERE space_id = %d AND void_id = %d",
+				'SELECT * FROM %1$s WHERE space_id = %2$d AND void_id = %3$d',
+				$wpdb->prefix . self::get_table_name(),
 				$space_id,
 				$void_id
 			),
 			ARRAY_A
 		);
-		// phpcs:enable WordPress.DB.DirectDatabaseQuery.SchemaChange, WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching, WordPress.DB.PreparedSQL.InterpolatedNotPrepared, WordPress.DB.PreparedSQLPlaceholders.UnfinishedPrepare.
 		if ( null !== $result ) {
 			return new self( $result );
 		}
@@ -118,17 +115,15 @@ class WC_PostFinanceCheckout_Entity_Void_Job extends WC_PostFinanceCheckout_Enti
 	public static function count_running_void_for_transaction( $space_id, $transaction_id ) {
 		global $wpdb;
 
-		$table = $wpdb->prefix . self::get_table_name();
-		// phpcs:disable WordPress.DB.DirectDatabaseQuery.SchemaChange, WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching, WordPress.DB.PreparedSQL.InterpolatedNotPrepared, WordPress.DB.PreparedSQLPlaceholders.UnfinishedPrepare -- Values are escaped in $wpdb->prepare.
 		$result = $wpdb->get_var(
 			$wpdb->prepare(
-				"SELECT COUNT(*) FROM $table WHERE space_id = %d AND transaction_id = %d AND state != %s",
+				'SELECT COUNT(*) FROM %1$s WHERE space_id = %2$d AND transaction_id = %3$d AND state != "%4$s"',
+				$wpdb->prefix . self::get_table_name(),
 				$space_id,
 				$transaction_id,
-				self::POSTFINANCECHECKOUT_STATE_DONE
+				self::STATE_DONE
 			)
 		);
-		// phpcs:enable WordPress.DB.DirectDatabaseQuery.SchemaChange, WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching, WordPress.DB.PreparedSQL.InterpolatedNotPrepared, WordPress.DB.PreparedSQLPlaceholders.UnfinishedPrepare.
 		return $result;
 	}
 
@@ -141,18 +136,16 @@ class WC_PostFinanceCheckout_Entity_Void_Job extends WC_PostFinanceCheckout_Enti
 	 */
 	public static function load_running_void_for_transaction( $space_id, $transaction_id ) {
 		global $wpdb;
-		$table = $wpdb->prefix . self::get_table_name();
-		// phpcs:disable WordPress.DB.DirectDatabaseQuery.SchemaChange, WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching, WordPress.DB.PreparedSQL.InterpolatedNotPrepared, WordPress.DB.PreparedSQLPlaceholders.UnfinishedPrepare -- Values are escaped in $wpdb->prepare.
 		$result = $wpdb->get_row(
 			$wpdb->prepare(
-				"SELECT * FROM $table WHERE space_id = %d AND transaction_id = %d AND state != %s",
+				'SELECT * FROM %1$s WHERE space_id = %2$d AND transaction_id = %3$d AND state != "%4$s"',
+				$wpdb->prefix . self::get_table_name(),
 				$space_id,
 				$transaction_id,
-				self::POSTFINANCECHECKOUT_STATE_DONE
+				self::STATE_DONE
 			),
 			ARRAY_A
 		);
-		// phpcs:enable WordPress.DB.DirectDatabaseQuery.SchemaChange, WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching, WordPress.DB.PreparedSQL.InterpolatedNotPrepared, WordPress.DB.PreparedSQLPlaceholders.UnfinishedPrepare.
 		if ( null !== $result ) {
 			return new self( $result );
 		}
@@ -170,17 +163,15 @@ class WC_PostFinanceCheckout_Entity_Void_Job extends WC_PostFinanceCheckout_Enti
 
 		$time = new DateTime();
 		$time->sub( new DateInterval( 'PT10M' ) );
-		$table = $wpdb->prefix . self::get_table_name();
-		// phpcs:disable WordPress.DB.DirectDatabaseQuery.SchemaChange, WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching, WordPress.DB.PreparedSQL.InterpolatedNotPrepared, WordPress.DB.PreparedSQLPlaceholders.UnfinishedPrepare -- Values are escaped in $wpdb->prepare.
 		$db_results = $wpdb->get_results(
 			$wpdb->prepare(
-				"SELECT id FROM $table WHERE state = %s AND updated_at < %s",
-				self::POSTFINANCECHECKOUT_STATE_CREATED,
+				'SELECT id FROM %1$s WHERE state = "%2$s" AND updated_at < "%3$s"',
+				$wpdb->prefix . self::get_table_name(),
+				self::STATE_CREATED,
 				$time->format( 'Y-m-d H:i:s' )
 			),
 			ARRAY_A
 		);
-		// phpcs:enable WordPress.DB.DirectDatabaseQuery.SchemaChange, WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching, WordPress.DB.PreparedSQL.InterpolatedNotPrepared, WordPress.DB.PreparedSQLPlaceholders.UnfinishedPrepare.
 		$result = array();
 		if ( is_array( $db_results ) ) {
 			foreach ( $db_results as $object_values ) {

@@ -39,11 +39,9 @@ How to modify this project
 ==========================
 
 If you need to modify the source code of this project, you need to build the project. Everything needed is already configured in the package.json file.
-If you have not done it before, you need to first install the dependencies needed by the project by running:
+If you have not done it before, you need to fist install the dependencies needed by the project by running:
 
 `npm install`
-
-Please notice that you need at least npm version 10 or up.
 
 After you have saved your changes, build the project by running:
 `npm run build`

@@ -1,9 +1,7 @@
 <?php
 /**
- * Plugin Name: PostFinanceCheckout
- * Author: postfinancecheckout AG
- * Text Domain: postfinancecheckout
- * Domain Path: /languages/
+ *
+ * WC_PostFinanceCheckout_Provider_Payment_Method Class
  *
  * PostFinanceCheckout
  * This plugin will add support for all PostFinanceCheckout payments methods and connect the PostFinanceCheckout servers to your WooCommerce webshop (https://postfinance.ch/en/business/products/e-commerce/postfinance-checkout-all-in-one.html).
@@ -14,8 +12,9 @@
  * @license  http://www.apache.org/licenses/LICENSE-2.0 Apache Software License (ASL 2.0)
  */
 
-defined( 'ABSPATH' ) || exit;
-
+if ( ! defined( 'ABSPATH' ) ) {
+	exit();
+}
 /**
  * Provider of payment method information from the gateway.
  */
@@ -34,7 +33,7 @@ class WC_PostFinanceCheckout_Provider_Payment_Method extends WC_PostFinanceCheck
 	 * @param int $id id.
 	 * @return \PostFinanceCheckout\Sdk\Model\PaymentMethod
 	 */
-	public function find( $id ) { //phpcs:ignore Generic.CodeAnalysis.UselessOverridingMethod.Found
+	public function find( $id ) {
 		return parent::find( $id );
 	}
 
@@ -43,7 +42,7 @@ class WC_PostFinanceCheckout_Provider_Payment_Method extends WC_PostFinanceCheck
 	 *
 	 * @return \PostFinanceCheckout\Sdk\Model\PaymentMethod[]
 	 */
-	public function get_all() { //phpcs:ignore Generic.CodeAnalysis.UselessOverridingMethod.Found
+	public function get_all() {
 		return parent::get_all();
 	}
 
@@ -67,7 +66,7 @@ class WC_PostFinanceCheckout_Provider_Payment_Method extends WC_PostFinanceCheck
 	 * @return int|string
 	 */
 	protected function get_id( $entry ) {
-		/* @var \PostFinanceCheckout\Sdk\Model\PaymentMethod $entry */ //phpcs:ignore
+		/* @var \PostFinanceCheckout\Sdk\Model\PaymentMethod $entry */
 		return $entry->getId();
 	}
 }

@@ -9,11 +9,11 @@
  */
 
 jQuery(
-	function ($) {
+	function($) {
 
 		var wc_postfinancecheckout_management = {
 
-			init : function () {
+			init : function() {
 				this.handle_refund_button();
 				this.show_refund_states();
 				$( '#woocommerce-order-items' ).off( 'click.woo-postfinancecheckout' );
@@ -83,17 +83,17 @@ jQuery(
 				);
 			},
 
-			handle_refund_button : function () {
+			handle_refund_button : function() {
 				if ($( 'span#postfinancecheckout-remove-refund' ).length > 0) {
 					$( 'div.wc-order-bulk-actions' ).find( 'button.refund-items' )
 					.remove();
 				}
 			},
 
-			show_refund_states : function () {
+			show_refund_states : function() {
 				$( 'tbody#order_refunds div.postfinancecheckout-refund-status' )
 				.each(
-					function () {
+					function() {
 						var id = $( this ).data( 'refund-id' );
 						var state = $( this ).data( 'refund-state' );
 						var refund_thumb = $(
@@ -114,7 +114,7 @@ jQuery(
 
 			},
 
-			show_completion : function (event) {
+			show_completion : function(event) {
 				var self = event.data.self;
 
 				$( 'div.refund-actions' ).children().remove();
@@ -122,7 +122,7 @@ jQuery(
 				$( 'div.wc-order-add-item' ).children(
 					'button.postfinancecheckout-completion-button'
 				).each(
-					function (key, value) {
+					function(key, value) {
 						$( value ).show();
 						$( 'div.refund-actions' ).prepend( $( value ) );
 					}
@@ -180,7 +180,7 @@ jQuery(
 				$( 'div.wc-order-refund-items' ).slideDown();
 				$( 'div.wc-order-item-bulk-edit' ).remove();
 				$( '#woocommerce-order-items' ).find( 'input.quantity' ).each(
-					function () {
+					function() {
 						$( this ).closest( 'td.quantity' ).find(
 							'input.refund_order_item_qty'
 						).val(
@@ -190,7 +190,7 @@ jQuery(
 				)
 
 				$( '#woocommerce-order-items' ).find( 'input.line_total' ).each(
-					function () {
+					function() {
 
 						$( this ).closest( 'td.line_cost' ).find(
 							'input.refund_line_total'
@@ -212,7 +212,7 @@ jQuery(
 					}
 				)
 				$( '#woocommerce-order-items' ).find( 'input.line_tax' ).each(
-					function () {
+					function() {
 
 						$( this ).closest( 'td.line_tax' ).find(
 							'input.refund_line_tax'
@@ -246,20 +246,20 @@ jQuery(
 				return false;
 			},
 
-			cancel_completion : function () {
+			cancel_completion : function() {
 				location.reload();
 
 				return false;
 			},
 
-			update_taxes_for_line_items : function () {
+			update_taxes_for_line_items : function() {
 				var initial_amount = $( this ).data( 'postfinancecheckout-initial-amount' );
 				var current_amount = $( this ).val();
 				$( this )
 				.closest( 'tr' )
 				.find( 'input.refund_line_tax' )
 				.each(
-					function () {
+					function() {
 						var initial_tax = $( this ).data(
 							'postfinancecheckout-initial-tax'
 						);
@@ -288,7 +288,7 @@ jQuery(
 				);
 			},
 
-			execute_completion : function () {
+			execute_completion : function() {
 
 				$( '#woocommerce-order-items' ).block(
 					{
@@ -309,7 +309,7 @@ jQuery(
 					var refund_amount = $( 'input#refund_amount' ).val();
 
 					$( '.refund input.refund_order_item_qty' ).each(
-						function (index, item) {
+						function(index, item) {
 							if ($( item ).closest( 'tr' ).data( 'order_item_id' )) {
 								if (item.value) {
 									line_item_qtys[$( item ).closest( 'tr' ).data(
@@ -321,7 +321,7 @@ jQuery(
 					);
 					$( '.refund input.refund_line_total' )
 					.each(
-						function (index, item) {
+						function(index, item) {
 							if ($( item ).closest( 'tr' ).data(
 								'order_item_id'
 							)) {
@@ -336,7 +336,7 @@ jQuery(
 					);
 					$( '.refund input.refund_line_tax' )
 					.each(
-						function (index, item) {
+						function(index, item) {
 							if ($( item ).closest( 'tr' ).data(
 								'order_item_id'
 							)) {
@@ -385,7 +385,8 @@ jQuery(
 					$.post(
 						woocommerce_admin_meta_boxes.ajax_url,
 						data,
-						function ( response ) {
+						function(
+							response) {
 
 							if (true === response.success) {
 								window.alert( response.data.message );
@@ -406,13 +407,13 @@ jQuery(
 				return false;
 			},
 
-			show_void : function () {
+			show_void : function() {
 
 				$( 'div.refund-actions' ).children().remove();
 
 				$( 'div.wc-order-add-item' ).children( 'button.postfinancecheckout-void-button' )
 				.each(
-					function (key, value) {
+					function(key, value) {
 						$( value ).show();
 						$( 'div.refund-actions' ).prepend( $( value ) );
 					}
@@ -457,13 +458,13 @@ jQuery(
 				return false;
 			},
 
-			cancel_void : function () {
+			cancel_void : function() {
 				location.reload();
 
 				return false;
 			},
 
-			execute_void : function () {
+			execute_void : function() {
 
 				$( '#woocommerce-order-items' ).block(
 					{
@@ -488,7 +489,8 @@ jQuery(
 					$.post(
 						woocommerce_admin_meta_boxes.ajax_url,
 						data,
-						function ( response ) {
+						function(
+							response) {
 
 							if (true === response.success) {
 								window.alert( response.data.message );
@@ -506,7 +508,7 @@ jQuery(
 				return false;
 			},
 
-			update_order : function () {
+			update_order : function() {
 
 				$( '#woocommerce-order-items' ).block(
 					{
@@ -527,7 +529,7 @@ jQuery(
 				$.post(
 					woocommerce_admin_meta_boxes.ajax_url,
 					data,
-					function (response) {
+					function(response) {
 
 						if (true === response.success) {
 							window.location.href = window.location.href;
@@ -541,11 +543,11 @@ jQuery(
 				return false;
 			},
 
-			restrict_refund_inputs : function (event) {
+			restrict_refund_inputs : function(event) {
 				var self = event.data.self;
 
 				$( '#woocommerce-order-items' ).find( 'input.line_total' ).each(
-					function () {
+					function() {
 
 						$( this ).closest( 'td.line_cost' ).find(
 							'input.refund_line_total'
@@ -564,7 +566,7 @@ jQuery(
 					}
 				)
 				$( '#woocommerce-order-items' ).find( 'input.line_tax' ).each(
-					function () {
+					function() {
 
 						$( this ).closest( 'td.line_tax' ).find(
 							'input.refund_line_tax'

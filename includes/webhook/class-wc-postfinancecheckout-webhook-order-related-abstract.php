@@ -1,9 +1,7 @@
 <?php
 /**
- * Plugin Name: PostFinanceCheckout
- * Author: postfinancecheckout AG
- * Text Domain: postfinancecheckout
- * Domain Path: /languages/
+ *
+ * WC_PostFinanceCheckout_Webhook_Order_Related_Abstract Class
  *
  * PostFinanceCheckout
  * This plugin will add support for all PostFinanceCheckout payments methods and connect the PostFinanceCheckout servers to your WooCommerce webshop (https://postfinance.ch/en/business/products/e-commerce/postfinance-checkout-all-in-one.html).
@@ -14,13 +12,11 @@
  * @license  http://www.apache.org/licenses/LICENSE-2.0 Apache Software License (ASL 2.0)
  */
 
-defined( 'ABSPATH' ) || exit;
-
+if ( ! defined( 'ABSPATH' ) ) {
+	exit();
+}
 /**
  * Abstract webhook processor for order related entities.
- *
- * @deprecated 3.0.12 No longer used by internal code and not recommended.
- * @see WC_PostFinanceCheckout_Webhook_Strategy_Base
  */
 abstract class WC_PostFinanceCheckout_Webhook_Order_Related_Abstract extends WC_PostFinanceCheckout_Webhook_Abstract {
 
@@ -53,7 +49,7 @@ abstract class WC_PostFinanceCheckout_Webhook_Order_Related_Abstract extends WC_
 	 * @param WC_PostFinanceCheckout_Webhook_Request $request request.
 	 * @return object
 	 */
-	abstract protected function load_entity( WC_PostFinanceCheckout_Webhook_Request $request );
+	abstract protected function load_entity( WC_PostFinanceCheckout_Webhook_Request $request);
 
 	/**
 	 * Returns the order's increment id linked to the entity.
@@ -61,7 +57,7 @@ abstract class WC_PostFinanceCheckout_Webhook_Order_Related_Abstract extends WC_
 	 * @param object $entity entity.
 	 * @return string
 	 */
-	abstract protected function get_order_id( $entity );
+	abstract protected function get_order_id( $entity);
 
 	/**
 	 * Returns the transaction's id linked to the entity.
@@ -69,7 +65,7 @@ abstract class WC_PostFinanceCheckout_Webhook_Order_Related_Abstract extends WC_
 	 * @param object $entity entity.
 	 * @return int
 	 */
-	abstract protected function get_transaction_id( $entity );
+	abstract protected function get_transaction_id( $entity);
 
 	/**
 	 * Actually processes the order related webhook request.
@@ -79,5 +75,5 @@ abstract class WC_PostFinanceCheckout_Webhook_Order_Related_Abstract extends WC_
 	 * @param WC_Order $order order.
 	 * @param Object   $entity entity.
 	 */
-	abstract protected function process_order_related_inner( WC_Order $order, $entity );
+	abstract protected function process_order_related_inner( WC_Order $order, $entity);
 }

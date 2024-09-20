@@ -1,28 +1,22 @@
 /**
- * Plugin Name: PostFinanceCheckout
- * Author: postfinancecheckout AG
- * Text Domain: postfinancecheckout
- * Domain Path: /languages/
+ * PostFinance Checkout WooCommerce
  *
- * PostFinanceCheckout
- * This plugin will add support for all PostFinanceCheckout payments methods and connect the PostFinanceCheckout servers to your WooCommerce webshop (https://postfinance.ch/en/business/products/e-commerce/postfinance-checkout-all-in-one.html).
+ * This WooCommerce plugin enables to process payments with PostFinance Checkout (https://postfinance.ch/en/business/products/e-commerce/postfinance-checkout-all-in-one.html).
  *
- * @category Class
- * @package  PostFinanceCheckout
- * @author   postfinancecheckout AG (https://postfinance.ch/en/business/products/e-commerce/postfinance-checkout-all-in-one.html)
- * @license  http://www.apache.org/licenses/LICENSE-2.0 Apache Software License (ASL 2.0)
+ * @author postfinancecheckout AG (https://postfinance.ch/en/business/products/e-commerce/postfinance-checkout-all-in-one.html)
+ * @license http://www.apache.org/licenses/LICENSE-2.0 Apache Software License (ASL 2.0)
  */
 /* Icons for status */
 @font-face {
-	font-family: 'woocommerce-postfinancecheckout';
-	src: url('../font/woocommerce-postfinancecheckout.eot?8310684');
-	src: url('../font/woocommerce-postfinancecheckout.eot?8310684#iefix') format('embedded-opentype'),
-		url('../font/woocommerce-postfinancecheckout.woff2?8310684') format('woff2'),
-		url('../font/woocommerce-postfinancecheckout.woff?8310684') format('woff'),
-		url('../font/woocommerce-postfinancecheckout.ttf?8310684') format('truetype'),
-		url('../font/woocommerce-postfinancecheckout.svg?8310684#woocommerce-postfinancecheckout') format('svg');
-	font-weight: normal;
-	font-style: normal;
+  font-family: 'woocommerce-postfinancecheckout';
+  src: url('../font/woocommerce-postfinancecheckout.eot?8310684');
+  src: url('../font/woocommerce-postfinancecheckout.eot?8310684#iefix') format('embedded-opentype'),
+	   url('../font/woocommerce-postfinancecheckout.woff2?8310684') format('woff2'),
+	   url('../font/woocommerce-postfinancecheckout.woff?8310684') format('woff'),
+	   url('../font/woocommerce-postfinancecheckout.ttf?8310684') format('truetype'),
+	   url('../font/woocommerce-postfinancecheckout.svg?8310684#woocommerce-postfinancecheckout') format('svg');
+  font-weight: normal;
+  font-style: normal;
 }
 
 /* Status Icons */
