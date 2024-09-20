@@ -1,7 +1,9 @@
 <?php
 /**
- *
- * WC_PostFinanceCheckout_Return_Handler Class
+ * Plugin Name: PostFinanceCheckout
+ * Author: postfinancecheckout AG
+ * Text Domain: postfinancecheckout
+ * Domain Path: /languages/
  *
  * PostFinanceCheckout
  * This plugin will add support for all PostFinanceCheckout payments methods and connect the PostFinanceCheckout servers to your WooCommerce webshop (https://postfinance.ch/en/business/products/e-commerce/postfinance-checkout-all-in-one.html).
@@ -12,16 +14,13 @@
  * @license  http://www.apache.org/licenses/LICENSE-2.0 Apache Software License (ASL 2.0)
  */
 
-if ( ! defined( 'ABSPATH' ) ) {
-	exit();
-}
+defined( 'ABSPATH' ) || exit;
+
 /**
  * Class WC_PostFinanceCheckout_Return_Handler.
+ * This class handles the customer returns
  *
  * @class WC_PostFinanceCheckout_Return_Handler
- */
-/**
- * This class handles the customer returns
  */
 class WC_PostFinanceCheckout_Return_Handler {
 
@@ -42,9 +41,9 @@ class WC_PostFinanceCheckout_Return_Handler {
 	 * Process
 	 */
 	public static function process() {
-		if ( isset( $_GET['action'] ) && isset( $_GET['order_key'] ) && isset( $_GET['order_id'] ) ) {
-			$order_key = sanitize_text_field( wp_unslash( $_GET['order_key'] ) );
-			$order_id = absint( wp_unslash( $_GET['order_id'] ) );
+		if ( isset( $_GET['action'] ) && isset( $_GET['order_key'] ) && isset( $_GET['order_id'] ) ) { //phpcs:ignore
+			$order_key = sanitize_text_field( wp_unslash( $_GET['order_key'] ) ); //phpcs:ignore
+			$order_id = absint( wp_unslash( $_GET['order_id'] ) ); //phpcs:ignore
 			$order = WC_Order_Factory::get_order( $order_id );
 			$action = sanitize_text_field( wp_unslash( $_GET['action'] ) );
 			if ( $order->get_id() === $order_id && $order->get_order_key() === $order_key ) {
@@ -59,7 +58,7 @@ class WC_PostFinanceCheckout_Return_Handler {
 				}
 			}
 		}
-		wp_redirect( home_url( '/' ) );
+		wp_redirect( home_url( '/' ) ); //phpcs:ignore
 		exit();
 	}
 
@@ -81,8 +80,8 @@ class WC_PostFinanceCheckout_Return_Handler {
 			5
 		);
 		$gateway = wc_get_payment_gateway_by_order( $order );
-		$url = apply_filters( 'wc_postfinancecheckout_success_url', $gateway->get_return_url( $order ), $order );
-		wp_redirect( $url );
+		$url = apply_filters( 'wc_postfinancecheckout_success_url', $gateway->get_return_url( $order ), $order ); //phpcs:ignore
+		wp_redirect( $url ); //phpcs:ignore
 		exit();
 	}
 
@@ -116,10 +115,10 @@ class WC_PostFinanceCheckout_Return_Handler {
 		// The order-pay functionality does not work currently with our plugin, so we don't
 		// redirect the user there.
 		// Otherwise we would get the url using:
-		// apply_filters( 'wc_postfinancecheckout_pay_failure_url', $order->get_checkout_payment_url( false ), $order )
+		// apply_filters( 'wc_postfinancecheckout_pay_failure_url', $order->get_checkout_payment_url( false ), $order ).
 
-		$url = apply_filters( 'wc_postfinancecheckout_checkout_failure_url', wc_get_checkout_url(), $order );
-		wp_redirect( $url );
+		$url = apply_filters( 'wc_postfinancecheckout_checkout_failure_url', wc_get_checkout_url(), $order ); //phpcs:ignore
+		wp_redirect( $url ); //phpcs:ignore
 
 		exit();
 	}

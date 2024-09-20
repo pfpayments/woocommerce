@@ -1,7 +1,9 @@
 <?php
 /**
- *
- * WC_PostFinanceCheckout_Email Class
+ * Plugin Name: PostFinanceCheckout
+ * Author: postfinancecheckout AG
+ * Text Domain: postfinancecheckout
+ * Domain Path: /languages/
  *
  * PostFinanceCheckout
  * This plugin will add support for all PostFinanceCheckout payments methods and connect the PostFinanceCheckout servers to your WooCommerce webshop (https://postfinance.ch/en/business/products/e-commerce/postfinance-checkout-all-in-one.html).
@@ -12,9 +14,8 @@
  * @license  http://www.apache.org/licenses/LICENSE-2.0 Apache Software License (ASL 2.0)
  */
 
-if ( ! defined( 'ABSPATH' ) ) {
-	exit();
-}
+defined( 'ABSPATH' ) || exit;
+
 /**
  * Class WC_PostFinanceCheckout_Email.
  *
@@ -140,7 +141,6 @@ class WC_PostFinanceCheckout_Email {
 
 		add_filter( 'woocommerce_email_actions', array( __CLASS__, 'add_email_actions' ), 10, 1 );
 		add_filter( 'woocommerce_email_classes', array( __CLASS__, 'add_email_classes' ), 100, 1 );
-
 	}
 
 	/**
@@ -159,7 +159,7 @@ class WC_PostFinanceCheckout_Email {
 		}
 		$gateway = wc_get_payment_gateway_by_order( $order );
 		if ( $gateway instanceof WC_PostFinanceCheckout_Gateway ) {
-			$send = get_option( WooCommerce_PostFinanceCheckout::CK_SHOP_EMAIL, 'yes' );
+			$send = get_option( WooCommerce_PostFinanceCheckout::POSTFINANCECHECKOUT_CK_SHOP_EMAIL, 'yes' );
 			if ( 'yes' !== $send ) {
 				return false;
 			}
@@ -173,7 +173,7 @@ class WC_PostFinanceCheckout_Email {
 	 * @param mixed $order order.
 	 * @return void
 	 */
-	public static function before_resend_email( $order ) {
+	public static function before_resend_email( $order ) { //phpcs:ignore
 		$GLOBALS['_postfinancecheckout_resend_email'] = true;
 	}
 
@@ -184,7 +184,7 @@ class WC_PostFinanceCheckout_Email {
 	 * @param mixed $email email.
 	 * @return void
 	 */
-	public static function after_resend_email( $order, $email ) {
+	public static function after_resend_email( $order, $email ) { //phpcs:ignore
 		unset( $GLOBALS['_postfinancecheckout_resend_email'] );
 	}
 
@@ -209,10 +209,10 @@ class WC_PostFinanceCheckout_Email {
 		);
 
 		if ( class_exists( 'woocommerce_wpml' ) ) {
-			global $woocommerce_wpml;
-			if ( ! is_null( $woocommerce_wpml ) ) {
+			global $woocommerce_wpml; //phpcs:ignore
+			if ( ! is_null( $woocommerce_wpml ) ) { //phpcs:ignore
 				// Add hooks for WPML, for email translations.
-				$notifications_all      = array(
+				$notifications_all = array(
 					'woocommerce_order_status_postfi-redirected_to_processing_notification',
 					'woocommerce_order_status_postfi-redirected_to_completed_notification',
 					'woocommerce_order_status_postfi-redirected_to_on-hold_notification',
@@ -227,7 +227,7 @@ class WC_PostFinanceCheckout_Email {
 					'woocommerce_order_status_postfi-waiting_to_cancelled_notifcation',
 				);
 
-				$wpml_instance = $woocommerce_wpml;
+				$wpml_instance = $woocommerce_wpml; //phpcs:ignore
 				$email_handler = $wpml_instance->emails;
 				foreach ( $notifications_all as $new_action ) {
 					add_action(
@@ -260,42 +260,44 @@ class WC_PostFinanceCheckout_Email {
 			}
 		}
 
-		if(class_exists('PLLWC')){
-			add_filter( 'pllwc_order_email_actions', function ( $actions ){
-				$all = array(
-					'woocommerce_order_status_postfi-redirected_to_processing',
-					'woocommerce_order_status_postfi-redirected_to_completed',
-					'woocommerce_order_status_postfi-redirected_to_on-hold',
-					'woocommerce_order_status_postfi-redirected_to_postfinancecheckout-waiting',
-					'woocommerce_order_status_postfi-redirected_to_postfinancecheckout-manual',
-					'woocommerce_order_status_postfi-manual_to_cancelled',
-					'woocommerce_order_status_postfi-waiting_to_cancelled',
-					'woocommerce_order_status_postfi-manual_to_processing',
-					'woocommerce_order_status_postfi-waiting_to_processing',
-					'woocommerce_order_status_postfi-redirected_to_processing_notification',
-					'woocommerce_order_status_postfi-redirected_to_completed_notification',
-					'woocommerce_order_status_postfi-redirected_to_on-hold_notification',
-					'woocommerce_order_status_postfi-redirected_to_postfinancecheckout-waiting_notification',
-					'woocommerce_order_status_postfi-redirected_to_postfinancecheckout-manual_notification',
-				);
+		if ( class_exists( 'PLLWC' ) ) {
+			add_filter(
+				'pllwc_order_email_actions',
+				function ( $actions ) {
+					$all = array(
+						'woocommerce_order_status_postfi-redirected_to_processing',
+						'woocommerce_order_status_postfi-redirected_to_completed',
+						'woocommerce_order_status_postfi-redirected_to_on-hold',
+						'woocommerce_order_status_postfi-redirected_to_postfinancecheckout-waiting',
+						'woocommerce_order_status_postfi-redirected_to_postfinancecheckout-manual',
+						'woocommerce_order_status_postfi-manual_to_cancelled',
+						'woocommerce_order_status_postfi-waiting_to_cancelled',
+						'woocommerce_order_status_postfi-manual_to_processing',
+						'woocommerce_order_status_postfi-waiting_to_processing',
+						'woocommerce_order_status_postfi-redirected_to_processing_notification',
+						'woocommerce_order_status_postfi-redirected_to_completed_notification',
+						'woocommerce_order_status_postfi-redirected_to_on-hold_notification',
+						'woocommerce_order_status_postfi-redirected_to_postfinancecheckout-waiting_notification',
+						'woocommerce_order_status_postfi-redirected_to_postfinancecheckout-manual_notification',
+					);
 
-				$customers = array(
-					'woocommerce_order_status_postfi-manual_to_processing_notification',
-					'woocommerce_order_status_postfi-waiting_to_processing_notification',
-					'woocommerce_order_status_on-hold_to_processing_notification',
-					'woocommerce_order_status_postfi-manual_to_cancelled_notification',
-					'woocommerce_order_status_postfi-waiting_to_cancelled_notifcation',
-				);
+					$customers = array(
+						'woocommerce_order_status_postfi-manual_to_processing_notification',
+						'woocommerce_order_status_postfi-waiting_to_processing_notification',
+						'woocommerce_order_status_on-hold_to_processing_notification',
+						'woocommerce_order_status_postfi-manual_to_cancelled_notification',
+						'woocommerce_order_status_postfi-waiting_to_cancelled_notifcation',
+					);
 
-				$actions = array_merge( $actions, $all, $customers);
-				return $actions;
-			});
+					$actions = array_merge( $actions, $all, $customers );
+					return $actions;
+				}
+			);
 		}
-		
+
 		$actions = array_merge( $actions, $to_add );
 		return $actions;
 	}
-
 
 	/**
 	 * Check Germanized pay email trigger.
@@ -311,7 +313,7 @@ class WC_PostFinanceCheckout_Email {
 		$gateway = wc_get_payment_gateway_by_order( $order );
 		if ( $gateway instanceof WC_PostFinanceCheckout_Gateway ) {
 
-			$send = get_option( WooCommerce_PostFinanceCheckout::CK_SHOP_EMAIL, 'yes' );
+			$send = get_option( WooCommerce_PostFinanceCheckout::POSTFINANCECHECKOUT_CK_SHOP_EMAIL, 'yes' );
 			if ( 'yes' !== $send ) {
 				return;
 			}
@@ -397,7 +399,7 @@ class WC_PostFinanceCheckout_Email {
 		}
 		$gateway = wc_get_payment_gateway_by_order( $order );
 		if ( $gateway instanceof WC_PostFinanceCheckout_Gateway ) {
-			$send = get_option( WooCommerce_PostFinanceCheckout::CK_SHOP_EMAIL, 'yes' );
+			$send = get_option( WooCommerce_PostFinanceCheckout::POSTFINANCECHECKOUT_CK_SHOP_EMAIL, 'yes' );
 			if ( 'yes' !== $send ) {
 				return true;
 			}

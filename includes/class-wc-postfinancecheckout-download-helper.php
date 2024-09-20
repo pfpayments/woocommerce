@@ -1,7 +1,9 @@
 <?php
 /**
- *
- * WC_PostFinanceCheckout_Download_Helper Class
+ * Plugin Name: PostFinanceCheckout
+ * Author: postfinancecheckout AG
+ * Text Domain: postfinancecheckout
+ * Domain Path: /languages/
  *
  * PostFinanceCheckout
  * This plugin will add support for all PostFinanceCheckout payments methods and connect the PostFinanceCheckout servers to your WooCommerce webshop (https://postfinance.ch/en/business/products/e-commerce/postfinance-checkout-all-in-one.html).
@@ -12,16 +14,13 @@
  * @license  http://www.apache.org/licenses/LICENSE-2.0 Apache Software License (ASL 2.0)
  */
 
-if ( ! defined( 'ABSPATH' ) ) {
-	exit();
-}
+defined( 'ABSPATH' ) || exit;
+
 /**
  * Class WC_PostFinanceCheckout_Download_Helper.
+ * This class provides function to download documents from PostFinance Checkout
  *
  * @class WC_PostFinanceCheckout_Download_Helper
- */
-/**
- * This class provides function to download documents from PostFinance Checkout
  */
 class WC_PostFinanceCheckout_Download_Helper {
 
@@ -38,7 +37,8 @@ class WC_PostFinanceCheckout_Download_Helper {
 				\PostFinanceCheckout\Sdk\Model\TransactionState::COMPLETED,
 				\PostFinanceCheckout\Sdk\Model\TransactionState::FULFILL,
 				\PostFinanceCheckout\Sdk\Model\TransactionState::DECLINE,
-			)
+			),
+			true
 		) ) {
 
 			$service = new \PostFinanceCheckout\Sdk\Service\TransactionService( WC_PostFinanceCheckout_Helper::instance()->get_api_client() );
@@ -71,10 +71,11 @@ class WC_PostFinanceCheckout_Download_Helper {
 		header( 'Pragma: public' );
 		header( 'Cache-Control: must-revalidate, post-check=0, pre-check=0' );
 		header( 'Content-type: application/pdf' );
-		header( 'Content-Disposition: attachment; filename="' . $document->getTitle() . '.pdf"' );
-		header( 'Content-Description: ' . $document->getTitle() );
-		// phpcs:ignore
-	    	echo base64_decode( $document->getData() );
+		header( 'Content-Disposition: attachment; filename="' . esc_html( $document->getTitle() ) . '.pdf"' );
+		header( 'Content-Description: ' . esc_html( $document->getTitle() ) );
+
+		$data_safe = base64_decode( $document->getData() );
+		echo $data_safe; // phpcs:ignore
 		exit();
 	}
 }

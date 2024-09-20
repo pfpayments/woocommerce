@@ -1,7 +1,9 @@
 <?php
 /**
- *
- * WC_PostFinanceCheckout_Email Class
+ * Plugin Name: PostFinanceCheckout
+ * Author: postfinancecheckout AG
+ * Text Domain: postfinancecheckout
+ * Domain Path: /languages/
  *
  * PostFinanceCheckout
  * This plugin will add support for all PostFinanceCheckout payments methods and connect the PostFinanceCheckout servers to your WooCommerce webshop (https://postfinance.ch/en/business/products/e-commerce/postfinance-checkout-all-in-one.html).
@@ -12,9 +14,8 @@
  * @license  http://www.apache.org/licenses/LICENSE-2.0 Apache Software License (ASL 2.0)
  */
 
-if ( ! defined( 'ABSPATH' ) ) {
-	exit();
-}
+defined( 'ABSPATH' ) || exit;
+
 /**
  * This entity holds data about a PostFinance Checkout payment method.
  *
@@ -37,9 +38,9 @@ if ( ! defined( 'ABSPATH' ) ) {
  * @method void set_image_base(string $image_base)
  */
 class WC_PostFinanceCheckout_Entity_Method_Configuration extends WC_PostFinanceCheckout_Entity_Abstract {
-	const STATE_ACTIVE = 'active';
-	const STATE_INACTIVE = 'inactive';
-	const STATE_HIDDEN = 'hidden';
+	const POSTFINANCECHECKOUT_STATE_ACTIVE = 'active';
+	const POSTFINANCECHECKOUT_STATE_INACTIVE = 'inactive';
+	const POSTFINANCECHECKOUT_STATE_HIDDEN = 'hidden';
 
 	/**
 	 * Get field definition.
@@ -48,14 +49,14 @@ class WC_PostFinanceCheckout_Entity_Method_Configuration extends WC_PostFinanceC
 	 */
 	protected static function get_field_definition() {
 		return array(
-			'state' => WC_PostFinanceCheckout_Entity_Resource_Type::STRING,
-			'space_id' => WC_PostFinanceCheckout_Entity_Resource_Type::INTEGER,
-			'configuration_id' => WC_PostFinanceCheckout_Entity_Resource_Type::INTEGER,
-			'configuration_name' => WC_PostFinanceCheckout_Entity_Resource_Type::STRING,
-			'title' => WC_PostFinanceCheckout_Entity_Resource_Type::OBJECT,
-			'description' => WC_PostFinanceCheckout_Entity_Resource_Type::OBJECT,
-			'image' => WC_PostFinanceCheckout_Entity_Resource_Type::STRING,
-			'image_base' => WC_PostFinanceCheckout_Entity_Resource_Type::STRING,
+			'state' => WC_PostFinanceCheckout_Entity_Resource_Type::POSTFINANCECHECKOUT_STRING,
+			'space_id' => WC_PostFinanceCheckout_Entity_Resource_Type::POSTFINANCECHECKOUT_INTEGER,
+			'configuration_id' => WC_PostFinanceCheckout_Entity_Resource_Type::POSTFINANCECHECKOUT_INTEGER,
+			'configuration_name' => WC_PostFinanceCheckout_Entity_Resource_Type::POSTFINANCECHECKOUT_STRING,
+			'title' => WC_PostFinanceCheckout_Entity_Resource_Type::POSTFINANCECHECKOUT_OBJECT,
+			'description' => WC_PostFinanceCheckout_Entity_Resource_Type::POSTFINANCECHECKOUT_OBJECT,
+			'image' => WC_PostFinanceCheckout_Entity_Resource_Type::POSTFINANCECHECKOUT_STRING,
+			'image_base' => WC_PostFinanceCheckout_Entity_Resource_Type::POSTFINANCECHECKOUT_STRING,
 
 		);
 	}
@@ -66,7 +67,7 @@ class WC_PostFinanceCheckout_Entity_Method_Configuration extends WC_PostFinanceC
 	 * @return string
 	 */
 	protected static function get_table_name() {
-		return 'wc_postfinancecheckout_method_config';
+		return 'postfinancecheckout_method_config';
 	}
 
 	/**
@@ -79,15 +80,17 @@ class WC_PostFinanceCheckout_Entity_Method_Configuration extends WC_PostFinanceC
 	public static function load_by_configuration( $space_id, $configuration_id ) {
 		global $wpdb;
 
+		$table = $wpdb->prefix . self::get_table_name();
+		// phpcs:disable WordPress.DB.DirectDatabaseQuery.SchemaChange, WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching, WordPress.DB.PreparedSQL.InterpolatedNotPrepared, WordPress.DB.PreparedSQLPlaceholders.UnfinishedPrepare -- Values are escaped in $wpdb->prepare.
 		$result = $wpdb->get_row(
 			$wpdb->prepare(
-				'SELECT * FROM %1$s WHERE space_id = %2$d AND configuration_id = %3$d',
-				$wpdb->prefix . self::get_table_name(),
+				"SELECT * FROM $table WHERE space_id = %d AND configuration_id = %d",
 				$space_id,
 				$configuration_id
 			),
 			ARRAY_A
 		);
+		// phpcs:enable WordPress.DB.DirectDatabaseQuery.SchemaChange, WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching, WordPress.DB.PreparedSQL.InterpolatedNotPrepared, WordPress.DB.PreparedSQLPlaceholders.UnfinishedPrepare.
 
 		if ( null !== $result ) {
 			return new self( $result );
@@ -121,12 +124,16 @@ class WC_PostFinanceCheckout_Entity_Method_Configuration extends WC_PostFinanceC
 		$query = 'SELECT * FROM ' . $wpdb->prefix . self::get_table_name() . ' WHERE space_id = %d AND state IN (' . $replace . ')';
 		$result = array();
 
-	    	// phpcs:ignore
-		$db_results = $wpdb->get_results( $wpdb->prepare( $query, $values ), ARRAY_A );
-		if ( is_array( $db_results ) ) {
-			foreach ( $db_results as $object_values ) {
-				$result[] = new static( $object_values );
+		try {
+			// phpcs:ignore
+			$db_results = $wpdb->get_results( $wpdb->prepare( $query, $values ), ARRAY_A );
+			if ( is_array( $db_results ) ) {
+				foreach ( $db_results as $object_values ) {
+					$result[] = new static( $object_values );
+				}
 			}
+		} catch ( Exception $e ) {
+			return $result;
 		}
 		return $result;
 	}

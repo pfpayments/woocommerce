@@ -1,7 +1,9 @@
 <?php
 /**
- *
- * WC_PostFinanceCheckout_Admin_Order_Void Class
+ * Plugin Name: PostFinanceCheckout
+ * Author: postfinancecheckout AG
+ * Text Domain: postfinancecheckout
+ * Domain Path: /languages/
  *
  * PostFinanceCheckout
  * This plugin will add support for all PostFinanceCheckout payments methods and connect the PostFinanceCheckout servers to your WooCommerce webshop (https://postfinance.ch/en/business/products/e-commerce/postfinance-checkout-all-in-one.html).
@@ -12,9 +14,7 @@
  * @license  http://www.apache.org/licenses/LICENSE-2.0 Apache Software License (ASL 2.0)
  */
 
-if ( ! defined( 'ABSPATH' ) ) {
-	exit();
-}
+defined( 'ABSPATH' ) || exit;
 
 /**
  * WC PostFinanceCheckout Admin Order Void class
@@ -92,14 +92,14 @@ class WC_PostFinanceCheckout_Admin_Order_Void {
 
 		check_ajax_referer( 'order-item', 'security' );
 
-		if ( ! current_user_can( 'edit_shop_orders' ) ) {
+		if ( ! current_user_can( 'edit_shop_orders' ) ) { // phpcs:ignore
 			wp_die( -1 );
 		}
 
-		$order_id = isset( $_POST['order_id'] ) ? absint( $_POST['order_id'] ) : null;
+		$order_id = isset( $_POST['order_id'] ) ? absint( sanitize_key( wp_unslash( $_POST['order_id'] ) ) ) : null;
 
 		$restock_void_items = isset( $_POST['restock_voided_items'] ) && 'true' === sanitize_text_field( wp_unslash( $_POST['restock_voided_items'] ) );
-		$current_void_id    = null;
+		$current_void_id = null;
 		try {
 			WC_PostFinanceCheckout_Helper::instance()->start_database_transaction();
 			$transaction_info = WC_PostFinanceCheckout_Entity_Transaction_Info::load_by_order_id( $order_id );
@@ -135,7 +135,7 @@ class WC_PostFinanceCheckout_Admin_Order_Void {
 			$void_job->set_restock( $restock_void_items );
 			$void_job->set_space_id( $transaction_info->get_space_id() );
 			$void_job->set_transaction_id( $transaction_info->get_transaction_id() );
-			$void_job->set_state( WC_PostFinanceCheckout_Entity_Void_Job::STATE_CREATED );
+			$void_job->set_state( WC_PostFinanceCheckout_Entity_Void_Job::POSTFINANCECHECKOUT_STATE_CREATED );
 			$void_job->set_order_id( $order_id );
 			$void_job->save();
 			$current_void_id = $void_job->get_id();
@@ -180,7 +180,7 @@ class WC_PostFinanceCheckout_Admin_Order_Void {
 		WC_PostFinanceCheckout_Helper::instance()->lock_by_transaction_id( $void_job->get_space_id(), $void_job->get_transaction_id() );
 		// Reload void job.
 		$void_job = WC_PostFinanceCheckout_Entity_Void_Job::load_by_id( $void_job_id );
-		if ( $void_job->get_state() !== WC_PostFinanceCheckout_Entity_Void_Job::STATE_CREATED ) {
+		if ( $void_job->get_state() !== WC_PostFinanceCheckout_Entity_Void_Job::POSTFINANCECHECKOUT_STATE_CREATED ) {
 			// Already sent in the meantime.
 			WC_PostFinanceCheckout_Helper::instance()->rollback_database_transaction();
 			return;
@@ -190,12 +190,12 @@ class WC_PostFinanceCheckout_Admin_Order_Void {
 
 			$void = $void_service->voidOnline( $void_job->get_space_id(), $void_job->get_transaction_id() );
 			$void_job->set_void_id( $void->getId() );
-			$void_job->set_state( WC_PostFinanceCheckout_Entity_Void_Job::STATE_SENT );
+			$void_job->set_state( WC_PostFinanceCheckout_Entity_Void_Job::POSTFINANCECHECKOUT_STATE_SENT );
 			$void_job->save();
 			WC_PostFinanceCheckout_Helper::instance()->commit_database_transaction();
 		} catch ( \PostFinanceCheckout\Sdk\ApiException $e ) {
 			if ( $e->getResponseObject() instanceof \PostFinanceCheckout\Sdk\Model\ClientError ) {
-				$void_job->set_state( WC_PostFinanceCheckout_Entity_Void_Job::STATE_DONE );
+				$void_job->set_state( WC_PostFinanceCheckout_Entity_Void_Job::POSTFINANCECHECKOUT_STATE_DONE );
 				$void_job->save();
 				WC_PostFinanceCheckout_Helper::instance()->commit_database_transaction();
 			} else {
@@ -223,9 +223,9 @@ class WC_PostFinanceCheckout_Admin_Order_Void {
 	 */
 	public static function update_for_order( WC_Order $order ) {
 		$transaction_info = WC_PostFinanceCheckout_Entity_Transaction_Info::load_by_order_id( $order->get_id() );
-		$void_job         = WC_PostFinanceCheckout_Entity_Void_Job::load_running_void_for_transaction( $transaction_info->get_space_id(), $transaction_info->get_transaction_id() );
+		$void_job = WC_PostFinanceCheckout_Entity_Void_Job::load_running_void_for_transaction( $transaction_info->get_space_id(), $transaction_info->get_transaction_id() );
 
-		if ( $void_job->get_state() === WC_PostFinanceCheckout_Entity_Void_Job::STATE_CREATED ) {
+		if ( $void_job->get_state() === WC_PostFinanceCheckout_Entity_Void_Job::POSTFINANCECHECKOUT_STATE_CREATED ) {
 			self::send_void( $void_job->get_id() );
 		}
 	}
@@ -241,7 +241,7 @@ class WC_PostFinanceCheckout_Admin_Order_Void {
 			try {
 				self::send_void( $id );
 			} catch ( Exception $e ) {
-				/* translators: %1$d: id, %2$s: message */
+				/* translators: %d: id, %s: message */
 				$message = sprintf( __( 'Error updating void job with id %1$d: %2$s', 'woo-postfinancecheckout' ), $id, $e->getMessage() );
 				WooCommerce_PostFinanceCheckout::instance()->log( $message, WC_Log_Levels::ERROR );
 			}

@@ -1,7 +1,9 @@
 <?php
 /**
- *
- * WC_PostFinanceCheckout_Provider_Language Class
+ * Plugin Name: PostFinanceCheckout
+ * Author: postfinancecheckout AG
+ * Text Domain: postfinancecheckout
+ * Domain Path: /languages/
  *
  * PostFinanceCheckout
  * This plugin will add support for all PostFinanceCheckout payments methods and connect the PostFinanceCheckout servers to your WooCommerce webshop (https://postfinance.ch/en/business/products/e-commerce/postfinance-checkout-all-in-one.html).
@@ -12,9 +14,8 @@
  * @license  http://www.apache.org/licenses/LICENSE-2.0 Apache Software License (ASL 2.0)
  */
 
-if ( ! defined( 'ABSPATH' ) ) {
-	exit();
-}
+defined( 'ABSPATH' ) || exit;
+
 /**
  * Provider of language information from the gateway.
  */
@@ -33,7 +34,7 @@ class WC_PostFinanceCheckout_Provider_Language extends WC_PostFinanceCheckout_Pr
 	 * @param string $code code.
 	 * @return \PostFinanceCheckout\Sdk\Model\RestLanguage
 	 */
-	public function find( $code ) {
+	public function find( $code ) { //phpcs:ignore Generic.CodeAnalysis.UselessOverridingMethod.Found
 		return parent::find( $code );
 	}
 
@@ -74,7 +75,7 @@ class WC_PostFinanceCheckout_Provider_Language extends WC_PostFinanceCheckout_Pr
 	 *
 	 * @return \PostFinanceCheckout\Sdk\Model\RestLanguage[]
 	 */
-	public function get_all() {
+	public function get_all() { //phpcs:ignore Generic.CodeAnalysis.UselessOverridingMethod.Found
 		return parent::get_all();
 	}
 
@@ -98,7 +99,7 @@ class WC_PostFinanceCheckout_Provider_Language extends WC_PostFinanceCheckout_Pr
 	 * @return string
 	 */
 	protected function get_id( $entry ) {
-		/* @var \PostFinanceCheckout\Sdk\Model\RestLanguage $entry */
+		/* @var \PostFinanceCheckout\Sdk\Model\RestLanguage $entry */ //phpcs:ignore
 		return $entry->getIetfCode();
 	}
 }

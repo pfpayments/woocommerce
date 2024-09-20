@@ -34,3 +34,11 @@ ____________________________________________________________________________
 ## License
 
 Please see the [license file](https://github.com/pfpayments/woocommerce/blob/3.1.3/LICENSE) for more information.
+
+## Privacy Policy
+
+Please see the [PostFinance Checkout privacy policies site](https://www.postfinance.ch/en/detail/data-protection/general-privacy-policy.html) for more information.
+
+## Terms of Use
+
+Please see the [PostFinance Checkout terms of use site](https://www.postfinance.ch/content/dam/pfch/doc/0_399/00201_en.pdf) for more information.

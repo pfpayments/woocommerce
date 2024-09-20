@@ -1,7 +1,9 @@
 <?php
 /**
- *
- * WC_PostFinanceCheckout_Unique_Id Class
+ * Plugin Name: PostFinanceCheckout
+ * Author: postfinancecheckout AG
+ * Text Domain: postfinancecheckout
+ * Domain Path: /languages/
  *
  * PostFinanceCheckout
  * This plugin will add support for all PostFinanceCheckout payments methods and connect the PostFinanceCheckout servers to your WooCommerce webshop (https://postfinance.ch/en/business/products/e-commerce/postfinance-checkout-all-in-one.html).
@@ -12,16 +14,13 @@
  * @license  http://www.apache.org/licenses/LICENSE-2.0 Apache Software License (ASL 2.0)
  */
 
-if ( ! defined( 'ABSPATH' ) ) {
-	exit();
-}
+defined( 'ABSPATH' ) || exit;
+
 /**
  * Class WC_PostFinanceCheckout_Unique_Id.
+ * This class handles the required unique ids
  *
  * @class WC_PostFinanceCheckout_Unique_Id
- */
-/**
- * This class handles the required unique ids
  */
 class WC_PostFinanceCheckout_Unique_Id {
 
@@ -81,7 +80,7 @@ class WC_PostFinanceCheckout_Unique_Id {
 	 *
 	 * @return WC_Order_Item_Product $item item
 	 */
-	public static function copy_unqiue_id_to_order_item( WC_Order_Item_Product $item, $cart_item_key, $values, WC_Order $order = null ) {
+	public static function copy_unqiue_id_to_order_item( WC_Order_Item_Product $item, $cart_item_key, $values, WC_Order $order = null ) { //phpcs:ignore
 		// We do not use the cart_item_key as it is deprecated.
 		$item->add_meta_data( '_postfinancecheckout_unique_line_item_id', self::get_uuid(), true );
 		return $item;
@@ -97,7 +96,7 @@ class WC_PostFinanceCheckout_Unique_Id {
 	 *
 	 * @return WC_Order_Item_Shipping $item item
 	 */
-	public static function copy_unqiue_id_to_order_shipping( WC_Order_Item_Shipping $item, $package_key, $package, WC_Order $order = null ) {
+	public static function copy_unqiue_id_to_order_shipping( WC_Order_Item_Shipping $item, $package_key, $package, WC_Order $order = null ) { //phpcs:ignore
 		$item->add_meta_data( '_postfinancecheckout_unique_line_item_id', self::get_uuid(), true );
 		return $item;
 	}
@@ -112,7 +111,7 @@ class WC_PostFinanceCheckout_Unique_Id {
 	 *
 	 * @return WC_Order_Item_Shipping $item item
 	 */
-	public static function copy_unqiue_id_to_order_fee( WC_Order_Item_Fee $item, $fee_key, $fee, WC_Order $order = null ) {
+	public static function copy_unqiue_id_to_order_fee( WC_Order_Item_Fee $item, $fee_key, $fee, WC_Order $order = null ) { //phpcs:ignore
 		$unique_id = null;
 		if ( $fee->amount < 0 ) {
 			$unique_id = 'discount-' . $fee->id;

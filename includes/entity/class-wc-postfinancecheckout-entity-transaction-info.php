@@ -1,7 +1,9 @@
 <?php
 /**
- *
- * WC_PostFinanceCheckout_Entity_Transaction_Info Class
+ * Plugin Name: PostFinanceCheckout
+ * Author: postfinancecheckout AG
+ * Text Domain: postfinancecheckout
+ * Domain Path: /languages/
  *
  * PostFinanceCheckout
  * This plugin will add support for all PostFinanceCheckout payments methods and connect the PostFinanceCheckout servers to your WooCommerce webshop (https://postfinance.ch/en/business/products/e-commerce/postfinance-checkout-all-in-one.html).
@@ -12,9 +14,8 @@
  * @license  http://www.apache.org/licenses/LICENSE-2.0 Apache Software License (ASL 2.0)
  */
 
-if ( ! defined( 'ABSPATH' ) ) {
-	exit();
-}
+defined( 'ABSPATH' ) || exit;
+
 /**
  * This entity holds data about a transaction on the gateway.
  *
@@ -60,23 +61,23 @@ class WC_PostFinanceCheckout_Entity_Transaction_Info extends WC_PostFinanceCheck
 	 */
 	protected static function get_field_definition() {
 		return array(
-			'transaction_id' => WC_PostFinanceCheckout_Entity_Resource_Type::INTEGER,
-			'state' => WC_PostFinanceCheckout_Entity_Resource_Type::STRING,
-			'space_id' => WC_PostFinanceCheckout_Entity_Resource_Type::INTEGER,
-			'space_view_id' => WC_PostFinanceCheckout_Entity_Resource_Type::INTEGER,
-			'language' => WC_PostFinanceCheckout_Entity_Resource_Type::STRING,
-			'currency' => WC_PostFinanceCheckout_Entity_Resource_Type::STRING,
-			'authorization_amount' => WC_PostFinanceCheckout_Entity_Resource_Type::DECIMAL,
-			'image' => WC_PostFinanceCheckout_Entity_Resource_Type::STRING,
-			'image_base' => WC_PostFinanceCheckout_Entity_Resource_Type::STRING,
-			'labels' => WC_PostFinanceCheckout_Entity_Resource_Type::OBJECT,
-			'payment_method_id' => WC_PostFinanceCheckout_Entity_Resource_Type::INTEGER,
-			'connector_id' => WC_PostFinanceCheckout_Entity_Resource_Type::INTEGER,
-			'order_id' => WC_PostFinanceCheckout_Entity_Resource_Type::INTEGER,
-			'order_mapping_id' => WC_PostFinanceCheckout_Entity_Resource_Type::INTEGER,
-			'failure_reason' => WC_PostFinanceCheckout_Entity_Resource_Type::OBJECT,
-			'user_failure_message' => WC_PostFinanceCheckout_Entity_Resource_Type::STRING,
-			'locked_at' => WC_PostFinanceCheckout_Entity_Resource_Type::DATETIME,
+			'transaction_id' => WC_PostFinanceCheckout_Entity_Resource_Type::POSTFINANCECHECKOUT_INTEGER,
+			'state' => WC_PostFinanceCheckout_Entity_Resource_Type::POSTFINANCECHECKOUT_STRING,
+			'space_id' => WC_PostFinanceCheckout_Entity_Resource_Type::POSTFINANCECHECKOUT_INTEGER,
+			'space_view_id' => WC_PostFinanceCheckout_Entity_Resource_Type::POSTFINANCECHECKOUT_INTEGER,
+			'language' => WC_PostFinanceCheckout_Entity_Resource_Type::POSTFINANCECHECKOUT_STRING,
+			'currency' => WC_PostFinanceCheckout_Entity_Resource_Type::POSTFINANCECHECKOUT_STRING,
+			'authorization_amount' => WC_PostFinanceCheckout_Entity_Resource_Type::POSTFINANCECHECKOUT_DECIMAL,
+			'image' => WC_PostFinanceCheckout_Entity_Resource_Type::POSTFINANCECHECKOUT_STRING,
+			'image_base' => WC_PostFinanceCheckout_Entity_Resource_Type::POSTFINANCECHECKOUT_STRING,
+			'labels' => WC_PostFinanceCheckout_Entity_Resource_Type::POSTFINANCECHECKOUT_OBJECT,
+			'payment_method_id' => WC_PostFinanceCheckout_Entity_Resource_Type::POSTFINANCECHECKOUT_INTEGER,
+			'connector_id' => WC_PostFinanceCheckout_Entity_Resource_Type::POSTFINANCECHECKOUT_INTEGER,
+			'order_id' => WC_PostFinanceCheckout_Entity_Resource_Type::POSTFINANCECHECKOUT_INTEGER,
+			'order_mapping_id' => WC_PostFinanceCheckout_Entity_Resource_Type::POSTFINANCECHECKOUT_INTEGER,
+			'failure_reason' => WC_PostFinanceCheckout_Entity_Resource_Type::POSTFINANCECHECKOUT_OBJECT,
+			'user_failure_message' => WC_PostFinanceCheckout_Entity_Resource_Type::POSTFINANCECHECKOUT_STRING,
+			'locked_at' => WC_PostFinanceCheckout_Entity_Resource_Type::POSTFINANCECHECKOUT_DATETIME,
 		);
 	}
 
@@ -86,7 +87,7 @@ class WC_PostFinanceCheckout_Entity_Transaction_Info extends WC_PostFinanceCheck
 	 * @return string
 	 */
 	protected static function get_table_name() {
-		return 'wc_postfinancecheckout_transaction_info';
+		return 'postfinancecheckout_transaction_info';
 	}
 
 	/**
@@ -111,14 +112,16 @@ class WC_PostFinanceCheckout_Entity_Transaction_Info extends WC_PostFinanceCheck
 	 */
 	public static function load_by_order_id( $order_id ) {
 		global $wpdb;
-		$result = $wpdb->get_row(
+		$table = $wpdb->prefix . self::get_table_name();
+		// phpcs:disable WordPress.DB.DirectDatabaseQuery.SchemaChange, WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching, WordPress.DB.PreparedSQL.InterpolatedNotPrepared, WordPress.DB.PreparedSQLPlaceholders.UnfinishedPrepare -- Values are escaped in $wpdb->prepare.
+		$result = $wpdb->get_row(//phpcs:ignore
 			$wpdb->prepare(
-				'SELECT * FROM %1$s WHERE order_id = %2$d',
-				$wpdb->prefix . self::get_table_name(),
+				"SELECT * FROM $table WHERE order_id = %d",
 				$order_id
 			),
 			ARRAY_A
 		);
+		// phpcs:enable WordPress.DB.DirectDatabaseQuery.SchemaChange, WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching, WordPress.DB.PreparedSQL.InterpolatedNotPrepared, WordPress.DB.PreparedSQLPlaceholders.UnfinishedPrepare.
 		if ( null !== $result ) {
 			return new self( $result );
 		}
@@ -134,15 +137,17 @@ class WC_PostFinanceCheckout_Entity_Transaction_Info extends WC_PostFinanceCheck
 	 */
 	public static function load_by_transaction( $space_id, $transaction_id ) {
 		global $wpdb;
+		$table = $wpdb->prefix . self::get_table_name();
+		// phpcs:disable WordPress.DB.DirectDatabaseQuery.SchemaChange, WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching, WordPress.DB.PreparedSQL.InterpolatedNotPrepared, WordPress.DB.PreparedSQLPlaceholders.UnfinishedPrepare -- Values are escaped in $wpdb->prepare.
 		$result = $wpdb->get_row(
 			$wpdb->prepare(
-				'SELECT * FROM %1$s WHERE space_id = %2$d AND transaction_id = %3$d',
-				$wpdb->prefix . self::get_table_name(),
+				"SELECT * FROM $table WHERE space_id = %d AND transaction_id = %d",
 				$space_id,
 				$transaction_id
 			),
 			ARRAY_A
 		);
+		// phpcs:enable WordPress.DB.DirectDatabaseQuery.SchemaChange, WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching, WordPress.DB.PreparedSQL.InterpolatedNotPrepared, WordPress.DB.PreparedSQLPlaceholders.UnfinishedPrepare.
 		if ( null !== $result ) {
 			return new self( $result );
 		}
@@ -158,14 +163,16 @@ class WC_PostFinanceCheckout_Entity_Transaction_Info extends WC_PostFinanceCheck
 	 */
 	public static function load_newest_by_mapped_order_id( $order_id ) {
 		global $wpdb;
+		$table = $wpdb->prefix . self::get_table_name();
+		// phpcs:disable WordPress.DB.DirectDatabaseQuery.SchemaChange, WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching, WordPress.DB.PreparedSQL.InterpolatedNotPrepared, WordPress.DB.PreparedSQLPlaceholders.UnfinishedPrepare -- Values are escaped in $wpdb->prepare.
 		$result = $wpdb->get_row(
 			$wpdb->prepare(
-				'SELECT * FROM %1$s WHERE order_mapping_id = %2$d ORDER BY id DESC',
-				$wpdb->prefix . self::get_table_name(),
+				"SELECT * FROM $table WHERE order_mapping_id = %d ORDER BY id DESC",
 				$order_id
 			),
 			ARRAY_A
 		);
+		// phpcs:enable WordPress.DB.DirectDatabaseQuery.SchemaChange, WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching, WordPress.DB.PreparedSQL.InterpolatedNotPrepared, WordPress.DB.PreparedSQLPlaceholders.UnfinishedPrepare.
 		if ( null !== $result ) {
 			return new self( $result );
 		}

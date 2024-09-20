@@ -1,7 +1,9 @@
 <?php
 /**
- *
- * WC_PostFinanceCheckout_Service_Abstract Class
+ * Plugin Name: PostFinanceCheckout
+ * Author: postfinancecheckout AG
+ * Text Domain: postfinancecheckout
+ * Domain Path: /languages/
  *
  * PostFinanceCheckout
  * This plugin will add support for all PostFinanceCheckout payments methods and connect the PostFinanceCheckout servers to your WooCommerce webshop (https://postfinance.ch/en/business/products/e-commerce/postfinance-checkout-all-in-one.html).
@@ -12,9 +14,8 @@
  * @license  http://www.apache.org/licenses/LICENSE-2.0 Apache Software License (ASL 2.0)
  */
 
-if ( ! defined( 'ABSPATH' ) ) {
-	exit();
-}
+defined( 'ABSPATH' ) || exit;
+
 /**
  * WC_PostFinanceCheckout_Service_Abstract Class.
  */
@@ -84,7 +85,7 @@ abstract class WC_PostFinanceCheckout_Service_Abstract {
 		if ( empty( $resolved_url ) ) {
 			return $resolved_url;
 		}
-		$parts = parse_url( $resolved_url );
+		$parts = wp_parse_url( $resolved_url );
 		return $parts['scheme'] . '://' . $parts['host'] . '/';
 	}
 
@@ -143,21 +144,21 @@ abstract class WC_PostFinanceCheckout_Service_Abstract {
 	/**
 	 * Changes the given string to have no more characters as specified.
 	 *
-	 * @param string $string string.
-	 * @param int    $max_length max length.
-	 * @return string
+	 * @param string $input_string The input string.
+	 * @param int    $max_length max_length.
+	 * @return string the sanitized string.
 	 */
-	protected function fix_length( $string, $max_length ) {
-		return mb_substr( $string, 0, $max_length, 'UTF-8' );
+	protected function fix_length( $input_string, $max_length ) {
+		return mb_substr( $input_string, 0, $max_length, 'UTF-8' );
 	}
 
 	/**
 	 * Removes all non printable ASCII chars
 	 *
-	 * @param String $string string.
-	 * @return $string
+	 * @param string $input_string The input string.
+	 * @return string the sanitized string.
 	 */
-	protected function remove_non_ascii( $string ) {
-		return preg_replace( '/[\x00-\x1F\x7F-\xFF]/', '', $string );
+	protected function remove_non_ascii( $input_string ) {
+		return preg_replace( '/[\x00-\x1F\x7F-\xFF]/', '', $input_string );
 	}
 }

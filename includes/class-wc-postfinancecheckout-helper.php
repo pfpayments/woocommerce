@@ -1,7 +1,9 @@
 <?php
 /**
- *
- * WC_PostFinanceCheckout_Helper Class
+ * Plugin Name: PostFinanceCheckout
+ * Author: postfinancecheckout AG
+ * Text Domain: postfinancecheckout
+ * Domain Path: /languages/
  *
  * PostFinanceCheckout
  * This plugin will add support for all PostFinanceCheckout payments methods and connect the PostFinanceCheckout servers to your WooCommerce webshop (https://postfinance.ch/en/business/products/e-commerce/postfinance-checkout-all-in-one.html).
@@ -12,17 +14,16 @@
  * @license  http://www.apache.org/licenses/LICENSE-2.0 Apache Software License (ASL 2.0)
  */
 
-if ( ! defined( 'ABSPATH' ) ) {
-	exit();
-}
+defined( 'ABSPATH' ) || exit;
+
 /**
  * WC_PostFinanceCheckout_Helper Class.
  */
 class WC_PostFinanceCheckout_Helper {
 
-	const SHOP_SYSTEM = 'x-meta-shop-system';
-	const SHOP_SYSTEM_VERSION = 'x-meta-shop-system-version';
-	const SHOP_SYSTEM_AND_VERSION = 'x-meta-shop-system-and-version';
+	const POSTFINANCECHECKOUT_SHOP_SYSTEM = 'x-meta-shop-system';
+	const POSTFINANCECHECKOUT_SHOP_SYSTEM_VERSION = 'x-meta-shop-system-version';
+	const POSTFINANCECHECKOUT_SHOP_SYSTEM_AND_VERSION = 'x-meta-shop-system-and-version';
 
 	/**
 	 * Instance.
@@ -41,7 +42,7 @@ class WC_PostFinanceCheckout_Helper {
 	/**
 	 * Construct.
 	 */
-	private function __construct(){}
+	private function __construct() {}
 
 	/**
 	 * Instance.
@@ -82,16 +83,16 @@ class WC_PostFinanceCheckout_Helper {
 	 */
 	public function get_api_client() {
 		if ( null === $this->api_client ) {
-			$user_id = get_option( WooCommerce_PostFinanceCheckout::CK_APP_USER_ID );
-			$user_key = get_option( WooCommerce_PostFinanceCheckout::CK_APP_USER_KEY );
+			$user_id = get_option( WooCommerce_PostFinanceCheckout::POSTFINANCECHECKOUT_CK_APP_USER_ID );
+			$user_key = get_option( WooCommerce_PostFinanceCheckout::POSTFINANCECHECKOUT_CK_APP_USER_KEY );
 			if ( ! empty( $user_id ) && ! empty( $user_key ) ) {
 				$this->api_client = new \PostFinanceCheckout\Sdk\ApiClient( $user_id, $user_key );
 				$this->api_client->setBasePath( rtrim( $this->get_base_gateway_url(), '/' ) . '/api' );
-				foreach (self::getDefaultHeaderData() as $key => $value) {
-					$this->api_client->addDefaultHeader($key, $value);
+				foreach ( self::get_default_header_data() as $key => $value ) {
+					$this->api_client->addDefaultHeader( $key, $value );
 				}
 			} else {
-				throw new Exception( __( 'The API access data is incomplete.', 'woo-postfinancecheckout' ) );
+				throw new Exception( esc_html__( 'The API access data is incomplete.', 'woo-postfinancecheckout' ) );
 			}
 		}
 		return $this->api_client;
@@ -124,7 +125,7 @@ class WC_PostFinanceCheckout_Helper {
 	 * @return mixed|null
 	 */
 	public function translate( $translated_string, $language = null ) {
-		if ( null == $language ) {
+		if ( empty( $language ) ) {
 			$language = $this->get_cleaned_locale();
 		}
 		if ( isset( $translated_string[ $language ] ) ) {
@@ -132,7 +133,6 @@ class WC_PostFinanceCheckout_Helper {
 		}
 
 		try {
-			/* @var WC_PostFinanceCheckout_Provider_Language $language_provider */
 			$language_provider = WC_PostFinanceCheckout_Provider_Language::instance();
 			$primary_language = $language_provider->find_primary( $language );
 			if ( $primary_language && isset( $translated_string[ $primary_language->getIetfCode() ] ) ) {
@@ -190,7 +190,6 @@ class WC_PostFinanceCheckout_Helper {
 	 * @return int
 	 */
 	public function get_currency_fraction_digits( $currency_code ) {
-		/* @var WC_PostFinanceCheckout_Provider_Currency $currency_provider */
 		$currency_provider = WC_PostFinanceCheckout_Provider_Currency::instance();
 		$currency = $currency_provider->find( $currency_code );
 		if ( $currency ) {
@@ -204,18 +203,19 @@ class WC_PostFinanceCheckout_Helper {
 	 * Get total amount including tax.
 	 *
 	 * @param array $line_items line items.
-	 * @param bool 	$excludeDiscounts exclude discounts.
+	 * @param bool  $exclude_discounts exclude discounts.
 	 * @return int
 	 */
-	public function get_total_amount_including_tax( array $line_items, bool $excludeDiscounts = false) {
+	public function get_total_amount_including_tax( array $line_items, bool $exclude_discounts = false ) {
 		$sum = 0;
-		/** @var \PostFinanceCheckout\Sdk\Model\LineItemCreate $line_item */
 		foreach ( $line_items as $line_item ) {
 			$type = $line_item->getType();
 			$name = $line_item->getName();
 
-			if ( $excludeDiscounts && $type === \PostFinanceCheckout\Sdk\Model\LineItemType::DISCOUNT && strpos( $name, WC_PostFinanceCheckout_Packages_Coupon_Discount::COUPON ) !== false ) {
-				//convert negative values to positive in order to be able to subtract it
+			if ( $exclude_discounts && \PostFinanceCheckout\Sdk\Model\LineItemType::DISCOUNT === $type
+				&& strpos( $name, WC_PostFinanceCheckout_Packages_Coupon_Discount::POSTFINANCECHECKOUT_COUPON ) !== false
+			) {
+				// convert negative values to positive in order to be able to subtract it.
 				$sum -= abs( $line_item->getAmountIncludingTax() );
 			} else {
 				$sum += abs( $line_item->getAmountIncludingTax() );
@@ -234,26 +234,26 @@ class WC_PostFinanceCheckout_Helper {
 	 * @throws WC_PostFinanceCheckout_Exception_Invalid_Transaction_Amount WC_PostFinanceCheckout_Exception_Invalid_Transaction_Amount.
 	 */
 	public function cleanup_line_items( array $line_items, $expected_sum, $currency ) {
-		//ensure that the effective sum coincides with the total discounted by the coupons
-		$has_coupons = apply_filters( 'wc_postfinancecheckout_packages_coupon_has_coupon_discounts_applied', $currency );
+		// ensure that the effective sum coincides with the total discounted by the coupons.
+		$has_coupons = apply_filters( 'wc_postfinancecheckout_packages_coupon_has_coupon_discounts_applied', $currency ); //phpcs:ignore
 		$effective_sum = $this->round_amount( $this->get_total_amount_including_tax( $line_items, $has_coupons ), $currency );
 		$rounded_expected_sum = $this->round_amount( $expected_sum, $currency );
 
 		if ( $has_coupons ) {
-			$result = apply_filters( 'wc_postfinancecheckout_packages_coupon_process_line_items_with_coupons', $line_items, $expected_sum, $currency );
+			$result = apply_filters( 'wc_postfinancecheckout_packages_coupon_process_line_items_with_coupons', $line_items, $expected_sum, $currency ); //phpcs:ignore
 			$line_items = $result['line_items_cleaned'];
 			$effective_sum = $result['effective_sum'];
 			$rounded_expected_sum = $this->round_amount( $expected_sum, $currency );
 		}
 
 		$inconsistent_amount = $rounded_expected_sum - $effective_sum;
-		if ( 0 != $inconsistent_amount ) {
-			$enforce_consistency = get_option( WooCommerce_PostFinanceCheckout::CK_ENFORCE_CONSISTENCY );
+		if ( 0 !== (int) $inconsistent_amount ) {
+			$enforce_consistency = get_option( WooCommerce_PostFinanceCheckout::POSTFINANCECHECKOUT_CK_ENFORCE_CONSISTENCY );
 			switch ( $enforce_consistency ) {
 				case 'no':
 					$line_item = new \PostFinanceCheckout\Sdk\Model\LineItemCreate();
 					$line_item->setAmountIncludingTax( $this->round_amount( $inconsistent_amount, $currency ) );
-					$line_item->setName( __( 'Adjustment', 'woo-postfinancecheckout' ) );
+					$line_item->setName( esc_html__( 'Adjustment', 'woo-postfinancecheckout' ) );
 					$line_item->setQuantity( 1 );
 					$line_item->setSku( 'adjustment' );
 					$line_item->setUniqueId( 'adjustment' );
@@ -262,7 +262,7 @@ class WC_PostFinanceCheckout_Helper {
 					$line_items[] = $line_item;
 					break;
 				default:
-					throw new WC_PostFinanceCheckout_Exception_Invalid_Transaction_Amount( $effective_sum, $rounded_expected_sum );
+					throw new WC_PostFinanceCheckout_Exception_Invalid_Transaction_Amount( esc_html( $effective_sum ), esc_html( $rounded_expected_sum ) );
 			}
 		}
 		return $this->ensure_unique_ids( $line_items );
@@ -289,7 +289,7 @@ class WC_PostFinanceCheckout_Helper {
 			if ( isset( $unique_ids[ $unique_id ] ) ) {
 				$backup = $unique_id;
 				$unique_id = $unique_id . '_' . $unique_ids[ $unique_id ];
-				$unique_ids[ $backup ] ++;
+				++$unique_ids[ $backup ];
 			} else {
 				$unique_ids[ $unique_id ] = 1;
 			}
@@ -373,27 +373,30 @@ class WC_PostFinanceCheckout_Helper {
 	public function lock_by_transaction_id( $space_id, $transaction_id ) {
 		global $wpdb;
 
-		$data_array = array(
-			'locked_at' => gmdate( 'Y-m-d H:i:s' ),
-		);
-		$type_array = array(
-			'%s',
-		);
-		$wpdb->query( $wpdb->prepare( 'SELECT * FROM ' . $wpdb->prefix . 'wc_postfinancecheckout_transaction_info WHERE transaction_id = %d and space_id = %d FOR UPDATE', $transaction_id, $space_id ) );
-
-		$wpdb->update(
-			$wpdb->prefix . 'wc_postfinancecheckout_transaction_info',
-			$data_array,
-			array(
-				'transaction_id' => $transaction_id,
-				'space_id' => $space_id,
-			),
-			$type_array,
-			array(
-				'%d',
-				'%d',
+		$locked_at = gmdate( 'Y-m-d H:i:s' );
+		$table_transaction_info = $wpdb->prefix . 'postfinancecheckout_transaction_info';
+		// phpcs:disable WordPress.DB.DirectDatabaseQuery.SchemaChange, WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching, WordPress.DB.PreparedSQL.InterpolatedNotPrepared, WordPress.DB.PreparedSQLPlaceholders.UnfinishedPrepare -- Values are escaped in $wpdb->prepare.
+		$wpdb->query(
+			$wpdb->prepare(
+				"SELECT * FROM $table_transaction_info WHERE transaction_id = %d and space_id = %d FOR UPDATE",
+				$transaction_id,
+				$space_id
 			)
 		);
+
+		// phpcs:enable WordPress.DB.DirectDatabaseQuery.SchemaChange, WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching, WordPress.DB.PreparedSQL.InterpolatedNotPrepared, WordPress.DB.PreparedSQLPlaceholders.UnfinishedPrepare.
+		// phpcs:disable WordPress.DB.DirectDatabaseQuery.SchemaChange, WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching, WordPress.DB.PreparedSQL.InterpolatedNotPrepared, WordPress.DB.PreparedSQLPlaceholders.UnfinishedPrepare -- Values are escaped in $wpdb->prepare.
+		$wpdb->query(
+			$wpdb->prepare(
+				"UPDATE $table_transaction_info
+					SET locked_at = %s
+					WHERE transaction_id = %d AND space_id = %d",
+				$locked_at,
+				$transaction_id,
+				$space_id
+			)
+		);
+		// phpcs:enable WordPress.DB.DirectDatabaseQuery.SchemaChange, WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching, WordPress.DB.PreparedSQL.InterpolatedNotPrepared, WordPress.DB.PreparedSQLPlaceholders.UnfinishedPrepare.
 	}
 
 
@@ -445,7 +448,6 @@ class WC_PostFinanceCheckout_Helper {
 			return null;
 		}
 		return $language->getIetfCode();
-
 	}
 
 
@@ -457,7 +459,7 @@ class WC_PostFinanceCheckout_Helper {
 	 */
 	public function try_to_parse_date( $date_string ) {
 		$date_of_birth = false;
-		$custom_date_of_birth_format = apply_filters( 'wc_postfinancecheckout_custom_date_of_birth_format', '' );
+		$custom_date_of_birth_format = apply_filters( 'wc_postfinancecheckout_custom_date_of_birth_format', '' ); //phpcs:ignore
 		if ( ! empty( $custom_date_of_birth_format ) ) {
 			$date_of_birth = DateTime::createFromFormat( $custom_date_of_birth_format, $date_string );
 		} else {
@@ -485,8 +487,8 @@ class WC_PostFinanceCheckout_Helper {
 	 */
 	public function start_database_transaction() {
 		global $wpdb;
-		$wpdb->query( 'SET TRANSACTION ISOLATION LEVEL READ COMMITTED' );
-		wc_transaction_query( 'start' );
+		$wpdb->query( 'SET TRANSACTION ISOLATION LEVEL READ COMMITTED' ); //phpcs:ignore
+		wc_transaction_query( 'start' ); //phpcs:ignore
 	}
 
 	/**
@@ -495,7 +497,7 @@ class WC_PostFinanceCheckout_Helper {
 	 * @return void
 	 */
 	public function commit_database_transaction() {
-		wc_transaction_query( 'commit' );
+		wc_transaction_query( 'commit' ); //phpcs:ignore
 	}
 
 	/**
@@ -504,7 +506,7 @@ class WC_PostFinanceCheckout_Helper {
 	 * @return void
 	 */
 	public function rollback_database_transaction() {
-		wc_transaction_query( 'rollback' );
+		wc_transaction_query( 'rollback' ); //phpcs:ignore
 	}
 
 	/**
@@ -525,7 +527,6 @@ class WC_PostFinanceCheckout_Helper {
 		} else {
 			wc_maybe_increase_stock_levels( $order );
 		}
-
 	}
 
 	/**
@@ -535,36 +536,43 @@ class WC_PostFinanceCheckout_Helper {
 	 * @return void
 	 */
 	protected function restock_items_for_order( WC_Order $order ) {
-		if ( 'yes' === get_option( 'woocommerce_manage_stock' ) && $order && apply_filters( 'wc_postfinancecheckout_can_increase_order_stock', true, $order ) && count( $order->get_items() ) > 0 ) {
+		if (
+			'yes' === get_option( 'woocommerce_manage_stock' )
+			&& $order && apply_filters( 'postfinancecheckout_can_increase_order_stock', true, $order )//phpcs:ignore
+			&& count( $order->get_items() ) > 0
+		) {
+
 			foreach ( $order->get_items() as $item ) {
 					$product = $item->get_product();
 				if ( $item->is_type( 'line_item' ) && $product && $product->managing_stock() ) {
+					//phpcs:ignore
 					$qty = apply_filters( 'woocommerce_order_item_quantity', $item->get_quantity(), $order, $item );
 					$item_name = esc_attr( $product->get_formatted_name() );
 					$new_stock = wc_update_product_stock( $product, $qty, 'increase' );
 					if ( ! is_wp_error( $new_stock ) ) {
 						/* translators: 1: item name 2: old stock quantity 3: new stock quantity */
-						$order->add_order_note( sprintf( __( '%1$s stock increased from %2$s to %3$s.', 'woo-postfinancecheckout' ), $item_name, $new_stock - $qty, $new_stock ) );
+						$order->add_order_note( sprintf( esc_html__( '%1$s stock increased from %2$s to %3$s.', 'woo-postfinancecheckout' ), $item_name, $new_stock - $qty, $new_stock ) );
 					}
 				}
 			}
-			do_action( 'wc_postfinancecheckout_restocked_order', $order );
+			do_action( 'wc_postfinancecheckout_restocked_order', $order ); //phpcs:ignore
 		}
 	}
 
 	/**
-	 * @return array
+	 * Retrieve the default header data.
+	 *
+	 * @return array Default header data.
 	 */
-	protected static function getDefaultHeaderData()
-	{
+	protected static function get_default_header_data() {
 		$version = WC_VERSION;
 
-		$shop_version = str_replace('v', '', $version);
-		list ($major_version, $minor_version) = explode('.', $shop_version, 3);
-		return [
-			self::SHOP_SYSTEM             => 'woocommerce',
-			self::SHOP_SYSTEM_VERSION     => $shop_version,
-			self::SHOP_SYSTEM_AND_VERSION => 'woocommerce-' . $major_version . '.' . $minor_version,
-		];
+		$shop_version = str_replace( 'v', '', $version );
+		list ($major_version, $minor_version) = explode( '.', $shop_version, 3 );
+		return array(
+			self::POSTFINANCECHECKOUT_SHOP_SYSTEM => 'woocommerce',
+			self::POSTFINANCECHECKOUT_SHOP_SYSTEM_VERSION => $shop_version,
+			self::POSTFINANCECHECKOUT_SHOP_SYSTEM_AND_VERSION => 'woocommerce-' . $major_version . '.' . $minor_version,
+		);
 	}
 }
