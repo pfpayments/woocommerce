@@ -54,6 +54,7 @@ class WC_PostFinanceCheckout_Webhook_Refund_Strategy extends WC_PostFinanceCheck
 	 * @param \PostFinanceCheckout\Sdk\Model\Refund $object The refund object.
 	 */
 	protected function get_order_id( $object ) {
+		/* @var \PostFinanceCheckout\Sdk\Model\Refund $object */
 		return WC_PostFinanceCheckout_Entity_Transaction_Info::load_by_transaction(
 			$object->getTransaction()->getLinkedSpaceId(),
 			$object->getTransaction()->getId()

@@ -3,7 +3,7 @@
  * Plugin Name: PostFinance Checkout
  * Plugin URI: https://wordpress.org/plugins/woo-postfinance-checkout
  * Description: Process WooCommerce payments with PostFinance Checkout.
- * Version: 3.1.2
+ * Version: 3.1.3
  * Author: postfinancecheckout AG
  * Author URI: https://postfinance.ch/en/business/products/e-commerce/postfinance-checkout-all-in-one.html
  * Text Domain: postfinancecheckout
@@ -11,9 +11,10 @@
  * Requires at least: 6.0
  * Requires PHP: 7.4
  * WC requires at least: 8.0.0
- * WC tested up to: 9.2.3
- * License: Apache 2
- * License URI: http://www.apache.org/licenses/LICENSE-2.0
+ * WC tested up to: 9.3.1
+ *
+ * Text Domain: postfinancecheckout
+ * Domain Path: /languages/
  */
 if ( ! defined( 'ABSPATH' ) ) {
 	exit(); // Exit if accessed directly.
@@ -28,25 +29,24 @@ if ( ! class_exists( 'WooCommerce_PostFinanceCheckout' ) ) {
 	 */
 	final class WooCommerce_PostFinanceCheckout {
 
-		const POSTFINANCECHECKOUT_CK_SPACE_ID = 'wc_postfinancecheckout_space_id';
-		const POSTFINANCECHECKOUT_CK_SPACE_VIEW_ID = 'wc_postfinancecheckout_space_view_id';
-		const POSTFINANCECHECKOUT_CK_APP_USER_ID = 'wc_postfinancecheckout_application_user_id';
-		const POSTFINANCECHECKOUT_CK_APP_USER_KEY = 'wc_postfinancecheckout_application_user_key';
-		const POSTFINANCECHECKOUT_CK_CUSTOMER_INVOICE = 'wc_postfinancecheckout_customer_invoice';
-		const POSTFINANCECHECKOUT_CK_CUSTOMER_PACKING = 'wc_postfinancecheckout_customer_packing';
-		const POSTFINANCECHECKOUT_CK_SHOP_EMAIL = 'wc_postfinancecheckout_shop_email';
-		const POSTFINANCECHECKOUT_CK_INTEGRATION = 'wc_postfinancecheckout_integration';
-		const POSTFINANCECHECKOUT_CK_ORDER_REFERENCE = 'wc_postfinancecheckout_order_reference';
-		const POSTFINANCECHECKOUT_CK_ENFORCE_CONSISTENCY = 'wc_postfinancecheckout_enforce_consistency';
-		const POSTFINANCECHECKOUT_UPGRADE_VERSION = '3.1.2';
-		const WC_MAXIMUM_VERSION = '9.2.3';
+		const CK_SPACE_ID = 'wc_postfinancecheckout_space_id';
+		const CK_SPACE_VIEW_ID = 'wc_postfinancecheckout_space_view_id';
+		const CK_APP_USER_ID = 'wc_postfinancecheckout_application_user_id';
+		const CK_APP_USER_KEY = 'wc_postfinancecheckout_application_user_key';
+		const CK_CUSTOMER_INVOICE = 'wc_postfinancecheckout_customer_invoice';
+		const CK_CUSTOMER_PACKING = 'wc_postfinancecheckout_customer_packing';
+		const CK_SHOP_EMAIL = 'wc_postfinancecheckout_shop_email';
+		const CK_INTEGRATION = 'wc_postfinancecheckout_integration';
+		const CK_ORDER_REFERENCE = 'wc_postfinancecheckout_order_reference';
+		const CK_ENFORCE_CONSISTENCY = 'wc_postfinancecheckout_enforce_consistency';
+		const WC_MAXIMUM_VERSION = '9.3.1';
 
 		/**
 		 * WooCommerce PostFinanceCheckout version.
 		 *
 		 * @var string
 		 */
-		private $version = '3.1.2';
+		private $version = '3.1.3';
 
 		/**
 		 * The single instance of the class.
