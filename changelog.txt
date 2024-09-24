@@ -822,22 +822,13 @@ Tested against:
 - [Tested Against] Woocommerce 9.1.4 & Woocommerce 9.2.1
 - [Tested Against] PHP SDK 4.5.0
 
-= 3.1.1 - Sept 13 2024 =
-- [Bugfix] Added migrations for 3.1.0 changes.
-- [Tested Against] PHP 8.2
-- [Tested Against] Wordpress 6.6
-- [Tested Against] Woocommerce 9.3.1
-- [Tested Against] PHP SDK 4.5.0
-
-= 3.1.2 - Sept 13 2024 =
-- [Bugfix] Fixed installation error.
-- [Tested Against] PHP 8.2
-- [Tested Against] Wordpress 6.6
-- [Tested Against] Woocommerce 9.3.1
-- [Tested Against] PHP SDK 4.5.0
-
-= 3.1.3 - Sept 20 2024 =
-- [Bugfix] Enchanced plugin performance on Checkout page.
+= 3.2.0 - Sept 23 2024 =
+- [Feature] Add privacy policy URL
+- [Feature] Adhere to WP code standards
+- [Feature] Add Support for WC 9.3.x
+- [Bugfix] Fix for error when renewing subscriptions
+- [Bugfix] Fix for deferred payments status being incorrect
+- [Bugfix] Added migrations for 3.2.0 changes
 - [Tested Against] PHP 8.2
 - [Tested Against] Wordpress 6.6
 - [Tested Against] Woocommerce 9.3.1

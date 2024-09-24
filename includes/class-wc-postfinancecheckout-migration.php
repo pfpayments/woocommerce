@@ -38,8 +38,6 @@ class WC_PostFinanceCheckout_Migration {
 	const POSTFINANCECHECKOUT_DEPRECATED_TABLE_PREFIX = 'wc_';
 	const POSTFINANCECHECKOUT_DEPRECATED_PLUGIN_PREFIX = 'woo-';
 
-	// const POSTFINANCECHECKOUT_CK_DB_VERSION = 'wc_postfinancecheckout_db_version';
-
 	/**
 	 * Database migrations.
 	 *
@@ -269,7 +267,7 @@ class WC_PostFinanceCheckout_Migration {
 	public static function plugin_row_meta( $links, $file ) {
 		if ( WC_POSTFINANCECHECKOUT_PLUGIN_BASENAME === $file ) {
 			$row_meta = array(
-				'docs' => '<a href="https://plugin-documentation.postfinance-checkout.ch/pfpayments/woocommerce/3.1.3/docs/en/documentation.html" aria-label="' . esc_html__( 'View Documentation', 'woo-postfinancecheckout' ) . '">' . esc_html__( 'Documentation', 'woo-postfinancecheckout' ) . '</a>',
+				'docs' => '<a href="https://plugin-documentation.postfinance-checkout.ch/pfpayments/woocommerce/3.2.0/docs/en/documentation.html" aria-label="' . esc_html__( 'View Documentation', 'woo-postfinancecheckout' ) . '">' . esc_html__( 'Documentation', 'woo-postfinancecheckout' ) . '</a>',
 			);
 
 			return array_merge( $links, $row_meta );

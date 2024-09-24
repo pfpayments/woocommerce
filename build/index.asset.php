@@ -2,7 +2,8 @@
 	'dependencies' => array(
 		'@woocommerce/blocks-registry',
 		'react',
+		'wp-element',
 		'wp-polyfill',
 	),
-	'version' => '95e2ee718829327fb379',
+	'version' => 'b53687c38b284a0c8c13',
 );
