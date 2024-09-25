@@ -841,3 +841,12 @@ Tested against:
 - [Tested Against] Woocommerce 9.3.1
 - [Tested Against] PHP SDK 4.5.0
 
+= 3.3.0 - Sept 25 2024 =
+- [Bugfix] Fix for infinite load when Germanized plugin active
+- [Tested Against] PHP 8.2
+- [Tested Against] Wordpress 6.6
+- [Tested Against] Woocommerce 9.3.2
+- [Tested Against] PHP SDK 4.6.0
+
+Please ensure that in woocommerce->settings->tax, the "Round tax at subtotal level, instead of rounding per line" is disabled
+

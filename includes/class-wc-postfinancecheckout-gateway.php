@@ -92,6 +92,13 @@ class WC_PostFinanceCheckout_Gateway extends WC_Payment_Gateway {
 	 * @var $pfc_image_base
 	 */
 	private $pfc_image_base = null;
+	
+	/**
+	 * Check to see if we have made the gateway available already.
+	 *
+	 * @var $haveAlreadyEntered have we already entered.
+	 */
+	private $haveAlreadyEntered = false;
 
 	/**
 	 * Constructor.
@@ -380,6 +387,12 @@ class WC_PostFinanceCheckout_Gateway extends WC_Payment_Gateway {
 				return false;
 			}
 		} else {
+			if ( $this->haveAlreadyEntered === true ) {
+				return true;
+			}
+			
+			$this->haveAlreadyEntered = true;
+
 			try {
 				$possible_methods = WC_PostFinanceCheckout_Service_Transaction::instance()->get_possible_payment_methods_for_cart();
 			} catch ( WC_PostFinanceCheckout_Exception_Invalid_Transaction_Amount $e ) {
@@ -401,6 +414,8 @@ class WC_PostFinanceCheckout_Gateway extends WC_Payment_Gateway {
 			} catch ( Exception $e ) {
 				WooCommerce_PostFinanceCheckout::instance()->log( $e->getMessage(), WC_Log_Levels::DEBUG );
 				return false;
+			} finally {
+				$this->haveAlreadyEntered = false;
 			}
 		}
 
