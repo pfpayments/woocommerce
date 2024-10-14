@@ -3,7 +3,7 @@ Contributors: postfinancecheckout AG
 Tags: woocommerce PostFinance Checkout, woocommerce, PostFinance Checkout, payment, e-commerce, webshop, psp, invoice, packing slips, pdf, customer invoice, processing
 Requires at least: 4.7
 Tested up to: 6.6
-Stable tag: 3.3.0
+Stable tag: 3.3.1
 License: Apache 2
 License URI: http://www.apache.org/licenses/LICENSE-2.0
 
@@ -23,7 +23,7 @@ To use this extension, a PostFinance Checkout account is required. Sign up on [P
 
 == Documentation ==
 
-Additional documentation for this plugin is available [here](https://plugin-documentation.postfinance-checkout.ch/pfpayments/woocommerce/3.3.0/docs/en/documentation.html).
+Additional documentation for this plugin is available [here](https://plugin-documentation.postfinance-checkout.ch/pfpayments/woocommerce/3.3.1/docs/en/documentation.html).
 
 == Support ==
 
@@ -64,11 +64,11 @@ Enquiries about our terms of use can be made on the [PostFinance Checkout terms 
 == Changelog ==
 
 
-= 3.3.0 - Sept 25 2024 =
-- [Bugfix] Fix for infinite load when Germanized plugin active
+= 3.3.1 - October 14 2024 =
+- [Feature] Added CH, FR and IT translations
+- [Improvement] Improve payment method loading speed at checkout
+- [Bugfix] Fix for incompatibility with Translatepress
 - [Tested Against] PHP 8.2
 - [Tested Against] Wordpress 6.6
 - [Tested Against] Woocommerce 9.3.2
 - [Tested Against] PHP SDK 4.6.0
-
-Please ensure that in woocommerce->settings->tax, the "Round tax at subtotal level, instead of rounding per line" is disabled

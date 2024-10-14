@@ -1,6 +1,6 @@
 {
   "name": "woocommerce",
-  "version": "1.0.0",
+  "version": "1.1.0",
   "description": "This JS app adds support for WooCommerce Blocks, implementing the checkout block so it can display payment methods.",
   "main": "index.js",
   "scripts": {

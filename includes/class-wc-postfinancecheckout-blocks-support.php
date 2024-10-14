@@ -96,13 +96,10 @@ final class WC_PostFinanceCheckout_Blocks_Support extends AbstractPaymentMethodT
 	 * This function is used for building the data that is expected by WooCommerce Blocks.
 	 * The information is returned directly via a JSON response
 	 *
-	 * @return void
+	 * @return array
 	 */
-	public static function get_payment_methods() {
+	public static function get_payment_methods(): array {
 
-		if ( ! isset( $_POST['postfinancecheckout_nonce'] ) || ! wp_verify_nonce( $_POST['postfinancecheckout_nonce'], 'postfinancecheckout_nonce_block' ) ) {  //phpcs:ignore
-			wp_send_json_error( 'Invalid request', 403 );
-		}
 		$payment_gateways = WC()->payment_gateways()->payment_gateways();
 
 		// From all the payment gateways, only use the ones provided by this module.
@@ -126,7 +123,20 @@ final class WC_PostFinanceCheckout_Blocks_Support extends AbstractPaymentMethodT
 		);
 
 		// Send the list back to the requester in a JSON.
-		wp_send_json( array_values( $payments_list ) );
+		return array_values( $payments_list );
+	}
+
+	/**
+	 * Send the list back to the requester in a JSON.
+	 *
+	 * @return void
+	 */
+	public static function get_payment_methods_json() {
+		if ( ! isset( $_POST['postfinancecheckout_nonce'] ) || ! wp_verify_nonce( $_POST['postfinancecheckout_nonce'], 'postfinancecheckout_nonce_block' ) ) {  //phpcs:ignore
+			wp_send_json_error( 'Invalid request: missing nonce value', 403 );
+		}
+		$payment_methods = WC_PostFinanceCheckout_Blocks_Support::get_payment_methods();
+		wp_send_json( $payment_methods );
 	}
 
 	/**

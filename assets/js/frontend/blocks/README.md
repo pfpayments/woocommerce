@@ -42,6 +42,7 @@ If you need to modify the source code of this project, you need to build the pro
 If you have not done it before, you need to first install the dependencies needed by the project by running:
 
 `npm install`
+You may need to run with sudo if errors happens: `sudo npm install`
 
 Please notice that you need at least npm version 10 or up.
 

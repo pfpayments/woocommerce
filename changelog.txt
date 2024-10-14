@@ -850,3 +850,12 @@ Tested against:
 
 Please ensure that in woocommerce->settings->tax, the "Round tax at subtotal level, instead of rounding per line" is disabled
 
+= 3.3.1 - October 14 2024 =
+- [Feature] Added CH, FR and IT translations
+- [Improvement] Improve payment method loading speed at checkout
+- [Bugfix] Fix for incompatibility with Translatepress
+- [Tested Against] PHP 8.2
+- [Tested Against] Wordpress 6.6
+- [Tested Against] Woocommerce 9.3.2
+- [Tested Against] PHP SDK 4.6.0
+

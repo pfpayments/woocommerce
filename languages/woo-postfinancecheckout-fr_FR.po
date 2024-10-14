@@ -1,0 +1,651 @@
+msgid ""
+msgstr ""
+"Project-Id-Version: PostFinance Checkout\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2021-11-30 16:16+0100\n"
+"PO-Revision-Date: 2021-11-30 16:16+0100\n"
+"Last-Translator: postfinancecheckout AG <checkout@postfinance.ch>\n"
+"Language-Team: Français\n"
+"Language: fr_FR\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=n != 1;\n"
+"X-Generator: Poedit 1.8.7.1\n"
+
+#: includes/class-wc-postfinancecheckout-helper.php:53
+msgid "The API access data is incomplete."
+msgstr "Les données d'accès à l'API sont incomplètes."
+
+#. 1: item name 2: old stock quantity 3: new stock quantity
+#: includes/class-wc-postfinancecheckout-helper.php:439
+#: includes/webhook/class-wc-postfinancecheckout-webhook-transaction-completion.php:90
+#, php-format
+msgid "%1$s stock increased from %2$s to %3$s."
+msgstr "Le stock de %1$s a augmenté de %2$s à %3$s."
+
+#: includes/class-wc-postfinancecheckout-migration.php:90
+#, php-format
+msgid "PHP %s+ is required. (You're running version %s)"
+msgstr "PHP %s+ est requis. (Vous utilisez la version %s)"
+
+#: includes/class-wc-postfinancecheckout-migration.php:93
+#, php-format
+msgid "Wordpress %s+ is required. (You're running version %s)"
+msgstr "Wordpress %s+ est nécessaire. (Vous utilisez la version %s)"
+
+#: includes/class-wc-postfinancecheckout-migration.php:98
+#, php-format
+msgid "Woocommerce %s+ has to be active."
+msgstr "Woocommerce %s+ doit être actif."
+
+#: includes/class-wc-postfinancecheckout-migration.php:104
+#, php-format
+msgid "Woocommerce %s+ is required. (You're running version %s)"
+msgstr "Woocommerce %s+ est nécessaire. (Vous utilisez la version %s)"
+
+#: includes/class-wc-postfinancecheckout-migration.php:116
+msgid "Could not activate plugin PostFinance Checkout."
+msgstr "Impossible d'activer le plugin PostFinance Checkout."
+
+#: includes/class-wc-postfinancecheckout-migration.php:118
+msgid "Please check the following requirements before activating:"
+msgstr "Veuillez vérifier les éléments suivants avant de procéder à l'activation:"
+
+#: includes/class-wc-postfinancecheckout-migration.php:260
+msgid "View Documentation"
+msgstr "Consulter la documentation"
+
+#: includes/class-wc-postfinancecheckout-migration.php:260
+#: includes/admin/class-wc-postfinancecheckout-admin-settings-page.php:148
+msgid "Documentation"
+msgstr "Documentation"
+
+#: includes/class-wc-postfinancecheckout-migration.php:587
+#, php-format
+msgid "A version of the PostFinanceCheckout plugin is yet to be released for this version of WooCommerce."
+msgstr "Une version du plugin PostFinanceCheckout n'est pas encore disponible pour cette version de WooCommerce."
+
+#: includes/class-wc-postfinancecheckout-migration.php:602
+msgid "WooCommerce is not activated. Please activate WooCommerce to use the payment integration."
+msgstr "WooCommerce n'est pas activé. Veuillez activer WooCommerce pour utiliser le module de paiement."
+
+#: includes/class-wc-postfinancecheckout-customer-document.php:57
+msgid "Order Documents"
+msgstr "Documents de commande"
+
+#: includes/class-wc-postfinancecheckout-customer-document.php:68
+msgid "Download Invoice"
+msgstr "Télécharger la facture"
+
+#: includes/class-wc-postfinancecheckout-customer-document.php:80
+msgid "Download Packing Slip"
+msgstr "Télécharger le bordereau d'expédition"
+
+#: includes/class-wc-postfinancecheckout-customer-document.php:150
+msgid "There was an error downloading the document."
+msgstr "Une erreur s'est produite lors du téléchargement du document."
+
+#: includes/class-wc-postfinancecheckout-gateway.php:139
+#, php-format
+msgid "Enable %s"
+msgstr "Activer %s"
+
+#: includes/class-wc-postfinancecheckout-gateway.php:146
+msgid "This controls the title which the user sees during checkout."
+msgstr "Ceci contrôle le nom que l'utilisateur voit lors de l'achat."
+
+#: includes/class-wc-postfinancecheckout-gateway.php:151
+msgid "[not set]"
+msgstr "[non défini]"
+
+#: includes/class-wc-postfinancecheckout-gateway.php:152
+msgid "Payment method description that the customer will see on your checkout."
+msgstr "Description du mode de paiement que le client verra lors de son passage à la caisse."
+
+#: includes/class-wc-postfinancecheckout-gateway.php:155
+msgid "Show description"
+msgstr "Afficher la description"
+
+#: includes/class-wc-postfinancecheckout-gateway.php:157
+#: includes/class-wc-postfinancecheckout-gateway.php:165
+msgid "Yes"
+msgstr "Oui"
+
+#: includes/class-wc-postfinancecheckout-gateway.php:159
+msgid "Show the payment method's description on the checkout page."
+msgstr "Afficher la description de la méthode de paiement sur la page de paiement."
+
+#: includes/class-wc-postfinancecheckout-gateway.php:163
+msgid "Show method image"
+msgstr "Afficher l'image du moyen de paiement"
+
+#: includes/class-wc-postfinancecheckout-gateway.php:167
+msgid "Show the payment method's image on the checkout page."
+msgstr "Afficher l'image de la méthode de paiement sur la page de paiement."
+
+#: includes/class-wc-postfinancecheckout-gateway.php:329
+msgid "Please fill out all required fields."
+msgstr "Veuillez remplir tous les champs obligatoires."
+
+#: includes/class-wc-postfinancecheckout-gateway.php:381
+msgid "The checkout timed out, please try again."
+msgstr "La vérification a été interrompue, veuillez réessayer."
+
+#: includes/class-wc-postfinancecheckout-gateway.php:391
+msgid ""
+"There was an issue, while processing your order. Please try again or use "
+"another payment method."
+msgstr "Un problème est survenu lors du traitement de votre commande. Veuillez réessayer ou utiliser un autre mode de paiement."
+
+#: includes/class-wc-postfinancecheckout-gateway.php:477
+msgid "There was a problem creating the refund."
+msgstr "Il y a eu un problème lors de la création du remboursement."
+
+#: includes/admin/class-wc-postfinancecheckout-admin-document.php:59
+#: includes/admin/class-wc-postfinancecheckout-admin-document.php:141
+msgid "Invoice"
+msgstr "Facture"
+
+#: includes/admin/class-wc-postfinancecheckout-admin-document.php:70
+#: includes/admin/class-wc-postfinancecheckout-admin-document.php:155
+msgid "Packing Slip"
+msgstr "Bordereau d'expédition"
+
+#: includes/admin/class-wc-postfinancecheckout-admin-document.php:95
+msgid "postfinancecheckout Documents"
+msgstr "postfinancecheckout Documents"
+
+#: includes/admin/class-wc-postfinancecheckout-admin-document.php:202
+msgid "Could not fetch the document from PostFinance Checkout."
+msgstr "Impossible de récupérer le document de PostFinance Checkout."
+
+#: includes/admin/class-wc-postfinancecheckout-admin.php:133
+msgid "There is a completion/void in progress."
+msgstr "Un achèvement/une annulation est en cours."
+
+#: includes/admin/class-wc-postfinancecheckout-admin.php:134
+#: includes/admin/class-wc-postfinancecheckout-admin-refund.php:61
+msgid "Update"
+msgstr "Mise à jour"
+
+#: includes/admin/class-wc-postfinancecheckout-admin.php:137
+msgid "Void"
+msgstr "Annuler"
+
+#: includes/admin/class-wc-postfinancecheckout-admin.php:138
+msgid "Completion"
+msgstr "Réalisation"
+
+#: includes/admin/class-wc-postfinancecheckout-admin.php:175
+msgid ""
+"Are you sure you wish to process this void? This action cannot be undone."
+msgstr "Êtes-vous sûr de vouloir traiter cette annulation ? Cette action ne peut être annulée."
+
+#: includes/admin/class-wc-postfinancecheckout-admin.php:176
+msgid ""
+"Are you sure you wish to process this completion? This action cannot be "
+"undone."
+msgstr "Êtes-vous sûr de vouloir traiter cette action ? Cette action ne peut être annulée."
+
+#: includes/admin/class-wc-postfinancecheckout-admin.php:228
+msgid "View Settings"
+msgstr "Afficher les paramètres"
+
+#: includes/admin/class-wc-postfinancecheckout-admin.php:228
+msgid "Settings"
+msgstr "Paramètres"
+
+#: includes/admin/class-wc-postfinancecheckout-admin.php:256
+#: includes/admin/class-wc-postfinancecheckout-admin.php:267
+msgid "Send attribute to PostFinance Checkout."
+msgstr "Envoyer l'attribut à PostFinance Checkout."
+
+#: includes/admin/class-wc-postfinancecheckout-admin-refund.php:60
+msgid "There is a refund in progress."
+msgstr "Un remboursement est en cours."
+
+#: includes/admin/class-wc-postfinancecheckout-admin-refund.php:94
+msgid "Could not load corresponding transaction"
+msgstr "Impossible de charger la transaction correspondante"
+
+#: includes/admin/class-wc-postfinancecheckout-admin-refund.php:101
+msgid "Please wait until the pending refund is processed."
+msgstr "Veuillez patienter jusqu'à ce que le remboursement en cours soit traité."
+
+#: includes/admin/class-wc-postfinancecheckout-admin-refund.php:155
+#: includes/admin/class-wc-postfinancecheckout-admin-refund.php:162
+#, php-format
+msgid ""
+"There has been an error while sending the refund to the gateway. Error: %s"
+msgstr "Une erreur s'est produite lors de l'envoi du remboursement à la plate-forme. Erreur : %s"
+
+#: includes/admin/class-wc-postfinancecheckout-admin-refund.php:182
+#, php-format
+msgid "Error updating refund job with id %d: %s"
+msgstr "Erreur de mise à jour du job de remboursement avec l'identifiant %d: %s"
+
+#: includes/admin/class-wc-postfinancecheckout-admin-order-completion.php:46
+#: includes/admin/class-wc-postfinancecheckout-admin-order-void.php:46
+msgid "Cancel"
+msgstr "Annuler"
+
+#: includes/admin/class-wc-postfinancecheckout-admin-order-completion.php:48
+msgid "Execute Completion"
+msgstr "Exécuter la clôture"
+
+#: includes/admin/class-wc-postfinancecheckout-admin-order-completion.php:50
+msgid "Restock not completed items"
+msgstr "Ajouter à nouveau à l'inventaire les articles non comptabilisés."
+
+#: includes/admin/class-wc-postfinancecheckout-admin-order-completion.php:52
+msgid "Completion Amount"
+msgstr "Montant de la réalisation"
+
+#: includes/admin/class-wc-postfinancecheckout-admin-order-completion.php:118
+msgid "The tax rate can not be changed."
+msgstr "Le taux d'imposition ne peut être modifié."
+
+#: includes/admin/class-wc-postfinancecheckout-admin-order-completion.php:127
+msgid ""
+"The line item total does not correspond to the total amount to complete."
+msgstr "Le total des éléments de la ligne ne correspond pas au montant total à compléter."
+
+#: includes/admin/class-wc-postfinancecheckout-admin-order-completion.php:141
+msgid "The transaction is not in a state to be completed."
+msgstr "La transaction n'est pas en état d'être complétée."
+
+#: includes/admin/class-wc-postfinancecheckout-admin-order-completion.php:146
+msgid "Please wait until the existing completion is processed."
+msgstr "Veuillez patienter jusqu'à ce que l'achèvement existant soit traité."
+
+#: includes/admin/class-wc-postfinancecheckout-admin-order-completion.php:150
+msgid "There is a void in process. The order can not be completed."
+msgstr "Il y a une annulation en cours de traitement. La commande ne peut pas être complétée."
+
+#: includes/admin/class-wc-postfinancecheckout-admin-order-completion.php:179
+msgid "The completion is updated automatically once the result is available."
+msgstr "L'achèvement est mis à jour automatiquement dès que le résultat est disponible."
+
+#: includes/admin/class-wc-postfinancecheckout-admin-order-completion.php:298
+#, php-format
+msgid "Error updating completion job with id %d: %s"
+msgstr "Erreur de mise à jour de la tâche d'achèvement avec l'identifiant %d : %s"
+
+#: includes/admin/class-wc-postfinancecheckout-admin-order-void.php:48
+msgid "Execute Void"
+msgstr "Exécuter l'annulation"
+
+#: includes/admin/class-wc-postfinancecheckout-admin-order-void.php:49
+msgid "Restock items"
+msgstr "Réapprovisionner les articles"
+
+#: includes/admin/class-wc-postfinancecheckout-admin-order-void.php:83
+msgid "The transaction is not in a state to be voided."
+msgstr "La transaction n'est pas en état d'être annulée."
+
+#: includes/admin/class-wc-postfinancecheckout-admin-order-void.php:88
+msgid "Please wait until the existing void is processed."
+msgstr "Veuillez patienter jusqu'à ce que l'annulation existante soit traitée."
+
+#: includes/admin/class-wc-postfinancecheckout-admin-order-void.php:92
+msgid "There is a completion in process. The order can not be voided."
+msgstr "La commande est en cours d'achèvement. La commande ne peut pas être annulée."
+
+#: includes/admin/class-wc-postfinancecheckout-admin-order-void.php:117
+msgid "The transaction is updated automatically once the result is available."
+msgstr "La transaction est mise à jour automatiquement dès que le résultat est disponible."
+
+#: includes/admin/class-wc-postfinancecheckout-admin-order-void.php:186
+#, php-format
+msgid "Error updating void job with id %d: %s"
+msgstr "Erreur lors de la mise à jour d'une commande non valide avec l'ID %d: %s"
+
+#: includes/admin/class-wc-postfinancecheckout-admin-transaction.php:79
+msgid "General Details"
+msgstr "Informations générales"
+
+#: includes/admin/class-wc-postfinancecheckout-admin-transaction.php:84
+msgid "Payment Method"
+msgstr "Mode de paiement"
+
+#: includes/admin/class-wc-postfinancecheckout-admin-transaction.php:97
+msgid "Transaction State"
+msgstr "État de la transaction"
+
+#: includes/admin/class-wc-postfinancecheckout-admin-transaction.php:103
+msgid "Failure Reason"
+msgstr "Raison de l'échec"
+
+#: includes/admin/class-wc-postfinancecheckout-admin-transaction.php:108
+msgid "Authorization Amount"
+msgstr "Montant de l'autorisation"
+
+#: includes/admin/class-wc-postfinancecheckout-admin-transaction.php:112
+msgid "Transaction"
+msgstr "Transaction"
+
+#: includes/admin/class-wc-postfinancecheckout-admin-transaction.php:116
+msgid "View in PostFinance Checkout"
+msgstr "Voir dans PostFinance Checkout"
+
+#: includes/admin/class-wc-postfinancecheckout-admin-transaction.php:162
+msgid "Authorized"
+msgstr "Autorisé"
+
+#: includes/admin/class-wc-postfinancecheckout-admin-transaction.php:164
+msgid "Completed"
+msgstr "Complété"
+
+#: includes/admin/class-wc-postfinancecheckout-admin-transaction.php:166
+msgid "Confirmed"
+msgstr "Confirmé"
+
+#: includes/admin/class-wc-postfinancecheckout-admin-transaction.php:168
+msgid "Decline"
+msgstr "Refusé"
+
+#: includes/admin/class-wc-postfinancecheckout-admin-transaction.php:170
+msgid "Failed"
+msgstr "Échoué"
+
+#: includes/admin/class-wc-postfinancecheckout-admin-transaction.php:172
+msgid "Fulfill"
+msgstr "Livré"
+
+#: includes/admin/class-wc-postfinancecheckout-admin-transaction.php:174
+msgid "Pending"
+msgstr "En Attente"
+
+#: includes/admin/class-wc-postfinancecheckout-admin-transaction.php:176
+msgid "Processing"
+msgstr "En cours de Traitement"
+
+#: includes/admin/class-wc-postfinancecheckout-admin-transaction.php:178
+msgid "Voided"
+msgstr "Annulé"
+
+#: includes/admin/class-wc-postfinancecheckout-admin-transaction.php:180
+msgid "Unknown State"
+msgstr "État inconnu"
+
+#: includes/admin/class-wc-postfinancecheckout-admin-settings-page.php:77
+msgid "Could not update payment method configuration."
+msgstr "Impossible de mettre à jour la configuration du mode de paiement."
+
+#: includes/admin/class-wc-postfinancecheckout-admin-settings-page.php:86
+msgid ""
+"Could not install webhooks, please check if the feature is active in your "
+"space."
+msgstr "Impossible d'installer les webhooks, veuillez vérifier si la fonctionnalité est active dans votre espace."
+
+#: includes/admin/class-wc-postfinancecheckout-admin-settings-page.php:95
+msgid "Could not update the manual task list."
+msgstr "Impossible de mettre à jour la liste des tâches manuelles."
+
+#: includes/admin/class-wc-postfinancecheckout-admin-settings-page.php:107
+msgid ""
+"Please check your credentials and grant the application user the necessary "
+"rights (Account Admin) for your space."
+msgstr "Veuillez vérifier vos informations d'identification et accorder à l'utilisateur de l'application les droits nécessaires (Account Admin) pour votre espace."
+
+#: includes/admin/class-wc-postfinancecheckout-admin-settings-page.php:149
+msgid "Sign Up"
+msgstr "S'enregistrer"
+
+#: includes/admin/class-wc-postfinancecheckout-admin-settings-page.php:155
+msgid "General Settings"
+msgstr "Paramètres généraux"
+
+#: includes/admin/class-wc-postfinancecheckout-admin-settings-page.php:157
+msgid ""
+"Enter your application user credentials and space id, if you don't have an "
+"account already sign up above."
+msgstr "Entrez vos identifiants d'utilisateur de l'application et votre identifiant d'espace, si vous n'avez pas encore de compte, inscrivez-vous ci-dessus."
+
+#: includes/admin/class-wc-postfinancecheckout-admin-settings-page.php:164
+msgid "Space Id"
+msgstr "Space Id"
+
+#: includes/admin/class-wc-postfinancecheckout-admin-settings-page.php:168
+#: includes/admin/class-wc-postfinancecheckout-admin-settings-page.php:177
+#: includes/admin/class-wc-postfinancecheckout-admin-settings-page.php:185
+msgid "(required)"
+msgstr "(requis)"
+
+#: includes/admin/class-wc-postfinancecheckout-admin-settings-page.php:172
+msgid "User Id"
+msgstr "User Id"
+
+#: includes/admin/class-wc-postfinancecheckout-admin-settings-page.php:173
+msgid ""
+"The user needs to have full permissions in the space this shop is linked to."
+msgstr "L'utilisateur doit avoir toutes les permissions dans l'espace auquel ce site est lié."
+
+#: includes/admin/class-wc-postfinancecheckout-admin-settings-page.php:181
+msgid "Authentication Key"
+msgstr "Authentication Key"
+
+#: includes/admin/class-wc-postfinancecheckout-admin-settings-page.php:194
+msgid "Email Options"
+msgstr "Options d'e-mail"
+
+#: includes/admin/class-wc-postfinancecheckout-admin-settings-page.php:200
+msgid "Send Order Email"
+msgstr "Envoyer un e-mail de commande"
+
+#: includes/admin/class-wc-postfinancecheckout-admin-settings-page.php:201
+msgid "Send the order email of WooCommerce."
+msgstr "Envoyer l'email de commande de WooCommerce."
+
+#: includes/admin/class-wc-postfinancecheckout-admin-settings-page.php:214
+msgid "Document Options"
+msgstr "Options du document"
+
+#: includes/admin/class-wc-postfinancecheckout-admin-settings-page.php:220
+msgid "Invoice Download"
+msgstr "Téléchargement de la facture"
+
+#: includes/admin/class-wc-postfinancecheckout-admin-settings-page.php:221
+msgid "Allow customers to download the invoice."
+msgstr "Permettre aux clients de télécharger la facture."
+
+#: includes/admin/class-wc-postfinancecheckout-admin-settings-page.php:228
+msgid "Packing Slip Download"
+msgstr "Télécharger le bordereau d'expédition"
+
+#: includes/admin/class-wc-postfinancecheckout-admin-settings-page.php:229
+msgid "Allow customers to download the packing slip."
+msgstr "Permettre aux clients de télécharger le bordereau d'expédition."
+
+#: includes/admin/class-wc-postfinancecheckout-admin-settings-page.php:242
+msgid "Space View Options"
+msgstr "Space View Options"
+
+#: includes/admin/class-wc-postfinancecheckout-admin-settings-page.php:248
+msgid "Space View Id"
+msgstr "Space View Id"
+
+#: includes/admin/class-wc-postfinancecheckout-admin-settings-page.php:249
+msgid ""
+"The Space View Id allows to control the styling of the payment form and the "
+"payment page within the space."
+msgstr "Le Space View Id permet de contrôler le style du formulaire de paiement et de la page de paiement dans le Space."
+
+#: includes/webhook/class-wc-postfinancecheckout-webhook-delivery-indication.php:53
+msgid "A manual decision about whether to accept the payment is required."
+msgstr "Une décision manuelle d'accepter ou non le paiement est requise."
+
+#: includes/service/class-wc-postfinancecheckout-service-refund.php:167
+msgid "Could not distribute the rounding difference."
+msgstr "Impossible de distribuer la différence d'arrondi."
+
+#: includes/service/class-wc-postfinancecheckout-service-transaction.php:374
+msgid "The checkout expired, please try again."
+msgstr "La commande a expiré, veuillez réessayer."
+
+#: views/admin-notices/manual-tasks.php:18
+msgid "There is a manual task that needs your attention."
+msgstr "Une tâche manuelle requiert votre attention."
+
+#: views/admin-notices/manual-tasks.php:21
+#, php-format
+msgid "There is %s manual task that needs your attention."
+msgid_plural "There are %s manual tasks that need your attention"
+msgstr[0] "Il y a %s tâche manuelle qui requière votre attention"
+msgstr[1] "Il y a %s tâches manuelles qui requièrent votre attention"
+
+#: views/admin-notices/manual-tasks.php:26
+msgid "View"
+msgstr "Voir"
+
+#: views/admin-notices/round-subtotal-warning.php:15
+msgid ""
+"The PostFinance Checkout payment method are not available, if the taxes are rounded at "
+"subtotal level. Please disable the 'Round tax at subtotal level, instead of "
+"rounding per line' in the tax settings to enable the PostFinance Checkout payment methods."
+msgstr " Les méthodes de paiement PostFinance Checkout ne sont pas disponibles si les taxes sont arrondies  "
+" au niveau du sous-total. Veuillez désactiver l'option 'Arrondir la taxe au niveau du sous-total, au lieu de  "
+" Arrondir la taxe au niveau du sous-total, au lieu d'arrondir par ligne' dans les paramètres de taxe pour activer les méthodes de paiement PostFinance Checkout. "
+
+#: views/admin-notices/migration-failed.php:15
+msgid "There was an issue executing the migration for PostFinance Checkout."
+msgstr "Il y a eu un problème lors de l'exécution de la migration pour PostFinance Checkout."
+
+#: views/admin-notices/plugin-deactivated.php:14
+msgid "PostFinance Checkout deactivated because it depends on WooCommerce."
+msgstr "PostFinance Checkout désactivé car il dépend de WooCommerce."
+
+#. Name of the plugin
+msgid "PostFinance Checkout"
+msgstr "PostFinance Checkout"
+
+#. Description of the plugin
+msgid "Process WooCommerce payments with PostFinance Checkout."
+msgstr "Traiter les paiements WooCommerce avec PostFinance Checkout."
+
+#. URI of the plugin
+msgid "https://wordpress.org/plugins/woo-postfinancecheckout"
+msgstr "https://wordpress.org/plugins/woo-postfinancecheckout"
+
+#. Author of the plugin
+msgid "postfinancecheckout AG"
+msgstr "postfinancecheckout AG"
+
+#. Author URI of the plugin
+msgid "https://postfinance.ch/en/business/products/e-commerce/postfinance-checkout-all-in-one.html"
+msgstr "https://postfinance.ch/en/business/products/e-commerce/postfinance-checkout-all-in-one.html"
+
+
+#: includes/admin/class-wc-postfinancecheckout-admin-settings-page.php:277
+msgid "Require that the transaction line items total is matching the order total."
+msgstr "Exiger que le total des postes de la transaction corresponde au total de la commande."
+
+#: includes/admin/class-wc-postfinancecheckout-admin-settings-page.php:276
+msgid "Enforce Consistency"
+msgstr "Assurer la consistance"
+
+#: includes/admin/class-wc-postfinancecheckout-admin-settings-page.php:270
+msgid "Line Items Options"
+msgstr "Options des éléments de ligne"
+
+#: includes/class-wc-postfinancecheckout-helper.php:207
+msgid "Adjustment"
+msgstr "Ajustements"
+
+#: includes/admin/class-wc-postfinancecheckout-admin-settings-page.php:253
+msgid "The integration type controls how the payment form is integrated into the WooCommerce checkout. The Lightbox integration type offers better performance but with a less compelling checkout experience."
+msgstr "Le type d'intégration contrôle la manière dont le formulaire de paiement est intégré dans le checkout de WooCommerce. Le type d'intégration Lightbox offre de meilleures performances, mais avec une expérience de paiement moins attrayante."
+
+#: includes/admin/class-wc-postfinancecheckout-admin-settings-page.php:252
+msgid "Integration Type"
+msgstr "Type d'intégration"
+
+#: includes/admin/class-wc-postfinancecheckout-admin-settings-page.php:245
+msgid "Integration Options"
+msgstr "Options d'intégration"
+
+#: views/admin-notices/round-subtotal-warning.php:15
+msgid "The PostFinance Checkout payment methods are not available, if the taxes are rounded at subtotal level. Please disable the 'Round tax at subtotal level, instead of rounding per line' in the tax settings to enable the PostFinance Checkout payment methods."
+msgstr "Les méthodes de paiement PostFinance Checkout ne sont pas disponibles si les taxes sont arrondies au niveau du sous-total. Veuillez désactiver l'option « Arrondir la taxe au niveau du sous-total, au lieu de l'arrondir par ligne » dans les paramètres de la taxe pour activer les méthodes de paiement PostFinance Checkout."
+
+#: woocommerce-postfinancecheckout.php:296
+msgctxt "Order status"
+msgid "Manual Decision"
+msgstr "Décision manuelle"
+
+#: woocommerce-postfinancecheckout.php:295
+msgctxt "Order status"
+msgid "Waiting"
+msgstr "Attente"
+
+#: woocommerce-postfinancecheckout.php:294
+msgctxt "Order status"
+msgid "Redirected"
+msgstr "Redirigé"
+
+#: woocommerce-postfinancecheckout.php:289
+msgid "Manual Decision <span class=\"count\">(%s)</span>"
+msgid_plural "Manual Decision <span class=\"count\">(%s)</span>"
+msgstr[0] "Décision manuelle <span class=\"count\">(%s)</span>"
+msgstr[1] "Décisions manuelles <span class=\"count\">(%s)</span>"
+
+#: woocommerce-postfinancecheckout.php:280
+msgid "Waiting <span class=\"count\">(%s)</span>"
+msgid_plural "Waiting <span class=\"count\">(%s)</span>"
+msgstr[0] "En attente <span class=\"count\">(%s)</span>"
+msgstr[1] "En attente <span class=\"count\">(%s)</span>"
+
+#: woocommerce-postfinancecheckout.php:271
+msgid "PostFinance Checkout Processing <span class=\"count\">(%s)</span>"
+msgid_plural "PostFinance Checkout Processing <span class=\"count\">(%s)</span>"
+msgstr[0] "PostFinance Checkout est en cours de traitement <span class=\"count\">(%s)</span>"
+msgstr[1] "PostFinance Checkout est en cours de traitement <span class=\"count\">(%s)</span>"
+
+#: includes/class-wc-postfinancecheckout-cron.php:31
+msgid "Every Five Minutes"
+msgstr "Toutes les cinq minutes"
+
+#: includes/class-wc-postfinancecheckout-gateway.php:149
+msgid "Description"
+msgstr "Description"
+
+#: includes/class-wc-postfinancecheckout-gateway.php:143
+msgid "Title"
+msgstr "Titre"
+
+#: includes/class-wc-postfinancecheckout-gateway.php:137
+msgid "Enable/Disable"
+msgstr "Activer/Désactiver"
+
+#: includes/class-wc-postfinancecheckout-migration.php:113
+msgid "Install the PHP cUrl extension or ensure the 'stream_socket_client' function is available."
+msgstr "Installer l'extension PHP cUrl ou s'assurer que la fonction « stream_socket_client » est disponible."
+
+#: includes/admin/class-wc-postfinancecheckout-admin.php:262
+#: includes/admin/class-wc-postfinancecheckout-admin.php:270
+msgid "Should this product attribute be sent to PostFinance Checkout as line item attribute?"
+msgstr "Cet attribut de produit doit-il être envoyé à PostFinance Checkout en tant qu'attribut d'article ?"
+
+#: includes/admin/class-wc-postfinancecheckout-admin-document.php:93
+msgid "PostFinance Checkout Documents"
+msgstr "PostFinance Checkout Documents"
+
+#: includes/admin/class-wc-postfinancecheckout-admin-transaction.php:43
+msgid "PostFinance Checkout Transaction"
+msgstr "PostFinance Checkout Transaction"
+
+#: includes/class-wc-postfinancecheckout-gateway.php:143
+#: includes/admin/class-wc-postfinancecheckout-admin-notices.php:104
+#: includes/admin/class-wc-postfinancecheckout-admin-settings-page.php:104
+msgid "'WooCommerce > Settings > PostFinanceCheckout > Enforce Consistency' and 'WooCommerce > Settings > Tax > Rounding' are both enabled. Please disable at least one of them."
+msgstr "'WooCommerce > Settings > PostFinanceCheckout > Enforce Consistency' et 'WooCommerce > Settings > Tax > Rounding' sont tous deux activés. Veuillez désactiver au moins l'un d'entre eux."
+
+#: includes/webhook/class-wc-postfinancecheckout-webhook-transaction-invoice.php:56
+msgid "Invoice Not Settled"
+msgstr "Facture non réglée"
+
+
+#: includes/webhook/class-wc-postfinancecheckout-webhook-transaction-invoice.php:59
+msgid "Invoice Settled"
+msgstr "Facture réglée"

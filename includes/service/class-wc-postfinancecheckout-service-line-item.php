@@ -73,7 +73,12 @@ class WC_PostFinanceCheckout_Service_Line_Item extends WC_PostFinanceCheckout_Se
 			$strings[] = $item->get_name();
 		}
 
-		$query = TRP_Translate_Press::get_trp_instance()->get_component( 'query' );
+		$trp = TRP_Translate_Press::get_trp_instance();
+
+		if ( is_null( $trp ) ) {
+			return array();
+		}
+
 		$query = $trp->get_component( 'query' );
 		// we get the translations from the dictionary.
 		$dictionary = $query->get_string_rows( '', $strings, $postfinancecheckout_trp_language ); //phpcs:ignore
