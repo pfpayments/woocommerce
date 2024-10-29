@@ -273,42 +273,44 @@ class WC_PostFinanceCheckout_Gateway extends WC_Payment_Gateway {
 	public function generate_info_html( $key, $data ) {
 		$field_key = $this->get_field_key( $key );
 		$defaults = array(
-			'title' => '',
-			'class' => '',
-			'css' => '',
-			'placeholder' => '',
-			'desc_tip' => true,
-			'description' => '',
+			'title'             => '',
+			'class'             => '',
+			'css'               => '',
+			'placeholder'       => '',
+			'desc_tip'          => true,
+			'description'       => '',
 			'custom_attributes' => array(),
 		);
-
+	
 		$data = wp_parse_args( $data, $defaults );
-
+	
 		ob_start();
 		?>
-<tr valign="top">
-	<th scope="row" class="titledesc">
-							<?php // phpcs:ignore ?>
-							<?php echo esc_html( $this->get_tooltip_html( $data ) ); ?>
-							<label for="<?php echo esc_attr( $field_key ); ?>"><?php echo wp_kses_post( $data['title'] ); ?></label>
-	</th>
-	<td class="forminp">
-		<fieldset>
-			<legend class="screen-reader-text">
-				<span><?php echo wp_kses_post( $data['title'] ); ?></span>
-			</legend>
-			<div class="input-text regular-input <?php echo esc_attr( $data['class'] ); ?>" id="<?php echo esc_attr( $field_key ); ?>" style="<?php echo esc_attr( $data['css'] ); ?>" <?php echo esc_html( $this->get_custom_attribute_html( $data ) ); ?> >
-								<?php echo esc_html( $data['value'] ); ?>
-						</div>
-		</fieldset>
-	</td>
-</tr>
+	<tr valign="top">
+		<th scope="row" class="titledesc">
+			<?php echo $this->get_tooltip_html( $data ); // Output the tooltip HTML directly ?>
+			<label for="<?php echo esc_attr( $field_key ); ?>"><?php echo esc_html( $data['title'] ); ?></label>
+		</th>
+		<td class="forminp">
+			<fieldset>
+				<legend class="screen-reader-text">
+					<span><?php echo esc_html( $data['title'] ); ?></span>
+				</legend>
+				<div
+					class="input-text regular-input <?php echo esc_attr( $data['class'] ); ?>"
+					id="<?php echo esc_attr( $field_key ); ?>"
+					style="<?php echo esc_attr( $data['css'] ); ?>"
+					<?php echo $this->get_custom_attribute_html( $data ); // Output custom attributes ?>
+				>
+					<?php echo wp_kses_post( $data['value'] ); ?>
+				</div>
+			</fieldset>
+		</td>
+	</tr>
 		<?php
-
+	
 		return ob_get_clean();
-	}
-
-	/**
+	}	/**
 	 * Validate Info Field.
 	 *
 	 * @param  string      $key Field key++.
