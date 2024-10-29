@@ -352,51 +352,50 @@ class WC_PostFinanceCheckout_Admin {
 	 * Display attribute options edit screen
 	 */
 	public function display_attribute_options_edit() {
-		if ( ! isset( $_GET['edit'] ) ) {// phpcs:ignore
+		if ( ! isset( $_GET['edit'] ) ) {
 			return;
 		} else {
-			$edit = esc_url_raw( wp_unslash( $_GET['edit'] ) );// phpcs:ignore
+			$edit = absint( $_GET['edit'] );
 		}
-		$edit = absint( $edit );
 		$checked = false;
 		$attribute_options = WC_PostFinanceCheckout_Entity_Attribute_Options::load_by_attribute_id( $edit );
 		if ( $attribute_options->get_id() > 0 && $attribute_options->get_send() ) {
 			$checked = true;
 		}
-		echo esc_html(
-			'<tr class="form-field form-required">
-					<th scope="row" valign="top">
-							<label for="postfinancecheckout_attribute_option_send">'
-			) . esc_html__( 'Send attribute to PostFinance Checkout.', 'woo-postfinancecheckout' ) . esc_html(
-						'</label>
-					</th>
-						<td>
-								<input name="postfinancecheckout_attribute_option_send" id="postfinancecheckout_attribute_option_send" type="checkbox" value="1" '
-			) . esc_attr( checked( $checked, true, false ) ) . esc_html(
-							'/>
-							<p class="description">'
-			) . esc_html__( 'Should this product attribute be sent to PostFinance Checkout as line item attribute?', 'woo-postfinancecheckout' ) . esc_html(
-							'</p>
-						</td>
-				</tr>'
-			);
+		?>
+		<tr class="form-field form-required">
+			<th scope="row" valign="top">
+				<label for="postfinancecheckout_attribute_option_send">
+					<?php esc_html_e( 'Send attribute to PostFinance Checkout.', 'woo-postfinancecheckout' ); ?>
+				</label>
+			</th>
+			<td>
+				<input name="postfinancecheckout_attribute_option_send" id="postfinancecheckout_attribute_option_send" type="checkbox" value="1" <?php checked( $checked, true ); ?> />
+				<p class="description">
+					<?php esc_html_e( 'Should this product attribute be sent to PostFinance Checkout as line item attribute?', 'woo-postfinancecheckout' ); ?>
+				</p>
+			</td>
+		</tr>
+		<?php
 	}
+	
+
 
 	/**
 	 * Display attribute options add screen
 	 */
 	public function display_attribute_options_add() {
-		echo esc_html(
-			'<div class="form-field">
-				<label for="postfinancecheckout_attribute_option_send"><input name="postfinancecheckout_attribute_option_send" id="postfinancecheckout_attribute_option_send" type="checkbox" value="1">'
-		) . esc_html__( 'Send attribute to PostFinance Checkout.', 'woo-postfinancecheckout' ) . esc_html(
-				'</label>
-				<p class="description">'
-		) . esc_html__( 'Should this product attribute be sent to PostFinance Checkout as line item attribute?', 'woo-postfinancecheckout' ) .
-		esc_html(
-				'</p>
-			</div>'
-		);
+		?>
+		<div class="form-field">
+			<label for="postfinancecheckout_attribute_option_send">
+				<input name="postfinancecheckout_attribute_option_send" id="postfinancecheckout_attribute_option_send" type="checkbox" value="1">
+				<?php esc_html_e( 'Send attribute to PostFinance Checkout.', 'woo-postfinancecheckout' ); ?>
+			</label>
+			<p class="description">
+				<?php esc_html_e( 'Should this product attribute be sent to PostFinance Checkout as line item attribute?', 'woo-postfinancecheckout' ); ?>
+			</p>
+		</div>
+		<?php
 	}
 }
 
