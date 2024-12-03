@@ -1,0 +1,17 @@
+name: Soft Release Plugin
+on:
+  push:
+    tags:
+      - '[0-9]+.[0-9]+.[0-9]+-beta*'
+      - '[0-9]+.[0-9]+.[0-9]+-rc*'
+
+jobs:
+  beta_release:
+    name: Soft Release
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+      - name: Pre-Release Notice
+        run: |
+          echo "Pre-release tag detected. Skipping full release steps. Only pre-release actions will be performed."
