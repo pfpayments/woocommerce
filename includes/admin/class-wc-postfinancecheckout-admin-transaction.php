@@ -34,7 +34,8 @@ class WC_PostFinanceCheckout_Admin_Transaction {
 				__CLASS__,
 				'add_meta_box',
 			),
-			40
+			40,
+			2
 		);
 	}
 
@@ -42,10 +43,14 @@ class WC_PostFinanceCheckout_Admin_Transaction {
 	 * Add WC Meta boxes.
 	 *
 	 * @see: https://woo.com/document/high-performance-order-storage/#section-8
+	 * @see: https://developer.wordpress.org/reference/hooks/add_meta_boxes/
 	 */
-	public static function add_meta_box() {
-		if ( empty( $post ) || ! ( $post instanceof WP_Post ) || empty( $post->ID ) || 'shop_order' != $post->post_type ) {
-			return;
+	public static function add_meta_box( $post_type = "", $post_or_order_object = null ) {
+		// WooCommerce is moving the Order information from Post to Order class. For now, we need to support both ways.
+		if ( empty( $post_or_order_object ) || ! ( $post_or_order_object instanceof \Automattic\WooCommerce\Admin\Overrides\Order) ) {
+			if ( empty( $post_or_order_object )  || ! ( $post_or_order_object instanceof WP_Post ) || empty( $post_or_order_object->ID ) || 'shop_order' != $post_or_order_object->post_type ) {
+				return;
+			}
 		}
 		$screen = class_exists( '\Automattic\WooCommerce\Internal\DataStores\Orders\CustomOrdersTableController' )
 			&& wc_get_container()->get( \Automattic\WooCommerce\Internal\DataStores\Orders\CustomOrdersTableController::class )->custom_orders_table_usage_is_enabled()

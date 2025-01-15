@@ -3,7 +3,7 @@
  * Plugin Name: PostFinance Checkout
  * Plugin URI: https://wordpress.org/plugins/woo-postfinance-checkout
  * Description: Process WooCommerce payments with PostFinance Checkout.
- * Version: 3.3.2
+ * Version: 3.3.3
  * Author: postfinancecheckout AG
  * Author URI: https://postfinance.ch/en/business/products/e-commerce/postfinance-checkout-all-in-one.html
  * Text Domain: postfinancecheckout
@@ -11,8 +11,8 @@
  * Requires at least: 6.0
  * Requires PHP: 7.4
  * WC requires at least: 8.0.0
- * WC tested up to 9.3.1
- * License: Apache 2
+ * WC tested up to 9.4.2
+ * License: Apache-2.0
  * License URI: http://www.apache.org/licenses/LICENSE-2.0
  */
 if ( ! defined( 'ABSPATH' ) ) {
@@ -46,7 +46,7 @@ if ( ! class_exists( 'WooCommerce_PostFinanceCheckout' ) ) {
 		 *
 		 * @var string
 		 */
-		private $version = '3.3.2';
+		private $version = '3.3.3';
 
 		/**
 		 * The single instance of the class.
@@ -693,7 +693,7 @@ if ( ! class_exists( 'WooCommerce_PostFinanceCheckout' ) ) {
 					// The goal here is to speed up the process of registering the payment methods.
 					$payment_methods = WC_PostFinanceCheckout_Blocks_Support::get_payment_methods();
 					$json_data = json_encode( $payment_methods );
-					$content .= '<div id="whitelabel-payment-methods" data-json="' . esc_attr($json_data) . '"></div>';
+					$content .= '<div id="postfinancecheckout-payment-methods" data-json="' . esc_attr( $json_data ) . '"></div>';
 				}
 
 				return $content;
