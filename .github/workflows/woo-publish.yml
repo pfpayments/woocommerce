@@ -24,6 +24,8 @@ jobs:
         sleep 90 
         echo $GITHUB_WORKSPACE
         echo $WORDPRESS_ORG_SLUG
+        echo "Installing SVN..."
+        sudo apt-get install subversion
         ls -ltrh
         git clone https://github.com/squizlabs/PHP_CodeSniffer.git phpcs;
         git clone -b main https://github.com/WordPress/WordPress-Coding-Standards.git wpcs;
