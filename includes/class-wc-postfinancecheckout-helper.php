@@ -24,6 +24,9 @@ class WC_PostFinanceCheckout_Helper {
 	const POSTFINANCECHECKOUT_SHOP_SYSTEM = 'x-meta-shop-system';
 	const POSTFINANCECHECKOUT_SHOP_SYSTEM_VERSION = 'x-meta-shop-system-version';
 	const POSTFINANCECHECKOUT_SHOP_SYSTEM_AND_VERSION = 'x-meta-shop-system-and-version';
+	const POSTFINANCECHECKOUT_CHECKOUT_VERSION = 'x-checkout-type';
+	const POSTFINANCECHECKOUT_CHECKOUT_TYPE_BLOCKS = 'blocks';
+	const POSTFINANCECHECKOUT_CHECKOUT_TYPE_LEGACY = 'legacy';
 
 	/**
 	 * Instance.

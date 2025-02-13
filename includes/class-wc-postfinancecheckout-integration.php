@@ -25,4 +25,5 @@ defined( 'ABSPATH' ) || exit;
 class WC_PostFinanceCheckout_Integration {
 	const POSTFINANCECHECKOUT_LIGHTBOX = 'lightbox';
 	const POSTFINANCECHECKOUT_IFRAME = 'iframe';
+	const POSTFINANCECHECKOUT_PAYMENTPAGE = 'payment_page';
 }

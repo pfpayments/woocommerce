@@ -18,7 +18,8 @@ jQuery(
 			payment_methods : {},
 			integrations: {
 				LIGHTBOX: 'lightbox',
-				IFRAME: 'iframe'
+				IFRAME: 'iframe',
+				PAYMENT_PAGE: 'payment_page',
 			},
 			validated : false,
 			update_sent : false,
@@ -120,6 +121,9 @@ jQuery(
 
 			payment_method_click : function (event) {
 				var self = event.data.self;
+				if ( postfinancecheckout_js_params.integration === self.integrations.PAYMENT_PAGE ) {
+					return;
+				}
 				var current_method = self.get_selected_payment_method();
 				if ( ! self.is_supported_method( current_method )) {
 					self.enable_place_order_button();

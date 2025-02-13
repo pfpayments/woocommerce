@@ -320,7 +320,7 @@ class WC_PostFinanceCheckout_Service_Line_Item extends WC_PostFinanceCheckout_Se
 	 */
 	private function calculate_discount_rates_proportionally( float $total_discount_amount ): array {
 		$cart = WC()->cart;
-		$tax_totals = array();
+		$tax_totals = [];
 		$total_amount = 0;
 
 		foreach ( $cart->get_cart() as $cart_item ) {
@@ -329,35 +329,49 @@ class WC_PostFinanceCheckout_Service_Line_Item extends WC_PostFinanceCheckout_Se
 			$tax_rates_class = WC_Tax::get_rates( $tax_class );
 
 			foreach ( $tax_rates_class as $rate ) {
-				$rate_id = $rate['rate'];
-				$line_total_with_tax = $cart_item['line_total'] + $cart_item['line_tax'];
+				$rate_id = (string) $rate['rate'];
+				$line_total_with_tax = floor(($cart_item['line_total'] + $cart_item['line_tax']) * 100) / 100;
 
 				if ( ! isset( $tax_totals[ $rate_id ] ) ) {
-					$tax_totals[ $rate_id ] = array(
-						'total' => 0,
-						'rate_percentage' => $rate_id,
-					);
+					$tax_totals[ $rate_id ] = [
+					  'total' => 0,
+					  'rate_percentage' => $rate['rate'],
+					];
 				}
 
-				$tax_totals[ $rate_id ]['total'] += $line_total_with_tax;
+				$tax_totals[ $rate_id ]['total'] += floor(($line_total_with_tax) * 100) / 100;
 				$total_amount += $line_total_with_tax;
 			}
 		}
 
-		$discounts = array();
+		if ( $total_amount <= 0 ) {
+			return [];
+		}
 
+		$discounts = [];
 		foreach ( $tax_totals as $rate_id => $data ) {
-				$proportional_discount_amount = $total_discount_amount * ( $data['total'] / $total_amount );
+			if ( $total_amount == 0 ) {
+				// If $total_amount is 0, no proportional discounts are applied, as there is nothing to distribute.
+				$proportional_discount_amount = 0;
+			} else {
+				$proportional_discount_amount = floor($total_discount_amount * ( $data['total'] / $total_amount ) * 100) / 100;
+			}
 
-				$discounts[] = array(
-					'rate_id' => $rate_id,
-					'amount' => $proportional_discount_amount,
-					'rate_percentage' => $rate_id,
-				);
+			$discounts[] = array(
+			  'rate_id' => $rate_id,
+			  'amount' => $proportional_discount_amount,
+			  'rate_percentage' => $rate_id,
+			);
+			$discounts[] = [
+			  'rate_id' => $rate_id,
+			  'amount' => $proportional_discount_amount,
+			  'rate_percentage' => $data['rate_percentage'],
+			];
 		}
 
 		return $discounts;
 	}
+
 	/**
 	 * Returns the line items from the given cart
 	 *

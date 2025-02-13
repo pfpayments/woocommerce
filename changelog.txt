@@ -884,3 +884,13 @@ Please ensure that in woocommerce->settings->tax, the "Round tax at subtotal lev
 - [Tested Against] Woocommerce 9.4.2
 - [Tested Against] PHP SDK 4.6.0
 
+= 3.3.4 - Feb 12th 2025 =
+- [Feature] Implement payment page checkout integration
+- [Feature] Checkout performance optimization and general approach refactoring
+- [Bugfix] Fixed for user invoice payment and redirect
+- [Bugfix] Fixed discount rate and amount calculation
+- [Tested Against] PHP 8.2
+- [Tested Against] Wordpress 6.7
+- [Tested Against] Woocommerce 9.6.0
+- [Tested Against] PHP SDK 4.6.0
+

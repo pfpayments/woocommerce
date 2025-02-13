@@ -1,5 +1,3 @@
-[![Build Status](https://travis-ci.org/pfpayments/woocommerce.svg?branch=master)](https://travis-ci.org/pfpayments/woocommerce)
-
 
 
 # PostFinance Checkout
@@ -16,7 +14,7 @@ This repository contains the PostFinance Checkout plugin that enables WooCommerc
 
 ## Documentation
 
-* [Documentation](https://plugin-documentation.postfinance-checkout.ch/pfpayments/woocommerce/3.3.3/docs/en/documentation.html)
+* [Documentation](https://plugin-documentation.postfinance-checkout.ch/pfpayments/woocommerce/3.3.4/docs/en/documentation.html)
 
 ## Support
 
@@ -33,7 +31,7 @@ ____________________________________________________________________________
 
 ## License
 
-Please see the [license file](https://github.com/pfpayments/woocommerce/blob/3.3.3/LICENSE) for more information.
+Please see the [license file](https://github.com/pfpayments/woocommerce/blob/3.3.4/LICENSE) for more information.
 
 ## Privacy Policy
 

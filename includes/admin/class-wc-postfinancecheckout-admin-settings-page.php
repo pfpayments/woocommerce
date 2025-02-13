@@ -184,7 +184,7 @@ class WC_PostFinanceCheckout_Admin_Settings_Page extends WC_Settings_Page {
 		$settings = array(
 			array(
 				'links' => array(
-					'https://plugin-documentation.postfinance-checkout.ch/pfpayments/woocommerce/3.3.3/docs/en/documentation.html' => esc_html__( 'Documentation', 'woo-postfinancecheckout' ),
+					'https://plugin-documentation.postfinance-checkout.ch/pfpayments/woocommerce/3.3.4/docs/en/documentation.html' => esc_html__( 'Documentation', 'woo-postfinancecheckout' ),
 					'https://checkout.postfinance.ch/en-ch/user/signup' => esc_html__( 'Sign Up', 'woo-postfinancecheckout' ),
 				),
 				'type'  => 'postfinancecheckout_links',
@@ -310,10 +310,11 @@ class WC_PostFinanceCheckout_Admin_Settings_Page extends WC_Settings_Page {
 				'id'  => WooCommerce_PostFinanceCheckout::POSTFINANCECHECKOUT_CK_INTEGRATION,
 				'type' => 'select',
 				'css' => 'min-width:300px;',
-				'default' => WC_PostFinanceCheckout_Integration::POSTFINANCECHECKOUT_IFRAME,
+				'default' => WC_PostFinanceCheckout_Integration::POSTFINANCECHECKOUT_PAYMENTPAGE,
 				'options' => array(
 					WC_PostFinanceCheckout_Integration::POSTFINANCECHECKOUT_IFRAME => $this->format_display_string( esc_html__( 'iframe', 'woo-postfinancecheckout' ) ),
 					WC_PostFinanceCheckout_Integration::POSTFINANCECHECKOUT_LIGHTBOX  => $this->format_display_string( esc_html__( 'lightbox', 'woo-postfinancecheckout' ) ),
+			  		WC_PostFinanceCheckout_Integration::POSTFINANCECHECKOUT_PAYMENTPAGE => $this->format_display_string( esc_html__( 'payment page', 'woo-postfinancecheckout' ) ),
 				),
 			),
 

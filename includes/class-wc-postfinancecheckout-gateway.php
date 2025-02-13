@@ -92,13 +92,13 @@ class WC_PostFinanceCheckout_Gateway extends WC_Payment_Gateway {
 	 * @var $pfc_image_base
 	 */
 	private $pfc_image_base = null;
-	
+
 	/**
 	 * Check to see if we have made the gateway available already.
 	 *
-	 * @var $haveAlreadyEntered have we already entered.
+	 * @var $have_already_entered have we already entered.
 	 */
-	private $haveAlreadyEntered = false;
+	private $have_already_entered = false;
 
 	/**
 	 * Constructor.
@@ -387,11 +387,11 @@ class WC_PostFinanceCheckout_Gateway extends WC_Payment_Gateway {
 				return false;
 			}
 		} else {
-			if ( $this->haveAlreadyEntered === true ) {
+			if ( $this->have_already_entered === true ) {
 				return true;
 			}
-			
-			$this->haveAlreadyEntered = true;
+
+			$this->have_already_entered = true;
 
 			try {
 				$possible_methods = WC_PostFinanceCheckout_Service_Transaction::instance()->get_possible_payment_methods_for_cart();
@@ -415,7 +415,7 @@ class WC_PostFinanceCheckout_Gateway extends WC_Payment_Gateway {
 				WooCommerce_PostFinanceCheckout::instance()->log( $e->getMessage(), WC_Log_Levels::DEBUG );
 				return false;
 			} finally {
-				$this->haveAlreadyEntered = false;
+				$this->have_already_entered = false;
 			}
 		}
 
@@ -433,7 +433,7 @@ class WC_PostFinanceCheckout_Gateway extends WC_Payment_Gateway {
 		// Store the availability information in the session.
 		$gateway_available = WC()->session->get( 'postfinancecheckout_payment_gateways' );
 		$gateway_available[ $this->pfc_payment_method_configuration_id ] = true;
-		$gateway_available = WC()->session->set( 'postfinancecheckout_payment_gateways', $gateway_available );
+		WC()->session->set( 'postfinancecheckout_payment_gateways', $gateway_available );
 		return true;
 	}
 
@@ -595,20 +595,28 @@ class WC_PostFinanceCheckout_Gateway extends WC_Payment_Gateway {
 
 			[ $result, $transaction ] = $this->process_payment_transaction( $order, $transaction_id, $space_id, $is_order_pay_endpoint, $transaction_service );
 
-			if ( $no_iframe ) {
+
+			$integration_mode = get_option( WooCommerce_PostFinanceCheckout::POSTFINANCECHECKOUT_CK_INTEGRATION );
+
+			$redirect_url = $transaction_service->get_payment_page_url( $transaction->getLinkedSpaceId(), $transaction->getId() );
+			if ( WC_PostFinanceCheckout_Integration::POSTFINANCECHECKOUT_PAYMENTPAGE === $integration_mode ) {
+				// Get Payment Page URL.
+				$transaction_service = WC_PostFinanceCheckout_Service_Transaction::instance();
+				$redirect_url = $transaction_service->get_payment_page_url( get_option( WooCommerce_PostFinanceCheckout::POSTFINANCECHECKOUT_CK_SPACE_ID ), $transaction->getId() );
 				$result = array(
-					'result' => 'success',
-					'redirect' => $transaction_service->get_payment_page_url( $transaction->getLinkedSpaceId(), $transaction->getId() ),
+				  'result' => 'success',
+				  'redirect' => $redirect_url,
 				);
 				return $result;
 			}
 
-			if ( apply_filters( 'wc_postfinancecheckout_gateway_result_send_json', $is_order_pay_endpoint, $order_id ) ) { //phpcs:ignore
-				wp_send_json( $result );
-				exit;
-			} else {
-				return $result;
+			if ( $no_iframe || apply_filters( 'wc_postfinancecheckout_gateway_result_send_json', $is_order_pay_endpoint, $order_id ) ) { //phpcs:ignore
+				$result = array(
+				  'result' => 'success',
+				  'redirect' => $redirect_url,
+				);
 			}
+			return $result;
 		} catch ( Exception $e ) {
 			$message = $e->getMessage();
 			$cleaned = preg_replace( '/^\[[A-Fa-f\d\-]+\] /', '', $message );
@@ -648,6 +656,11 @@ class WC_PostFinanceCheckout_Gateway extends WC_Payment_Gateway {
 	 */
 	public function process_payment_transaction( $order, $transaction_id, $space_id, $is_order_pay_endpoint, $transaction_service ) {
 		try {
+
+			$transaction_service->api_client->addDefaultHeader(
+			  WC_PostFinanceCheckout_Helper::POSTFINANCECHECKOUT_CHECKOUT_VERSION,
+			  WC_PostFinanceCheckout_Helper::POSTFINANCECHECKOUT_CHECKOUT_TYPE_LEGACY
+			);
 			$transaction = $transaction_service->get_transaction( $space_id, $transaction_id );
 
 			$order->add_meta_data( '_postfinancecheckout_pay_for_order', $is_order_pay_endpoint, true );

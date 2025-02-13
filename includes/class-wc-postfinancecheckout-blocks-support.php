@@ -99,31 +99,45 @@ final class WC_PostFinanceCheckout_Blocks_Support extends AbstractPaymentMethodT
 	 * @return array
 	 */
 	public static function get_payment_methods(): array {
+		try {
+			$updateTransaction = (bool) ($_POST['updateTransaction'] ?? false);
 
-		$payment_gateways = WC()->payment_gateways()->payment_gateways();
+			if (true === $updateTransaction) {
+				$transaction_service = WC_PostFinanceCheckout_Service_Transaction::instance();
+				$transaction_service->load_and_update_transaction_from_session();
+			}
 
-		// From all the payment gateways, only use the ones provided by this module.
-		$payment_plugin = array_filter( $payment_gateways, fn( $key ) => str_contains( $key, 'postfinancecheckout_' ), ARRAY_FILTER_USE_KEY );
+			$payment_gateways = WC()->payment_gateways()->payment_gateways();
+			$available_payment_methods = WC_PostFinanceCheckout_Service_Transaction::instance()->get_possible_payment_methods_for_cart();
 
-		// Build the list with the keys expected by WooCommerce Blocks registering functionality.
-		$payments_list = array_map(
-			function ( WC_PostFinanceCheckout_Gateway $payment_gateway ) {
-				return array(
-					'name' => $payment_gateway->id,
-					'label' => $payment_gateway->get_title(),
-					'ariaLabel' => $payment_gateway->get_title(),
-					'description' => $payment_gateway->get_description(),
-					'configuration_id' => $payment_gateway->get_payment_configuration_id(),
-					'integration_mode' => ( get_option( WooCommerce_PostFinanceCheckout::POSTFINANCECHECKOUT_CK_INTEGRATION ) == WC_PostFinanceCheckout_Integration::POSTFINANCECHECKOUT_LIGHTBOX ) ? 'lightbox' : 'iframe',
-					'supports' => $payment_gateway->supports,
-					'icon' => $payment_gateway->get_icon(),
-				);
-			},
-			$payment_plugin
-		);
+			$payment_plugin = array_filter(
+			  $payment_gateways,
+			  fn( $key ) => str_contains( $key, 'postfinancecheckout_' ),
+			  ARRAY_FILTER_USE_KEY
+			);
 
-		// Send the list back to the requester in a JSON.
-		return array_values( $payments_list );
+			$payments_list =
+			  array_map(
+				function ( WC_PostFinanceCheckout_Gateway $payment_gateway ) use ( $available_payment_methods ) {
+					return array(
+					  'name' => $payment_gateway->id,
+					  'label' => $payment_gateway->get_title(),
+					  'ariaLabel' => $payment_gateway->get_title(),
+					  'description' => $payment_gateway->get_description(),
+					  'configuration_id' => $payment_gateway->get_payment_configuration_id(),
+					  'integration_mode' => get_option( WooCommerce_PostFinanceCheckout::POSTFINANCECHECKOUT_CK_INTEGRATION ),
+					  'supports' => $payment_gateway->supports,
+					  'icon' => $payment_gateway->get_icon(),
+					  'isActive' => in_array($payment_gateway->get_payment_configuration_id(), $available_payment_methods, true)
+					);
+				},
+				$payment_plugin
+			  );
+
+			return array_values( $payments_list );
+		} catch (\Exception $e) {
+			return [];
+		}
 	}
 
 	/**
@@ -181,24 +195,32 @@ final class WC_PostFinanceCheckout_Blocks_Support extends AbstractPaymentMethodT
 			$transaction_service = WC_PostFinanceCheckout_Service_Transaction::instance();
 			$transaction = $transaction_service->get_transaction_from_session();
 
-			if ( get_option( WooCommerce_PostFinanceCheckout::POSTFINANCECHECKOUT_CK_INTEGRATION ) == WC_PostFinanceCheckout_Integration::POSTFINANCECHECKOUT_LIGHTBOX ) {
-				// Ask the portal for the lighbox's javascript file.
-				$js_url = $transaction_service->get_lightbox_url_for_transaction( $transaction );
-			} else {
-				// Ask the portal for the iframe's javascript file.
-				$js_url = $transaction_service->get_javascript_url_for_transaction( $transaction );
+			switch( get_option( WooCommerce_PostFinanceCheckout::POSTFINANCECHECKOUT_CK_INTEGRATION ) ) {
+				case WC_PostFinanceCheckout_Integration::POSTFINANCECHECKOUT_IFRAME:
+					// Ask the portal for the iframe's javascript file.
+					$js_url = $transaction_service->get_javascript_url_for_transaction( $transaction );
+					break;
+				case WC_PostFinanceCheckout_Integration::POSTFINANCECHECKOUT_LIGHTBOX:
+					$js_url = $transaction_service->get_lightbox_url_for_transaction( $transaction );
+					// Ask the portal for the lighbox's javascript file.
+					break;
+				default:
+					$js_url = '';
+					break;
 			}
 
-			// Add the JS URL to the response.
-			wp_enqueue_script(
-				'postfinancecheckout-remote-checkout-js',
-				$js_url,
-				array(
+			if ( $js_url ) {
+				// Add the JS URL to the response.
+				wp_enqueue_script(
+				  'postfinancecheckout-remote-checkout-js',
+				  $js_url,
+				  array(
 					'jquery',
-				),
-				1,
-				true
-			);
+				  ),
+				  1,
+				  true
+				);
+			}
 		} catch ( Exception $e ) {
 			WooCommerce_PostFinanceCheckout::instance()->log( $e->getMessage(), WC_Log_Levels::DEBUG );
 		}
@@ -233,13 +255,27 @@ final class WC_PostFinanceCheckout_Blocks_Support extends AbstractPaymentMethodT
 		// We call here the payment processor from our gateway.
 		$space_id = get_option( WooCommerce_PostFinanceCheckout::POSTFINANCECHECKOUT_CK_SPACE_ID );
 		$transaction_service = WC_PostFinanceCheckout_Service_Transaction::instance();
+
+		$transaction_service->api_client->addDefaultHeader(
+		  WC_PostFinanceCheckout_Helper::POSTFINANCECHECKOUT_CHECKOUT_VERSION,
+		  WC_PostFinanceCheckout_Helper::POSTFINANCECHECKOUT_CHECKOUT_TYPE_BLOCKS
+		);
+
 		$transaction = $transaction_service->get_transaction_from_session();
 		$transaction_id = $transaction->getId();
 		[$gateway_result, $transaction] = $payment_method_object->process_payment_transaction( $context->order, $transaction_id, $space_id, true, $transaction_service );
 
+
+		$integration_mode = get_option( WooCommerce_PostFinanceCheckout::POSTFINANCECHECKOUT_CK_INTEGRATION );
+		$redirect_url = $gateway_result['redirect'];
+		if ( WC_PostFinanceCheckout_Integration::POSTFINANCECHECKOUT_PAYMENTPAGE === $integration_mode ) {
+			$transaction_service->update_transaction_info( $transaction, $context->order );
+			$redirect_url = $transaction_service->get_payment_page_url( get_option( WooCommerce_PostFinanceCheckout::POSTFINANCECHECKOUT_CK_SPACE_ID ), $transaction->getId() );
+		}
+
 		// Build the result object, which will be sent back to the browser's JS that invoked the process in the checkout.
 		$result->set_status( isset( $gateway_result['result'] ) && 'success' == $gateway_result['result'] ? 'success' : 'failure' );
 		$result->set_payment_details( array_merge( $result->payment_details, $gateway_result ) );
-		$result->set_redirect_url( $gateway_result['redirect'] );
+		$result->set_redirect_url( $redirect_url );
 	}
 }
