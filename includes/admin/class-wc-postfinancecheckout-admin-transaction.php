@@ -44,11 +44,13 @@ class WC_PostFinanceCheckout_Admin_Transaction {
 	 *
 	 * @see: https://woo.com/document/high-performance-order-storage/#section-8
 	 * @see: https://developer.wordpress.org/reference/hooks/add_meta_boxes/
+	 * @param string $post_type The type of post where the meta box should be added.
+	 * @param WP_Post|WC_Order|null $post_or_order_object The post or order object.
 	 */
 	public static function add_meta_box( $post_type = "", $post_or_order_object = null ) {
 		// WooCommerce is moving the Order information from Post to Order class. For now, we need to support both ways.
 		if ( empty( $post_or_order_object ) || ! ( $post_or_order_object instanceof \Automattic\WooCommerce\Admin\Overrides\Order) ) {
-			if ( empty( $post_or_order_object )  || ! ( $post_or_order_object instanceof WP_Post ) || empty( $post_or_order_object->ID ) || 'shop_order' != $post_or_order_object->post_type ) {
+			if ( empty( $post_or_order_object ) || ! ( $post_or_order_object instanceof WP_Post ) || empty( $post_or_order_object->ID ) || 'shop_order' != $post_or_order_object->post_type ) {
 				return;
 			}
 		}

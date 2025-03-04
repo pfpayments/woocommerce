@@ -358,7 +358,7 @@ class WC_PostFinanceCheckout_Gateway extends WC_Payment_Gateway {
 
 		global $wp;
 		if ( is_checkout() && isset( $wp->query_vars['order-received'] ) ) {
-			// Sometimes, when the Thank you page is loaded, there are new attemps to get
+			// Sometimes, when the Thank you page is loaded, there are new attempts to get
 			// gateways availability. In this particular case, we retrieve the availability
 			// information from the session, so the plugin does not have to ask the portal
 			// for this information, creating an unused transaction in the process.
@@ -604,16 +604,16 @@ class WC_PostFinanceCheckout_Gateway extends WC_Payment_Gateway {
 				$transaction_service = WC_PostFinanceCheckout_Service_Transaction::instance();
 				$redirect_url = $transaction_service->get_payment_page_url( get_option( WooCommerce_PostFinanceCheckout::POSTFINANCECHECKOUT_CK_SPACE_ID ), $transaction->getId() );
 				$result = array(
-				  'result' => 'success',
-				  'redirect' => $redirect_url,
+					'result' => 'success',
+					'redirect' => $redirect_url,
 				);
 				return $result;
 			}
 
 			if ( $no_iframe || apply_filters( 'wc_postfinancecheckout_gateway_result_send_json', $is_order_pay_endpoint, $order_id ) ) { //phpcs:ignore
 				$result = array(
-				  'result' => 'success',
-				  'redirect' => $redirect_url,
+					'result' => 'success',
+					'redirect' => $redirect_url,
 				);
 			}
 			return $result;
@@ -621,7 +621,7 @@ class WC_PostFinanceCheckout_Gateway extends WC_Payment_Gateway {
 			$message = $e->getMessage();
 			$cleaned = preg_replace( '/^\[[A-Fa-f\d\-]+\] /', '', $message );
 			WC()->session->set( 'postfinancecheckout_failure_message', $cleaned );
-			$order->update_status( 'failed' );
+			apply_filters( 'postfinancecheckout_order_update_status', $order, 'failed' );
 			$result = array(
 				'result' => 'failure',
 				'reload' => 'true',
@@ -656,10 +656,9 @@ class WC_PostFinanceCheckout_Gateway extends WC_Payment_Gateway {
 	 */
 	public function process_payment_transaction( $order, $transaction_id, $space_id, $is_order_pay_endpoint, $transaction_service ) {
 		try {
-
 			$transaction_service->api_client->addDefaultHeader(
-			  WC_PostFinanceCheckout_Helper::POSTFINANCECHECKOUT_CHECKOUT_VERSION,
-			  WC_PostFinanceCheckout_Helper::POSTFINANCECHECKOUT_CHECKOUT_TYPE_LEGACY
+				WC_PostFinanceCheckout_Helper::POSTFINANCECHECKOUT_CHECKOUT_VERSION,
+				WC_PostFinanceCheckout_Helper::POSTFINANCECHECKOUT_CHECKOUT_TYPE_LEGACY
 			);
 			$transaction = $transaction_service->get_transaction( $space_id, $transaction_id );
 

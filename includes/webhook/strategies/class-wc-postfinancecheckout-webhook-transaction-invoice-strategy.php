@@ -90,11 +90,11 @@ class WC_PostFinanceCheckout_Webhook_Transaction_Invoice_Strategy extends WC_Pos
 	protected function process_order_related_inner( WC_Order $order, \PostFinanceCheckout\Sdk\Model\TransactionInvoice $transaction_invoice, WC_PostFinanceCheckout_Webhook_Request $request ) {
 		switch ( $request->get_state() ) {
 			case \PostFinanceCheckout\Sdk\Model\TransactionInvoiceState::DERECOGNIZED:
-				$order->add_order_note( __( 'Invoice Not Settled' ) );
+				$order->add_order_note( __( 'Invoice Not Settled', 'woo-postfinancecheckout' ) );
 				break;
 			case \PostFinanceCheckout\Sdk\Model\TransactionInvoiceState::NOT_APPLICABLE:
 			case \PostFinanceCheckout\Sdk\Model\TransactionInvoiceState::PAID:
-				$order->add_order_note( __( 'Invoice Settled' ) );
+				$order->add_order_note( __( 'Invoice Settled', 'woo-postfinancecheckout' ) );
 				break;
 			default:
 				// Nothing to do.

@@ -649,3 +649,175 @@ msgstr "Fattura non saldata"
 #: includes/webhook/class-wc-postfinancecheckout-webhook-transaction-invoice.php:59
 msgid "Invoice Settled"
 msgstr "Fattura saldata"
+
+#: includes/admin/class-wc-postfinancecheckout-admin-settings-page.php:360
+msgid "Order Status Settings"
+msgstr "Impostazioni dello stato dell'ordine"
+
+#: includes/admin/class-wc-postfinancecheckout-admin-settings-page.php:363
+msgid "Map WooCommerce Order Statuses to PostFinanceCheckout Transaction Statuses to ensure seamless integration and consistent order tracking across both platforms."
+msgstr "Mappa gli stati degli ordini WooCommerce con gli stati delle transazioni PostFinanceCheckout. Questo aiuterà a sincronizzare lo stato degli ordini tra il tuo negozio WooCommerce e PostFinanceCheckout."
+
+#: includes/admin/class-wc-postfinancecheckout-admin-settings-page.php:379
+msgid "Set a custom WooCommerce order status to be applied automatically when a transaction is in the %s state."
+msgstr "Stato in cui entra l'ordine quando la transazione è nello stato %s."
+
+#: includes/admin/class-wc-postfinancecheckout-admin-settings-page.php:374
+msgid "Create"
+msgstr "Crea"
+
+#: includes/admin/class-wc-postfinancecheckout-admin-settings-page.php:374
+msgid "Pending"
+msgstr "In sospeso"
+
+#: includes/admin/class-wc-postfinancecheckout-admin-settings-page.php:374
+msgid "Pending payment"
+msgstr "In sospeso"
+
+#: includes/admin/class-wc-postfinancecheckout-admin-settings-page.php:374
+msgid "Confirmed"
+msgstr "Confermato"
+
+#: includes/admin/class-wc-postfinancecheckout-admin-settings-page.php:374
+msgid "Processing"
+msgstr "In elaborazione"
+
+#: includes/admin/class-wc-postfinancecheckout-admin-settings-page.php:374
+msgid "Failed"
+msgstr "Non riuscito"
+
+#: includes/admin/class-wc-postfinancecheckout-admin-settings-page.php:374
+msgid "Authorized"
+msgstr "Autorizzato"
+
+#: includes/admin/class-wc-postfinancecheckout-admin-settings-page.php:374
+msgid "Completed"
+msgstr "Completato"
+
+#: includes/admin/class-wc-postfinancecheckout-admin-settings-page.php:374
+msgid "On hold"
+msgstr "In attesa"
+
+#: includes/admin/class-wc-postfinancecheckout-admin-settings-page.php:374
+msgid "Fulfill"
+msgstr "Consegna"
+
+#: includes/admin/class-wc-postfinancecheckout-admin-settings-page.php:374
+msgid "Decline"
+msgstr "Rifiuta"
+
+#: includes/admin/class-wc-postfinancecheckout-admin-settings-page.php:374
+msgid "Voided"
+msgstr "Annullato"
+
+#: includes/admin/class-wc-postfinancecheckout-admin-settings-page.php:374
+msgid "On Hold"
+msgstr "In attesa"
+
+#: includes/admin/class-wc-postfinancecheckout-admin-settings-page.php:374
+msgid "Draft"
+msgstr "Bozza"
+
+#: includes/admin/class-wc-postfinancecheckout-admin-settings-page.php:374
+msgid "Cancelled"
+msgstr "Annullato"
+
+#: includes/admin/class-wc-postfinancecheckout-admin-settings-page.php:374
+msgid "Refunded"
+msgstr "Rimborsato"
+
+#: woocommerce-postfinancecheckout.php:886
+msgid "custom"
+msgstr "personalizzato"
+
+#: woocommerce-postfinancecheckout.php:931
+msgid "Cannot delete: this status is currently in use."
+msgstr "Impossibile eliminare: questo stato è attualmente in uso."
+
+#: woocommerce-postfinancecheckout.php:938
+msgid "Deleted successfully"
+msgstr "Eliminato con successo"
+
+#: includes/admin/class-wc-postfinancecheckout-admin-settings-page.php:59
+msgid "General Settings"
+msgstr "Impostazioni generali"
+
+#: includes/admin/class-wc-postfinancecheckout-admin-settings-page.php:60
+msgid "Order Statuses Settings"
+msgstr "Impostazioni degli stati dell'ordine"
+
+#: includes/admin/class-wc-postfinancecheckout-admin-settings-page.php:61
+msgid "Order Statuses"
+msgstr "Stato dell'ordine"
+
+#: includes/admin/class-wc-postfinancecheckout-admin-settings-page.php:61
+msgid "Order Status"
+msgstr "Stati dell'ordine"
+
+#: includes/admin/class-wc-postfinancecheckout-admin-settings-page.php:397
+msgid "Map WooCommerce Order Statuses to PostFinanceCheckout Transaction Statuses to ensure seamless integration and consistent order tracking across both platforms."
+msgstr "Mappa gli stati dell'ordine WooCommerce agli stati della transazione PostFinanceCheckout. Questo aiuterà a sincronizzare lo stato degli ordini tra il tuo negozio WooCommerce e PostFinanceCheckout."
+
+#: includes/admin/class-wc-postfinancecheckout-admin-settings-page.php:418
+msgid "Set a custom WooCommerce order status to be applied automatically when a transaction is in the %s state."
+msgstr "Stato in cui entra l'ordine quando la transazione è nello stato %s."
+
+#: includes/admin/class-wc-postfinancecheckout-admin-settings-page.php:453
+msgid "Status key"
+msgstr "Chiave dello stato"
+
+#: includes/admin/class-wc-postfinancecheckout-admin-settings-page.php:454
+msgid "Label"
+msgstr "Etichetta"
+
+#: includes/admin/class-wc-postfinancecheckout-admin-settings-page.php:455
+msgid "Type"
+msgstr "Tipo"
+
+#: includes/admin/class-wc-postfinancecheckout-admin-settings-page.php:559
+msgid "Your changed data will be lost if you leave this page without saving."
+msgstr "Le modifiche apportate andranno perse se lasci questa pagina senza salvare."
+
+#: includes/admin/class-wc-postfinancecheckout-admin-settings-page.php:560
+msgid "Your changes were not saved. Please retry."
+msgstr "Le modifiche non sono state salvate. Riprova."
+
+#: includes/admin/class-wc-postfinancecheckout-admin-settings-page.php:561
+msgid "Are you sure you want to delete this custom status?"
+msgstr "Sei sicuro di voler eliminare questo stato personalizzato?"
+
+#: includes/admin/class-wc-postfinancecheckout-admin-settings-page.php:510
+msgid "characters remaining"
+msgstr "caratteri rimanenti"
+
+#: includes/admin/class-wc-postfinancecheckout-admin-settings-page.php:400
+msgid "PostFinanceCheckout payment status"
+msgstr "Stato del pagamento PostFinanceCheckout"
+
+#: includes/admin/class-wc-postfinancecheckout-admin-settings-page.php:401
+msgid "WooCommerce Order Status"
+msgstr "Stato dell'ordine WooCommerce"
+
+#: includes/admin/class-wc-postfinancecheckout-admin-settings-page.php:407
+msgid "Custom order statuses"
+msgstr "Stati dell'ordine personalizzati"
+
+#: includes/admin/class-wc-postfinancecheckout-admin-settings-page.php:408
+msgid "Allows the use of customs statuses in orders."
+msgstr "Consente di utilizzare gli stati doganali negli ordini."
+
+#: views/admin-settings/html-admin-page-order-statuses.php:11
+msgid "Add custom status"
+msgstr "Aggiungi stato personalizzato"
+
+#: views/admin-settings/html-admin-page-order-statuses.php:28
+msgid "No custom status have been created."
+msgstr "Nessuno stato personalizzato è stato creato."
+
+#: views/admin-settings/html-admin-page-order-statuses.php:67
+msgid "Give your custom status a name for easy identification"
+msgstr "Dai un nome al tuo stato personalizzato per una facile identificazione."
+
+#: views/admin-settings/html-admin-page-order-statuses.php:64
+msgid "e.g. awaiting"
+msgstr "es. in attesa"

@@ -74,8 +74,10 @@ class WC_PostFinanceCheckout_Download_Helper {
 		header( 'Content-Disposition: attachment; filename="' . esc_html( $document->getTitle() ) . '.pdf"' );
 		header( 'Content-Description: ' . esc_html( $document->getTitle() ) );
 
+		// phpcs:ignore WordPress.PHP.DiscouragedPHPFunctions.obfuscation_base64_decode
 		$data_safe = base64_decode( $document->getData() );
-		echo $data_safe; // phpcs:ignore
+		// The following line outputs binary PDF data, escaping is not applied as it's not HTML content.
+		echo $data_safe; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
 		exit();
 	}
 }

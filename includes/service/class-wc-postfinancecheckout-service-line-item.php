@@ -334,8 +334,8 @@ class WC_PostFinanceCheckout_Service_Line_Item extends WC_PostFinanceCheckout_Se
 
 				if ( ! isset( $tax_totals[ $rate_id ] ) ) {
 					$tax_totals[ $rate_id ] = [
-					  'total' => 0,
-					  'rate_percentage' => $rate['rate'],
+						'total' => 0,
+						'rate_percentage' => $rate['rate'],
 					];
 				}
 
@@ -358,14 +358,14 @@ class WC_PostFinanceCheckout_Service_Line_Item extends WC_PostFinanceCheckout_Se
 			}
 
 			$discounts[] = array(
-			  'rate_id' => $rate_id,
-			  'amount' => $proportional_discount_amount,
-			  'rate_percentage' => $rate_id,
+				'rate_id' => $rate_id,
+				'amount' => $proportional_discount_amount,
+				'rate_percentage' => $rate_id,
 			);
 			$discounts[] = [
-			  'rate_id' => $rate_id,
-			  'amount' => $proportional_discount_amount,
-			  'rate_percentage' => $data['rate_percentage'],
+				'rate_id' => $rate_id,
+				'amount' => $proportional_discount_amount,
+				'rate_percentage' => $data['rate_percentage'],
 			];
 		}
 

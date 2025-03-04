@@ -87,11 +87,11 @@ class WC_PostFinanceCheckout_Webhook_Transaction_Invoice extends WC_PostFinanceC
 		/* @var \PostFinanceCheckout\Sdk\Model\TransactionInvoice $transaction_invoice */ //phpcs:ignore
 		switch ( $transaction_invoice->getState() ) {
 			case \PostFinanceCheckout\Sdk\Model\TransactionInvoiceState::DERECOGNIZED:
-				$order->add_order_note( esc_html__( 'Invoice Not Settled' ) );
+				$order->add_order_note( esc_html__( 'Invoice Not Settled', 'woo-postfinancecheckout' ) );
 				break;
 			case \PostFinanceCheckout\Sdk\Model\TransactionInvoiceState::NOT_APPLICABLE:
 			case \PostFinanceCheckout\Sdk\Model\TransactionInvoiceState::PAID:
-				$order->add_order_note( esc_html__( 'Invoice Settled' ) );
+				$order->add_order_note( esc_html__( 'Invoice Settled', 'woo-postfinancecheckout' ) );
 				break;
 			default:
 				// Nothing to do.

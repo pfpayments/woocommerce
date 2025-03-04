@@ -3,7 +3,7 @@ Contributors: postfinancecheckout AG
 Tags: woocommerce PostFinance Checkout, woocommerce, PostFinance Checkout, payment, e-commerce, webshop, psp, invoice, packing slips, pdf, customer invoice, processing
 Requires at least: 4.7
 Tested up to: 6.7
-Stable tag: 3.3.4
+Stable tag: 3.3.5
 License: Apache-2.0
 License URI: http://www.apache.org/licenses/LICENSE-2.0
 
@@ -23,7 +23,24 @@ To use this extension, a PostFinance Checkout account is required. Sign up on [P
 
 == Documentation ==
 
-Additional documentation for this plugin is available [here](https://plugin-documentation.postfinance-checkout.ch/pfpayments/woocommerce/3.3.4/docs/en/documentation.html).
+Additional documentation for this plugin is available [here](https://plugin-documentation.postfinance-checkout.ch/pfpayments/woocommerce/3.3.5/docs/en/documentation.html).
+
+== External Services ==
+
+This plugin includes an internal script to manage device verification within the WooCommerce store environment. 
+
+The script helps ensure session consistency and transaction security.
+
+- **Service Name:** PostFinance Checkout Device Verification Script
+- **Purpose:** To track device sessions and enhance security during checkout and payment processing.
+- **Data Sent:**
+  - **Cookie Name:** `wc_whitelabelname_device_id`
+  - **Data Stored in Cookie:** A unique device identifier (hashed value).
+  - **When the Cookie is Set:** The cookie is set when the checkout page is accessed and updated during payment processing.
+  - **Where the Data is Processed:** All operations occur locally within the WooCommerce store and are not transmitted to external services.
+- **Conditions for Use:** The cookie is only set if the customer initiates a checkout session.
+
+No personal data is sent to third-party services; all information remains within the WooCommerce store for internal verification purposes.
 
 == Support ==
 
@@ -64,12 +81,10 @@ Enquiries about our terms of use can be made on the [PostFinance Checkout terms 
 == Changelog ==
 
 
-= 3.3.4 - Feb 12th 2025 =
-- [Feature] Implement payment page checkout integration
-- [Feature] Checkout performance optimization and general approach refactoring
-- [Bugfix] Fixed for user invoice payment and redirect
+= 3.3.5 - Mar 4 2025 =
+- [Feature] Status mapping feature introduced
 - [Bugfix] Fixed discount rate and amount calculation
 - [Tested Against] PHP 8.2
 - [Tested Against] Wordpress 6.7
-- [Tested Against] Woocommerce 9.6.0
+- [Tested Against] Woocommerce 9.7.0
 - [Tested Against] PHP SDK 4.6.0

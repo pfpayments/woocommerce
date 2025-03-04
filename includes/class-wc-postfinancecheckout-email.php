@@ -154,7 +154,7 @@ class WC_PostFinanceCheckout_Email {
 		if ( ! ( $order instanceof WC_Order ) ) {
 			return $enabled;
 		}
-		if ( isset( $GLOBALS['_postfinancecheckout_resend_email'] ) && $GLOBALS['_postfinancecheckout_resend_email'] ) {
+		if ( isset( $GLOBALS['postfinancecheckout_resend_email'] ) && $GLOBALS['postfinancecheckout_resend_email'] ) {
 			return $enabled;
 		}
 		$gateway = wc_get_payment_gateway_by_order( $order );
@@ -174,7 +174,7 @@ class WC_PostFinanceCheckout_Email {
 	 * @return void
 	 */
 	public static function before_resend_email( $order ) { //phpcs:ignore
-		$GLOBALS['_postfinancecheckout_resend_email'] = true;
+		$GLOBALS['postfinancecheckout_resend_email'] = true;
 	}
 
 	/**
@@ -185,7 +185,7 @@ class WC_PostFinanceCheckout_Email {
 	 * @return void
 	 */
 	public static function after_resend_email( $order, $email ) { //phpcs:ignore
-		unset( $GLOBALS['_postfinancecheckout_resend_email'] );
+		unset( $GLOBALS['postfinancecheckout_resend_email'] );
 	}
 
 	/**

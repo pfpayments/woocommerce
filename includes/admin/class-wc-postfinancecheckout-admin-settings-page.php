@@ -29,7 +29,7 @@ class WC_PostFinanceCheckout_Admin_Settings_Page extends WC_Settings_Page {
 	 */
 	public function __construct() {
 		$this->id = 'postfinancecheckout';
-		$this->label = 'PostFinance Checkout';
+		$this->label = __( 'PostFinance Checkout', 'woo-postfinancecheckout' );
 
 		add_filter(
 			'woocommerce_settings_tabs_array',
@@ -39,36 +39,13 @@ class WC_PostFinanceCheckout_Admin_Settings_Page extends WC_Settings_Page {
 			),
 			20
 		);
-		add_action(
-			'woocommerce_settings_' . $this->id,
-			array(
-				$this,
-				'settings_tab',
-			)
-		);
-		add_action(
-			'woocommerce_settings_save_' . $this->id,
-			array(
-				$this,
-				'save',
-			)
-		);
 
-		add_action(
-			'woocommerce_update_options_' . $this->id,
-			array(
-				$this,
-				'update_settings',
-			)
-		);
+		add_action( 'admin_enqueue_scripts', array( $this, 'enqueue_scripts' ) );
+		add_action( 'woocommerce_update_options_' . $this->id, array( $this, 'update_settings' ) );
+		add_action( 'woocommerce_admin_field_postfinancecheckout_order_statuses_table', array( $this, 'order_statuses_table' ) );
+		add_action( 'woocommerce_admin_field_postfinancecheckout_links', array( $this, 'output_links' ) );
 
-		add_action(
-			'woocommerce_admin_field_postfinancecheckout_links',
-			array(
-				$this,
-				'output_links',
-			)
-		);
+		parent::__construct();
 	}
 
 	/**
@@ -83,12 +60,57 @@ class WC_PostFinanceCheckout_Admin_Settings_Page extends WC_Settings_Page {
 	}
 
 	/**
-	 * Settings Tab
+	 * Get all sections for this page, both the own ones and the ones defined via filters.
+	 * This method overrides the parent method to add the own sections to the list of sections.
 	 *
-	 * @return void
+	 * @return array
 	 */
-	public function settings_tab() {
-		woocommerce_admin_fields( $this->get_settings() );
+	protected function get_own_sections() {
+		return array(
+			'' => esc_html__( 'General Settings', 'woo-postfinancecheckout' ),
+			'postfinancecheckout_order_statuses_settings' => esc_html__( 'Order Statuses Settings', 'woo-postfinancecheckout' ),
+		);
+	}
+
+	/**
+	 * Get settings for the default section.
+	 *
+	 * This method returns the settings array for the default section (i.e., when the section ID is empty).
+	 * Originally, the get_settings() method returned the settings for the "Options" section when the supplied
+	 * $current_section was an empty string.
+	 *
+	 * @return array
+	 */
+	protected function get_settings_for_default_section() {
+		return $this->get_default_settings();
+	}
+
+	/**
+	 * Get settings for the order status settings section.
+	 *
+	 * This method returns the settings array for the "Order Status Settings" section.
+	 * This replaces the original behavior of get_settings() which returned the "Options" section when the
+	 * supplied $current_section was empty.
+	 *
+	 * @return array
+	 */
+	protected function get_settings_for_postfinancecheckout_order_statuses_settings_section() {
+		return $this->get_order_status_settings();
+	}
+
+	/**
+	 * Get settings for the add new order status section.
+	 *
+	 * This method returns the settings array for the "Add New Order Status" section.
+	 * This replaces the original behavior of get_settings() which returned the "Options" section when the
+	 * supplied $current_section was empty.
+	 *
+	 * @return array
+	 */
+	protected function get_settings_for_postfinancecheckout_order_statuses_section() {
+		global $current_section, $hide_save_button;
+		$hide_save_button = true;
+		return $this->get_order_statuses();
 	}
 
 	/**
@@ -97,8 +119,8 @@ class WC_PostFinanceCheckout_Admin_Settings_Page extends WC_Settings_Page {
 	 * @return void
 	 */
 	public function save() {
-		$settings = $this->get_settings();
-		WC_Admin_Settings::save_fields( $settings );
+		$this->save_settings_for_current_section();
+		$this->do_update_options_action();
 	}
 
 	/**
@@ -179,12 +201,11 @@ class WC_PostFinanceCheckout_Admin_Settings_Page extends WC_Settings_Page {
 	 *
 	 * @return array
 	 */
-	public function get_settings() {
-
+	public function get_default_settings() {
 		$settings = array(
 			array(
 				'links' => array(
-					'https://plugin-documentation.postfinance-checkout.ch/pfpayments/woocommerce/3.3.4/docs/en/documentation.html' => esc_html__( 'Documentation', 'woo-postfinancecheckout' ),
+					'https://plugin-documentation.postfinance-checkout.ch/pfpayments/woocommerce/3.3.5/docs/en/documentation.html' => esc_html__( 'Documentation', 'woo-postfinancecheckout' ),
 					'https://checkout.postfinance.ch/en-ch/user/signup' => esc_html__( 'Sign Up', 'woo-postfinancecheckout' ),
 				),
 				'type'  => 'postfinancecheckout_links',
@@ -314,7 +335,7 @@ class WC_PostFinanceCheckout_Admin_Settings_Page extends WC_Settings_Page {
 				'options' => array(
 					WC_PostFinanceCheckout_Integration::POSTFINANCECHECKOUT_IFRAME => $this->format_display_string( esc_html__( 'iframe', 'woo-postfinancecheckout' ) ),
 					WC_PostFinanceCheckout_Integration::POSTFINANCECHECKOUT_LIGHTBOX  => $this->format_display_string( esc_html__( 'lightbox', 'woo-postfinancecheckout' ) ),
-			  		WC_PostFinanceCheckout_Integration::POSTFINANCECHECKOUT_PAYMENTPAGE => $this->format_display_string( esc_html__( 'payment page', 'woo-postfinancecheckout' ) ),
+					WC_PostFinanceCheckout_Integration::POSTFINANCECHECKOUT_PAYMENTPAGE => $this->format_display_string( esc_html__( 'payment page', 'woo-postfinancecheckout' ) ),
 				),
 			),
 
@@ -369,7 +390,92 @@ class WC_PostFinanceCheckout_Admin_Settings_Page extends WC_Settings_Page {
 
 		);
 
-		return apply_filters( 'wc_postfinancecheckout_settings', $settings );
+		return apply_filters( 'postfinancecheckout_settings', $settings );
+	}
+
+	/**
+	 * Returns the configuration for the Order Status section.
+	 *
+	 * @return array
+	 */
+	public function get_order_status_settings() {
+		$settings = array(
+			array(
+				'title' => __( 'Order Status Settings', 'woo-postfinancecheckout' ),
+				'type' => 'title',
+				'id' => 'order_status_mapping_options',
+				'desc' => __( 'Map WooCommerce Order Statuses to PostFinanceCheckout Transaction Statuses to ensure seamless integration and consistent order tracking across both platforms.', 'woo-postfinancecheckout' ) . '
+						<table class="form-table" style="width: 100%;">
+							<thead>
+								<tr style="">
+									<th scope="row" class="titledesc">' . __( 'PostFinanceCheckout payment status', 'woo-postfinancecheckout' ) . '</th>
+									<th class="forminp forminp-select" style="width: 100%;"><label style="margin: 0 10px;">' . __( 'WooCommerce Order Status', 'woo-postfinancecheckout' ) . '</label></th>
+								</tr>
+							</thead>
+						</table>',
+			),
+		);
+
+		$woocommerce_statuses = apply_filters( 'postfinancecheckout_woocommerce_statuses', array() );
+		$postfinancecheckout_statuses = apply_filters( 'postfinancecheckout_order_statuses', array() );
+		$default_mappings = apply_filters( 'postfinancecheckout_default_order_status_mappings', array() );
+
+		foreach ( $postfinancecheckout_statuses as $status_key => $status_label ) {
+			$default_mapped_status = isset( $default_mappings[ $status_key ] ) ? $default_mappings[ $status_key ] : '';
+
+			$settings[] = array(
+				'title' => __( $status_label, 'woo-postfinancecheckout' ), // phpcs:ignore
+				'id' => WC_PostFinanceCheckout_Order_Status_Adapter::POSTFINANCECHECKOUT_ORDER_STATUS_MAPPING_PREFIX . $status_key,
+				'type' => 'select',
+				'options' => array_map( function ( $status ) {
+						return __( $status, 'woo-postfinancecheckout' ); // phpcs:ignore
+					},
+					$woocommerce_statuses
+				),
+				/* translators: %s: replaces string */
+				'default' => sprintf( __( '%s', 'woo-postfinancecheckout' ), $default_mapped_status ), // phpcs:ignore
+				'desc' => sprintf( __( 'Set a custom WooCommerce order status to be applied automatically when a transaction is in the %s state.', 'woo-postfinancecheckout' ), strtolower( __( $status_label, 'woo-postfinancecheckout' ) ) ), // phpcs:ignore
+			);
+		}
+
+		$settings[] = array(
+			'type' => 'sectionend',
+			'id' => 'status_mapping_options',
+		);
+
+		return apply_filters( 'postfinancecheckout_custom_order_statuses_settings', $settings );
+	}
+
+	/**
+	 * Output order statuses section.
+	 */
+	public function get_order_statuses() {
+		$settings = array(
+			array( 'type' => 'postfinancecheckout_order_statuses_table' ),
+			array(
+				'type' => 'sectionend',
+				'id'   => 'order_statuses_section',
+			),
+		);
+
+		return apply_filters( 'postfinancecheckout_custom_order_statuses', $settings );
+	}
+
+	/**
+	 * Output order statuses section.
+	 */
+	public function order_statuses_table() {
+		// Extendable columns to show on the order statuses screen.
+		$order_statuses_columns = apply_filters(
+			'postfinancecheckout_order_statuses_columns',
+			array(
+				'postfinancecheckout-order-status-key' => __( 'Status key', 'woo-postfinancecheckout' ),
+				'postfinancecheckout-order-status-label' => __( 'Label', 'woo-postfinancecheckout' ),
+				'postfinancecheckout-order-status-type' => __( 'Type', 'woo-postfinancecheckout' ),
+			)
+		);
+
+		require_once WC_POSTFINANCECHECKOUT_ABSPATH . '/views/admin-settings/html-admin-page-order-statuses.php';
 	}
 
 	/**
@@ -380,5 +486,54 @@ class WC_PostFinanceCheckout_Admin_Settings_Page extends WC_Settings_Page {
 	 */
 	private function format_display_string( $display_string ) {
 		return ucwords( str_replace( '_', ' ', $display_string ) );
+	}
+
+
+	/**
+	 * Enqueue scripts.
+	 */
+	public function enqueue_scripts() {
+		global $current_section;
+
+		$version = WC_POSTFINANCECHECKOUT_REQUIRED_WC_MAXIMUM_VERSION;
+
+		// Register scripts.
+		wp_register_script(
+			'postfinancecheckout-order-statuses',
+			WooCommerce_PostFinanceCheckout::instance()->plugin_url() . '/assets/js/admin/order-statuses.js',
+			array(
+				'jquery',
+				'wp-util',
+				'underscore',
+				'backbone',
+				'wc-backbone-modal'
+			),
+			$version,
+			array( 'in_footer' => false )
+		);
+		wp_enqueue_script( 'postfinancecheckout-order-statuses' );
+
+		$localized_object = array(
+			'ajaxurl' => admin_url( 'admin-ajax.php' ),
+			'statuses' => WC_PostFinanceCheckout_Helper::instance()->get_woocommerce_order_statuses_json(),
+			'default_order_status' => array(
+				'key' => '',
+				'label' => '',
+				'type' => '',
+			),
+			'postfinancecheckout_order_statuses_nonce' => wp_create_nonce( 'postfinancecheckout_order_statuses_nonce' ),
+			'strings' => array(
+				'custom_order_status_prefix' => WC_PostFinanceCheckout_Order_Status_Adapter::POSTFINANCECHECKOUT_CUSTOM_ORDER_STATUS_PREFIX,
+				'unload_confirmation_msg' => __( 'Your changed data will be lost if you leave this page without saving.', 'woo-postfinancecheckout' ),
+				'save_failed' => __( 'Your changes were not saved. Please retry.', 'woo-postfinancecheckout' ),
+				'delete_confirmation_msg' => __( 'Are you sure you want to delete this custom status?', 'woo-postfinancecheckout' ),
+				'characters_remaining' => __( 'characters remaining', 'woo-postfinancecheckout' ),
+			),
+		);
+		wp_localize_script(
+			'postfinancecheckout-order-statuses',
+			'postfinancecheckoutOrderStatusesLocalizeScript',
+			$localized_object
+		);
 	}
 }

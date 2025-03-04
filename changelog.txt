@@ -859,7 +859,7 @@ Please ensure that in woocommerce->settings->tax, the "Round tax at subtotal lev
 - [Tested Against] Woocommerce 9.3.2
 - [Tested Against] PHP SDK 4.6.0
 
-= 3.3.1 - October 14 2024 =
+= 3.3.2-beta - December 3 2024 =
 - [Improvement] Improve payment method loading speed at checkout
 - [Bugfix] Fix for missing transaction box in order
 - [Tested Against] PHP 8.2
@@ -867,7 +867,7 @@ Please ensure that in woocommerce->settings->tax, the "Round tax at subtotal lev
 - [Tested Against] Woocommerce 9.4.2
 - [Tested Against] PHP SDK 4.6.0
 
-= 3.3.1 - October 14 2024 =
+= 3.3.2 - December 10 2024 =
 - [Improvement] Improve payment method loading speed at checkout
 - [Bugfix] Fix for missing transaction box in order
 - [Tested Against] PHP 8.2
@@ -878,7 +878,7 @@ Please ensure that in woocommerce->settings->tax, the "Round tax at subtotal lev
 = 3.3.3 - Jan 15th 2025 =
 - [Improvement] Improve payment method loading speed at checkout
 - [Bugfix] Fix for missing transaction box in order
-- [Bugfix]  Version bump for missing files in previous release
+- [Bugfix] Version bump for missing files in previous release
 - [Tested Against] PHP 8.2
 - [Tested Against] Wordpress 6.7
 - [Tested Against] Woocommerce 9.4.2
@@ -892,5 +892,13 @@ Please ensure that in woocommerce->settings->tax, the "Round tax at subtotal lev
 - [Tested Against] PHP 8.2
 - [Tested Against] Wordpress 6.7
 - [Tested Against] Woocommerce 9.6.0
+- [Tested Against] PHP SDK 4.6.0
+
+= 3.3.5 - Mar 4 2025 =
+- [Feature] Status mapping feature introduced
+- [Bugfix] Fixed discount rate and amount calculation
+- [Tested Against] PHP 8.2
+- [Tested Against] Wordpress 6.7
+- [Tested Against] Woocommerce 9.7.0
 - [Tested Against] PHP SDK 4.6.0
 

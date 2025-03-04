@@ -3,7 +3,7 @@
  * Plugin Name: PostFinance Checkout
  * Plugin URI: https://wordpress.org/plugins/woo-postfinance-checkout
  * Description: Process WooCommerce payments with PostFinance Checkout.
- * Version: 3.3.4
+ * Version: 3.3.5
  * Author: postfinancecheckout AG
  * Author URI: https://postfinance.ch/en/business/products/e-commerce/postfinance-checkout-all-in-one.html
  * Text Domain: postfinancecheckout
@@ -11,7 +11,7 @@
  * Requires at least: 6.0
  * Requires PHP: 7.4
  * WC requires at least: 8.0.0
- * WC tested up to 9.6.0
+ * WC tested up to 9.7.0
  * License: Apache-2.0
  * License URI: http://www.apache.org/licenses/LICENSE-2.0
  */
@@ -39,14 +39,14 @@ if ( ! class_exists( 'WooCommerce_PostFinanceCheckout' ) ) {
 		const POSTFINANCECHECKOUT_CK_ORDER_REFERENCE = 'wc_postfinancecheckout_order_reference';
 		const POSTFINANCECHECKOUT_CK_ENFORCE_CONSISTENCY = 'wc_postfinancecheckout_enforce_consistency';
 		const POSTFINANCECHECKOUT_UPGRADE_VERSION = '3.1.1';
-		const WC_MAXIMUM_VERSION = '9.3.1';
+		const WC_MAXIMUM_VERSION = '9.7.0';
 
 		/**
 		 * WooCommerce PostFinanceCheckout version.
 		 *
 		 * @var string
 		 */
-		private $version = '3.3.4';
+		private $version = '3.3.5';
 
 		/**
 		 * The single instance of the class.
@@ -123,6 +123,7 @@ if ( ! class_exists( 'WooCommerce_PostFinanceCheckout' ) ) {
 			require_once WC_POSTFINANCECHECKOUT_ABSPATH . 'includes/class-wc-postfinancecheckout-unique-id.php';
 			require_once WC_POSTFINANCECHECKOUT_ABSPATH . 'includes/class-wc-postfinancecheckout-customer-document.php';
 			require_once WC_POSTFINANCECHECKOUT_ABSPATH . 'includes/class-wc-postfinancecheckout-cron.php';
+			require_once WC_POSTFINANCECHECKOUT_ABSPATH . 'includes/class-wc-postfinancecheckout-order-status-adapter.php';
 			require_once WC_POSTFINANCECHECKOUT_ABSPATH . 'includes/packages/coupon/class-wc-postfinancecheckout-packages-coupon-discount.php';
 
 			if ( is_admin() ) {
@@ -290,6 +291,25 @@ if ( ! class_exists( 'WooCommerce_PostFinanceCheckout' ) ) {
 				2
 			);
 
+			add_action(
+				'wp_ajax_postfinancecheckout_custom_order_status_save_changes',
+				array(
+					$this,
+					'custom_order_status_save_changes',
+				),
+				20,
+				2
+			);
+
+			add_action(
+				'wp_ajax_postfinancecheckout_custom_order_status_delete',
+				array(
+					$this,
+					'custom_order_status_delete',
+				),
+				20,
+				2
+			);
 			// Clear the permalinks after the post type has been registered.
 		}
 
@@ -428,7 +448,7 @@ if ( ! class_exists( 'WooCommerce_PostFinanceCheckout' ) ) {
 				$old_option_prefix . self::WC_MAXIMUM_VERSION,
 			];
 
-			// If the old plugin options exist, perform the migration
+			// If the old plugin options exist, perform the migration.
 			foreach ( $options_to_migrate as $option_name ) {
 				$option_value = get_option( $option_name );
 				if ( false !== $option_value ) {
@@ -548,6 +568,25 @@ if ( ! class_exists( 'WooCommerce_PostFinanceCheckout' ) ) {
 				),
 				10,
 				3
+			);
+			add_filter(
+				'woocommerce_cart_needs_payment',
+				function($value, $object) {
+					return true;
+				}, 10, 2
+			);
+			add_filter(
+			 	'woocommerce_order_needs_payment',
+			 	function($value, $order) {
+					$order_data = $order->get_data();
+					if (substr_count($order_data['payment_method'], "postfinancecheckout")) {
+						// If the order is using our payment method, we want to process it
+						// even if the value of the transaction is 0, which woocommerce by default
+						// process it without payment gateway.
+						return true;
+					}
+					return $value;
+				}, 10, 2
 			);
 			add_action(
 				'woocommerce_checkout_update_order_review',
@@ -802,6 +841,114 @@ if ( ! class_exists( 'WooCommerce_PostFinanceCheckout' ) ) {
 		}
 
 		/**
+		 * Handles AJAX request to save order status changes.
+		 *
+		 * This method validates the nonce for security, checks if the required fields are present,
+		 * and returns either an error response or a success response with updated order statuses.
+		 *
+		 * @return void Outputs a JSON response and terminates execution.
+		 */
+		public function custom_order_status_save_changes() {
+			// Validate nonce for security.
+			if ( ! isset( $_POST['postfinancecheckout_order_statuses_nonce'] ) || ! wp_verify_nonce( sanitize_key( wp_unslash( $_POST['postfinancecheckout_order_statuses_nonce'] ) ), 'postfinancecheckout_order_statuses_nonce' ) ) {  //phpcs:ignore
+				wp_send_json_error( 'Invalid request: missing nonce value', 403 );
+			}
+
+			// Ensure required fields are present.
+			if ( ! isset( $_POST['changes'] ) || empty( $_POST['changes'] ) ) {
+				wp_send_json_error( 'missing_fields' );
+				wp_die();
+			}
+
+			// Sanitize input properly.
+			$changes = sanitize_text_field( wp_unslash( $_POST['changes'] ) );
+
+			// Get the first key inside the 'changes' array.
+			$first_key = key( $changes );
+			$data = $_POST['changes'][$first_key];
+
+			if ( isset( $data['key'] ) ) {
+				$label = str_replace( ['-', '_'], ' ', sanitize_text_field( $data['key'] ) );
+				
+				// Normalize the key by replacing spaces and dashes with underscores.
+				$sanitized_key_underscore = str_replace( [' ', '-'], '_', WC_PostFinanceCheckout_Order_Status_Adapter::POSTFINANCECHECKOUT_CUSTOM_ORDER_STATUS_PREFIX . $first_key );
+				$sanitized_key_hyphen = str_replace( [' ', '_'], '-', $first_key );
+
+				// Construct the full option name with the required prefix.
+				$custom_order_value = 'wc-' . $sanitized_key_hyphen;
+				$custom_order_name = $sanitized_key_underscore;
+				// Save to wp_options.
+				update_option( $custom_order_name, $custom_order_value );
+
+				register_post_status( $custom_order_value, array(
+					'label' => $label,
+					'public' => true,
+					'show_in_admin_status_list' => true,
+					'show_in_admin_all_list' => true,
+					'exclude_from_search' => false,
+					/* translators: %s: replaces string */
+					'label_count' => _n_noop( $label . ' <span class="count">(%s)</span>', $label . ' <span class="count">(%s)</span>' ) // phpcs:ignore
+				) );
+
+				// Send a success response with the saved order status details.
+				wp_send_json_success([
+					'message'      => 'Success',
+					'order_status' => [
+						'key'   => $custom_order_value,  // The full key with the prefix.
+						'label' => ucfirst( $label ), // As received from the form data.
+						'type'  => __( 'custom' , 'woo-postfinancecheckout' )
+					]
+				]);
+			} else {
+				wp_send_json_error( 'invalid_data' );
+			}
+		}
+
+		/**
+		 * Handles AJAX request to delete a custom order status.
+		 *
+		 * This method verifies the nonce for security, checks if the required key is provided,
+		 * deletes the corresponding order status from the WordPress options, and returns a success
+		 * or error response in JSON format.
+		 *
+		 * @return void Outputs a JSON response and terminates execution.
+		 */
+		public function custom_order_status_delete() {
+			global $wpdb;
+
+			// Verify nonce.
+			if ( ! isset( $_POST['postfinancecheckout_order_statuses_nonce'] ) || ! wp_verify_nonce( sanitize_key( wp_unslash( $_POST['postfinancecheckout_order_statuses_nonce'] ) ), 'postfinancecheckout_order_statuses_nonce' ) ) {
+				wp_send_json_error( 'Invalid request: missing nonce value', 403 );
+			}
+
+			// Check if key is provided.
+			if ( empty( $_POST['key'] ) ) {
+				wp_send_json_error( 'Missing status key' );
+			}
+
+			$sanitized_key = sanitize_text_field( wp_unslash( $_POST['key'] ) );
+
+			// Check if this order status is being used in wp_options with key prefix "postfinancecheckout_order_status_mapping_".
+			$like_pattern = WC_PostFinanceCheckout_Order_Status_Adapter::POSTFINANCECHECKOUT_ORDER_STATUS_MAPPING_PREFIX . '%';
+			$is_used = $wpdb->get_var( $wpdb->prepare( "SELECT COUNT(*) FROM {$wpdb->options} WHERE option_name LIKE %s AND option_value = %s", $like_pattern, $sanitized_key ) );
+
+			if ( $is_used > 0 ) {
+				// The status is in use, so do not delete it.
+				wp_send_json_error( ['message' => __( 'Cannot delete: this status is currently in use.', 'woo-postfinancecheckout' ), 'key' => ucfirst( $sanitized_key )], 400 );
+			}
+
+			 // Get the custom order status in wp_options with key prefix "postfinancecheckout_order_status_mapping_".
+			$like_pattern = WC_PostFinanceCheckout_Order_Status_Adapter::POSTFINANCECHECKOUT_CUSTOM_ORDER_STATUS_PREFIX . '%';
+			$custom_order_status_name = $wpdb->get_var( $wpdb->prepare( "SELECT option_name FROM {$wpdb->options} WHERE option_name LIKE %s AND option_value = %s", $like_pattern, $sanitized_key ) );
+
+			// Remove from wp_options.
+			delete_option( $custom_order_status_name );
+
+			// Return success response.
+			wp_send_json_success( ['message' => __( 'Deleted successfully', 'woo-postfinancecheckout' ), 'key' => ucfirst( $sanitized_key )] );
+		}
+
+		/**
 		 * Set device id cookie.
 		 *
 		 * @return void
@@ -899,7 +1046,7 @@ if ( ! class_exists( 'WooCommerce_PostFinanceCheckout' ) ) {
 		 * @return void
 		 */
 		public function before_calculate_totals( $cart ) { //phpcs:ignore
-			$GLOBALS['_wc_postfinancecheckout_calculating'] = true;
+			$GLOBALS['postfinancecheckout_calculating'] = true;
 		}
 
 		/**
@@ -909,7 +1056,7 @@ if ( ! class_exists( 'WooCommerce_PostFinanceCheckout' ) ) {
 		 * @return void
 		 */
 		public function after_calculate_totals( $cart ) { //phpcs:ignore
-			unset( $GLOBALS['_wc_postfinancecheckout_calculating'] );
+			unset( $GLOBALS['postfinancecheckout_calculating'] );
 		}
 
 
@@ -1091,6 +1238,7 @@ if ( ! class_exists( 'WooCommerce_PostFinanceCheckout' ) ) {
 		 * @return true
 		 */
 		public function register_checkout_error_msg() {
+			if ( ! isset( WC()->session ) ) return false;
 			$msg = WC()->session->get( 'postfinancecheckout_failure_message', null );
 			if ( ! empty( $msg ) ) {
 				$this->add_notice( (string) $msg, 'error' );
