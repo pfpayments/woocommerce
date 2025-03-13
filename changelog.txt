@@ -902,3 +902,6 @@ Please ensure that in woocommerce->settings->tax, the "Round tax at subtotal lev
 - [Tested Against] Woocommerce 9.7.0
 - [Tested Against] PHP SDK 4.6.0
 
+= 3.3.6 - Mar 4 2025 =
+- [Bugfix] Correct default status for confirmed and fulfill
+

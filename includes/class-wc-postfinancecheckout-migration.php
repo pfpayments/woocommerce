@@ -53,6 +53,7 @@ class WC_PostFinanceCheckout_Migration {
 		'1.0.6' => 'update_1_0_6_shorten_table_names',
 		'1.0.7' => 'update_1_0_7_migrate_plugin_name_and_tables',
 		'1.0.8' => 'update_1_0_8_store_default_status_mappings',
+		'1.0.9' => 'update_1_0_9_restore_default_status_mappings',
 	);
 
 	/**
@@ -267,7 +268,7 @@ class WC_PostFinanceCheckout_Migration {
 	public static function plugin_row_meta( $links, $file ) {
 		if ( WC_POSTFINANCECHECKOUT_PLUGIN_BASENAME === $file ) {
 			$row_meta = array(
-				'docs' => '<a href="https://plugin-documentation.postfinance-checkout.ch/pfpayments/woocommerce/3.3.5/docs/en/documentation.html" aria-label="' . esc_html__( 'View Documentation', 'woo-postfinancecheckout' ) . '">' . esc_html__( 'Documentation', 'woo-postfinancecheckout' ) . '</a>',
+				'docs' => '<a href="https://plugin-documentation.postfinance-checkout.ch/pfpayments/woocommerce/3.3.6/docs/en/documentation.html" aria-label="' . esc_html__( 'View Documentation', 'woo-postfinancecheckout' ) . '">' . esc_html__( 'Documentation', 'woo-postfinancecheckout' ) . '</a>',
 			);
 
 			return array_merge( $links, $row_meta );
@@ -751,6 +752,17 @@ class WC_PostFinanceCheckout_Migration {
 	 * Ensures that the default order statuses are properly set.
 	 */
 	public static function update_1_0_8_store_default_status_mappings() {
+		$status_adapter = new WC_PostFinanceCheckout_Order_Status_Adapter();
+		$status_adapter->store_default_status_mappings_on_database();
+	}
+
+
+
+	/**
+	 * Store default order status mappings in the database during migration.
+	 * Ensures that the default order statuses are properly set.
+	 */
+	public static function update_1_0_9_restore_default_status_mappings() {
 		$status_adapter = new WC_PostFinanceCheckout_Order_Status_Adapter();
 		$status_adapter->store_default_status_mappings_on_database();
 	}
