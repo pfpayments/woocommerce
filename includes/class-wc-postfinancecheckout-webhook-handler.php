@@ -79,6 +79,7 @@ class WC_PostFinanceCheckout_Webhook_Handler {
 			$webhook_service = WC_PostFinanceCheckout_Service_Webhook::instance();
 
 			// Handling of payloads without a signature (legacy method).
+			// TODO add config to disable strategy/use default webhooks
 			// Deprecated since 3.0.12.
 			if ( empty( $signature ) ) {
 				$webhook_model = $webhook_service->get_webhook_entity_for_id( $request->get_listener_entity_id() );
