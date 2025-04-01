@@ -357,16 +357,13 @@ class WC_PostFinanceCheckout_Service_Line_Item extends WC_PostFinanceCheckout_Se
 				$proportional_discount_amount = floor($total_discount_amount * ( $data['total'] / $total_amount ) * 100) / 100;
 			}
 
-			$discounts[] = array(
-				'rate_id' => $rate_id,
-				'amount' => $proportional_discount_amount,
-				'rate_percentage' => $rate_id,
-			);
-			$discounts[] = [
-				'rate_id' => $rate_id,
-				'amount' => $proportional_discount_amount,
-				'rate_percentage' => $data['rate_percentage'],
-			];
+			if ( $proportional_discount_amount > 0 ) {
+				$discounts[] = [
+				  'rate_id' => $rate_id,
+				  'amount' => $proportional_discount_amount,
+				  'rate_percentage' => $data['rate_percentage'],
+				];
+			}
 		}
 
 		return $discounts;

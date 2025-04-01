@@ -24,7 +24,7 @@ use \ArrayAccess;
 use \PostFinanceCheckout\Sdk\ObjectSerializer;
 
 /**
- * ShopifySubscriptionModelItem model
+ * TaxLine model
  *
  * @category    Class
  * @description 
@@ -32,7 +32,7 @@ use \PostFinanceCheckout\Sdk\ObjectSerializer;
  * @author      wallee AG
  * @license     http://www.apache.org/licenses/LICENSE-2.0 Apache License v2
  */
-class ShopifySubscriptionModelItem implements ModelInterface, ArrayAccess
+class TaxLine implements ModelInterface, ArrayAccess
 {
     const DISCRIMINATOR = null;
 
@@ -41,7 +41,7 @@ class ShopifySubscriptionModelItem implements ModelInterface, ArrayAccess
       *
       * @var string
       */
-    protected static $swaggerModelName = 'ShopifySubscriptionModel.Item';
+    protected static $swaggerModelName = 'TaxLine';
 
     /**
       * Array of property to type mappings. Used for (de)serialization
@@ -49,11 +49,8 @@ class ShopifySubscriptionModelItem implements ModelInterface, ArrayAccess
       * @var string[]
       */
     protected static $swaggerTypes = [
-        'price_including_tax' => 'float',
-        'product_id' => 'int',
-        'quantity' => 'float',
-        'recalculate_price' => 'bool',
-        'tax_lines' => '\PostFinanceCheckout\Sdk\Model\ShopifySubscriptionModelTaxLine[]'
+        'rate' => 'float',
+        'title' => 'string'
     ];
 
     /**
@@ -62,11 +59,8 @@ class ShopifySubscriptionModelItem implements ModelInterface, ArrayAccess
       * @var string[]
       */
     protected static $swaggerFormats = [
-        'price_including_tax' => null,
-        'product_id' => 'int64',
-        'quantity' => null,
-        'recalculate_price' => null,
-        'tax_lines' => null
+        'rate' => null,
+        'title' => null
     ];
 
     /**
@@ -76,11 +70,8 @@ class ShopifySubscriptionModelItem implements ModelInterface, ArrayAccess
      * @var string[]
      */
     protected static $attributeMap = [
-        'price_including_tax' => 'priceIncludingTax',
-        'product_id' => 'productId',
-        'quantity' => 'quantity',
-        'recalculate_price' => 'recalculatePrice',
-        'tax_lines' => 'taxLines'
+        'rate' => 'rate',
+        'title' => 'title'
     ];
 
     /**
@@ -89,11 +80,8 @@ class ShopifySubscriptionModelItem implements ModelInterface, ArrayAccess
      * @var string[]
      */
     protected static $setters = [
-        'price_including_tax' => 'setPriceIncludingTax',
-        'product_id' => 'setProductId',
-        'quantity' => 'setQuantity',
-        'recalculate_price' => 'setRecalculatePrice',
-        'tax_lines' => 'setTaxLines'
+        'rate' => 'setRate',
+        'title' => 'setTitle'
     ];
 
     /**
@@ -102,11 +90,8 @@ class ShopifySubscriptionModelItem implements ModelInterface, ArrayAccess
      * @var string[]
      */
     protected static $getters = [
-        'price_including_tax' => 'getPriceIncludingTax',
-        'product_id' => 'getProductId',
-        'quantity' => 'getQuantity',
-        'recalculate_price' => 'getRecalculatePrice',
-        'tax_lines' => 'getTaxLines'
+        'rate' => 'getRate',
+        'title' => 'getTitle'
     ];
 
     
@@ -127,15 +112,9 @@ class ShopifySubscriptionModelItem implements ModelInterface, ArrayAccess
     public function __construct(array $data = null)
     {
         
-        $this->container['price_including_tax'] = isset($data['price_including_tax']) ? $data['price_including_tax'] : null;
+        $this->container['rate'] = isset($data['rate']) ? $data['rate'] : null;
         
-        $this->container['product_id'] = isset($data['product_id']) ? $data['product_id'] : null;
-        
-        $this->container['quantity'] = isset($data['quantity']) ? $data['quantity'] : null;
-        
-        $this->container['recalculate_price'] = isset($data['recalculate_price']) ? $data['recalculate_price'] : null;
-        
-        $this->container['tax_lines'] = isset($data['tax_lines']) ? $data['tax_lines'] : null;
+        $this->container['title'] = isset($data['title']) ? $data['title'] : null;
         
     }
 
@@ -229,125 +208,50 @@ class ShopifySubscriptionModelItem implements ModelInterface, ArrayAccess
     
 
     /**
-     * Gets price_including_tax
+     * Gets rate
      *
      * @return float
      */
-    public function getPriceIncludingTax()
+    public function getRate()
     {
-        return $this->container['price_including_tax'];
+        return $this->container['rate'];
     }
 
     /**
-     * Sets price_including_tax
+     * Sets rate
      *
-     * @param float $price_including_tax 
+     * @param float $rate 
      *
      * @return $this
      */
-    public function setPriceIncludingTax($price_including_tax)
+    public function setRate($rate)
     {
-        $this->container['price_including_tax'] = $price_including_tax;
+        $this->container['rate'] = $rate;
 
         return $this;
     }
     
 
     /**
-     * Gets product_id
+     * Gets title
      *
-     * @return int
+     * @return string
      */
-    public function getProductId()
+    public function getTitle()
     {
-        return $this->container['product_id'];
+        return $this->container['title'];
     }
 
     /**
-     * Sets product_id
+     * Sets title
      *
-     * @param int $product_id 
+     * @param string $title 
      *
      * @return $this
      */
-    public function setProductId($product_id)
+    public function setTitle($title)
     {
-        $this->container['product_id'] = $product_id;
-
-        return $this;
-    }
-    
-
-    /**
-     * Gets quantity
-     *
-     * @return float
-     */
-    public function getQuantity()
-    {
-        return $this->container['quantity'];
-    }
-
-    /**
-     * Sets quantity
-     *
-     * @param float $quantity 
-     *
-     * @return $this
-     */
-    public function setQuantity($quantity)
-    {
-        $this->container['quantity'] = $quantity;
-
-        return $this;
-    }
-    
-
-    /**
-     * Gets recalculate_price
-     *
-     * @return bool
-     */
-    public function getRecalculatePrice()
-    {
-        return $this->container['recalculate_price'];
-    }
-
-    /**
-     * Sets recalculate_price
-     *
-     * @param bool $recalculate_price 
-     *
-     * @return $this
-     */
-    public function setRecalculatePrice($recalculate_price)
-    {
-        $this->container['recalculate_price'] = $recalculate_price;
-
-        return $this;
-    }
-    
-
-    /**
-     * Gets tax_lines
-     *
-     * @return \PostFinanceCheckout\Sdk\Model\ShopifySubscriptionModelTaxLine[]
-     */
-    public function getTaxLines()
-    {
-        return $this->container['tax_lines'];
-    }
-
-    /**
-     * Sets tax_lines
-     *
-     * @param \PostFinanceCheckout\Sdk\Model\ShopifySubscriptionModelTaxLine[] $tax_lines 
-     *
-     * @return $this
-     */
-    public function setTaxLines($tax_lines)
-    {
-        $this->container['tax_lines'] = $tax_lines;
+        $this->container['title'] = $title;
 
         return $this;
     }

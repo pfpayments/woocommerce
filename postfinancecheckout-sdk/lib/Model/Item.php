@@ -24,7 +24,7 @@ use \ArrayAccess;
 use \PostFinanceCheckout\Sdk\ObjectSerializer;
 
 /**
- * AnalyticsQuery model
+ * Item model
  *
  * @category    Class
  * @description 
@@ -32,7 +32,7 @@ use \PostFinanceCheckout\Sdk\ObjectSerializer;
  * @author      wallee AG
  * @license     http://www.apache.org/licenses/LICENSE-2.0 Apache License v2
  */
-class AnalyticsQuery implements ModelInterface, ArrayAccess
+class Item implements ModelInterface, ArrayAccess
 {
     const DISCRIMINATOR = null;
 
@@ -41,7 +41,7 @@ class AnalyticsQuery implements ModelInterface, ArrayAccess
       *
       * @var string
       */
-    protected static $swaggerModelName = 'AnalyticsQuery';
+    protected static $swaggerModelName = 'Item';
 
     /**
       * Array of property to type mappings. Used for (de)serialization
@@ -49,12 +49,11 @@ class AnalyticsQuery implements ModelInterface, ArrayAccess
       * @var string[]
       */
     protected static $swaggerTypes = [
-        'account_id' => 'int',
-        'external_id' => 'string',
-        'max_cache_age' => 'int',
-        'query_string' => 'string',
-        'scanned_data_limit' => 'float',
-        'space_ids' => 'int[]'
+        'price_including_tax' => 'float',
+        'product_id' => 'int',
+        'quantity' => 'float',
+        'recalculate_price' => 'bool',
+        'tax_lines' => '\PostFinanceCheckout\Sdk\Model\TaxLine[]'
     ];
 
     /**
@@ -63,12 +62,11 @@ class AnalyticsQuery implements ModelInterface, ArrayAccess
       * @var string[]
       */
     protected static $swaggerFormats = [
-        'account_id' => 'int64',
-        'external_id' => null,
-        'max_cache_age' => 'int32',
-        'query_string' => null,
-        'scanned_data_limit' => null,
-        'space_ids' => 'int64'
+        'price_including_tax' => null,
+        'product_id' => 'int64',
+        'quantity' => null,
+        'recalculate_price' => null,
+        'tax_lines' => null
     ];
 
     /**
@@ -78,12 +76,11 @@ class AnalyticsQuery implements ModelInterface, ArrayAccess
      * @var string[]
      */
     protected static $attributeMap = [
-        'account_id' => 'accountId',
-        'external_id' => 'externalId',
-        'max_cache_age' => 'maxCacheAge',
-        'query_string' => 'queryString',
-        'scanned_data_limit' => 'scannedDataLimit',
-        'space_ids' => 'spaceIds'
+        'price_including_tax' => 'priceIncludingTax',
+        'product_id' => 'productId',
+        'quantity' => 'quantity',
+        'recalculate_price' => 'recalculatePrice',
+        'tax_lines' => 'taxLines'
     ];
 
     /**
@@ -92,12 +89,11 @@ class AnalyticsQuery implements ModelInterface, ArrayAccess
      * @var string[]
      */
     protected static $setters = [
-        'account_id' => 'setAccountId',
-        'external_id' => 'setExternalId',
-        'max_cache_age' => 'setMaxCacheAge',
-        'query_string' => 'setQueryString',
-        'scanned_data_limit' => 'setScannedDataLimit',
-        'space_ids' => 'setSpaceIds'
+        'price_including_tax' => 'setPriceIncludingTax',
+        'product_id' => 'setProductId',
+        'quantity' => 'setQuantity',
+        'recalculate_price' => 'setRecalculatePrice',
+        'tax_lines' => 'setTaxLines'
     ];
 
     /**
@@ -106,12 +102,11 @@ class AnalyticsQuery implements ModelInterface, ArrayAccess
      * @var string[]
      */
     protected static $getters = [
-        'account_id' => 'getAccountId',
-        'external_id' => 'getExternalId',
-        'max_cache_age' => 'getMaxCacheAge',
-        'query_string' => 'getQueryString',
-        'scanned_data_limit' => 'getScannedDataLimit',
-        'space_ids' => 'getSpaceIds'
+        'price_including_tax' => 'getPriceIncludingTax',
+        'product_id' => 'getProductId',
+        'quantity' => 'getQuantity',
+        'recalculate_price' => 'getRecalculatePrice',
+        'tax_lines' => 'getTaxLines'
     ];
 
     
@@ -132,17 +127,15 @@ class AnalyticsQuery implements ModelInterface, ArrayAccess
     public function __construct(array $data = null)
     {
         
-        $this->container['account_id'] = isset($data['account_id']) ? $data['account_id'] : null;
+        $this->container['price_including_tax'] = isset($data['price_including_tax']) ? $data['price_including_tax'] : null;
         
-        $this->container['external_id'] = isset($data['external_id']) ? $data['external_id'] : null;
+        $this->container['product_id'] = isset($data['product_id']) ? $data['product_id'] : null;
         
-        $this->container['max_cache_age'] = isset($data['max_cache_age']) ? $data['max_cache_age'] : null;
+        $this->container['quantity'] = isset($data['quantity']) ? $data['quantity'] : null;
         
-        $this->container['query_string'] = isset($data['query_string']) ? $data['query_string'] : null;
+        $this->container['recalculate_price'] = isset($data['recalculate_price']) ? $data['recalculate_price'] : null;
         
-        $this->container['scanned_data_limit'] = isset($data['scanned_data_limit']) ? $data['scanned_data_limit'] : null;
-        
-        $this->container['space_ids'] = isset($data['space_ids']) ? $data['space_ids'] : null;
+        $this->container['tax_lines'] = isset($data['tax_lines']) ? $data['tax_lines'] : null;
         
     }
 
@@ -154,17 +147,6 @@ class AnalyticsQuery implements ModelInterface, ArrayAccess
     public function listInvalidProperties()
     {
         $invalidProperties = [];
-
-        if ($this->container['account_id'] === null) {
-            $invalidProperties[] = "'account_id' can't be null";
-        }
-        if (!is_null($this->container['query_string']) && (mb_strlen($this->container['query_string']) > 4096)) {
-            $invalidProperties[] = "invalid value for 'query_string', the character length must be smaller than or equal to 4096.";
-        }
-
-        if (!is_null($this->container['query_string']) && (mb_strlen($this->container['query_string']) < 1)) {
-            $invalidProperties[] = "invalid value for 'query_string', the character length must be bigger than or equal to 1.";
-        }
 
         return $invalidProperties;
     }
@@ -247,157 +229,125 @@ class AnalyticsQuery implements ModelInterface, ArrayAccess
     
 
     /**
-     * Gets account_id
-     *
-     * @return int
-     */
-    public function getAccountId()
-    {
-        return $this->container['account_id'];
-    }
-
-    /**
-     * Sets account_id
-     *
-     * @param int $account_id The ID of the account in which the query is to be executed.
-     *
-     * @return $this
-     */
-    public function setAccountId($account_id)
-    {
-        $this->container['account_id'] = $account_id;
-
-        return $this;
-    }
-    
-
-    /**
-     * Gets external_id
-     *
-     * @return string
-     */
-    public function getExternalId()
-    {
-        return $this->container['external_id'];
-    }
-
-    /**
-     * Sets external_id
-     *
-     * @param string $external_id A client-generated nonce which uniquely identifies some action to be executed. Subsequent requests with the same external ID do not execute the action again, but return the original result.
-     *
-     * @return $this
-     */
-    public function setExternalId($external_id)
-    {
-        $this->container['external_id'] = $external_id;
-
-        return $this;
-    }
-    
-
-    /**
-     * Gets max_cache_age
-     *
-     * @return int
-     */
-    public function getMaxCacheAge()
-    {
-        return $this->container['max_cache_age'];
-    }
-
-    /**
-     * Sets max_cache_age
-     *
-     * @param int $max_cache_age The maximum age (in minutes) of queries already executed that are to be taken into account. If an equivalent query is already available and not older than the specified age, its result will be returned instead of re-executing it. To force a new execution, specify a new, unique external ID and no maximum cache age.
-     *
-     * @return $this
-     */
-    public function setMaxCacheAge($max_cache_age)
-    {
-        $this->container['max_cache_age'] = $max_cache_age;
-
-        return $this;
-    }
-    
-
-    /**
-     * Gets query_string
-     *
-     * @return string
-     */
-    public function getQueryString()
-    {
-        return $this->container['query_string'];
-    }
-
-    /**
-     * Sets query_string
-     *
-     * @param string $query_string The PrestoDB/Athena SQL statement to be executed.
-     *
-     * @return $this
-     */
-    public function setQueryString($query_string)
-    {
-        if (!is_null($query_string) && (mb_strlen($query_string) > 4096)) {
-            throw new \InvalidArgumentException('invalid length for $query_string when calling AnalyticsQuery., must be smaller than or equal to 4096.');
-        }
-        if (!is_null($query_string) && (mb_strlen($query_string) < 1)) {
-            throw new \InvalidArgumentException('invalid length for $query_string when calling AnalyticsQuery., must be bigger than or equal to 1.');
-        }
-
-        $this->container['query_string'] = $query_string;
-
-        return $this;
-    }
-    
-
-    /**
-     * Gets scanned_data_limit
+     * Gets price_including_tax
      *
      * @return float
      */
-    public function getScannedDataLimit()
+    public function getPriceIncludingTax()
     {
-        return $this->container['scanned_data_limit'];
+        return $this->container['price_including_tax'];
     }
 
     /**
-     * Sets scanned_data_limit
+     * Sets price_including_tax
      *
-     * @param float $scanned_data_limit The maximum amount of data that the query is allowed to scan. After the limit is reached, the query will be canceled.
+     * @param float $price_including_tax 
      *
      * @return $this
      */
-    public function setScannedDataLimit($scanned_data_limit)
+    public function setPriceIncludingTax($price_including_tax)
     {
-        $this->container['scanned_data_limit'] = $scanned_data_limit;
+        $this->container['price_including_tax'] = $price_including_tax;
 
         return $this;
     }
     
 
     /**
-     * Gets space_ids
+     * Gets product_id
      *
-     * @return int[]
+     * @return int
      */
-    public function getSpaceIds()
+    public function getProductId()
     {
-        return $this->container['space_ids'];
+        return $this->container['product_id'];
     }
 
     /**
-     * Sets space_ids
+     * Sets product_id
      *
-     * @param int[] $space_ids The IDs of the spaces belonging to the specified account in which the query is to be executed. Do not provide any value to query all spaces in the specified account.
+     * @param int $product_id 
      *
      * @return $this
      */
-    public function setSpaceIds($space_ids)
+    public function setProductId($product_id)
     {
-        $this->container['space_ids'] = $space_ids;
+        $this->container['product_id'] = $product_id;
+
+        return $this;
+    }
+    
+
+    /**
+     * Gets quantity
+     *
+     * @return float
+     */
+    public function getQuantity()
+    {
+        return $this->container['quantity'];
+    }
+
+    /**
+     * Sets quantity
+     *
+     * @param float $quantity 
+     *
+     * @return $this
+     */
+    public function setQuantity($quantity)
+    {
+        $this->container['quantity'] = $quantity;
+
+        return $this;
+    }
+    
+
+    /**
+     * Gets recalculate_price
+     *
+     * @return bool
+     */
+    public function getRecalculatePrice()
+    {
+        return $this->container['recalculate_price'];
+    }
+
+    /**
+     * Sets recalculate_price
+     *
+     * @param bool $recalculate_price 
+     *
+     * @return $this
+     */
+    public function setRecalculatePrice($recalculate_price)
+    {
+        $this->container['recalculate_price'] = $recalculate_price;
+
+        return $this;
+    }
+    
+
+    /**
+     * Gets tax_lines
+     *
+     * @return \PostFinanceCheckout\Sdk\Model\TaxLine[]
+     */
+    public function getTaxLines()
+    {
+        return $this->container['tax_lines'];
+    }
+
+    /**
+     * Sets tax_lines
+     *
+     * @param \PostFinanceCheckout\Sdk\Model\TaxLine[] $tax_lines 
+     *
+     * @return $this
+     */
+    public function setTaxLines($tax_lines)
+    {
+        $this->container['tax_lines'] = $tax_lines;
 
         return $this;
     }
