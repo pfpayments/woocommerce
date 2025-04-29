@@ -464,8 +464,12 @@ msgid "Send Order Email"
 msgstr "Bestellungsbestätigung versenden"
 
 #: includes/admin/class-wc-postfinancecheckout-admin-settings-page.php:201
-msgid "Send the order email of WooCommerce."
-msgstr "Versenden Sie Emails von WooCommerce."
+msgid "Enable this option to send order confirmation emails directly from WooCommerce instead of the Portal."
+msgstr "Aktivieren Sie diese Einstellung, um Kunden zu ermöglichen, Rechnungen direkt aus Ihrem Shop herunterzuladen."
+
+#: includes/admin/class-wc-postfinancecheckout-admin-settings-page.php:300
+msgid "This field allows you to apply custom styling to the payment form and payment page.\nThe styling is defined in your Space settings in the Portal."
+msgstr "Dieses Feld ermöglicht es Ihnen, benutzerdefiniertes Styling auf das Zahlungsformular und die Zahlungsseite anzuwenden.\nDas Styling wird in den Einstellungen Ihres Space im Portal definiert."
 
 #: includes/admin/class-wc-postfinancecheckout-admin-settings-page.php:214
 msgid "Document Options"
@@ -476,16 +480,20 @@ msgid "Invoice Download"
 msgstr "Rechnung herunterladen"
 
 #: includes/admin/class-wc-postfinancecheckout-admin-settings-page.php:221
-msgid "Allow customers to download the invoice."
-msgstr "Erlauben Sie dem Kunden, die Rechnung herunterzuladen."
+msgid "Enable this setting to allow customers to download invoices directly from your shop."
+msgstr "Aktivieren Sie diese Einstellung, um Kunden das direkte Herunterladen von Rechnungen aus Ihrem Shop zu ermöglichen."
 
 #: includes/admin/class-wc-postfinancecheckout-admin-settings-page.php:228
 msgid "Packing Slip Download"
 msgstr "Lieferschein herunterladen"
 
 #: includes/admin/class-wc-postfinancecheckout-admin-settings-page.php:229
-msgid "Allow customers to download the packing slip."
-msgstr "Erlauben Sie dem Kunden, den Lieferschein herunterzuladen."
+msgid "Enable this setting to allow customers to download Packing Slip directly from your shop."
+msgstr "Aktivieren Sie diese Einstellung, um Kunden das direkte Herunterladen des Packzettels aus Ihrem Shop zu ermöglichen."
+
+#: includes/admin/class-wc-postfinancecheckout-admin-settings-page.php:300
+msgid "This field allows you to apply custom styling to the payment form and payment page.\nThe styling is defined in your Space settings in the Portal."
+msgstr "Dieses Feld ermöglicht es Ihnen, benutzerdefiniertes Styling auf das Zahlungsformular und die Zahlungsseite anzuwenden.\nDas Styling wird in den Einstellungen Ihres Space im Portal definiert."
 
 #: includes/admin/class-wc-postfinancecheckout-admin-settings-page.php:242
 msgid "Space View Options"
@@ -577,10 +585,21 @@ msgstr "postfinancecheckout AG"
 msgid "https://postfinance.ch/en/business/products/e-commerce/postfinance-checkout-all-in-one.html"
 msgstr "https://postfinance.ch/en/business/products/e-commerce/postfinance-checkout-all-in-one.html"
 
-#: includes/admin/class-wc-postfinancecheckout-admin-settings-page.php:277
+#: includes/admin/class-wc-postfinancecheckout-admin-settings-page.php:350
+msgid "Enable this setting to require that the sum of all line items matches the order total value."
+msgstr "Aktivieren Sie diese Einstellung, um zu verlangen, dass die Summe aller Positionen dem Gesamtwert der Bestellung entspricht."
+
+#: includes/admin/class-wc-postfinancecheckout-admin-settings-page.php:351
 msgid ""
-"Require that the transaction line items total is matching the order total."
-msgstr "Erzwingen, dass die Summe aller Artikel dem Bestelltotal entspricht."
+"WooCommerce calculates taxes at the line-item level, which may result in minor discrepancies (typically a few cents) between the order's total tax and the displayed price. This occurs due to rounding differences during individual line-item calculations.\n\n"
+"If the \"Enforce consistency\" setting is enabled, the portal will automatically reject orders with such discrepancies. To avoid payment processing issues, we recommend disabling this setting unless strict tax total validation is required."
+msgstr ""
+"WooCommerce berechnet Steuern auf der Positionsebene, was zu geringfügigen Abweichungen (typischerweise wenigen Cent) zwischen der Gesamtsteuer der Bestellung und dem angezeigten Preis führen kann. Dies tritt aufgrund von Rundungsdifferenzen bei der Berechnung einzelner Positionen auf.\n\n"
+"Wenn die Einstellung „Konsistenz erzwingen“ aktiviert ist, wird das Portal Bestellungen mit solchen Abweichungen automatisch ablehnen. Um Probleme bei der Zahlungsabwicklung zu vermeiden, empfehlen wir, diese Einstellung zu deaktivieren, es sei denn, eine strikte Validierung der Steuerbeträge ist erforderlich."
+
+#: includes/admin/class-wc-postfinancecheckout-admin-settings-page.php:372
+msgid "Choose how orders are uniquely identified when sent to the portal. This reference ensures orders can be tracked and reconciled between systems. We recommend to use Order ID unless your workflow requires custom identifiers."
+msgstr "Wählen Sie, wie Bestellungen eindeutig identifiziert werden, wenn sie an das Portal gesendet werden. Diese Referenz stellt sicher, dass Bestellungen zwischen den Systemen verfolgt und abgeglichen werden können. Wir empfehlen die Verwendung der Bestell-ID, es sei denn, Ihr Workflow erfordert benutzerdefinierte Kennungen."
 
 #: includes/admin/class-wc-postfinancecheckout-admin-settings-page.php:276
 msgid "Enforce Consistency"
@@ -594,15 +613,17 @@ msgstr "Artikelpositionen"
 msgid "Adjustment"
 msgstr "Anpassung"
 
-#: includes/admin/class-wc-postfinancecheckout-admin-settings-page.php:253
+#: includes/admin/class-wc-postfinancecheckout-admin-settings-page.php:319
 msgid ""
-"The integration type controls how the payment form is integrated into the "
-"WooCommerce checkout. The Lightbox integration type offers better "
-"performance but with a less compelling checkout experience."
+"The Integration Options setting determines how the payment form is displayed during the WooCommerce checkout process. Choose the option that best suits your store’s needs:\n\n"
+"IFrame: Embeds the payment form directly within the WooCommerce checkout page for a seamless experience.\n\n"
+"Lightbox: Opens a secure popup window for customers to complete their payment without leaving the checkout page.\n\n"
+"Payment Page: Redirects customers to a dedicated payment page hosted by the payment provider."
 msgstr ""
-"Der Integrationstyp steuert, wie das Zahlungsformular in den WooCommerce "
-"Checkout integriert wird. Die Lightbox Integration bietet eine bessere "
-"Performance, dafür ist die Integration nicht gleich ansprechend."
+"Die Einstellung der Integrationsoptionen bestimmt, wie das Zahlungsformular während des WooCommerce Checkout-Prozesses angezeigt wird. Wählen Sie die Option, die am besten zu den Bedürfnissen Ihres Shops passt:\n\n"
+"IFrame: Betten Sie das Zahlungsformular direkt auf der WooCommerce Checkout-Seite ein, um eine nahtlose Erfahrung zu ermöglichen.\n\n"
+"Lightbox: Öffnet ein sicheres Popup-Fenster, damit die Kunden ihre Zahlung abschließen können, ohne die Checkout-Seite zu verlassen.\n\n"
+"Zahlungsseite: Leitet die Kunden auf eine dedizierte Zahlungsseite weiter, die vom Zahlungsanbieter gehostet wird."
 
 #: includes/admin/class-wc-postfinancecheckout-admin-settings-page.php:252
 msgid "Integration Type"

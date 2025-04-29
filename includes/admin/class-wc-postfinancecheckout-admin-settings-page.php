@@ -205,7 +205,7 @@ class WC_PostFinanceCheckout_Admin_Settings_Page extends WC_Settings_Page {
 		$settings = array(
 			array(
 				'links' => array(
-					'https://plugin-documentation.postfinance-checkout.ch/pfpayments/woocommerce/3.3.8/docs/en/documentation.html' => esc_html__( 'Documentation', 'woo-postfinancecheckout' ),
+					'https://plugin-documentation.postfinance-checkout.ch/pfpayments/woocommerce/3.3.9/docs/en/documentation.html' => esc_html__( 'Documentation', 'woo-postfinancecheckout' ),
 					'https://checkout.postfinance.ch/en-ch/user/signup' => esc_html__( 'Sign Up', 'woo-postfinancecheckout' ),
 				),
 				'type'  => 'postfinancecheckout_links',
@@ -260,7 +260,7 @@ class WC_PostFinanceCheckout_Admin_Settings_Page extends WC_Settings_Page {
 
 			array(
 				'title' => esc_html__( 'Send Order Email', 'woo-postfinancecheckout' ),
-				'desc' => esc_html__( 'Send the order email of WooCommerce.', 'woo-postfinancecheckout' ),
+				'desc' => esc_html__( 'Enable this option to send order confirmation emails directly from WooCommerce instead of the Portal.', 'woo-postfinancecheckout' ),
 				'id' => WooCommerce_PostFinanceCheckout::POSTFINANCECHECKOUT_CK_SHOP_EMAIL,
 				'type' => 'checkbox',
 				'default' => 'yes',
@@ -280,7 +280,7 @@ class WC_PostFinanceCheckout_Admin_Settings_Page extends WC_Settings_Page {
 
 			array(
 				'title' => esc_html__( 'Invoice Download', 'woo-postfinancecheckout' ),
-				'desc' => esc_html__( 'Allow customers to download the invoice.', 'woo-postfinancecheckout' ),
+				'desc' => esc_html__( 'Enable this setting to allow customers to download invoices directly from your shop.', 'woo-postfinancecheckout' ),
 				'id' => WooCommerce_PostFinanceCheckout::POSTFINANCECHECKOUT_CK_CUSTOMER_INVOICE,
 				'type' => 'checkbox',
 				'default' => 'yes',
@@ -288,7 +288,7 @@ class WC_PostFinanceCheckout_Admin_Settings_Page extends WC_Settings_Page {
 			),
 			array(
 				'title' => esc_html__( 'Packing Slip Download', 'woo-postfinancecheckout' ),
-				'desc' => esc_html__( 'Allow customers to download the packing slip.', 'woo-postfinancecheckout' ),
+				'desc' => esc_html__( 'Enable this setting to allow customers to download Packing Slip directly from your shop.', 'woo-postfinancecheckout' ),
 				'id' => WooCommerce_PostFinanceCheckout::POSTFINANCECHECKOUT_CK_CUSTOMER_PACKING,
 				'type' => 'checkbox',
 				'default' => 'yes',
@@ -308,7 +308,7 @@ class WC_PostFinanceCheckout_Admin_Settings_Page extends WC_Settings_Page {
 
 			array(
 				'title' => esc_html__( 'Space View Id', 'woo-postfinancecheckout' ),
-				'desc_tip' => esc_html__( 'The Space View Id allows to control the styling of the payment form and the payment page within the space.', 'woo-postfinancecheckout' ),
+				'desc_tip' => esc_html__( 'This field allows you to apply custom styling to the payment form and payment page.\nThe styling is defined in your Space settings in the Portal.', 'woo-postfinancecheckout' ),
 				'id' => WooCommerce_PostFinanceCheckout::POSTFINANCECHECKOUT_CK_SPACE_VIEW_ID,
 				'type' => 'number',
 				'css' => 'min-width:300px;',
@@ -327,7 +327,17 @@ class WC_PostFinanceCheckout_Admin_Settings_Page extends WC_Settings_Page {
 
 			array(
 				'title' => esc_html__( 'Integration Type', 'woo-postfinancecheckout' ),
-				'desc_tip' => esc_html__( 'The integration type controls how the payment form is integrated into the WooCommerce checkout. The Lightbox integration type offers better performance but with a less compelling checkout experience.', 'woo-postfinancecheckout' ),
+				'desc_tip' => esc_html__(
+			    <<<TEXT
+				The Integration Options setting determines how the payment form is displayed during the WooCommerce checkout process. Choose the option that best suits your store’s needs:
+				
+				IFrame: Embeds the payment form directly within the WooCommerce checkout page for a seamless experience.
+				
+				Lightbox: Opens a secure popup window for customers to complete their payment without leaving the checkout page.
+				
+				Payment Page: Redirects customers to a dedicated payment page hosted by the payment provider.
+				TEXT
+				, 'woo-postfinancecheckout' ),
 				'id'  => WooCommerce_PostFinanceCheckout::POSTFINANCECHECKOUT_CK_INTEGRATION,
 				'type' => 'select',
 				'css' => 'min-width:300px;',
@@ -350,14 +360,21 @@ class WC_PostFinanceCheckout_Admin_Settings_Page extends WC_Settings_Page {
 				'id' => 'line_items_options',
 			),
 
-			array(
-				'title' => esc_html__( 'Enforce Consistency', 'woo-postfinancecheckout' ),
-				'desc' => esc_html__( 'Require that the transaction line items total is matching the order total.', 'woo-postfinancecheckout' ),
-				'id' => WooCommerce_PostFinanceCheckout::POSTFINANCECHECKOUT_CK_ENFORCE_CONSISTENCY,
-				'type' => 'checkbox',
-				'default' => 'yes',
-				'css' => 'min-width:300px;',
-			),
+		  array(
+			'title' => esc_html__( 'Enforce Consistency', 'woo-postfinancecheckout' ),
+			'desc' => esc_html__( 'Enable this setting to require that the sum of all line items matches the order total value.', 'woo-postfinancecheckout' ),
+			'desc_tip' => esc_html__(
+			  <<<TEXT
+WooCommerce calculates taxes at the line-item level, which may result in minor discrepancies (typically a few cents) between the order's total tax and the displayed price. This occurs due to rounding differences during individual line-item calculations.
+
+If the "Enforce consistency" setting is enabled, the portal will automatically reject orders with such discrepancies. To avoid payment processing issues, we recommend disabling this setting unless strict tax total validation is required.
+TEXT
+			  , 'woo-postfinancecheckout' ),
+			'id' => WooCommerce_PostFinanceCheckout::POSTFINANCECHECKOUT_CK_ENFORCE_CONSISTENCY,
+			'type' => 'checkbox',
+			'default' => 'yes',
+			'css' => 'min-width:300px;',
+		  ),
 
 			array(
 				'type' => 'sectionend',
@@ -372,7 +389,10 @@ class WC_PostFinanceCheckout_Admin_Settings_Page extends WC_Settings_Page {
 
 			array(
 				'title' => esc_html__( 'Order Reference Type', 'woo-postfinancecheckout' ),
-				'desc_tip' => esc_html__( 'Choose which order reference is sent.', 'woo-postfinancecheckout' ),
+				'desc_tip' => esc_html__(
+				  'Choose how orders are uniquely identified when sent to the portal. This reference ensures orders can be tracked and reconciled between systems. We recommend to use Order ID unless your workflow requires custom identifiers.',
+				  'woo-postfinancecheckout'
+				),
 				'id' => WooCommerce_PostFinanceCheckout::POSTFINANCECHECKOUT_CK_ORDER_REFERENCE,
 				'type' => 'select',
 				'css' => 'min-width:300px;',
