@@ -14,6 +14,8 @@
  * @license  http://www.apache.org/licenses/LICENSE-2.0 Apache Software License (ASL 2.0)
  */
 
+use PostFinanceCheckout\Sdk\Model\TransactionState;
+
 defined( 'ABSPATH' ) || exit;
 
 /**
@@ -27,6 +29,15 @@ class WC_PostFinanceCheckout_Email {
 	 * Register email hooks.
 	 */
 	public static function init() {
+		add_action(
+			'postfinancecheckout_transaction_authorized_send_email',
+			array(
+				__CLASS__,
+		  		'send_on_hold_email_when_authorized'
+			),
+			10,
+			1
+		);
 		add_filter(
 			'woocommerce_email_enabled_new_order',
 			array(
@@ -144,6 +155,27 @@ class WC_PostFinanceCheckout_Email {
 	}
 
 	/**
+	 * @param $order_id
+	 * @return void
+	 */
+	public static function send_on_hold_email_when_authorized( $order_id ) {
+		$order = wc_get_order( $order_id );
+		if ( ! $order instanceof WC_Order ) {
+			return;
+		}
+
+		$emails = WC()->mailer()->get_emails();
+		if ( isset( $emails['WC_Email_Customer_On_Hold_Order'] ) ) {
+			$emails['WC_Email_Customer_On_Hold_Order']->trigger( $order_id );
+			update_post_meta( $order_id, '_postfinancecheckout_on_hold_email_sent', true );
+		}
+
+		if ( isset( $emails['WC_Email_New_Order'] ) ) {
+			$emails['WC_Email_New_Order']->trigger( $order_id );
+		}
+	}
+
+	/**
 	 * Sends emails.
 	 *
 	 * @param mixed $enabled enabled.
@@ -161,7 +193,11 @@ class WC_PostFinanceCheckout_Email {
 		if ( $gateway instanceof WC_PostFinanceCheckout_Gateway ) {
 			$send = get_option( WooCommerce_PostFinanceCheckout::POSTFINANCECHECKOUT_CK_SHOP_EMAIL, 'yes' );
 			if ( 'yes' !== $send ) {
-				return false;
+				return;
+			}
+
+			if ( ! self::is_authorized_on_hold_order( $order ) ) {
+				return;
 			}
 		}
 		return $enabled;
@@ -317,6 +353,11 @@ class WC_PostFinanceCheckout_Email {
 			if ( 'yes' !== $send ) {
 				return;
 			}
+
+			if ( ! self::is_authorized_on_hold_order( $order ) ) {
+				return;
+			}
+
 			$mails = WC()->mailer()->get_emails();
 			if ( isset( $mails['WC_GZD_Email_Customer_Paid_For_Order'] ) ) {
 				$mails['WC_GZD_Email_Customer_Paid_For_Order']->trigger( $order_id );
@@ -404,7 +445,28 @@ class WC_PostFinanceCheckout_Email {
 				return true;
 			}
 		}
+
+		if ( ! self::is_authorized_on_hold_order( $order ) ) {
+			return;
+		}
 		return $email_sent;
+	}
+
+	/**
+	 * @param WC_Order $order
+	 * @return bool
+	 */
+	private static function is_authorized_on_hold_order( WC_Order $order ) {
+		if ( $order->get_status() !== 'on-hold' ) {
+			return true;
+		}
+
+		$transaction_info = WC_PostFinanceCheckout_Entity_Transaction_Info::load_by_order_id( $order->get_id() );
+		if ( ! $transaction_info || ( $transaction_info->get_state() !== TransactionState::AUTHORIZED ) ) {
+			return false;
+		}
+
+		return true;
 	}
 }
 

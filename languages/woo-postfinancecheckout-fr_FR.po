@@ -841,3 +841,31 @@ msgstr "Donnez un nom à votre statut personnalisé pour une identification faci
 #: views/admin-settings/html-admin-page-order-statuses.php:64
 msgid "e.g. awaiting"
 msgstr "ex. en attente"
+
+#: includes/class-wc-postfinancecheckout-zero-gateway.php:11
+msgid "No Payment Required"
+msgstr "Aucun paiement requis"
+
+#: includes/class-wc-postfinancecheckout-zero-gateway.php:12
+msgid "Used when order total is zero."
+msgstr "Utilisé lorsque le total de la commande est égal à zéro."
+
+#: includes/class-wc-postfinancecheckout-zero-gateway.php:30
+msgid "Enable/Disable"
+msgstr "Activer/Désactiver"
+
+#: includes/class-wc-postfinancecheckout-zero-gateway.php:32
+msgid "Enable No Payment Required Gateway"
+msgstr "Activer la passerelle « Aucun paiement requis »"
+
+#: includes/class-wc-postfinancecheckout-zero-gateway.php:36
+msgid "Title"
+msgstr "Titre"
+
+#: includes/class-wc-postfinancecheckout-zero-gateway.php:38
+msgid "This controls the title seen by the customer during checkout."
+msgstr "Contrôle le titre affiché au client lors du paiement."
+
+#: includes/class-wc-postfinancecheckout-zero-gateway.php:55
+msgid "Order completed automatically – no payment needed."
+msgstr "Commande finalisée automatiquement – aucun paiement requis."

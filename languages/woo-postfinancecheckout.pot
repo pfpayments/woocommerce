@@ -842,3 +842,32 @@ msgstr "Geben Sie Ihrem benutzerdefinierten Status einen Namen zur einfachen Ide
 msgid "e.g. awaiting"
 msgstr "z.B. ausstehend"
 
+#: includes/class-wc-postfinancecheckout-zero-gateway.php:11
+msgid "No Payment Required"
+msgstr "Keine Zahlung erforderlich"
+
+#: includes/class-wc-postfinancecheckout-zero-gateway.php:12
+msgid "Used when order total is zero."
+msgstr "Verwendet, wenn der Bestellwert null ist."
+
+#: includes/class-wc-postfinancecheckout-zero-gateway.php:30
+msgid "Enable/Disable"
+msgstr "Aktivieren/Deaktivieren"
+
+#: includes/class-wc-postfinancecheckout-zero-gateway.php:32
+msgid "Enable No Payment Required Gateway"
+msgstr "Gateway 'Keine Zahlung erforderlich' aktivieren"
+
+#: includes/class-wc-postfinancecheckout-zero-gateway.php:36
+msgid "Title"
+msgstr "Titel"
+
+#: includes/class-wc-postfinancecheckout-zero-gateway.php:38
+msgid "This controls the title seen by the customer during checkout."
+msgstr "Steuert den Titel, den der Kunde beim Checkout sieht."
+
+#: includes/class-wc-postfinancecheckout-zero-gateway.php:55
+msgid "Order completed automatically – no payment needed."
+msgstr "Bestellung automatisch abgeschlossen – keine Zahlung erforderlich."
+
+

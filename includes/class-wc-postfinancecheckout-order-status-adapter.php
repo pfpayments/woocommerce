@@ -96,7 +96,7 @@ class WC_PostFinanceCheckout_Order_Status_Adapter
 		//tests.
 		// CPT-based orders.
 		add_filter( 'bulk_actions-edit-shop_order', array($this, 'bulk_actions_shop_order'), 20, 1 );
-		add_action( 'handle_bulk_actions-edit-shop_order', 'rudr_bulk_process_custom_status', 20, 3 );
+		add_action( 'handle_bulk_actions-edit-shop_order', array($this, 'bulk_process_custom_status'), 20, 3 );
 		// HPOS orders.
 		add_filter( 'bulk_actions-woocommerce_page_wc-orders', array($this, 'bulk_actions_shop_order'), 20, 1 );
 		add_filter( 'handle_bulk_actions-woocommerce_page_wc-orders', array($this, 'bulk_process_custom_status'), 20, 3 );

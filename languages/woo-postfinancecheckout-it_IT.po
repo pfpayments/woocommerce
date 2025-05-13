@@ -846,3 +846,31 @@ msgstr "Dai un nome al tuo stato personalizzato per una facile identificazione."
 #: views/admin-settings/html-admin-page-order-statuses.php:64
 msgid "e.g. awaiting"
 msgstr "es. in attesa"
+
+#: includes/class-wc-postfinancecheckout-zero-gateway.php:11
+msgid "No Payment Required"
+msgstr "Nessun pagamento richiesto"
+
+#: includes/class-wc-postfinancecheckout-zero-gateway.php:12
+msgid "Used when order total is zero."
+msgstr "Utilizzato quando il totale dell’ordine è pari a zero."
+
+#: includes/class-wc-postfinancecheckout-zero-gateway.php:30
+msgid "Enable/Disable"
+msgstr "Abilita/Disabilita"
+
+#: includes/class-wc-postfinancecheckout-zero-gateway.php:32
+msgid "Enable No Payment Required Gateway"
+msgstr "Abilita gateway « Nessun pagamento richiesto »"
+
+#: includes/class-wc-postfinancecheckout-zero-gateway.php:36
+msgid "Title"
+msgstr "Titolo"
+
+#: includes/class-wc-postfinancecheckout-zero-gateway.php:38
+msgid "This controls the title seen by the customer during checkout."
+msgstr "Controlla il titolo visualizzato dal cliente al checkout."
+
+#: includes/class-wc-postfinancecheckout-zero-gateway.php:55
+msgid "Order completed automatically – no payment needed."
+msgstr "Ordine completato automaticamente – nessun pagamento richiesto."

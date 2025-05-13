@@ -47,6 +47,9 @@ class WC_PostFinanceCheckout_Webhook_Transaction_Strategy extends WC_PostFinance
 		$entity = $this->load_entity( $request );
 		if ( false != $order && $order->get_id() ) {
 			$this->process_order_related_inner( $order, $entity );
+			if ($request->get_state() === \PostFinanceCheckout\Sdk\Model\TransactionState::AUTHORIZED) {
+				do_action( 'postfinancecheckout_transaction_authorized_send_email', $order->get_id() );
+			}
 		}
 	}
 

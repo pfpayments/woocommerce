@@ -57,7 +57,7 @@ final class WC_PostFinanceCheckout_Blocks_Support extends AbstractPaymentMethodT
 	 */
 	public function get_payment_method_script_handles() {
 		$dependencies = array();
-		$version = '1';
+		$version = '3.3.10';
 
 		wp_register_script(
 			'WooCommerce_PostFinanceCheckout_blocks_support',
@@ -108,6 +108,7 @@ final class WC_PostFinanceCheckout_Blocks_Support extends AbstractPaymentMethodT
 			}
 
 			$payment_gateways = WC()->payment_gateways()->payment_gateways();
+
 			$available_payment_methods = WC_PostFinanceCheckout_Service_Transaction::instance()->get_possible_payment_methods_for_cart();
 
 			$payment_plugin = array_filter(
@@ -118,7 +119,15 @@ final class WC_PostFinanceCheckout_Blocks_Support extends AbstractPaymentMethodT
 
 			$payments_list =
 			  array_map(
-				function ( WC_PostFinanceCheckout_Gateway $payment_gateway ) use ( $available_payment_methods ) {
+				function ( $payment_gateway ) use ( $available_payment_methods ) {
+					$has_subscription = WC_PostFinanceCheckout_Zero_Gateway::cart_has_subscription();
+					$cartTotal = (WC()->cart && WC()->cart->total) ?? 0;
+					$isPaymentMethodVisibleOnCheckout = $payment_gateway->get_payment_configuration_id() === WC_PostFinanceCheckout_Zero_Gateway::ZERO_PAYMENT_CONF_ID && $cartTotal == 0;
+
+					if ( !$isPaymentMethodVisibleOnCheckout ) {
+						$isPaymentMethodVisibleOnCheckout = in_array( $payment_gateway->get_payment_configuration_id(), $available_payment_methods, true ) && ( $cartTotal > 0 || $has_subscription );
+					}
+
 					return array(
 					  'name' => $payment_gateway->id,
 					  'label' => $payment_gateway->get_title(),
@@ -128,7 +137,7 @@ final class WC_PostFinanceCheckout_Blocks_Support extends AbstractPaymentMethodT
 					  'integration_mode' => get_option( WooCommerce_PostFinanceCheckout::POSTFINANCECHECKOUT_CK_INTEGRATION ),
 					  'supports' => $payment_gateway->supports,
 					  'icon' => $payment_gateway->get_icon(),
-					  'isActive' => in_array( $payment_gateway->get_payment_configuration_id(), $available_payment_methods, true )
+					  'isActive' => $isPaymentMethodVisibleOnCheckout
 					);
 				},
 				$payment_plugin
@@ -195,18 +204,17 @@ final class WC_PostFinanceCheckout_Blocks_Support extends AbstractPaymentMethodT
 			$transaction_service = WC_PostFinanceCheckout_Service_Transaction::instance();
 			$transaction = $transaction_service->get_transaction_from_session();
 
-			switch( get_option( WooCommerce_PostFinanceCheckout::POSTFINANCECHECKOUT_CK_INTEGRATION ) ) {
-				case WC_PostFinanceCheckout_Integration::POSTFINANCECHECKOUT_IFRAME:
-					// Ask the portal for the iframe's javascript file.
-					$js_url = $transaction_service->get_javascript_url_for_transaction( $transaction );
-					break;
-				case WC_PostFinanceCheckout_Integration::POSTFINANCECHECKOUT_LIGHTBOX:
-					$js_url = $transaction_service->get_lightbox_url_for_transaction( $transaction );
-					// Ask the portal for the lighbox's javascript file.
-					break;
-				default:
-					$js_url = '';
-					break;
+			$js_url = '';
+			$zeroPaymentMethod = new WC_PostFinanceCheckout_Zero_Gateway();
+			if ( !$zeroPaymentMethod->is_available() || $zeroPaymentMethod->cart_has_subscription() ) {
+				switch( get_option( WooCommerce_PostFinanceCheckout::POSTFINANCECHECKOUT_CK_INTEGRATION ) ) {
+					case WC_PostFinanceCheckout_Integration::POSTFINANCECHECKOUT_IFRAME:
+						$js_url = $transaction_service->get_javascript_url_for_transaction( $transaction );
+						break;
+					case WC_PostFinanceCheckout_Integration::POSTFINANCECHECKOUT_LIGHTBOX:
+						$js_url = $transaction_service->get_lightbox_url_for_transaction( $transaction );
+						break;
+				}
 			}
 
 			if ( $js_url ) {
@@ -250,6 +258,7 @@ final class WC_PostFinanceCheckout_Blocks_Support extends AbstractPaymentMethodT
 		if ( ! $payment_method_object instanceof \WC_PostFinanceCheckout_Gateway ) {
 			return;
 		}
+
 		$payment_method_object->validate_fields();
 
 		// We call here the payment processor from our gateway.
