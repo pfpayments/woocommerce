@@ -593,7 +593,7 @@ class WC_PostFinanceCheckout_Helper {
 	*/
 	public function get_woocommerce_order_statuses_json() {
 		$woocommerce_statuses = apply_filters( 'postfinancecheckout_woocommerce_statuses', array() );
-		$excluded_statuses = array( 
+		$excluded_statuses = array(
 			'wc-postfi-manual',
 			'wc-postfi-redirected',
 			'wc-postfi-waiting',
@@ -619,5 +619,108 @@ class WC_PostFinanceCheckout_Helper {
 			$woocommerce_statuses
 		);
 	}
+
+	/**
+	 * @param $order
+	 * @return void
+	 */
+	public static function set_virtual_orders_to_complete( $order ) {
+
+		$only_virtual = true;
+		foreach ( $order->get_items() as $item ) {
+			$product = $item->get_product();
+			if ( ! $product || ! $product->is_virtual() ) {
+				$only_virtual = false;
+				break;
+			}
+		}
+
+		if ( $only_virtual ) {
+			$order->update_status( 'completed' );
+		}
+	}
+
+	/**
+	 * Update WooCommerce order status to "Pre-Order" if any product is out of stock or marked as pre-order.
+	 *
+	 * @param WC_Order $order        WooCommerce order object.
+	 */
+	public static function update_order_status_for_preorder_if_needed( $order ) {
+		if ( ! $order instanceof WC_Order ) {
+			$order = wc_get_order( $order );
+		}
+
+		if ( ! $order ) {
+			return;
+		}
+
+		$is_preorder = false;
+		$is_out_of_stock = false;
+		$order_statuses = wc_get_order_statuses();
+
+		foreach ( $order->get_items() as $item ) {
+			$product_id = $item->get_product_id();
+			$product = wc_get_product( $product_id );
+			if ( ! $product ) {
+				continue;
+			}
+			$is_preorder_wc = (
+			  class_exists( 'WC_Pre_Orders' )
+			  && function_exists( 'wc_pre_orders_product_is_pre_order' )
+			  && wc_pre_orders_product_is_pre_order( $product )
+			);
+			$is_preorder_yith = ( 'yes' === $product->get_meta( '_ywpo_preorder' ) );
+
+			if ( $is_preorder_wc || $is_preorder_yith ) {
+				// Check if order is marked as pre-ordered
+				if ( 'yes' !== $order->get_meta( '_order_has_preorder' ) ) {
+					return;
+				}
+
+				// Check if Yith Pre-Order plugin setting
+				if ( 'default' === get_option( 'ywpo_order_status', 'default' ) ) {
+					return;
+				}
+				$is_preorder = true;
+				break;
+			}
+
+			// Check if product is not out of stock. Edge case: sometimes get_stock_quantity is not set, but then items are available
+			if ( ( $product->get_stock_quantity() ?? 1 ) < 1 ) {
+				$is_out_of_stock = true;
+				break;
+			}
+		}
+
+		if ( !$is_preorder && !$is_out_of_stock ) {
+			return;
+		}
+
+		$preorder_status_slug = null;
+		foreach ( $order_statuses as $status_slug => $status_label ) {
+			if ( strpos( $status_slug, 'pre-ord' ) !== false || strpos( $status_slug, 'preorder' ) !== false ) {
+				$preorder_status_slug = str_replace( 'wc-', '', $status_slug );
+				break;
+			}
+		}
+
+		if ( $preorder_status_slug ) {
+
+			if ( $order->get_status() === $preorder_status_slug ) {
+				return;
+			}
+
+			$order->update_status(
+			  $preorder_status_slug,
+			  __( 'Product is on pre-order. Status set automatically.', 'woo-postfinancecheckout' )
+			);
+
+			$order->add_order_note(
+			  __( 'Order status automatically set to pre-order.', 'woo-postfinancecheckout' )
+			);
+		}
+	}
+
+
 
 }

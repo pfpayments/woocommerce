@@ -323,118 +323,136 @@ class WC_PostFinanceCheckout_Gateway extends WC_Payment_Gateway {
 	 * @return bool
 	 */
 	public function is_available() {
-		$is_available = parent::is_available();
-
-		if ( ! $is_available ) {
-			return false;
+		static $checking = false;
+		if ( $checking ) {
+			return false; // prevent reentry/loop
 		}
-
-		// It's not possible to support the rounding on subtotal level and still get valid tax rates and amounts.
-		// Therefore the payment methods are disabled, if this option is active.
-		if ( wc_tax_enabled() && ( 'yes' === get_option( 'woocommerce_tax_round_at_subtotal' ) ) ) {
-			if ( 'yes' === get_option( WooCommerce_PostFinanceCheckout::POSTFINANCECHECKOUT_CK_ENFORCE_CONSISTENCY ) ) {
-				$error_message = esc_html__( "'WooCommerce > Settings > PostFinanceCheckout > Enforce Consistency' and 'WooCommerce > Settings > Tax > Rounding' are both enabled. Please disable at least one of them.", 'woo-postfinancecheckout' );
-				WooCommerce_PostFinanceCheckout::instance()->log( $error_message, WC_Log_Levels::ERROR );
+		$checking = true;
+	
+		try {
+			// Step 1: Respect parent availability
+			if ( ! parent::is_available() ) {
 				return false;
 			}
-		}
-
-		// It is possbile this function is called in the WordPress admin section. There is not a cart, so all active methods are available.
-		// If it is not a checkout page the method is availalbe. Some plugins check this, on non checkout pages, without a cart available.
-		// The active  gateways are  available during order total caluclation, as other plugins could need them.
-		if (
-			apply_filters(
-				'postfinancecheckout_is_method_available',
-				is_admin()
-				|| ! is_checkout()
-				|| ( isset( $GLOBALS['_postfinancecheckout_calculating'] )
-					&& $GLOBALS['_postfinancecheckout_calculating']
-					),
-				$this
-			)
-		) {//phpcs:ignore
-			return $this->get_payment_method_configuration()->get_state() == WC_PostFinanceCheckout_Entity_Method_Configuration::POSTFINANCECHECKOUT_STATE_ACTIVE;
-		}
-
-		global $wp;
-		if ( is_checkout() && isset( $wp->query_vars['order-received'] ) ) {
-			// Sometimes, when the Thank you page is loaded, there are new attempts to get
-			// gateways availability. In this particular case, we retrieve the availability
-			// information from the session, so the plugin does not have to ask the portal
-			// for this information, creating an unused transaction in the process.
-			$gateway_available = WC()->session->get( 'postfinancecheckout_payment_gateways' );
-			if ( ! empty( $gateway_available[ $this->pfc_payment_method_configuration_id ] ) ) {
-				return $gateway_available[ $this->pfc_payment_method_configuration_id ];
-			} else {
-
-				return false;
-			}
-		}
-
-		if ( apply_filters( 'wc_postfinancecheckout_is_order_pay_endpoint', is_checkout_pay_page() ) ) { //phpcs:ignore
-			// We have to use the order and not the cart for this endpoint.
-			$order = WC_Order_Factory::get_order( $wp->query_vars['order-pay'] );
-			if ( ! $order ) {
-				return false;
-			}
-			try {
-				$possible_methods = WC_PostFinanceCheckout_Service_Transaction::instance()->get_possible_payment_methods_for_order( $order );
-			} catch ( WC_PostFinanceCheckout_Exception_Invalid_Transaction_Amount $e ) {
-				WooCommerce_PostFinanceCheckout::instance()->log( $e->getMessage() . ' Order Id: ' . $order->get_id(), WC_Log_Levels::ERROR );
-				return false;
-			} catch ( Exception $e ) {
-				WooCommerce_PostFinanceCheckout::instance()->log( $e->getMessage(), WC_Log_Levels::DEBUG );
-				return false;
-			}
-		} else {
-			if ( $this->have_already_entered === true ) {
-				return true;
-			}
-
-			$this->have_already_entered = true;
-
-			try {
-				$possible_methods = WC_PostFinanceCheckout_Service_Transaction::instance()->get_possible_payment_methods_for_cart();
-			} catch ( WC_PostFinanceCheckout_Exception_Invalid_Transaction_Amount $e ) {
-				WooCommerce_PostFinanceCheckout::instance()->log( $e->getMessage(), WC_Log_Levels::ERROR );
-				return false;
-			} catch ( \PostFinanceCheckout\Sdk\ApiException $e ) {
-				WooCommerce_PostFinanceCheckout::instance()->log( $e->getMessage(), WC_Log_Levels::DEBUG );
-				$response_object = $e->getResponseObject();
-				$is_client_error = ( $response_object instanceof \PostFinanceCheckout\Sdk\Model\ClientError );
-				if ( $is_client_error ) {
-					$error_types = array( 'CONFIGURATION_ERROR', 'DEVELOPER_ERROR' );
-					if ( in_array( $response_object->getType(), $error_types ) ) {
-						$message = esc_attr( $response_object->getType() ) . ': ' . esc_attr( $response_object->getMessage() );
-						wc_print_notice( $message, 'error' );
-						return false;
-					}
+	
+			// Step 2: Prevent conflict with tax rounding
+			if ( wc_tax_enabled() && 'yes' === get_option( 'woocommerce_tax_round_at_subtotal' ) ) {
+				if ( 'yes' === get_option( WooCommerce_PostFinanceCheckout::POSTFINANCECHECKOUT_CK_ENFORCE_CONSISTENCY ) ) {
+					$error_message = esc_html__( "'WooCommerce > Settings > PostFinanceCheckout > Enforce Consistency' and 'WooCommerce > Settings > Tax > Rounding' are both enabled. Please disable at least one of them.", 'woo-postfinancecheckout' );
+					WooCommerce_PostFinanceCheckout::instance()->log( $error_message, WC_Log_Levels::ERROR );
+					return false;
 				}
-				return false;
-			} catch ( Exception $e ) {
-				WooCommerce_PostFinanceCheckout::instance()->log( $e->getMessage(), WC_Log_Levels::DEBUG );
-				return false;
-			} finally {
-				$this->have_already_entered = false;
 			}
-		}
-
-		$possible = false;
-		foreach ( $possible_methods as $possible_method ) {
-			if ( $possible_method == $this->get_payment_method_configuration()->get_configuration_id() ) {
-				$possible = true;
-				break;
+	
+			// Step 3: Use session cache if available
+			$gateway_available = WC()->session && WC()->session->has_session()
+				? WC()->session->get( 'postfinancecheckout_payment_gateways' )
+				: array();
+	
+			if ( isset( $gateway_available[ $this->wle_payment_method_configuration_id ] ) ) {
+				return $gateway_available[ $this->wle_payment_method_configuration_id ];
 			}
+	
+			// Step 4: Allow admin and non-checkout pages to pass
+			if ( apply_filters(
+				'postfinancecheckout_is_method_available',
+				is_admin() || ! is_checkout() || ( isset( $GLOBALS['_postfinancecheckout_calculating'] ) && $GLOBALS['_postfinancecheckout_calculating'] ),
+				$this
+			) ) {
+				return $this->get_payment_method_configuration()->get_state() === WC_PostFinanceCheckout_Entity_Method_Configuration::POSTFINANCECHECKOUT_STATE_ACTIVE;
+			}
+	
+			// Step 5: Handle "order received" page logic
+			global $wp;
+			if ( is_checkout() && isset( $wp->query_vars['order-received'] ) ) {
+				return ! empty( $gateway_available[ $this->wle_payment_method_configuration_id ] );
+			}
+	
+			// Step 6: Handle "order pay" endpoint
+			if ( apply_filters( 'wc_postfinancecheckout_is_order_pay_endpoint', is_checkout_pay_page() ) ) {
+				$order = WC_Order_Factory::get_order( $wp->query_vars['order-pay'] ?? 0 );
+				if ( ! $order ) {
+					return false;
+				}
+				$possible_methods = $this->get_safe_possible_payment_methods_for_order( $order );
+			} else {
+				$possible_methods = $this->get_safe_possible_payment_methods_for_cart();
+			}
+	
+			// Step 7: Check if this gateway is among the possible ones
+			$possible = false;
+			foreach ( $possible_methods as $method_id ) {
+				if ( $method_id == $this->get_payment_method_configuration()->get_configuration_id() ) {
+					$possible = true;
+					break;
+				}
+			}
+	
+			if ( ! $possible ) {
+				return false;
+			}
+	
+			// Step 8: Cache success in session
+			if ( WC()->session && WC()->session->has_session() ) {
+				$gateway_available[ $this->wle_payment_method_configuration_id ] = true;
+				WC()->session->set( 'postfinancecheckout_payment_gateways', $gateway_available );
+			}
+	
+			return true;
+	
+		} finally {
+			$checking = false;
 		}
-		if ( ! $possible ) {
-			return false;
-		}
+	}
 
-		// Store the availability information in the session.
-		$gateway_available = WC()->session->get( 'postfinancecheckout_payment_gateways' );
-		$gateway_available[ $this->pfc_payment_method_configuration_id ] = true;
-		WC()->session->set( 'postfinancecheckout_payment_gateways', $gateway_available );
-		return true;
+	/**
+	 * Safely fetches possible payment methods for the current cart.
+	 *
+	 * Handles known exceptions to prevent issues during cart calculation
+	 * (especially important for avoiding loops with plugins like Germanized).
+	 *
+	 * @return array|false Array of method configuration IDs if successful, false on failure.
+	 */
+	protected function get_safe_possible_payment_methods_for_cart() {
+		try {
+			return WC_PostFinanceCheckout_Service_Transaction::instance()->get_possible_payment_methods_for_cart();
+		} catch ( WC_PostFinanceCheckout_Exception_Invalid_Transaction_Amount $e ) {
+			WooCommerce_PostFinanceCheckout::instance()->log( $e->getMessage(), WC_Log_Levels::ERROR );
+		} catch ( \PostFinanceCheckout\Sdk\ApiException $e ) {
+			WooCommerce_PostFinanceCheckout::instance()->log( $e->getMessage(), WC_Log_Levels::DEBUG );
+			$response_object = $e->getResponseObject();
+			$is_client_error = ( $response_object instanceof \PostFinanceCheckout\Sdk\Model\ClientError );
+			if ( $is_client_error ) {
+				$error_types = array( 'CONFIGURATION_ERROR', 'DEVELOPER_ERROR' );
+				if ( in_array( $response_object->getType(), $error_types ) ) {
+					$message = esc_attr( $response_object->getType() ) . ': ' . esc_attr( $response_object->getMessage() );
+					wc_print_notice( $message, 'error' );
+				}
+			}
+		} catch ( Exception $e ) {
+			WooCommerce_PostFinanceCheckout::instance()->log( $e->getMessage(), WC_Log_Levels::DEBUG );
+		}
+	
+		return false;
+	}
+
+	/**
+	 * Safely fetches possible payment methods for a given WooCommerce order.
+	 *
+	 * Primarily used on the "order pay" endpoint where cart isn't available.
+	 *
+	 * @param WC_Order $order WooCommerce order object.
+	 * @return array|false Array of method configuration IDs if successful, false on failure.
+	 */
+	protected function get_safe_possible_payment_methods_for_order( $order ) {
+		try {
+			return WC_Wallee_Service_Transaction::instance()->get_possible_payment_methods_for_order( $order );
+		} catch ( WC_Wallee_Exception_Invalid_Transaction_Amount $e ) {
+			WooCommerce_Wallee::instance()->log( $e->getMessage() . ' Order Id: ' . $order->get_id(), WC_Log_Levels::ERROR );
+		} catch ( Exception $e ) {
+			WooCommerce_Wallee::instance()->log( $e->getMessage(), WC_Log_Levels::DEBUG );
+		}
+		return false;
 	}
 
 	/**
