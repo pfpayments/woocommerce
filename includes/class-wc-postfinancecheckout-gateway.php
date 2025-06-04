@@ -349,8 +349,8 @@ class WC_PostFinanceCheckout_Gateway extends WC_Payment_Gateway {
 				? WC()->session->get( 'postfinancecheckout_payment_gateways' )
 				: array();
 	
-			if ( isset( $gateway_available[ $this->wle_payment_method_configuration_id ] ) ) {
-				return $gateway_available[ $this->wle_payment_method_configuration_id ];
+			if ( isset( $gateway_available[ $this->pfc_payment_method_configuration_id ] ) ) {
+				return $gateway_available[ $this->pfc_payment_method_configuration_id ];
 			}
 	
 			// Step 4: Allow admin and non-checkout pages to pass
@@ -365,7 +365,7 @@ class WC_PostFinanceCheckout_Gateway extends WC_Payment_Gateway {
 			// Step 5: Handle "order received" page logic
 			global $wp;
 			if ( is_checkout() && isset( $wp->query_vars['order-received'] ) ) {
-				return ! empty( $gateway_available[ $this->wle_payment_method_configuration_id ] );
+				return ! empty( $gateway_available[ $this->pfc_payment_method_configuration_id ] );
 			}
 	
 			// Step 6: Handle "order pay" endpoint
@@ -394,7 +394,7 @@ class WC_PostFinanceCheckout_Gateway extends WC_Payment_Gateway {
 	
 			// Step 8: Cache success in session
 			if ( WC()->session && WC()->session->has_session() ) {
-				$gateway_available[ $this->wle_payment_method_configuration_id ] = true;
+				$gateway_available[ $this->pfc_payment_method_configuration_id ] = true;
 				WC()->session->set( 'postfinancecheckout_payment_gateways', $gateway_available );
 			}
 	
@@ -446,11 +446,11 @@ class WC_PostFinanceCheckout_Gateway extends WC_Payment_Gateway {
 	 */
 	protected function get_safe_possible_payment_methods_for_order( $order ) {
 		try {
-			return WC_Wallee_Service_Transaction::instance()->get_possible_payment_methods_for_order( $order );
-		} catch ( WC_Wallee_Exception_Invalid_Transaction_Amount $e ) {
-			WooCommerce_Wallee::instance()->log( $e->getMessage() . ' Order Id: ' . $order->get_id(), WC_Log_Levels::ERROR );
+			return WC_PostFinanceCheckout_Service_Transaction::instance()->get_possible_payment_methods_for_order( $order );
+		} catch ( WC_PostFinanceCheckout_Exception_Invalid_Transaction_Amount $e ) {
+			WooCommerce_PostFinanceCheckout::instance()->log( $e->getMessage() . ' Order Id: ' . $order->get_id(), WC_Log_Levels::ERROR );
 		} catch ( Exception $e ) {
-			WooCommerce_Wallee::instance()->log( $e->getMessage(), WC_Log_Levels::DEBUG );
+			WooCommerce_PostFinanceCheckout::instance()->log( $e->getMessage(), WC_Log_Levels::DEBUG );
 		}
 		return false;
 	}

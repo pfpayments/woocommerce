@@ -205,7 +205,7 @@ class WC_PostFinanceCheckout_Admin_Settings_Page extends WC_Settings_Page {
 		$settings = array(
 			array(
 				'links' => array(
-					'https://plugin-documentation.postfinance-checkout.ch/pfpayments/woocommerce/3.3.11/docs/en/documentation.html' => esc_html__( 'Documentation', 'woo-postfinancecheckout' ),
+					'https://plugin-documentation.postfinance-checkout.ch/pfpayments/woocommerce/3.3.12/docs/en/documentation.html' => esc_html__( 'Documentation', 'woo-postfinancecheckout' ),
 					'https://checkout.postfinance.ch/en-ch/user/signup' => esc_html__( 'Sign Up', 'woo-postfinancecheckout' ),
 				),
 				'type'  => 'postfinancecheckout_links',

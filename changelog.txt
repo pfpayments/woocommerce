@@ -946,3 +946,10 @@ Please ensure that in woocommerce->settings->tax, the "Round tax at subtotal lev
 - [Tested Against] Woocommerce 9.8.5
 - [Tested Against] PHP SDK 4.8.0
 
+= 3.3.12 - June 4th 2025 =
+- [Hotfix] Incorrect index name
+- [Tested Against] PHP 8.2
+- [Tested Against] Wordpress 6.7
+- [Tested Against] Woocommerce 9.8.5
+- [Tested Against] PHP SDK 4.8.0
+
