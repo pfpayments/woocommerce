@@ -52,6 +52,16 @@ class WC_PostFinanceCheckout_Zero_Gateway extends WC_Payment_Gateway {
 	}
 
 	public function is_available() {
+		if (isset($_GET['pay_for_order']) && boolval($_GET['pay_for_order']) === true) {
+			$order_id = get_query_var( 'order-pay' );
+			$order = wc_get_order( $order_id );
+
+			if ( $order instanceof WC_Order && floatval( $order->get_total() ) == 0 ) {
+				return true;
+			}
+
+			return false;
+		}
 		return ( WC()->cart && WC()->cart->total == 0 ) && $this->enabled === 'yes';
 	}
 
@@ -74,6 +84,15 @@ class WC_PostFinanceCheckout_Zero_Gateway extends WC_Payment_Gateway {
 	public function hide_gateways_for_zero_order_total( $available_gateways ) {
 		if ( is_admin() ) {
 			return $available_gateways;
+		}
+
+		if (isset($_GET['pay_for_order']) && boolval($_GET['pay_for_order']) === true) {
+			$order_id = get_query_var( 'order-pay' );
+			$order = wc_get_order( $order_id );
+
+			if ( $order instanceof WC_Order && floatval( $order->get_total() ) > 0 ) {
+				return $available_gateways;
+			}
 		}
 
 		$has_subscription = self::cart_has_subscription();

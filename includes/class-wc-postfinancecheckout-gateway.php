@@ -328,13 +328,13 @@ class WC_PostFinanceCheckout_Gateway extends WC_Payment_Gateway {
 			return false; // prevent reentry/loop
 		}
 		$checking = true;
-	
+
 		try {
 			// Step 1: Respect parent availability
 			if ( ! parent::is_available() ) {
 				return false;
 			}
-	
+
 			// Step 2: Prevent conflict with tax rounding
 			if ( wc_tax_enabled() && 'yes' === get_option( 'woocommerce_tax_round_at_subtotal' ) ) {
 				if ( 'yes' === get_option( WooCommerce_PostFinanceCheckout::POSTFINANCECHECKOUT_CK_ENFORCE_CONSISTENCY ) ) {
@@ -343,16 +343,16 @@ class WC_PostFinanceCheckout_Gateway extends WC_Payment_Gateway {
 					return false;
 				}
 			}
-	
+
 			// Step 3: Use session cache if available
 			$gateway_available = WC()->session && WC()->session->has_session()
 				? WC()->session->get( 'postfinancecheckout_payment_gateways' )
 				: array();
-	
+
 			if ( isset( $gateway_available[ $this->pfc_payment_method_configuration_id ] ) ) {
 				return $gateway_available[ $this->pfc_payment_method_configuration_id ];
 			}
-	
+
 			// Step 4: Allow admin and non-checkout pages to pass
 			if ( apply_filters(
 				'postfinancecheckout_is_method_available',
@@ -361,13 +361,13 @@ class WC_PostFinanceCheckout_Gateway extends WC_Payment_Gateway {
 			) ) {
 				return $this->get_payment_method_configuration()->get_state() === WC_PostFinanceCheckout_Entity_Method_Configuration::POSTFINANCECHECKOUT_STATE_ACTIVE;
 			}
-	
+
 			// Step 5: Handle "order received" page logic
 			global $wp;
 			if ( is_checkout() && isset( $wp->query_vars['order-received'] ) ) {
 				return ! empty( $gateway_available[ $this->pfc_payment_method_configuration_id ] );
 			}
-	
+
 			// Step 6: Handle "order pay" endpoint
 			if ( apply_filters( 'wc_postfinancecheckout_is_order_pay_endpoint', is_checkout_pay_page() ) ) {
 				$order = WC_Order_Factory::get_order( $wp->query_vars['order-pay'] ?? 0 );
@@ -378,7 +378,7 @@ class WC_PostFinanceCheckout_Gateway extends WC_Payment_Gateway {
 			} else {
 				$possible_methods = $this->get_safe_possible_payment_methods_for_cart();
 			}
-	
+
 			// Step 7: Check if this gateway is among the possible ones
 			$possible = false;
 			foreach ( $possible_methods as $method_id ) {
@@ -387,19 +387,19 @@ class WC_PostFinanceCheckout_Gateway extends WC_Payment_Gateway {
 					break;
 				}
 			}
-	
+
 			if ( ! $possible ) {
 				return false;
 			}
-	
+
 			// Step 8: Cache success in session
 			if ( WC()->session && WC()->session->has_session() ) {
 				$gateway_available[ $this->pfc_payment_method_configuration_id ] = true;
 				WC()->session->set( 'postfinancecheckout_payment_gateways', $gateway_available );
 			}
-	
+
 			return true;
-	
+
 		} finally {
 			$checking = false;
 		}
@@ -432,7 +432,7 @@ class WC_PostFinanceCheckout_Gateway extends WC_Payment_Gateway {
 		} catch ( Exception $e ) {
 			WooCommerce_PostFinanceCheckout::instance()->log( $e->getMessage(), WC_Log_Levels::DEBUG );
 		}
-	
+
 		return false;
 	}
 

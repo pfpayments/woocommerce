@@ -3,7 +3,7 @@
  * Plugin Name: PostFinance Checkout
  * Plugin URI: https://wordpress.org/plugins/woo-postfinance-checkout
  * Description: Process WooCommerce payments with PostFinance Checkout.
- * Version: 3.3.12
+ * Version: 3.3.13
  * Author: postfinancecheckout AG
  * Author URI: https://postfinance.ch/en/business/products/e-commerce/postfinance-checkout-all-in-one.html
  * Text Domain: postfinancecheckout
@@ -11,7 +11,7 @@
  * Requires at least: 6.0
  * Requires PHP: 7.4
  * WC requires at least: 8.0.0
- * WC tested up to 9.8.5
+ * WC tested up to 9.9.5
  * License: Apache-2.0
  * License URI: http://www.apache.org/licenses/LICENSE-2.0
  */
@@ -39,14 +39,14 @@ if ( ! class_exists( 'WooCommerce_PostFinanceCheckout' ) ) {
 		const POSTFINANCECHECKOUT_CK_ORDER_REFERENCE = 'wc_postfinancecheckout_order_reference';
 		const POSTFINANCECHECKOUT_CK_ENFORCE_CONSISTENCY = 'wc_postfinancecheckout_enforce_consistency';
 		const POSTFINANCECHECKOUT_UPGRADE_VERSION = '3.1.1';
-		const WC_MAXIMUM_VERSION = '9.7.0';
+		const WC_MAXIMUM_VERSION = '9.9.5';
 
 		/**
 		 * WooCommerce PostFinanceCheckout version.
 		 *
 		 * @var string
 		 */
-		private $version = '3.3.12';
+		private $version = '3.3.13';
 
 		/**
 		 * The single instance of the class.
@@ -588,6 +588,19 @@ if ( ! class_exists( 'WooCommerce_PostFinanceCheckout' ) ) {
 						// If the order is using our payment method, we want to process it
 						// even if the value of the transaction is 0, which woocommerce by default
 						// process it without payment gateway.
+						$transaction_info = WC_PostFinanceCheckout_Entity_Transaction_Info::load_by_order_id( $order->get_id() );
+						if ( in_array(
+						  $transaction_info->get_state(),
+						  array(
+							\PostFinanceCheckout\Sdk\Model\TransactionState::FULFILL,
+							\PostFinanceCheckout\Sdk\Model\TransactionState::AUTHORIZED,
+							\PostFinanceCheckout\Sdk\Model\TransactionState::FAILED,
+							\PostFinanceCheckout\Sdk\Model\TransactionState::DECLINE,
+						  ),
+						  true
+						) ) {
+							return false;
+						}
 						return true;
 					}
 					return $value;

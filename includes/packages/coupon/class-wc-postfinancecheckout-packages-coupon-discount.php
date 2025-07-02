@@ -117,7 +117,11 @@ class WC_PostFinanceCheckout_Packages_Coupon_Discount {
 		}
 
 		$order_id = $session->get( 'postfinancecheckout_order_id' );
-		if ( WC()->cart->get_cart_contents_count() == 0 && ! is_null( $order_id ) ) {
+		$cart = WC()->cart;
+		if ( ! class_exists( 'WC_Cart' ) || ! ( $cart instanceof WC_Cart ) ) {
+			return $coupons_discount_total;
+		}
+		if ( $cart->get_cart_contents_count() == 0 && ! is_null( $order_id ) ) {
 			$order = wc_get_order( $order_id );
 			if ( $order ) {
 				$coupons_discount_total += $order->get_total_discount();
@@ -125,11 +129,11 @@ class WC_PostFinanceCheckout_Packages_Coupon_Discount {
 		}
 
 		// guard clause if the cart is empty, nothing to do here. This applies to subscription renewals.
-		if ( empty( WC()->cart->get_cart_contents_count() ) ) {
+		if ( empty( $cart->get_cart_contents_count() ) ) {
 			return $coupons_discount_total;
 		}
 
-		foreach ( WC()->cart->get_coupon_discount_totals() as $coupon_discount_total ) {
+		foreach ( $cart->get_coupon_discount_totals() as $coupon_discount_total ) {
 			$coupons_discount_total += WC_PostFinanceCheckout_Helper::instance()->round_amount( $coupon_discount_total, $currency );
 		}
 

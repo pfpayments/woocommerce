@@ -953,3 +953,12 @@ Please ensure that in woocommerce->settings->tax, the "Round tax at subtotal lev
 - [Tested Against] Woocommerce 9.8.5
 - [Tested Against] PHP SDK 4.8.0
 
+= 3.3.13 - July 1st 2025 =
+- [Bugfix] Remove pay button for already paid orders
+- [Bugfix] Fix error when manually extending a subscription
+- [Bugfix] Fix incorrect handling of orders containing 0 amount line items
+- [Tested Against] PHP 8.2
+- [Tested Against] Wordpress 6.7
+- [Tested Against] Woocommerce 9.9.5
+- [Tested Against] PHP SDK 4.8.0
+
