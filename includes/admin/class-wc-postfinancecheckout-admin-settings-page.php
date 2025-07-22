@@ -205,7 +205,7 @@ class WC_PostFinanceCheckout_Admin_Settings_Page extends WC_Settings_Page {
 		$settings = array(
 			array(
 				'links' => array(
-					'https://plugin-documentation.postfinance-checkout.ch/pfpayments/woocommerce/3.3.13/docs/en/documentation.html' => esc_html__( 'Documentation', 'woo-postfinancecheckout' ),
+					'https://plugin-documentation.postfinance-checkout.ch/pfpayments/woocommerce/3.3.14/docs/en/documentation.html' => esc_html__( 'Documentation', 'woo-postfinancecheckout' ),
 					'https://checkout.postfinance.ch/en-ch/user/signup' => esc_html__( 'Sign Up', 'woo-postfinancecheckout' ),
 				),
 				'type'  => 'postfinancecheckout_links',
@@ -408,6 +408,25 @@ TEXT
 				'id' => 'reference_options',
 			),
 
+			array(
+				'title' => esc_html__( 'Virtual Order Status Options', 'woo-postfinancecheckout' ),
+				'type' => 'title',
+				'id' => 'order_status_options',
+			),
+
+			array(
+				'title' => esc_html__( 'Change Virtual Order Status On Completion', 'woo-postfinancecheckout' ),
+				'desc' => esc_html__( 'Enable this setting to automatically set order\'s status to "Completed" when they consist entirely out of virtual products and order\'s total is 0.', 'woo-postfinancecheckout' ),
+				'id' => WooCommerce_PostFinanceCheckout::POSTFINANCECHECKOUT_CK_CHANGE_ORDER_STATUS,
+				'type' => 'checkbox',
+				'default' => 'yes',
+				'css' => 'min-width:300px;',
+			),
+
+			array(
+				'type' => 'sectionend',
+				'id' => 'order_status_options',
+			),
 		);
 
 		return apply_filters( 'postfinancecheckout_settings', $settings );

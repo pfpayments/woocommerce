@@ -511,6 +511,18 @@ msgstr ""
 "Die Space View ID kontrolliert das Styling des Zahlungsformulars und der "
 "Zahlungsseite im Space."
 
+#: includes/admin/class-wc-postfinancecheckout-admin-settings-page.php:401
+msgid "Order Status Options"
+msgstr "Bestellstatus‑Optionen"
+
+#: includes/admin/class-wc-postfinancecheckout-admin-settings-page.php:407
+msgid "Change Order Status On Completion"
+msgstr "Bestellstatus nach Abschluss ändern"
+
+#: includes/admin/class-wc-postfinancecheckout-admin-settings-page.php:408
+msgid "Enable this setting to automatically set order's status to \"Completed\" when they consist entirely out of virtual products and order's total is 0."
+msgstr "Aktivieren Sie diese Einstellung, um Bestellungen automatisch auf „Abgeschlossen“ zu setzen, wenn sie ausschließlich aus virtuellen Produkten bestehen und der Bestellwert 0 beträgt."
+
 #: includes/webhook/class-wc-postfinancecheckout-webhook-delivery-indication.php:53
 msgid "A manual decision about whether to accept the payment is required."
 msgstr ""
