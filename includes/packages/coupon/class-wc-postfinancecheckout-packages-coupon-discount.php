@@ -39,40 +39,22 @@ class WC_PostFinanceCheckout_Packages_Coupon_Discount {
 			4
 		);
 		add_filter(
-			'wc_postfinancecheckout_packages_coupon_discount_totals_including_tax_from_cart',
+			'wc_postfinancecheckout_packages_coupon_discount_totals_including_tax',
 			array(
 				__CLASS__,
-				'get_coupons_discount_totals_including_tax_from_cart',
+				'get_coupons_discount_totals_including_tax',
 			),
 			10,
 			1
 		);
 		add_filter(
-			'wc_postfinancecheckout_packages_coupon_discount_totals_including_tax_from_line_items',
+			'wc_postfinancecheckout_packages_coupon_has_coupon_discounts_applied',
 			array(
 				__CLASS__,
-				'get_coupons_discount_totals_including_tax_from_line_items',
-			),
-			10,
-			2
-		);
-		add_filter(
-			'wc_postfinancecheckout_packages_coupon_cart_has_coupon_discounts_applied',
-			array(
-				__CLASS__,
-				'cart_has_coupon_discounts_applied',
+				'has_coupon_discounts_applied',
 			),
 			10,
 			1
-		);
-		add_filter(
-			'wc_postfinancecheckout_packages_coupon_line_items_have_coupon_discounts',
-			array(
-				__CLASS__,
-				'line_items_have_coupon_discounts',
-			),
-			10,
-			2
 		);
 		add_filter(
 			'wc_postfinancecheckout_packages_coupon_discounts_applied_by_cart',
@@ -125,7 +107,7 @@ class WC_PostFinanceCheckout_Packages_Coupon_Discount {
 	 * @param string $currency The currency code.
 	 * @return float|int The total coupons' discounts' amount including tax.
 	 */
-	public static function get_coupons_discount_totals_including_tax_from_cart( $currency ) {
+	public static function get_coupons_discount_totals_including_tax( $currency ) {
 		$coupons_discount_total = 0;
 
 		// guard clause if the order doesn't exists, nothing to do here.
@@ -164,44 +146,8 @@ class WC_PostFinanceCheckout_Packages_Coupon_Discount {
 	 * @param string $currency currency.
 	 * @return bool
 	 */
-	public static function cart_has_coupon_discounts_applied( $currency ) {
-		$discount = apply_filters( 'wc_postfinancecheckout_packages_coupon_discount_totals_including_tax_from_cart', $currency ); //phpcs:ignore
-		return $discount > 0;
-	}
-
-	/**
-	 * Get the total coupons discounts amount from line items.
-	 *
-	 * @param array  $line_items The array of line items.
-	 * @param string $currency The currency code.
-	 * @return float|int The total coupons' discounts' amount including tax.
-	 */
-	public static function get_coupons_discount_totals_including_tax_from_line_items( array $line_items, $currency ) {
-		$coupons_discount_total = 0;
-
-		if ( empty( $line_items ) ) {
-			return $coupons_discount_total;
-		}
-
-		foreach ( $line_items as $line_item ) {
-			if ( $line_item->getType() == \PostFinanceCheckout\Sdk\Model\LineItemType::DISCOUNT ) {
-				$line_item_amount_including_tax = abs( $line_item->getAmountIncludingTax() );
-				$coupons_discount_total += WC_PostFinanceCheckout_Helper::instance()->round_amount( $line_item_amount_including_tax, $currency );
-			}
-		}
-
-		return $coupons_discount_total;
-	}
-
-	/**
-	 * Check if line items have any coupons.
-	 *
-	 * @param array  $line_items The array of line items.
-	 * @param string $currency currency.
-	 * @return bool
-	 */
-	public static function line_items_have_coupon_discounts( $line_items, $currency ) {
-		$discount = apply_filters( 'wc_postfinancecheckout_packages_coupon_discount_totals_including_tax_from_line_items', $line_items, $currency ); //phpcs:ignore
+	public static function has_coupon_discounts_applied( $currency ) {
+		$discount = apply_filters( 'wc_postfinancecheckout_packages_coupon_discount_totals_including_tax', $currency ); //phpcs:ignore
 		return $discount > 0;
 	}
 

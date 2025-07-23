@@ -477,18 +477,6 @@ msgid ""
 "payment page within the space."
 msgstr "Lo Space View Id consente di controllare lo stile del modulo di pagamento e della pagina di pagamento all'interno dello spazio."
 
-#: includes/admin/class-wc-postfinancecheckout-admin-settings-page.php:401
-msgid "Order Status Options"
-msgstr "Opzioni stato ordine"
-
-#: includes/admin/class-wc-postfinancecheckout-admin-settings-page.php:407
-msgid "Change Order Status On Completion"
-msgstr "Cambia lo stato dell’ordine al completamento"
-
-#: includes/admin/class-wc-postfinancecheckout-admin-settings-page.php:408
-msgid "Enable this setting to automatically set order's status to \"Completed\" when they consist entirely out of virtual products and order's total is 0."
-msgstr "Abilita questa opzione per impostare automaticamente lo stato dell’ordine su « Completato » quando contiene solo prodotti virtuali e il totale dell’ordine è 0."
-
 #: includes/webhook/class-wc-postfinancecheckout-webhook-delivery-indication.php:53
 msgid "A manual decision about whether to accept the payment is required."
 msgstr "È necessario decidere manualmente se accettare o meno il pagamento."

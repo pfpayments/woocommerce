@@ -274,7 +274,7 @@ class WC_PostFinanceCheckout_Service_Line_Item extends WC_PostFinanceCheckout_Se
 	 * @param float $total_discount_amount The amount of the coupon.
 	 * @return \PostFinanceCheckout\Sdk\Model\LineItemCreate|null The line item created or null if the coupon is not valid.
 	 */
-	private function create_coupon_line_items( $coupon, float $total_discount_amount = 0, array $items = [] ) {
+	private function create_coupon_line_items( $coupon, float $total_discount_amount = 0 ) {
 		if ( ! $coupon instanceof WC_Coupon && ! $coupon instanceof WC_Order_Item_Coupon ) {
 			return array();
 		}
@@ -284,7 +284,7 @@ class WC_PostFinanceCheckout_Service_Line_Item extends WC_PostFinanceCheckout_Se
 		$sku = str_replace( array( "\n", "\r" ), '', $sku );
 
 		// Calculate the proportional discount amounts for each tax rate.
-		$discounts = $this->calculate_discount_rates_proportionally( $items, $total_discount_amount );
+		$discounts = $this->calculate_discount_rates_proportionally( $total_discount_amount );
 
 		$line_items = array();
 
@@ -318,39 +318,19 @@ class WC_PostFinanceCheckout_Service_Line_Item extends WC_PostFinanceCheckout_Se
 	 * @param float $total_discount_amount total_discount_amount.
 	 * @return array
 	 */
-	private function calculate_discount_rates_proportionally( array $items, float $total_discount_amount ): array {
+	private function calculate_discount_rates_proportionally( float $total_discount_amount ): array {
+		$cart = WC()->cart;
 		$tax_totals = [];
 		$total_amount = 0;
-		// If coupon line items are created from session, $items will always be an empty array. If from order, it will have said order line items.
-		$is_created_from_order = ! empty($items);
 
-		// Check whether line items are no created from existing order. If not, line items are fetched from cart.
-		if ( ! $is_created_from_order) {
-			$cart = WC()->cart;
-			$items = $cart->get_cart();
-		}
-
-		foreach ( $items as $item ) {
-			// If created from cart session, $item is an array ['data' => WC_Product_Subscription]; otherwise it's a WC_Order_Item_Product.
-			$product = ! $is_created_from_order ? $item['data'] : $item->get_product();
+		foreach ( $cart->get_cart() as $cart_item ) {
+			$product = $cart_item['data'];
 			$tax_class = $product->get_tax_class();
 			$tax_rates_class = WC_Tax::get_rates( $tax_class );
 
-			// If product has no tax rates class set, then create a fake 0 rate one.
-			if ( empty( $tax_rates_class ) ) {
-				$tax_rates_class = [
-					0 => [
-						'rate' => 0,
-					],
-				];
-			}
-
 			foreach ( $tax_rates_class as $rate ) {
 				$rate_id = (string) $rate['rate'];
-				// Line totals are retrieved differently depending on item source here too.
-				$line_total = ! $is_created_from_order ? $item['line_total'] : $item->get_total();
-				$line_tax = ! $is_created_from_order ? $item['line_tax'] : $item->get_total_tax();
-				$line_total_with_tax = floor(($line_total + $line_tax) * 100) / 100;
+				$line_total_with_tax = floor(($cart_item['line_total'] + $cart_item['line_tax']) * 100) / 100;
 
 				if ( ! isset( $tax_totals[ $rate_id ] ) ) {
 					$tax_totals[ $rate_id ] = [
@@ -628,7 +608,7 @@ class WC_PostFinanceCheckout_Service_Line_Item extends WC_PostFinanceCheckout_Se
 			$discount += (float) $coupon->get_discount() + (float) $coupon->get_discount_tax();
 		}
 
-		$line_items = $this->create_coupon_line_items( current( $order->get_coupons() ), $discount, $order->get_items() );
+		$line_items = $this->create_coupon_line_items( current( $order->get_coupons() ), $discount );
 		foreach ( $line_items as $line_item ) {
 			$coupons[] = $this->clean_line_item( $line_item );
 		}

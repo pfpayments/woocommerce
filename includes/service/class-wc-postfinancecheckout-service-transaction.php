@@ -569,10 +569,6 @@ class WC_PostFinanceCheckout_Service_Transaction extends WC_PostFinanceCheckout_
 		$transaction->setShippingAddress( $this->get_order_shipping_address( $order ) );
 		$transaction->setCustomerEmailAddress( $this->get_order_email_address( $order ) );
 		$transaction->setCustomerId( $this->get_customer_id() );
-		$customer_note = $order->get_customer_note();
-		if (!empty($customer_note)) {
-			$transaction->setMetaData(['customerNotes' => $customer_note]);
-		}
 		$language = null;
 		$language_string = $order->get_meta( 'wpml_language', true, 'edit' );
 		if ( ! empty( $language_string ) ) {
@@ -1066,7 +1062,7 @@ class WC_PostFinanceCheckout_Service_Transaction extends WC_PostFinanceCheckout_
 	protected function get_session_email_address() {
 		// if we are in update_order_review, the entered email is in the post_data string.
 		// as WooCommerce does not update the email on the customer.
-		$sanitized_post_data = wp_verify_nonce( isset( $_POST['post_data'] ), 'postfinancecheckout_nonce_block' );
+		$sanitized_post_data = wp_verify_nonce( isset( $_POST['post_data'] ) );
 
 		if ( isset( $sanitized_post_data ) ) {
 			$post_data = array();

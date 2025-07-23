@@ -82,7 +82,7 @@ class WC_PostFinanceCheckout_Webhook_Transaction_Strategy extends WC_PostFinance
 				case \PostFinanceCheckout\Sdk\Model\TransactionState::FULFILL:
 					$this->authorize( $transaction, $order );
 					$this->fulfill( $transaction, $order );
-					WC_PostFinanceCheckout_Helper::set_virtual_zero_total_orders_to_complete( $order );
+					WC_PostFinanceCheckout_Helper::set_virtual_orders_to_complete( $order );
 					WC_PostFinanceCheckout_Helper::update_order_status_for_preorder_if_needed( $order );
 					break;
 				case \PostFinanceCheckout\Sdk\Model\TransactionState::VOIDED:

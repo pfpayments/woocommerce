@@ -962,16 +962,6 @@ Please ensure that in woocommerce->settings->tax, the "Round tax at subtotal lev
 - [Tested Against] Woocommerce 9.9.5
 - [Tested Against] PHP SDK 4.8.0
 
-= 3.3.14 - July 22nd 2025 =
-- [Bugfix] Fix class loading order issues
-- [Bugfix] Fix problem with multisite not installing tables when plugin is network activated
-- [Bugfix] Fix missing payment methods if subscription price is 0
-- [Bugfix] Fix for failed subscriptions renewals if subscription contains a discount
-- [Bugfix] Fix for iframe payment fields not loading on delivery method change
-- [Feature] Added plugin version metric
-- [Feature] Send order notes to portal
-- [Tested Against] PHP 8.2
-- [Tested Against] Wordpress 6.7
-- [Tested Against] Woocommerce 10.0.0
-- [Tested Against] PHP SDK 4.8.0
+= 3.3.15 - July 23rd 2025 =
+- [Hotfix] Rollback to stable version
 
