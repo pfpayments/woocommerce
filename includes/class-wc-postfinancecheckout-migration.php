@@ -69,11 +69,13 @@ class WC_PostFinanceCheckout_Migration {
 			5
 		);
 		add_action(
-			'wpmu_new_blog',
+			'wp_initialize_site',
 			array(
 				__CLASS__,
-				'wpmu_new_blog',
-			)
+				'wp_initialize_site'
+			),
+			10,
+			2
 		);
 		add_filter(
 			'wpmu_drop_tables',
@@ -176,16 +178,23 @@ class WC_PostFinanceCheckout_Migration {
 	/**
 	 * Create tables if new MU blog is created
 	 *
-	 * @param  mixed $blog_id blog id.
-	 * @param  mixed $user_id user id.
-	 * @param  mixed $domain domain.
-	 * @param  mixed $path path.
-	 * @param  mixed $site_id site id.
-	 * @param  mixed $meta meta.
+	 * wp_initialize_site hook introduced since 5.1.0
+	 * @link https://developer.wordpress.org/reference/hooks/wp_initialize_site/
+	 *
+	 * @param WP_Site $site
+	 * @param array $args
+	 * @return void
 	 */
-	public static function wpmu_new_blog( $blog_id, $user_id, $domain, $path, $site_id, $meta ) { //phpcs:ignore
-
+	public static function wp_initialize_site( WP_Site $site, array $args ) { //phpcs:ignore
 		if ( is_plugin_active_for_network( 'woo-postfinancecheckout/woocommerce-postfinancecheckout.php' ) ) {
+			$blog_id = $site->blog_id;
+			// Defensive check: blog_id should always be set, otherwise will be shown as postfinancecheckout error
+			if ( ! $blog_id ) {
+				$logger = wc_get_logger();
+				$logger->error( 'Could not detect blog_id during wp_initialize_site.', [ 'source' => 'postfinancecheckout' ] );
+				return;
+			}
+
 			switch_to_blog( $blog_id );
 			self::migrate_db();
 			restore_current_blog();
@@ -241,7 +250,7 @@ class WC_PostFinanceCheckout_Migration {
 		try {
 			$current_version = get_option( self::POSTFINANCECHECKOUT_CK_DB_VERSION, 0 );
 			$version_keys = array_keys( self::$db_migrations );
-			if ( version_compare( $current_version, '0', '>' ) && version_compare( $current_version, end( $version_keys ), '<' ) ) {
+			if ( $current_version === 0 || version_compare( $current_version, '0', '>' ) && version_compare( $current_version, end( $version_keys ), '<' ) ) {
 				// We migrate the Db for all blogs.
 				self::install_db( true );
 			}
@@ -268,7 +277,7 @@ class WC_PostFinanceCheckout_Migration {
 	public static function plugin_row_meta( $links, $file ) {
 		if ( WC_POSTFINANCECHECKOUT_PLUGIN_BASENAME === $file ) {
 			$row_meta = array(
-				'docs' => '<a href="https://plugin-documentation.postfinance-checkout.ch/pfpayments/woocommerce/3.3.15/docs/en/documentation.html" aria-label="' . esc_html__( 'View Documentation', 'woo-postfinancecheckout' ) . '">' . esc_html__( 'Documentation', 'woo-postfinancecheckout' ) . '</a>',
+				'docs' => '<a href="https://plugin-documentation.postfinance-checkout.ch/pfpayments/woocommerce/3.3.16/docs/en/documentation.html" aria-label="' . esc_html__( 'View Documentation', 'woo-postfinancecheckout' ) . '">' . esc_html__( 'Documentation', 'woo-postfinancecheckout' ) . '</a>',
 			);
 
 			return array_merge( $links, $row_meta );
