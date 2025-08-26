@@ -70,7 +70,7 @@ defined( 'ABSPATH' ) || exit;
 											<?php echo esc_html( 'wc-' ); ?>
 										</span>
 										<input type="text" name="key" data-attribute="key" value="{{ data.key }}"
-											style="flex: 1; padding: 12px; border-radius: 0 4px 4px 0;" 
+											style="flex: 1; padding: 12px; border-radius: 0 4px 4px 0;"
 											placeholder="<?php esc_attr_e( 'e.g. awaiting', 'woo-postfinancecheckout' ); ?>" />
 									</label>
                                     <small id="charCount" style="color: gray;"></small>
