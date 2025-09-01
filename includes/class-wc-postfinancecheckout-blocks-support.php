@@ -57,7 +57,7 @@ final class WC_PostFinanceCheckout_Blocks_Support extends AbstractPaymentMethodT
 	 */
 	public function get_payment_method_script_handles() {
 		$dependencies = array();
-		$version = '3.3.18';
+		$version = '3.3.19';
 
 		wp_register_script(
 			'WooCommerce_PostFinanceCheckout_blocks_support',
@@ -199,14 +199,14 @@ final class WC_PostFinanceCheckout_Blocks_Support extends AbstractPaymentMethodT
 	 * @return void
 	 */
 	public static function enqueue_portal_scripts() {
+		if ( is_order_received_page() ) return;
 
 		try {
-			$transaction_service = WC_PostFinanceCheckout_Service_Transaction::instance();
-			$transaction = $transaction_service->get_transaction_from_session();
-
 			$js_url = '';
 			$zeroPaymentMethod = new WC_PostFinanceCheckout_Zero_Gateway();
 			if ( !$zeroPaymentMethod->is_available() || $zeroPaymentMethod->cart_has_subscription() ) {
+				$transaction_service = WC_PostFinanceCheckout_Service_Transaction::instance();
+				$transaction = $transaction_service->get_transaction_from_session();
 				switch( get_option( WooCommerce_PostFinanceCheckout::POSTFINANCECHECKOUT_CK_INTEGRATION ) ) {
 					case WC_PostFinanceCheckout_Integration::POSTFINANCECHECKOUT_IFRAME:
 						$js_url = $transaction_service->get_javascript_url_for_transaction( $transaction );

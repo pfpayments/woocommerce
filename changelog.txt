@@ -962,7 +962,7 @@ Please ensure that in woocommerce->settings->tax, the "Round tax at subtotal lev
 - [Tested Against] Woocommerce 9.9.5
 - [Tested Against] PHP SDK 4.8.0
 
-= 3.3.18 - July 22nd 2025 =
+= 3.3.19 - July 22nd 2025 =
 - [Bugfix] Fix class loading order issues
 - [Bugfix] Fix problem with multisite not installing tables when plugin is network activated
 - [Bugfix] Fix missing payment methods if subscription price is 0
@@ -978,7 +978,7 @@ Please ensure that in woocommerce->settings->tax, the "Round tax at subtotal lev
 = 3.3.15 - July 23rd 2025 =
 - [Hotfix] Rollback to stable version
 
-= 3.3.18 - July 29nd 2025 =
+= 3.3.19 - July 29nd 2025 =
 - [Bugfix] Fix class loading order issues
 - [Bugfix] Fix problem with multisite not installing tables when plugin is network activated
 - [Bugfix] Fix missing payment methods if subscription price is 0
@@ -991,7 +991,7 @@ Please ensure that in woocommerce->settings->tax, the "Round tax at subtotal lev
 - [Tested Against] Woocommerce 10.0.3
 - [Tested Against] PHP SDK 4.8.0
 
-= 3.3.18 - July 30th 2025 =
+= 3.3.19 - July 30th 2025 =
 - [Bugfix] Fix issue with calling a renamed function
 - [Tested Against] PHP 8.2
 - [Tested Against] Wordpress 6.7
@@ -1001,6 +1001,14 @@ Please ensure that in woocommerce->settings->tax, the "Round tax at subtotal lev
 = 3.3.18 - August 26th 2025 =
 - [Feature] Improved pipeline
 - [Feature] Compatibility with 10.1.x
+- [Tested Against] PHP 8.2
+- [Tested Against] Wordpress 6.7
+- [Tested Against] Woocommerce 10.1.0
+- [Tested Against] PHP SDK 4.8.0
+
+= 3.3.19 - September 1st 2025 =
+- [Feature] Improved webhook performance at checkout
+- [Bugfix] Fixed issue with headers sent early, prevent emails from being sent
 - [Tested Against] PHP 8.2
 - [Tested Against] Wordpress 6.7
 - [Tested Against] Woocommerce 10.1.0
