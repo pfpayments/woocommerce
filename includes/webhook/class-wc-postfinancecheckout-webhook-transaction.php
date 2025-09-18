@@ -69,6 +69,9 @@ class WC_PostFinanceCheckout_Webhook_Transaction extends WC_PostFinanceCheckout_
 	 * @throws Exception Exception.
 	 */
 	protected function process_order_related_inner( WC_Order $order, $transaction ) {
+		if ( strpos( $order->get_payment_method(), 'postfinancecheckout' ) === false ) {
+			return;
+		}
 
 		/* @var \PostFinanceCheckout\Sdk\Model\Transaction $transaction */ //phpcs:ignore
 		$transaction_info = WC_PostFinanceCheckout_Entity_Transaction_Info::load_by_order_id( $order->get_id() );
@@ -189,6 +192,10 @@ class WC_PostFinanceCheckout_Webhook_Transaction extends WC_PostFinanceCheckout_
 	 * @return void
 	 */
 	protected function failed( \PostFinanceCheckout\Sdk\Model\Transaction $transaction, WC_Order $order ) {
+		if ( ! $order->has_status( array( 'pending', 'on-hold' ) ) ) {
+			return;
+		}
+
 		do_action( 'wc_postfinancecheckout_failed', $transaction, $order );
 		$valid_order_statuses = array(
 			// Default pending status.

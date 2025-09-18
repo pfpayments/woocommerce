@@ -57,7 +57,7 @@ final class WC_PostFinanceCheckout_Blocks_Support extends AbstractPaymentMethodT
 	 */
 	public function get_payment_method_script_handles() {
 		$dependencies = array();
-		$version = '3.3.19';
+		$version = '3.3.20';
 
 		wp_register_script(
 			'WooCommerce_PostFinanceCheckout_blocks_support',

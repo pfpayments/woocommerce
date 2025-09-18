@@ -26,6 +26,11 @@ defined( 'ABSPATH' ) || exit;
 class WC_PostFinanceCheckout_Email {
 
 	/**
+	 * Allow on hold emails being sent when germanized plugin is installed.
+	 */
+	private static $allow_on_hold_emails = false;
+
+	/**
 	 * Register email hooks.
 	 */
 	public static function init() {
@@ -129,25 +134,23 @@ class WC_PostFinanceCheckout_Email {
 			10,
 			2
 		);
-
 		add_filter(
-			'woocommerce_germanized_order_email_customer_confirmation_sent',
+			'woocommerce_germanized_send_instant_order_confirmation',
 			array(
 				__CLASS__,
-				'germanized_send_order_confirmation',
+				'gzd_block_send_instant_order_confirmation',
 			),
 			10,
 			2
 		);
-
 		add_filter(
-			'woocommerce_germanized_order_email_admin_confirmation_sent',
+			'woocommerce_gzd_disable_on_hold_email',
 			array(
 				__CLASS__,
-				'germanized_send_order_confirmation',
+				'gzd_allow_on_hold_email',
 			),
 			10,
-			2
+			1
 		);
 
 		add_filter( 'woocommerce_email_actions', array( __CLASS__, 'add_email_actions' ), 10, 1 );
@@ -163,7 +166,11 @@ class WC_PostFinanceCheckout_Email {
 		if ( ! $order instanceof WC_Order ) {
 			return;
 		}
+		if ( get_post_meta( $order_id, '_postfinancecheckout_on_hold_email_sent', true ) ) {
+			return;
+		}
 
+		self::$allow_on_hold_emails = true;
 		$emails = WC()->mailer()->get_emails();
 		if ( isset( $emails['WC_Email_Customer_On_Hold_Order'] ) ) {
 			$emails['WC_Email_Customer_On_Hold_Order']->trigger( $order_id );
@@ -173,6 +180,7 @@ class WC_PostFinanceCheckout_Email {
 		if ( isset( $emails['WC_Email_New_Order'] ) ) {
 			$emails['WC_Email_New_Order']->trigger( $order_id );
 		}
+		self::$allow_on_hold_emails = false;
 	}
 
 	/**
@@ -359,8 +367,8 @@ class WC_PostFinanceCheckout_Email {
 			}
 
 			$mails = WC()->mailer()->get_emails();
-			if ( isset( $mails['WC_GZD_Email_Customer_Paid_For_Order'] ) ) {
-				$mails['WC_GZD_Email_Customer_Paid_For_Order']->trigger( $order_id );
+			if ( isset( $mails['WC_Email_Customer_Processing_Order'] ) ) {
+				$mails['WC_Email_Customer_Processing_Order']->trigger( $order_id );
 			}
 		}
 	}
@@ -424,6 +432,34 @@ class WC_PostFinanceCheckout_Email {
 		}
 
 		return $emails;
+	}
+
+	/**
+	 * Block confirmation email being sent when germanized plugin is installed.
+	 *
+	 * @param mixed $email_sent email sent.
+	 * @param mixed $order order.
+	 * @return bool
+	 */
+	public static function gzd_block_send_instant_order_confirmation ( $email_sent, $order ) {
+		if ( ! ( $order instanceof WC_Order ) ) {
+			return $email_sent;
+		}
+		$gateway = wc_get_payment_gateway_by_order( $order );
+		if ( $gateway instanceof WC_PostFinanceCheckout_Gateway ) {
+			return false;
+		}
+		return $email_sent;
+	}
+
+	/**
+	 * Toggle to allow "On Hold" emails being sent when germanized plugin is installed.
+	 *
+	 * @param mixed $disable if email sending is disabled.
+	 * @return bool
+	 */
+	public static function gzd_allow_on_hold_email( $disable ) {
+		return self::$allow_on_hold_emails ? false : $disable;
 	}
 
 	/**

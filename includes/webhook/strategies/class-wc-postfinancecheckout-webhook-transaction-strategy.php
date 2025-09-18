@@ -62,6 +62,10 @@ class WC_PostFinanceCheckout_Webhook_Transaction_Strategy extends WC_PostFinance
 	 * @throws Exception Exception.
 	 */
 	protected function process_order_related_inner( WC_Order $order, $transaction ) {
+		if ( strpos( $order->get_payment_method(), 'postfinancecheckout' ) === false ) {
+			return;
+		}
+
 		$transaction_info = WC_PostFinanceCheckout_Entity_Transaction_Info::load_by_order_id( $order->get_id() );
 		$transaction_state = $transaction->getState();
 		if ( $transaction_state != $transaction_info->get_state() ) {
@@ -96,9 +100,8 @@ class WC_PostFinanceCheckout_Webhook_Transaction_Strategy extends WC_PostFinance
 					// Nothing to do.
 					break;
 			}
+			WC_PostFinanceCheckout_Service_Transaction::instance()->update_transaction_info( $transaction, $order );
 		}
-
-		WC_PostFinanceCheckout_Service_Transaction::instance()->update_transaction_info( $transaction, $order );
 	}
 
 	/**
@@ -174,6 +177,10 @@ class WC_PostFinanceCheckout_Webhook_Transaction_Strategy extends WC_PostFinance
 	 * @return void
 	 */
 	protected function failed( \PostFinanceCheckout\Sdk\Model\Transaction $transaction, WC_Order $order ) {
+		if ( ! $order->has_status( array( 'pending', 'on-hold' ) ) ) {
+			return;
+		}
+
 		do_action( 'wc_postfinancecheckout_failed', $transaction, $order );
 		$valid_order_statuses = array(
 			// Default pending status.
