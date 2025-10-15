@@ -42,9 +42,9 @@ class WC_PostFinanceCheckout_Webhook_Transaction_Completion_Strategy extends WC_
 	 * @inheritDoc
 	 * @param WC_PostFinanceCheckout_Webhook_Request $request The webhook request.
 	 */
-	protected function load_entity( WC_PostFinanceCheckout_Webhook_Request $request ) {
-		$transaction_invoice_service = new \PostFinanceCheckout\Sdk\Service\TransactionCompletionService( WC_PostFinanceCheckout_Helper::instance()->get_api_client() );
-		return $transaction_invoice_service->read( $request->get_space_id(), $request->get_entity_id() );
+	public function load_entity( WC_PostFinanceCheckout_Webhook_Request $request ) {
+		$completion_service = new \PostFinanceCheckout\Sdk\Service\TransactionCompletionService( WC_PostFinanceCheckout_Helper::instance()->get_api_client() );
+		return $completion_service->read( $request->get_space_id(), $request->get_entity_id() );
 	}
 
 	/**
@@ -53,13 +53,25 @@ class WC_PostFinanceCheckout_Webhook_Transaction_Completion_Strategy extends WC_
 	 * @inheritDoc
 	 * @param object $object The webhook request.
 	 */
-	protected function get_order_id( $object ) {
+	public function get_order_id( $object ) {
 		/* @var \PostFinanceCheckout\Sdk\Model\TransactionCompletion $object */
 		return WC_PostFinanceCheckout_Entity_Transaction_Info::load_by_transaction(
 			$object->getLineItemVersion()->getTransaction()->getLinkedSpaceId(),
 			$object->getLineItemVersion()->getTransaction()->getId()
 		)->get_order_id();
 	}
+
+	/**
+	 * Meant to bridge code from deprecated processor.
+	 *
+	 * @param WC_Order $order The WooCommerce order linked to the completion.
+	 * @param \PostFinanceCheckout\Sdk\Model\TransactionCompletion $completion The transaction completion object.
+	 * @param WC_PostFinanceCheckout_Webhook_Request $request The webhook request.
+	 * @return void
+	 */
+	public function bridge_process_order_related_inner( WC_Order $order, \PostFinanceCheckout\Sdk\Model\TransactionCompletion $completion, WC_PostFinanceCheckout_Webhook_Request $request ) {
+        $this->process_order_related_inner( $order, $completion, $request, true );
+    }
 
 	/**
 	 * Processes the incoming webhook request pertaining to transaction completions.
@@ -85,10 +97,12 @@ class WC_PostFinanceCheckout_Webhook_Transaction_Completion_Strategy extends WC_
 	 * @param WC_Order $order The WooCommerce order linked to the completion.
 	 * @param \PostFinanceCheckout\Sdk\Model\TransactionCompletion $completion The transaction completion object.
 	 * @param WC_PostFinanceCheckout_Webhook_Request $request The webhook request.
+	 * @param bool $legacy_mode legacy code used.
 	 * @return void
 	 */
-	protected function process_order_related_inner( WC_Order $order, \PostFinanceCheckout\Sdk\Model\TransactionCompletion $completion, WC_PostFinanceCheckout_Webhook_Request $request ) {
-		switch ( $request->get_state() ) {
+	protected function process_order_related_inner( WC_Order $order, \PostFinanceCheckout\Sdk\Model\TransactionCompletion $completion, WC_PostFinanceCheckout_Webhook_Request $request, $legacy_mode = false ) {
+		$entity_state = $legacy_mode ? $completion->getState() : $request->get_state();
+		switch ( $entity_state ) {
 			case \PostFinanceCheckout\Sdk\Model\TransactionCompletionState::FAILED:
 				$this->failed( $order, $completion );
 				break;
@@ -156,7 +170,7 @@ class WC_PostFinanceCheckout_Webhook_Transaction_Completion_Strategy extends WC_
 
 						$order->add_order_note(
 							/* translators: %1$s, %2$s, %3$s are replaced with "string" */
-							sprintf( __( '%1$s stock increased from %2$s to %3$s.', 'woo-postfinancecheckout' ), $item_name, $old_stock, $new_stock )
+							sprintf( esc_html__( '%1$s stock increased from %2$s to %3$s.', 'woo-postfinancecheckout' ), $item_name, $old_stock, $new_stock )
 						);
 						do_action( 'wc_postfinancecheckout_restock_not_completed_item', $product->get_id(), $old_stock, $new_stock, $order, $product );
 					}
@@ -175,7 +189,7 @@ class WC_PostFinanceCheckout_Webhook_Transaction_Completion_Strategy extends WC_
 	private function adapt_order_items( array $completed_items, WC_Order $order ) {
 		foreach ( $order->get_items() as $item_id => $item ) {
 			if ( ! isset( $completed_items[ $item_id ] ) ||
-					 $completed_items[ $item_id ]['completion_total'] + array_sum( $completed_items[ $item_id ]['completion_tax'] ) == 0 ) {
+					$completed_items[ $item_id ]['completion_total'] + array_sum( $completed_items[ $item_id ]['completion_tax'] ) == 0 ) {
 				$order_item = $order->get_item( $item_id );
 				$order_item->delete( true );
 				continue;
@@ -216,7 +230,7 @@ class WC_PostFinanceCheckout_Webhook_Transaction_Completion_Strategy extends WC_
 		}
 		foreach ( $order->get_fees() as $fee_id => $fee ) {
 			if ( ! isset( $completed_items[ $fee_id ] ) ||
-					 $completed_items[ $fee_id ]['completion_total'] + array_sum( $completed_items[ $fee_id ]['completion_tax'] ) == 0 ) {
+					$completed_items[ $fee_id ]['completion_total'] + array_sum( $completed_items[ $fee_id ]['completion_tax'] ) == 0 ) {
 				$order_fee = $order->get_item( $fee_id );
 				$order_fee->delete();
 				continue;
@@ -234,7 +248,7 @@ class WC_PostFinanceCheckout_Webhook_Transaction_Completion_Strategy extends WC_
 		foreach ( $order->get_shipping_methods() as $shipping_id => $shipping ) {
 
 			if ( ! isset( $completed_items[ $shipping_id ] ) ||
-					 $completed_items[ $shipping_id ]['completion_total'] + array_sum( $completed_items[ $shipping_id ]['completion_tax'] ) == 0 ) {
+					$completed_items[ $shipping_id ]['completion_total'] + array_sum( $completed_items[ $shipping_id ]['completion_tax'] ) == 0 ) {
 				$order_shipping = $order->get_item( $shipping_id );
 				$order_shipping->delete();
 				continue;

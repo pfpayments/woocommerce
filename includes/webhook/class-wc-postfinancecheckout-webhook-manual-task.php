@@ -30,7 +30,12 @@ class WC_PostFinanceCheckout_Webhook_Manual_Task extends WC_PostFinanceCheckout_
 	 * @param WC_PostFinanceCheckout_Webhook_Request $request request.
 	 */
 	public function process( WC_PostFinanceCheckout_Webhook_Request $request ) {
-		$manual_task_service = WC_PostFinanceCheckout_Service_Manual_Task::instance();
-		$manual_task_service->update();
+		wc_deprecated_function(
+            __METHOD__,
+            '3.0.12',
+            'WC_PostFinanceCheckout_Webhook_Manual_Task_Strategy::process'
+        );
+		$strategy = new WC_PostFinanceCheckout_Webhook_Manual_Task_Strategy();
+		$strategy->process( $request );
 	}
 }

@@ -38,7 +38,7 @@ abstract class WC_PostFinanceCheckout_Webhook_Order_Related_Abstract extends WC_
 			WC_PostFinanceCheckout_Helper::instance()->lock_by_transaction_id( $request->get_space_id(), $this->get_transaction_id( $entity ) );
 			$order = WC_Order_Factory::get_order( $this->get_order_id( $entity ) );
 			if ( false != $order && $order->get_id() ) {
-				$this->process_order_related_inner( $order, $entity );
+				$this->process_order_related_inner( $order, $entity, $request );
 			}
 			WC_PostFinanceCheckout_Helper::instance()->commit_database_transaction();
 		} catch ( Exception $e ) {
@@ -78,6 +78,7 @@ abstract class WC_PostFinanceCheckout_Webhook_Order_Related_Abstract extends WC_
 	 *
 	 * @param WC_Order $order order.
 	 * @param Object   $entity entity.
+	 * @param WC_PostFinanceCheckout_Webhook_Request $request request.
 	 */
-	abstract protected function process_order_related_inner( WC_Order $order, $entity );
+	abstract protected function process_order_related_inner( WC_Order $order, $entity, $request );
 }

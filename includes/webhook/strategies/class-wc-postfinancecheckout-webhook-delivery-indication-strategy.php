@@ -42,9 +42,9 @@ class WC_PostFinanceCheckout_Webhook_Delivery_Indication_Strategy extends WC_Pos
 	 * @inheritDoc
 	 * @param WC_PostFinanceCheckout_Webhook_Request $request The webhook request.
 	 */
-	protected function load_entity( WC_PostFinanceCheckout_Webhook_Request $request ) {
-		$transaction_invoice_service = new \PostFinanceCheckout\Sdk\Service\DeliveryIndicationService( WC_PostFinanceCheckout_Helper::instance()->get_api_client() );
-		return $transaction_invoice_service->read( $request->get_space_id(), $request->get_entity_id() );
+	public function load_entity( WC_PostFinanceCheckout_Webhook_Request $request ) {
+		$delivery_indication_service = new \PostFinanceCheckout\Sdk\Service\DeliveryIndicationService( WC_PostFinanceCheckout_Helper::instance()->get_api_client() );
+		return $delivery_indication_service->read( $request->get_space_id(), $request->get_entity_id() );
 	}
 
 	/**
@@ -53,13 +53,25 @@ class WC_PostFinanceCheckout_Webhook_Delivery_Indication_Strategy extends WC_Pos
 	 * @inheritDoc
 	 * @param object $object The webhook request.
 	 */
-	protected function get_order_id( $object ) {
+	public function get_order_id( $object ) {
 		/* @var \PostFinanceCheckout\Sdk\Model\DeliveryIndication $object */
 		return WC_PostFinanceCheckout_Entity_Transaction_Info::load_by_transaction(
 			$object->getTransaction()->getLinkedSpaceId(),
 			$object->getTransaction()->getId()
 		)->get_order_id();
 	}
+
+	/**
+	 * Meant to bridge code from deprecated processor.
+	 *
+	 * @param WC_Order $order The WooCommerce order linked to the delivery indication.
+	 * @param \PostFinanceCheckout\Sdk\Model\DeliveryIndication $delivery_indication The delivery indication object.
+	 * @param WC_PostFinanceCheckout_Webhook_Request $request The webhook request.
+	 * @return void
+	 */
+	public function bridge_process_order_related_inner( WC_Order $order, \PostFinanceCheckout\Sdk\Model\DeliveryIndication $delivery_indication, WC_PostFinanceCheckout_Webhook_Request $request ) {
+        $this->process_order_related_inner( $order, $delivery_indication, $request, true );
+    }
 
 	/**
 	 * Processes the incoming webhook request pertaining to delivery indications.
@@ -85,10 +97,12 @@ class WC_PostFinanceCheckout_Webhook_Delivery_Indication_Strategy extends WC_Pos
 	 * @param WC_Order $order The WooCommerce order linked to the delivery indication.
 	 * @param \PostFinanceCheckout\Sdk\Model\DeliveryIndication $delivery_indication The delivery indication object.
 	 * @param WC_PostFinanceCheckout_Webhook_Request $request The webhook request.
+	 * @param bool $legacy_mode legacy code used.
 	 * @return void
 	 */
-	protected function process_order_related_inner( WC_Order $order, \PostFinanceCheckout\Sdk\Model\DeliveryIndication $delivery_indication, WC_PostFinanceCheckout_Webhook_Request $request ) {
-		switch ( $request->get_state() ) {
+	protected function process_order_related_inner( WC_Order $order, \PostFinanceCheckout\Sdk\Model\DeliveryIndication $delivery_indication, WC_PostFinanceCheckout_Webhook_Request $request, $legacy_mode = false ) {
+		$entity_state = $legacy_mode ? $delivery_indication->getState() : $request->get_state();
+		switch ( $entity_state ) {
 			case \PostFinanceCheckout\Sdk\Model\DeliveryIndicationState::MANUAL_CHECK_REQUIRED:
 				$this->review( $order );
 				break;
@@ -106,7 +120,9 @@ class WC_PostFinanceCheckout_Webhook_Delivery_Indication_Strategy extends WC_Pos
 	 */
 	protected function review( WC_Order $order ) {
 		$order->add_meta_data( '_postfinancecheckout_manual_check', true );
-		$status = apply_filters( 'wc_postfinancecheckout_manual_task_status', 'postfi-manual', $order );
+		$default_status = WC_PostFinanceCheckout_Helper::map_status_to_current_mode( 'postfi-manual' );
+		$status = apply_filters( 'wc_postfinancecheckout_manual_task_status', $default_status, $order );
+		$status = WC_PostFinanceCheckout_Helper::map_status_to_current_mode( $status );
 		$status = apply_filters( 'postfinancecheckout_order_update_status', $order, $status, __( 'A manual decision about whether to accept the payment is required.', 'woo-postfinancecheckout' ) );
 		$order->update_status( $status, __( 'A manual decision about whether to accept the payment is required.', 'woo-postfinancecheckout' ) );
 	}

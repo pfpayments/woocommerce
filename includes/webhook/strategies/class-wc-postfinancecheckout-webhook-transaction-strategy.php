@@ -37,6 +37,17 @@ class WC_PostFinanceCheckout_Webhook_Transaction_Strategy extends WC_PostFinance
 	}
 
 	/**
+	 * Meant to bridge code from deprecated processor.
+	 *
+	 * @param WC_Order $order order.
+	 * @param mixed $transaction transaction.
+	 * @return mixed The result of the processing.
+	 */
+	public function bridge_process_order_related_inner( WC_Order $order, $transaction ) {
+        $this->process_order_related_inner( $order, $transaction, true );
+    }
+
+	/**
 	 * Process the webhook request.
 	 *
 	 * @param \PostFinanceCheckout\Sdk\Model\Transaction $transaction The webhook request object.
@@ -58,10 +69,11 @@ class WC_PostFinanceCheckout_Webhook_Transaction_Strategy extends WC_PostFinance
 	 *
 	 * @param WC_Order $order order.
 	 * @param mixed $transaction transaction.
+	 * @param bool $legacy_mode legacy code used.
 	 * @return void
 	 * @throws Exception Exception.
 	 */
-	protected function process_order_related_inner( WC_Order $order, $transaction ) {
+	protected function process_order_related_inner( WC_Order $order, $transaction, $legacy_mode = false ) {
 		if ( strpos( $order->get_payment_method(), 'postfinancecheckout' ) === false ) {
 			return;
 		}
@@ -86,6 +98,9 @@ class WC_PostFinanceCheckout_Webhook_Transaction_Strategy extends WC_PostFinance
 				case \PostFinanceCheckout\Sdk\Model\TransactionState::FULFILL:
 					$this->authorize( $transaction, $order );
 					$this->fulfill( $transaction, $order );
+					if ( $legacy_mode ) {
+						do_action( 'postfinancecheckout_transaction_authorized_send_email', $order->get_id() );
+					}
 					WC_PostFinanceCheckout_Helper::set_virtual_zero_total_orders_to_complete( $order );
 					WC_PostFinanceCheckout_Helper::update_order_status_for_preorder_if_needed( $order );
 					break;
@@ -102,6 +117,14 @@ class WC_PostFinanceCheckout_Webhook_Transaction_Strategy extends WC_PostFinance
 			}
 			WC_PostFinanceCheckout_Service_Transaction::instance()->update_transaction_info( $transaction, $order );
 		}
+
+		if ( $legacy_mode ) {
+			// This is edge case for deferred payment methods
+			$transaction_info = WC_PostFinanceCheckout_Entity_Transaction_Info::load_by_order_id( $order->get_id() );
+			if ($transaction_info->get_state() === \PostFinanceCheckout\Sdk\Model\TransactionState::AUTHORIZED) {
+				do_action( 'postfinancecheckout_transaction_authorized_send_email', $order->get_id() );
+			}
+		}
 	}
 
 	/**
@@ -115,7 +138,11 @@ class WC_PostFinanceCheckout_Webhook_Transaction_Strategy extends WC_PostFinance
 		if ( ! $order->get_meta( '_postfinancecheckout_confirmed', true ) && ! $order->get_meta( '_postfinancecheckout_authorized', true ) ) {
 			do_action( 'wc_postfinancecheckout_confirmed', $transaction, $order );
 			$order->add_meta_data( '_postfinancecheckout_confirmed', 'true', true );
-			$default_status = apply_filters( 'wc_postfinancecheckout_confirmed_status', 'postfi-redirected', $order );
+			$default_status = apply_filters(
+				'wc_postfinancecheckout_confirmed_status',
+				WC_PostFinanceCheckout_Helper::map_status_to_current_mode( 'postfi-redirected' ),
+				$order
+			);
 			apply_filters( 'postfinancecheckout_order_update_status', $order, \PostFinanceCheckout\Sdk\Model\TransactionState::CONFIRMED, $default_status );
 			wc_maybe_reduce_stock_levels( $order->get_id() );
 		}
@@ -150,7 +177,11 @@ class WC_PostFinanceCheckout_Webhook_Transaction_Strategy extends WC_PostFinance
 	protected function waiting( \PostFinanceCheckout\Sdk\Model\Transaction $transaction, WC_Order $order ) {
 		if ( ! $order->get_meta( '_postfinancecheckout_manual_check', true ) ) {
 			do_action( 'wc_postfinancecheckout_completed', $transaction, $order );
-			$default_status = apply_filters( 'wc_postfinancecheckout_completed_status', 'processing', $order );
+			$default_status = apply_filters(
+				'wc_postfinancecheckout_completed_status',
+				WC_PostFinanceCheckout_Helper::map_status_to_current_mode( 'postfi-waiting' ),
+				$order
+			);
 			apply_filters( 'postfinancecheckout_order_update_status', $order, \PostFinanceCheckout\Sdk\Model\TransactionState::COMPLETED, $default_status );
 		}
 	}
@@ -191,7 +222,7 @@ class WC_PostFinanceCheckout_Webhook_Transaction_Strategy extends WC_PostFinance
 		);
 		if ( in_array( $order->get_status( 'edit' ), $valid_order_statuses ) ) {
 			$default_status = apply_filters( 'wc_postfinancecheckout_failed_status', 'failed', $order );
-			apply_filters( 'postfinancecheckout_order_update_status', $order, \PostFinanceCheckout\Sdk\Model\TransactionState::FAILED, $default_status, );
+			apply_filters( 'postfinancecheckout_order_update_status', $order, \PostFinanceCheckout\Sdk\Model\TransactionState::FAILED, $default_status );
 			WC_PostFinanceCheckout_Helper::instance()->maybe_restock_items_for_order( $order );
 		}
 	}
@@ -207,6 +238,23 @@ class WC_PostFinanceCheckout_Webhook_Transaction_Strategy extends WC_PostFinance
 		do_action( 'wc_postfinancecheckout_fulfill', $transaction, $order );
 		// Sets the status to procesing or complete depending on items.
 		$order->payment_complete( $transaction->getId() );
+		$mapped_status = apply_filters(
+			'postfinancecheckout_wc_status_for_transaction',
+			\PostFinanceCheckout\Sdk\Model\TransactionState::FULFILL
+		);
+
+		if ( empty( $mapped_status ) ) {
+			$mapped_status = 'processing';
+		}
+
+		$mapped_status = apply_filters( 'wc_postfinancecheckout_fulfill_status', $mapped_status, $order );
+
+		apply_filters(
+			'postfinancecheckout_order_update_status',
+			$order,
+			\PostFinanceCheckout\Sdk\Model\TransactionState::FULFILL,
+			$mapped_status
+		);
 	}
 
 	/**

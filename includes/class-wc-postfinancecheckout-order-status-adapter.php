@@ -39,7 +39,6 @@ class WC_PostFinanceCheckout_Order_Status_Adapter
 
 	const POSTFINANCECHECKOUT_ORDER_STATUS_MAPPING_PREFIX = 'postfinancecheckout_order_status_mapping_';
 	const POSTFINANCECHECKOUT_CUSTOM_ORDER_STATUS_PREFIX = 'postfinancecheckout_custom_order_status_';
-
 	/**
 	 * Stores the status mappings loaded from the database.
 	 *
@@ -174,14 +173,54 @@ class WC_PostFinanceCheckout_Order_Status_Adapter
 	 */
 	private function initialize_status_mappings(): void
 	{
+		$is_custom_mapping_enabled = WC_PostFinanceCheckout_Helper::is_custom_status_mapping_enabled();
 		$default_mappings = apply_filters( 'postfinancecheckout_default_order_status_mappings', array() );
 
-		$this->settings = array_map( function ( $transaction_status, $default_order_status ) {
-			return array(
+		if ( ! is_array( $default_mappings ) ) {
+			$default_mappings = array();
+		}
+
+		$this->settings = array();
+
+		foreach ( $default_mappings as $transaction_status => $default_order_status ) {
+			$option_key = self::POSTFINANCECHECKOUT_ORDER_STATUS_MAPPING_PREFIX . $transaction_status;
+			$stored_order_status = $this->ensure_status_has_prefix( get_option( $option_key, $default_order_status ) );
+
+			if ( ! $is_custom_mapping_enabled ) {
+				$stored_order_status = $this->ensure_status_has_prefix( $default_order_status );
+			}
+
+			$this->settings[] = array(
 				'transaction_status' => $transaction_status,
-				'order_status' => get_option( self::POSTFINANCECHECKOUT_ORDER_STATUS_MAPPING_PREFIX . $transaction_status, $default_order_status )
+				'order_status' => $stored_order_status,
 			);
-		}, array_keys( $default_mappings ), $default_mappings );
+		}
+	}
+
+	/**
+	 * Determines whether the provided order status belongs to the custom mapping set.
+	 *
+	 * @param string $order_status Order status, potentially prefixed with `wc-`.
+	 * @return bool
+	 */
+	private function is_custom_order_status( string $order_status ): bool
+	{
+		return strpos( $order_status, 'wc-postfi-' ) === 0 || strpos( $order_status, 'postfi-' ) === 0;
+	}
+
+	/**
+	 * Ensures a status slug contains the `wc-` prefix when required.
+	 *
+	 * @param string $status Status slug.
+	 * @return string
+	 */
+	private function ensure_status_has_prefix( string $status ): string
+	{
+		if ( '' === $status ) {
+			return $status;
+		}
+
+		return strpos( $status, 'wc-' ) === 0 ? $status : 'wc-' . $status;
 	}
 
 	/**
@@ -219,15 +258,19 @@ class WC_PostFinanceCheckout_Order_Status_Adapter
  	 * To maintain compatibility with earlier versions, string values are used as a fallback.
 	 * This is the interface to use in next versions Automattic\WooCommerce\Enums\OrderInternalStatus
 	 *
-	 * Example of saved options in `wp_options`:
+	 * Example of saved options in `wp_options` (custom mapping enabled):
 	 * - postfinancecheckout_order_status_mapping_pending -> wc-pending -> OrderInternalStatus::PENDING
 	 * - postfinancecheckout_order_status_mapping_confirmed -> wc-on-hold -> OrderInternalStatus::ON_HOLD
 	 * - postfinancecheckout_order_status_mapping_processing -> wc-on-hold -> OrderInternalStatus::ON_HOLD
 	 * - postfinancecheckout_order_status_mapping_authorized -> wc-on-hold -> OrderInternalStatus::ON_HOLD
-	 * - postfinancecheckout_order_status_mapping_completed -> wc-on-hold -> OrderInternalStatus::ON_HOLD
+	 * - postfinancecheckout_order_status_mapping_completed -> wc-postfi-waiting -> OrderInternalStatus::ON_HOLD
 	 * - postfinancecheckout_order_status_mapping_failed -> wc-failed -> OrderInternalStatus::FAILED
 	 * - postfinancecheckout_order_status_mapping_voided -> wc-cancelled or 'wc-refunded' -> OrderInternalStatus::CANCELLED
 	 * - postfinancecheckout_order_status_mapping_fulfill -> wc-processing -> OrderInternalStatus::PROCESSING
+	 *
+	 * Example when relying on WooCommerce core statuses:
+	 * - postfinancecheckout_order_status_mapping_processing -> wc-processing -> OrderInternalStatus::PROCESSING
+	 * - postfinancecheckout_order_status_mapping_completed -> wc-processing -> OrderInternalStatus::PROCESSING
 	 *
 	 * These defaults are used if no custom mappings are provided by the user.
 	 *
@@ -235,17 +278,23 @@ class WC_PostFinanceCheckout_Order_Status_Adapter
 	 */
 	public function get_default_status_mappings() : array
 	{
-		return array(
+		$default_mappings = array(
 			self::POSTFINANCECHECKOUT_STATUS_PENDING => 'wc-pending',
 			self::POSTFINANCECHECKOUT_STATUS_CONFIRMED => 'wc-on-hold',
 			self::POSTFINANCECHECKOUT_STATUS_PROCESSING => 'wc-on-hold',
 			self::POSTFINANCECHECKOUT_STATUS_AUTHORIZED => 'wc-on-hold',
-			self::POSTFINANCECHECKOUT_STATUS_COMPLETED => 'wc-postfi-waiting',
+			self::POSTFINANCECHECKOUT_STATUS_COMPLETED => 'wc-on-hold',
 			self::POSTFINANCECHECKOUT_STATUS_FAILED => 'wc-failed',
 			self::POSTFINANCECHECKOUT_STATUS_VOIDED => 'wc-cancelled',
 			self::POSTFINANCECHECKOUT_STATUS_FULFILL => 'wc-processing',
 			self::POSTFINANCECHECKOUT_STATUS_DECLINE => 'wc-cancelled',
 		);
+
+		if ( WC_PostFinanceCheckout_Helper::is_custom_status_mapping_enabled() ) {
+			$default_mappings[ self::POSTFINANCECHECKOUT_STATUS_COMPLETED ] = 'wc-postfi-waiting';
+		}
+
+		return $default_mappings;
 	}
 
 	/**
@@ -302,11 +351,15 @@ class WC_PostFinanceCheckout_Order_Status_Adapter
 	/**
 	 * Gets the WooCommerce status corresponding to a PostFinanceCheckout status.
 	 *
-	 * @param string $status The PostFinanceCheckout transaction status.
+	 * @param string|null $status The PostFinanceCheckout transaction status.
 	 * @return string|null The corresponding WooCommerce order status or null if not found.
 	 */
-	private function map_postfinancecheckout_status_to_woocommerce( string $status ): ?string
+	private function map_postfinancecheckout_status_to_woocommerce( ?string $status ): ?string
 	{
+		if ( null === $status || '' === $status ) {
+			return $status;
+		}
+
 		if ( empty( $this->settings ) ) {
 			return $status; //Return the current status if there are no mappings available.
 		}
@@ -330,7 +383,7 @@ class WC_PostFinanceCheckout_Order_Status_Adapter
 			}
 		}
 		
-		return $status; //Return legacy status or original if not found.
+		return str_replace( 'wc-', '', $status ); //Return legacy status or original (ensuring WC prefix is stripped).
 	}
 
 	/**
@@ -346,7 +399,7 @@ class WC_PostFinanceCheckout_Order_Status_Adapter
 	{
 		// If status is empty.
 		if ( $status === null && $order !== null ) {
-			$transaction_info = PostFinanceCheckout_Entity_Transaction_Info::load_by_order_id( $order->get_id() );
+			$transaction_info = WC_PostFinanceCheckout_Entity_Transaction_Info::load_by_order_id( $order->get_id() );
 			if ( $transaction_info ) {
 				$status = $transaction_info->get_state();
 			}
@@ -354,7 +407,17 @@ class WC_PostFinanceCheckout_Order_Status_Adapter
 
 		// Apply a pre-update filter to allow modifications before processing the status.
 		$status = apply_filters( 'postfinancecheckout_pre_order_update_status', $status, $order, $note, $manual );
-		$new_status = $this->map_postfinancecheckout_status_to_woocommerce( $status );
+		$change_setting_enabled = 'yes' === get_option( WooCommerce_PostFinanceCheckout::POSTFINANCECHECKOUT_CK_CHANGE_ORDER_STATUS );
+		$is_virtual_order = WC_PostFinanceCheckout_Helper::is_order_virtual( $order );
+		$should_force_completed = (
+			$change_setting_enabled
+			&& $is_virtual_order
+			&& null !== $status
+			&& strtolower( (string) $status ) === strtolower( \PostFinanceCheckout\Sdk\Model\TransactionState::FULFILL )
+		);
+
+		// Preserve WooCommerce's completed status only once the transaction reaches FULFILL.
+		$new_status = $should_force_completed ? 'completed' : $this->map_postfinancecheckout_status_to_woocommerce( $status );
 
 		if ( !empty( $new_status ) && !empty( $order ) ) {
 			$order->update_status( $new_status, $note, $manual );
@@ -374,9 +437,14 @@ class WC_PostFinanceCheckout_Order_Status_Adapter
 	 */
 	public function get_order_status_on_payment_complete( string $status, int $order_id, WC_Order $order ): string
 	{
-		// If order consists entirely out of virtual products and their total is 0, change their status to completed
-		if ( 'yes' === get_option( WooCommerce_PostFinanceCheckout::POSTFINANCECHECKOUT_CK_CHANGE_ORDER_STATUS ) 
-		&& $order->get_total() <= 0 && WC_PostFinanceCheckout_Helper::is_order_virtual( $order ) ) {
+		$change_setting_enabled = 'yes' === get_option( WooCommerce_PostFinanceCheckout::POSTFINANCECHECKOUT_CK_CHANGE_ORDER_STATUS );
+		$is_virtual_order = WC_PostFinanceCheckout_Helper::is_order_virtual( $order );
+		$transaction_info = WC_PostFinanceCheckout_Entity_Transaction_Info::load_by_order_id( $order_id );
+		$is_fulfilled = $transaction_info
+			&& strtolower( $transaction_info->get_state() ) === strtolower( \PostFinanceCheckout\Sdk\Model\TransactionState::FULFILL );
+
+		// Preserve WooCommerce's completed status only when the transaction is fulfilled.
+		if ( $change_setting_enabled && $is_virtual_order && $is_fulfilled ) {
 			return self::POSTFINANCECHECKOUT_STATUS_COMPLETED;
 		}
 		
@@ -401,12 +469,21 @@ class WC_PostFinanceCheckout_Order_Status_Adapter
 	 * Expected values for `$postfinancecheckout_status`: Pending, Confirmed, Processing, Failed, Authorized, Voided, Completed, Fulfill, Decline.
 	 *
 	 * @since 1.0.0
-	 * @param string $postfinancecheckout_status The transaction status from PostFinanceCheckout.
+	 * @param string|null $postfinancecheckout_status The transaction status from PostFinanceCheckout.
 	 * @return string|null The mapped WooCommerce order status, or null if no mapping is found.
 	 */
-	public function get_wc_status_for_transaction( string $postfinancecheckout_status ): ?string
+	public function get_wc_status_for_transaction( ?string $postfinancecheckout_status ): ?string
 	{
+		if ( null === $postfinancecheckout_status || '' === $postfinancecheckout_status ) {
+			return null;
+		}
+
 		$status = get_option( self::POSTFINANCECHECKOUT_ORDER_STATUS_MAPPING_PREFIX . strtolower( $postfinancecheckout_status ), null );
+		if ( ! WC_PostFinanceCheckout_Helper::is_custom_status_mapping_enabled() && $status && $this->is_custom_order_status( $status ) ) {
+			$default_mappings = $this->get_default_status_mappings();
+			$status_key = strtolower( $postfinancecheckout_status );
+			$status = $default_mappings[ $status_key ] ?? $status;
+		}
 		return is_null( $status ) ? null : str_replace( 'wc-', '', $status );
 	}
 }

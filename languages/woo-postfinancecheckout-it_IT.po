@@ -426,13 +426,21 @@ msgstr "L'utente deve disporre di tutte le autorizzazioni nello spazio a cui è 
 msgid "Authentication Key"
 msgstr "Authentication Key"
 
-#: includes/admin/class-wc-postfinancecheckout-admin-settings-page.php:194
+#: includes/admin/class-wc-postfinancecheckout-admin-settings-page.php:245
 msgid "Email Options"
 msgstr "Opzioni e-mail"
 
-#: includes/admin/class-wc-postfinancecheckout-admin-settings-page.php:200
+#: includes/admin/class-wc-postfinancecheckout-admin-settings-page.php:251
 msgid "Send Order Email"
 msgstr "Inviare l'e-mail dell'ordine"
+
+#: includes/admin/class-wc-postfinancecheckout-admin-settings-page.php:260
+msgid "Disable Pending Email"
+msgstr "Disattiva email in attesa"
+
+#: includes/admin/class-wc-postfinancecheckout-admin-settings-page.php:261
+msgid "Enable this setting to prevent WooCommerce from sending \"pending payment\" emails for PostFinanceCheckout payment methods."
+msgstr "Abilita questa impostazione per impedire a WooCommerce di inviare e-mail di “pagamento in sospeso” per i metodi di pagamento PostFinanceCheckout."
 
 #: includes/admin/class-wc-postfinancecheckout-admin-settings-page.php:201
 msgid "Enable this option to send order confirmation emails directly from WooCommerce instead of the Portal."

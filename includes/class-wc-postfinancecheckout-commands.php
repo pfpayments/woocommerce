@@ -31,6 +31,13 @@ if ( class_exists( 'WP_CLI' ) && ! class_exists( 'WC_PostFinanceCheckout_Command
          */
         public static function init() {
             WP_CLI::add_command(
+                'postfinancecheckout settings init',
+                array(
+                    __CLASS__,
+                    'settings_init'
+                )
+            );
+            WP_CLI::add_command(
                 'postfinancecheckout webhooks install',
                 array(
                     __CLASS__,
@@ -44,6 +51,33 @@ if ( class_exists( 'WP_CLI' ) && ! class_exists( 'WC_PostFinanceCheckout_Command
                     'payment_methods_sync'
                 )
             );
+        }
+
+        /**
+         * Initialize PostFinance Checkout settings.
+         * It doesn't reset settings to default, it sets default settings if they haven't been initialized yet.
+         *
+         * ## EXAMPLE
+         *
+         *     $ wp postfinancecheckout settings init
+         *
+         * @param array $args WP-CLI positional arguments.
+         * @param array $assoc_args WP-CLI associative arguments.
+         */
+        public static function settings_init( $args, $assoc_args ) {
+            try {
+                $default_settings = WC_PostFinanceCheckout_Helper::instance()->get_default_settings();
+                foreach ( $default_settings as $setting => $value ) {
+                    $current_setting = get_option( $setting, false );
+                    if ( $current_setting === false ) {
+                        update_option( $setting, $value );
+                    }
+                }
+                WP_CLI::success( "Settings initialized." );
+            } catch ( \Exception $e ) {
+                WooCommerce_PostFinanceCheckout::instance()->log( $e->getMessage(), WC_Log_Levels::ERROR );
+                WP_CLI::error( "Failed to initialize settings: " . $e->getMessage() );
+            }
         }
 
         /**

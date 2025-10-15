@@ -25,6 +25,21 @@ defined( 'ABSPATH' ) || exit;
 class WC_PostFinanceCheckout_Webhook_Transaction_Void extends WC_PostFinanceCheckout_Webhook_Order_Related_Abstract {
 
 	/**
+	 * Canonical processor.
+	 *
+	 * @var WC_PostFinanceCheckout_Webhook_Transaction_Void_Strategy
+	 */
+	private $strategy;
+
+	/**
+	 * Construct to initialize canonical processor.
+	 *
+	 */
+	public function __construct() {
+		$this->strategy = new WC_PostFinanceCheckout_Webhook_Transaction_Void_Strategy();
+	}
+
+	/**
 	 * Load entity.
 	 *
 	 * @param WC_PostFinanceCheckout_Webhook_Request $request request.
@@ -34,8 +49,12 @@ class WC_PostFinanceCheckout_Webhook_Transaction_Void extends WC_PostFinanceChec
 	 * @throws \PostFinanceCheckout\Sdk\VersioningException VersioningException.
 	 */
 	protected function load_entity( WC_PostFinanceCheckout_Webhook_Request $request ) {
-		$void_service = new \PostFinanceCheckout\Sdk\Service\TransactionVoidService( WC_PostFinanceCheckout_Helper::instance()->get_api_client() );
-		return $void_service->read( $request->get_space_id(), $request->get_entity_id() );
+		wc_deprecated_function(
+            __METHOD__,
+            '3.0.12',
+            'WC_PostFinanceCheckout_Webhook_Transaction_Void_Strategy::load_entity'
+        );
+		return $this->strategy->load_entity( $request );
 	}
 
 	/**
@@ -45,8 +64,12 @@ class WC_PostFinanceCheckout_Webhook_Transaction_Void extends WC_PostFinanceChec
 	 * @return int|string
 	 */
 	protected function get_order_id( $void_transaction ) {
-		/* @var \PostFinanceCheckout\Sdk\Model\TransactionVoid $void */ //phpcs:ignore
-		return WC_PostFinanceCheckout_Entity_Transaction_Info::load_by_transaction( $void_transaction->getTransaction()->getLinkedSpaceId(), $void_transaction->getTransaction()->getId() )->get_order_id();
+		wc_deprecated_function(
+            __METHOD__,
+            '3.0.12',
+            'WC_PostFinanceCheckout_Webhook_Transaction_Void_Strategy::get_order_id'
+        );
+		return $this->strategy->get_order_id( $void_transaction );
 	}
 
 	/**
@@ -65,75 +88,15 @@ class WC_PostFinanceCheckout_Webhook_Transaction_Void extends WC_PostFinanceChec
 	 *
 	 * @param WC_Order $order order.
 	 * @param mixed $void_transaction void transaction.
+	 * @param WC_PostFinanceCheckout_Webhook_Request $request request.
 	 * @return void
 	 */
-	protected function process_order_related_inner( WC_Order $order, $void_transaction ) {
-		/* @var \PostFinanceCheckout\Sdk\Model\TransactionVoid $void_transaction */ //phpcs:ignore
-		switch ( $void_transaction->getState() ) {
-			case \PostFinanceCheckout\Sdk\Model\TransactionVoidState::FAILED:
-				$this->failed( $void_transaction, $order );
-				break;
-			case \PostFinanceCheckout\Sdk\Model\TransactionVoidState::SUCCESSFUL:
-				$this->success( $void_transaction, $order );
-				break;
-			default:
-				// Nothing to do.
-				break;
-		}
-	}
-
-	/**
-	 * Success.
-	 *
-	 * @param \PostFinanceCheckout\Sdk\Model\TransactionVoid $void_transaction void.
-	 * @param WC_Order $order order.
-	 * @return void
-	 * @throws Exception Exception.
-	 */
-	protected function success( \PostFinanceCheckout\Sdk\Model\TransactionVoid $void_transaction, WC_Order $order ) {
-		$void_job = WC_PostFinanceCheckout_Entity_Void_Job::load_by_void( $void_transaction->getLinkedSpaceId(), $void_transaction->getId() );
-		if ( ! $void_job->get_id() ) {
-			// We have no void job with this id -> the server could not store the id of the void after sending the request. (e.g. connection issue or crash).
-			// We only have on running void which was not yet processed successfully and use it as it should be the one the webhook is for.
-			$void_job = WC_PostFinanceCheckout_Entity_Void_Job::load_running_void_for_transaction( $void_transaction->getLinkedSpaceId(), $void_transaction->getLinkedTransaction() );
-			if ( ! $void_job->get_id() ) {
-				// void not initiated in shop backend ignore.
-				return;
-			}
-			$void_job->set_void_id( $void_transaction->getId() );
-		}
-		$void_job->set_state( WC_PostFinanceCheckout_Entity_Void_Job::POSTFINANCECHECKOUT_STATE_DONE );
-
-		if ( $void_job->get_restock() ) {
-			WC_PostFinanceCheckout_Helper::instance()->maybe_restock_items_for_order( $order );
-		}
-		$void_job->save();
-	}
-
-	/**
-	 * Failed.
-	 *
-	 * @param \PostFinanceCheckout\Sdk\Model\TransactionVoid $void_transaction void.
-	 * @param WC_Order $order order.
-	 * @return void
-	 * @throws Exception Exception.
-	 */
-	protected function failed( \PostFinanceCheckout\Sdk\Model\TransactionVoid $void_transaction, WC_Order $order ) {
-		$void_job = WC_PostFinanceCheckout_Entity_Void_Job::load_by_void( $void_transaction->getLinkedSpaceId(), $void_transaction->getId() );
-		if ( ! $void_job->get_id() ) {
-			// We have no void job with this id -> the server could not store the id of the void after sending the request. (e.g. connection issue or crash)
-			// We only have on running void which was not yet processed successfully and use it as it should be the one the webhook is for.
-			$void_job = WC_PostFinanceCheckout_Entity_Void_Job::load_running_void_for_transaction( $void_transaction->getLinkedSpaceId(), $void_transaction->getLinkedTransaction() );
-			if ( ! $void_job->get_id() ) {
-				// void not initiated in shop backend ignore.
-				return;
-			}
-			$void_job->set_void_id( $void_transaction->getId() );
-		}
-		if ( $void_job->getFailureReason() != null ) {
-			$void_job->set_failure_reason( $void_transaction->getFailureReason()->getDescription() );
-		}
-		$void_job->set_state( WC_PostFinanceCheckout_Entity_Void_Job::POSTFINANCECHECKOUT_STATE_DONE );
-		$void_job->save();
+	protected function process_order_related_inner( WC_Order $order, $void_transaction, $request ) {
+		wc_deprecated_function(
+            __METHOD__,
+            '3.0.12',
+            'WC_PostFinanceCheckout_Webhook_Transaction_Void_Strategy::process_order_related_inner'
+        );
+        $this->strategy->bridge_process_order_related_inner( $order, $void_transaction, $request );
 	}
 }

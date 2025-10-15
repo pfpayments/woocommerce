@@ -34,7 +34,12 @@ class WC_PostFinanceCheckout_Webhook_Token_Version extends WC_PostFinanceCheckou
 	 * @throws \PostFinanceCheckout\Sdk\VersioningException VersioningException.
 	 */
 	public function process( WC_PostFinanceCheckout_Webhook_Request $request ) {
-		$token_service = WC_PostFinanceCheckout_Service_Token::instance();
-		$token_service->update_token_version( $request->get_space_id(), $request->get_entity_id() );
+		wc_deprecated_function(
+            __METHOD__,
+            '3.0.12',
+            'WC_PostFinanceCheckout_Webhook_Token_Version_Strategy::process'
+        );
+		$strategy = new WC_PostFinanceCheckout_Webhook_Token_Version_Strategy();
+		$strategy->process( $request );
 	}
 }

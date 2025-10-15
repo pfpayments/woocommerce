@@ -61,6 +61,45 @@ class WC_PostFinanceCheckout_Helper {
 	}
 
 	/**
+	 * Determine whether custom status mapping is enabled.
+	 *
+	 * @return bool
+	 */
+	public static function is_custom_status_mapping_enabled() {
+		$enabled = get_option( WooCommerce_PostFinanceCheckout::POSTFINANCECHECKOUT_CK_ENABLE_CUSTOM_STATUS_MAPPING, 'no' );
+		return 'yes' === apply_filters( 'postfinancecheckout_enable_custom_status_mapping_value', $enabled );
+	}
+
+	/**
+	 * Returns the appropriate status slug according to the selected mapping mode.
+	 *
+	 * @param string $status_slug Order status slug, with or without the `wc-` prefix.
+	 * @param bool   $prefixed    When true the returned status contains the `wc-` prefix.
+	 * @return string
+	 */
+	public static function map_status_to_current_mode( $status_slug, $prefixed = false ) {
+		if ( strpos( $status_slug, 'wc-' ) === 0 ) {
+			$status_slug = substr( $status_slug, 3 );
+		}
+
+		$fallback_statuses = array(
+			'postfi-manual' => 'on-hold',
+			'postfi-redirected' => 'processing',
+			'postfi-waiting' => 'processing',
+		);
+
+		$mapped_status = self::is_custom_status_mapping_enabled()
+			? $status_slug
+			: ( $fallback_statuses[ $status_slug ] ?? $status_slug );
+
+		if ( $prefixed ) {
+			return strpos( $mapped_status, 'wc-' ) === 0 ? $mapped_status : 'wc-' . $mapped_status;
+		}
+
+		return $mapped_status;
+	}
+
+	/**
 	 * Delete provider transients.
 	 *
 	 * @return void
@@ -577,7 +616,7 @@ class WC_PostFinanceCheckout_Helper {
 		$version = WC_VERSION;
 
 		$shop_version = str_replace( 'v', '', $version );
-		$plugin_version = '3.3.20';
+		$plugin_version = '3.3.21';
 		list ($major_version, $minor_version) = explode( '.', $shop_version, 3 );
 		return array(
 			self::POSTFINANCECHECKOUT_SHOP_SYSTEM => 'woocommerce',
@@ -602,9 +641,6 @@ class WC_PostFinanceCheckout_Helper {
 	public function get_woocommerce_order_statuses_json() {
 		$woocommerce_statuses = apply_filters( 'postfinancecheckout_woocommerce_statuses', array() );
 		$excluded_statuses = array(
-			'wc-postfi-manual',
-			'wc-postfi-redirected',
-			'wc-postfi-waiting',
 			'wc-pending',
 			'wc-processing',
 			'wc-on-hold',
@@ -615,6 +651,16 @@ class WC_PostFinanceCheckout_Helper {
 			'wc-trash',
 			'wc-checkout-draft'
 		);
+		if ( self::is_custom_status_mapping_enabled() ) {
+			$excluded_statuses = array_merge(
+				$excluded_statuses,
+				array(
+					'wc-postfi-manual',
+					'wc-postfi-redirected',
+					'wc-postfi-waiting'
+				)
+			);
+		}
 
 		return array_map( function( $key, $value ) use ( $excluded_statuses ) {
 				return array(
@@ -742,6 +788,22 @@ class WC_PostFinanceCheckout_Helper {
 		}
 	}
 
-
+	/**
+	 * Get default PostFinanceCheckout settings array
+	 *
+	 * @return array
+	 */
+	public function get_default_settings() {
+		$settings = array(
+			WooCommerce_PostFinanceCheckout::POSTFINANCECHECKOUT_CK_SHOP_EMAIL => 'yes',
+            WooCommerce_PostFinanceCheckout::POSTFINANCECHECKOUT_CK_CUSTOMER_INVOICE => 'yes',
+            WooCommerce_PostFinanceCheckout::POSTFINANCECHECKOUT_CK_CUSTOMER_PACKING => 'yes',
+            WooCommerce_PostFinanceCheckout::POSTFINANCECHECKOUT_CK_INTEGRATION => WC_PostFinanceCheckout_Integration::POSTFINANCECHECKOUT_PAYMENTPAGE,
+            WooCommerce_PostFinanceCheckout::POSTFINANCECHECKOUT_CK_ENFORCE_CONSISTENCY => 'yes',
+            WooCommerce_PostFinanceCheckout::POSTFINANCECHECKOUT_CK_ORDER_REFERENCE => WC_PostFinanceCheckout_Order_Reference::POSTFINANCECHECKOUT_ORDER_ID,
+            WooCommerce_PostFinanceCheckout::POSTFINANCECHECKOUT_CK_CHANGE_ORDER_STATUS => 'yes',
+		);
+		return $settings;
+	}
 
 }
