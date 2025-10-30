@@ -3,7 +3,7 @@ Contributors: postfinancecheckout AG
 Tags: payment, PostFinance Checkout, e-commerce, invoice, psp
 Requires at least: 4.7
 Tested up to: 6.7
-Stable tag: 3.3.21
+Stable tag: 3.3.22
 License: Apache-2.0
 License URI: http://www.apache.org/licenses/LICENSE-2.0
 
@@ -23,7 +23,7 @@ To use this extension, a PostFinance Checkout account is required. Sign up on [P
 
 == Documentation ==
 
-Additional documentation for this plugin is available [here](https://plugin-documentation.postfinance-checkout.ch/pfpayments/woocommerce/3.3.21/docs/en/documentation.html).
+Additional documentation for this plugin is available [here](https://plugin-documentation.postfinance-checkout.ch/pfpayments/woocommerce/3.3.22/docs/en/documentation.html).
 
 == External Services ==
 
@@ -81,11 +81,10 @@ Enquiries about our terms of use can be made on the [PostFinance Checkout terms 
 == Changelog ==
 
 
-= 3.3.21 - October 14th 2025 =
-- [Feature] Refactor the way custom status mapping is applied
-- [Feature] Pending payment emails can be disabled
-- [Feature] Code cleaning
+= 3.3.21 - October 30th 2025 =
+- [Feature] Bump SDK version to include new ca bundle
+- [Feature] 10.3.0 compatibility
 - [Tested Against] PHP 8.2
 - [Tested Against] Wordpress 6.7
-- [Tested Against] Woocommerce 10.2.2
-- [Tested Against] PHP SDK 4.8.0
+- [Tested Against] Woocommerce 10.3.0
+- [Tested Against] PHP SDK 4.8.1
