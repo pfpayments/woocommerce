@@ -1,89 +1,141 @@
 === PostFinance Checkout ===
 Contributors: postfinancecheckout AG
 Tags: payment, PostFinance Checkout, e-commerce, invoice, psp
-Requires at least: 4.7
+Requires at least: 6.0
 Tested up to: 6.7
-Stable tag: 3.3.22
+Stable tag: 3.3.23
 License: Apache-2.0
 License URI: http://www.apache.org/licenses/LICENSE-2.0
 
-Accept payments in WooCommerce with PostFinance Checkout.
+PostFinance Checkout
 
 == Description ==
 
-Website: [https://postfinance.ch/en/business/products/e-commerce/postfinance-checkout-all-in-one.html](https://postfinance.ch/en/business/products/e-commerce/postfinance-checkout-all-in-one.html)
+By PostFinance Ltd
 
-The plugin offers an easy and convenient way to accept credit cards and all
-other payment methods listed below fast and securely. The payment forms will be fully integrated in your checkout
-and for credit cards there is no redirection to a payment page needed anymore. The pages are by default mobile optimized but
-the look and feel can be changed according the merchants needs.
+With the PostFinance E-Payment Module, many payment methods for your online business are available in the Checkout back office tool. Depending on your needs and turnover volume, you can choose a standard commission rate or negotiate the price conditions simply and directly with the acceptance partners you require. This allows you to benefit from attractive prices and many useful features (such as configuration options for fraud management, the accounting feature, payment link for in-store payments).
 
-This plugin will add support for all PostFinance Checkout payments methods and connect the PostFinance Checkout servers to your WooCommerce webshop.
-To use this extension, a PostFinance Checkout account is required. Sign up on [PostFinance Checkout](https://checkout.postfinance.ch/en-ch/user/signup).
+Find out for yourself by testing our payment service provider solution free of charge in simulation mode. You can extend simulation mode after the 30-day trial period.
 
-== Documentation ==
+With our e-com bundle, you pay no set-up fee:
+https://www.postfinance.ch/en/business/products/payment-collection/online-shop/e-com-bundle.html
 
-Additional documentation for this plugin is available [here](https://plugin-documentation.postfinance-checkout.ch/pfpayments/woocommerce/3.3.22/docs/en/documentation.html).
+== PostFinance Checkout contact and support ==
+
+We are available to answer your questions and enquiries around the clock.
+
+If you have technical problems, please contact our support team directly:
+https://www.postfinance.ch/en/support/payments/transactions/postfinance-checkout-contact-and-support.html
+
+== Platform availability information ==
+
+For up-to-date information on maintenance work and disruptions to our Checkout platform, please visit our status page. Please check this page before contacting us. You can also subscribe to the latest disruption messages by e-mail.
+
+== Go to Checkout status ==
+
+Completely overhauled new version – Benefit now from the new, improved version of the plug-in, which resolves problems and uncertainties in the previous versions. The new version offers reliability and stability.
+
+== Video ==
+
+### PostFinance
+https://www.youtube.com/watch?v=yX7iERUsRMA
+
+### Plugin
+https://www.youtube.com/watch?v=gzPfBybvpR0
+
+== List of supported payment methods ==
+The following payment methods can be offered with Checkout:
+
+* PostFinance Pay
+* Twint
+* Visa
+* Mastercard
+* American Express
+* Apple Pay
+* Click to Pay
+* Diners
+* JCB
+* Union Pay
+* Purchase by invoice
+* Fully automated payment in advance
+* eBill
+* Others on request
+
+== List of plug-in features ==
+Benefit from the following features when you use Checkout:
+
+* Personalized e-mails and documents
+* Simple accounting
+* Fraud management
+* Set-up service for QR module with eBill
+* Always at your side: self-service support
+* Personal support (free of charge)
+* Creation of a payment QR code for occasional in-store payment collection
+* Expansion with payment terminals to omnichannel for in-store payment collection
+
+== How do I get a PostFinance account? ==
+* Open an account for the product you require -> Product page
+* Configure your account and choose your preferred payment methods
+* Link the account to your WooCommerce shop
+* Conclude the necessary contracts
+* Get started
+
+== Links to instructions/tutorials ==
+[here](https://plugin-documentation.postfinance-checkout.ch/pfpayments/woocommerce/3.3.23/docs/en/documentation.html).
+
+== About us ==
+PostFinance is one of Switzerland’s leading financial institutions and is a reliable financial partner for around 2.5 million private and business customers. We offer our customers fresh solutions and smart innovations.
+https://www.postfinance.ch/en/about-us.html
+
+== FAQs ==
+You can find the most important questions and answers on our website:
+https://www.postfinance.ch/en/support/products/onlineshop-pos/questions-about-checkout-solutions.html
+
+== Screenshots ==
+1. Checkout desktop view
+2. Checkout mobile view
+3. Admin backend portal
+4. Payment methods overview
+
+== Tags ==
+Twint; PostFinance; Switzerland; Checkout; Woo; WooCommerce
 
 == External Services ==
-
-This plugin includes an internal script to manage device verification within the WooCommerce store environment. 
-
-The script helps ensure session consistency and transaction security.
-
-- **Service Name:** PostFinance Checkout Device Verification Script
-- **Purpose:** To track device sessions and enhance security during checkout and payment processing.
-- **Data Sent:**
-  - **Cookie Name:** `wc_whitelabelname_device_id`
-  - **Data Stored in Cookie:** A unique device identifier (hashed value).
-  - **When the Cookie is Set:** The cookie is set when the checkout page is accessed and updated during payment processing.
-  - **Where the Data is Processed:** All operations occur locally within the WooCommerce store and are not transmitted to external services.
-- **Conditions for Use:** The cookie is only set if the customer initiates a checkout session.
-
-No personal data is sent to third-party services; all information remains within the WooCommerce store for internal verification purposes.
+This plugin includes an internal script to manage device verification within the WooCommerce store environment.
 
 == Support ==
-
-Support queries can be issued on the [PostFinance Checkout support site](https://www.postfinance.ch/en/business/support.html).
+Support queries can be issued on the PostFinance Checkout support site.
 
 == Privacy Policy ==
-
-Enquiries about our privacy policy can be made on the [PostFinance Checkout privacy policies site](https://www.postfinance.ch/en/detail/data-protection/general-privacy-policy.html).
+Enquiries about our privacy policy can be made on the PostFinance Checkout privacy policies site.
 
 == Terms of use ==
-
-Enquiries about our terms of use can be made on the [PostFinance Checkout terms of use site](https://www.postfinance.ch/content/dam/pfch/doc/0_399/00201_en.pdf).
+Enquiries about our terms of use can be made on the PostFinance Checkout terms of use site.
 
 == Installation ==
-
-= Minimum Requirements =
-
-* PHP version 5.6 or greater
-* WordPress 4.7 up to 6.6
+**Minimum Requirements**
+* PHP version 7.4 or greater
+* WordPress 4.7 up to 6.7
 * WooCommerce 3.0.0 up to 9.8.5
 
-= Automatic installation =
+**Automatic installation steps**
+1. Install the plugin via **Plugins → Add New** and search for "PostFinance Checkout".
+2. Activate the plugin in WordPress.
+3. Set your credentials under **WooCommerce → Settings → PostFinance Checkout**.
+4. Done — payment methods visible in checkout.
 
-1. Install the plugin via Plugins -> New plugin. Search for 'PostFinance Checkout'.
-2. Activate the 'PostFinance Checkout' plugin through the 'Plugins' menu in WordPress
-3. Set your PostFinance Checkout credentials at WooCommerce -> Settings -> PostFinance Checkout (or use the *Settings* link in the Plugins overview)
-4. You're done, the active payment methods should be visible in the checkout of your webshop.
-
-= Manual installation =
-
-1. Unpack the downloaded package.
-2. Upload the directory to the `/wp-content/plugins/` directory
-3. Activate the 'PostFinance Checkout' plugin through the 'Plugins' menu in WordPress
-4. Set your credentials at WooCommerce -> Settings -> PostFinance Checkout (or use the *Settings* link in the Plugins overview)
-5. You're done, the active payment methods should be visible in the checkout of your webshop.
+**Manual installation steps**
+1. Upload files to `/wp-content/plugins/`.
+2. Activate via ‘Plugins’.
+3. Configure credentials under **WooCommerce → Settings → PostFinance Checkout**.
+4. Payment methods appear in checkout.
 
 
 == Changelog ==
+Initial release with multilingual readme integration.
 
-
-= 3.3.21 - October 30th 2025 =
-- [Feature] Bump SDK version to include new ca bundle
-- [Feature] 10.3.0 compatibility
+= 3.3.23 - November 5th 2025 =
+- [Feature] Updated plugin metada and description
 - [Tested Against] PHP 8.2
 - [Tested Against] Wordpress 6.7
 - [Tested Against] Woocommerce 10.3.0

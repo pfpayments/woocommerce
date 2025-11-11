@@ -73,3 +73,20 @@ jobs:
         SVN_PASSWORD: ${{ secrets.SVN_PASSWORD }}
         ASSETS_DIR: ${{ vars.WORDPRESS_ORG_SLUG }}/build-woo/src
         SLUG: ${{ vars.WORDPRESS_ORG_SLUG }}
+
+    - name: Upload Translations to WordPress.org
+      if: ${{ vars.WORDPRESS_ORG_SLUG != 'woo-WhiteLabelGithubOwnerName' }}
+      run: |
+        echo "Installing WP-CLI..."
+        curl -O https://raw.githubusercontent.com/wp-cli/builds/gh-pages/phar/wp-cli.phar
+        php wp-cli.phar --info
+
+        echo "Installing wporg-translations..."
+        php wp-cli.phar package install wporg-cli/wporg-translations-command
+
+        echo "Pushing translation files..."
+        php wp-cli.phar wporg-translations push \
+          --slug="${{ vars.WORDPRESS_ORG_SLUG }}" \
+          --path="build-woo/${{ vars.WORDPRESS_ORG_SLUG }}/languages" \
+          --username="${{ secrets.SVN_USERNAME }}" \
+          --password="${{ secrets.SVN_PASSWORD }}"

@@ -1,0 +1,224 @@
+msgid ""
+msgstr ""
+"Project-Id-Version: postfinancecheckout-woo\n"
+"Language: de_DE\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+
+msgid "PostFinance Checkout"
+msgstr "PostFinance Checkout"
+
+msgid "By PostFinance Ltd"
+msgstr "By PostFinance AG"
+
+msgid "With the PostFinance E-Payment Module, many payment methods for your online business are available in the Checkout back office tool. Depending on your needs and turnover volume, you can choose a standard commission rate or negotiate the price conditions simply and directly with the acceptance partners you require. This allows you to benefit from attractive prices and many useful features (such as configuration options for fraud management, the accounting feature, payment link for in-store payments)."
+msgstr "Mit dem E-Payment-Modul von PostFinance stehen Ihnen im Backoffice-Tool von Checkout viele Zahlungsarten für Ihr Onlinegeschäft zur Verfügung. Entscheiden Sie je nach Bedürfnis und Umsatzvolumen für eine Einheitskommission oder verhandeln Sie einfach und direkt die Preiskonditionen mit den gewünschten Akzeptanzpartnern. Profitieren Sie dadurch von attraktiven Preisen sowie vielen nützlichen Funktionen (z. B. Konfigurationsmöglichkeiten im Betrugsmanagement, Buchhaltungsfeature, Payment-Link für das Einkassieren vor Ort)."
+
+msgid "Find out for yourself by testing our payment service provider solution free of charge in simulation mode. You can extend simulation mode after the 30-day trial period."
+msgstr "Überzeugen Sie sich selbst und testen Sie kostenlos unsere Payment-Service-Provider-Lösung im Simulationsmodus. Sie können den Simulationsmodus nach 30 Testtagen erneut verlängern."
+
+msgid "With our e-com bundle, you pay no set-up fee:"
+msgstr "Mit unserem E-Com-Bundle bezahlten Sie keine Einrichtungsgebühr:"
+
+msgid "https://www.postfinance.ch/en/business/products/payment-collection/online-shop/e-com-bundle.html"
+msgstr "https://www.postfinance.ch/de/unternehmen/produkte/einkassieren/onlineshop/e-com-bundle.html"
+
+msgid "PostFinance Checkout contact and support"
+msgstr "Kontakt und Support PostFinance Checkout"
+
+msgid "We are available to answer your questions and enquiries around the clock."
+msgstr "Wir stehen Ihnen gerne rund um die Uhr für Ihre Fragen und Anliegen zur Verfügung."
+
+msgid "If you have technical problems, please contact our support team directly:"
+msgstr "Bei technischen Problemen wenden Sie sich direkt an unser Support-Team:"
+
+msgid "https://www.postfinance.ch/en/support/payments/transactions/postfinance-checkout-contact-and-support.html"
+msgstr "https://www.postfinance.ch/de/support/zahlungen/transaktionen/kontakt-und-support-postfinance-checkout.html"
+
+msgid "Platform availability information"
+msgstr "Informationen Plattform-Verfügbarkeit"
+
+msgid "For up-to-date information on maintenance work and disruptions to our Checkout platform, please visit our status page. Please check this page before contacting us. You can also subscribe to the latest disruption messages by e-mail."
+msgstr "Für aktuelle Informationen zu Wartungsarbeiten oder Störungen unserer Checkout-Plattform besuchen Sie bitte unsere Status-Seite. Prüfen Sie diese Seite, bevor Sie Kontakt mit uns aufnehmen. Sie können die aktuellen Störungsmeldungen auch per E-Mail abonnieren."
+
+msgid "Go to Checkout status"
+msgstr "Weiter zu Checkout Status"
+
+msgid "Completely overhauled new version – Benefit now from the new, improved version of the plug-in, which resolves problems and uncertainties in the previous versions. The new version offers reliability and stability."
+msgstr "Komplett überarbeitete neue Version – Profitieren Sie nun von der neuen, verbesserten Version des Plugins. Probleme und Unsicherheiten der vorigen Versionen wurden darin behoben. Die neue Version bietet Sicherheit und Stabilität."
+
+msgid "Video: PostFinance"
+msgstr "Video: PostFinance"
+
+msgid "https://www.youtube.com/watch?v=yX7iERUsRMA"
+msgstr "https://www.youtube.com/watch?v=yX7iERUsRMA"
+
+msgid "Plug-in"
+msgstr "Plugin:"
+
+msgid "https://www.youtube.com/watch?v=gzPfBybvpR0"
+msgstr "https://www.youtube.com/watch?v=gzPfBybvpR0"
+
+msgid "List of supported payment methods"
+msgstr "Liste der unterstützten Zahlungsmethoden"
+
+msgid "The following payment methods can be offered with Checkout:"
+msgstr "Folgende Zahlungsarten können mit Checkout angeboten werden:"
+
+msgid "PostFinance Pay"
+msgstr "PostFinance Pay"
+
+msgid "Twint"
+msgstr "Twint"
+
+msgid "Visa"
+msgstr "VISA"
+
+msgid "Mastercard"
+msgstr "MasterCard"
+
+msgid "American Express"
+msgstr "American Express"
+
+msgid "Apple Pay"
+msgstr "Apple Pay"
+
+msgid "Click to Pay"
+msgstr "Click to Pay"
+
+msgid "Diners"
+msgstr "Diners"
+
+msgid "JCB"
+msgstr "JCB"
+
+msgid "Union Pay"
+msgstr "Union Pay"
+
+msgid "Purchase by invoice"
+msgstr "Kauf auf Rechnung"
+
+msgid "Fully automated payment in advance"
+msgstr "Vollautomatisierte Vorauskasse"
+
+msgid "eBill"
+msgstr "eBill"
+
+msgid "Others on request"
+msgstr "Weitere auf Anfrage"
+
+msgid "List of plug-in features"
+msgstr "Liste der Plugin Features"
+
+msgid "Benefit from the following features when you use Checkout:"
+msgstr "Profitieren Sie bei der Nutzung von Checkout von folgenden Features:"
+
+msgid "Personalized e-mails and documents"
+msgstr "Individualisieren von E-Mails und Dokumenten"
+
+msgid "Simple accounting"
+msgstr "Einfache Buchhaltung"
+
+msgid "Fraud management"
+msgstr "Betrugsmanagement"
+
+msgid "Set-up service for QR module with eBill"
+msgstr "Einrichtungsservice für QR-Modul mit eBill"
+
+msgid "Always at your side: self-service support"
+msgstr "Immer an Ihrer Seite: Selfservice Support"
+
+msgid "Personal support (free of charge)"
+msgstr "Persönlicher Support (kostenlos)"
+
+msgid "Creation of a payment QR code for occasional in-store payment collection"
+msgstr "Erstellen von einem Payment QR-Code für das gelegentliche Einkassieren vor Ort"
+
+msgid "Expansion with payment terminals to omnichannel for in-store payment collection"
+msgstr "Erweiterung mit Zahlterminals auf Omnichannel für das Einkassieren vor Ort"
+
+msgid "How do I get a PostFinance account?"
+msgstr "Wie komme ich zu einem PostFinance Account?"
+
+msgid "Open an account for the product you require -> Product page"
+msgstr "Eröffnen Sie einen Account für das gewünschte Produkt -> Produktseite"
+
+msgid "Configure your account and choose your preferred payment methods"
+msgstr "Konfigurieren Sie Ihren Account und wählen ihre gewünschten Zahlungsarten aus"
+
+msgid "Link the account to your WooCommerce shop"
+msgstr "Verknüpfen Sie den Account mit Ihrem Woocommerce-Shop"
+
+msgid "Conclude the necessary contracts"
+msgstr "Schliessen Sie die benötigen Verträge ab."
+
+msgid "Get started"
+msgstr "Legen Sie los."
+
+msgid "Links to instructions/tutorials"
+msgstr "Links zu Anleitungen/Tutorials"
+
+msgid "https://plugin-documentation.postfinance-checkout.ch/pfpayments/woocommerce/3.3.2/docs/en/documentation.html"
+msgstr "https://plugin-documentation.postfinance-checkout.ch/pfpayments/woocommerce/3.3.2/docs/en/documentation.html"
+
+msgid "About us"
+msgstr "Über uns"
+
+msgid "PostFinance is one of Switzerland’s leading financial institutions and is a reliable financial partner for around 2.5 million private and business customers. We offer our customers fresh solutions and smart innovations."
+msgstr "PostFinance gehört zu den führenden Finanzinstituten der Schweiz und ist für rund 2.5 Millionen Privat- und Geschäftskund:innen eine zuverlässige Finanzpartnerin. Unseren Kund:innen bieten wir frische Lösungen und smarte Innovationen."
+
+msgid "https://www.postfinance.ch/en/about-us.html"
+msgstr "https://www.postfinance.ch/de/ueber-uns.html"
+
+msgid "FAQs"
+msgstr "FAQ"
+
+msgid "You can find the most important questions and answers on our website:"
+msgstr "Die wichtigsten Fragen und Antworten finden Sie auf unserer Website:"
+
+msgid "https://www.postfinance.ch/en/support/products/onlineshop-pos/questions-about-checkout-solutions.html"
+msgstr "https://www.postfinance.ch/de/support/produkte/onlineshop-pos/fragen-zu-check-out-loesungen.html"
+
+msgid "Screenshots"
+msgstr "Screenshots"
+
+msgid "Desktop Checkout:"
+msgstr "Desktop Checkout:"
+
+msgid "Mobile Checkout:"
+msgstr "Mobile Checkout:"
+
+msgid "Backend:"
+msgstr "Backend:"
+
+msgid "Tags"
+msgstr "Tags"
+
+msgid "Twint; PostFinance; Switzerland; Checkout, Woo, WooCommerce"
+msgstr "Twint; PostFinance; Switzerland; Checkout, Woo, Woocommerce"
+
+msgid "Additional documentation for this plugin is available here:"
+msgstr "Zusätzliche Dokumentation zu diesem Plugin ist hier verfügbar:"
+
+msgid "This plugin includes an internal script to manage device verification within the WooCommerce store environment."
+msgstr "Dieses Plugin enthält ein internes Skript zur Verwaltung der Geräteüberprüfung innerhalb der WooCommerce-Store-Umgebung."
+
+msgid "Support queries can be issued on the PostFinance Checkout support site."
+msgstr "Supportanfragen können auf der PostFinance Checkout-Supportseite gestellt werden."
+
+msgid "Enquiries about our privacy policy can be made on the PostFinance Checkout privacy policies site."
+msgstr "Anfragen zu unserer Datenschutzrichtlinie können auf der PostFinance Checkout-Datenschutzseite gestellt werden."
+
+msgid "Enquiries about our terms of use can be made on the PostFinance Checkout terms of use site."
+msgstr "Anfragen zu unseren Nutzungsbedingungen können auf der PostFinance Checkout-Nutzungsbedingungsseite gestellt werden."
+
+msgid "Minimum Requirements:"
+msgstr "Mindestanforderungen:"
+
+msgid "Automatic installation steps:"
+msgstr "Automatische Installationsschritte:"
+
+msgid "Manual installation steps:"
+msgstr "Manuelle Installationsschritte:"
+
+msgid "Initial release with multilingual readme integration."
+msgstr "Erstveröffentlichung mit mehrsprachiger Readme-Integration."
