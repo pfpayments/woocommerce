@@ -462,17 +462,17 @@ msgstr "Activez cette option pour permettre aux clients de télécharger directe
 msgid "Packing Slip Download"
 msgstr "Télécharger le bordereau d'expédition"
 
-#: includes/admin/class-wc-postfinancecheckout-admin-settings-page.php:221
-msgid "Enable this setting to allow customers to download invoices directly from your shop."
-msgstr "Activez cette option pour permettre aux clients de télécharger directement les factures depuis votre boutique."
+#: includes/admin/class-wc-postfinancecheckout-admin-settings-page.php:229
+msgid "Enable this setting to allow customers to download Packing Slip directly from your shop."
+msgstr "Activez ce paramètre pour permettre aux clients de télécharger directement le bon de livraison depuis votre boutique."
 
 #: includes/admin/class-wc-postfinancecheckout-admin-settings-page.php:300
-msgid "This field allows you to apply custom styling to the payment form and payment page.\nThe styling is defined in your Space settings in the Portal."
-msgstr "Ce champ vous permet d'appliquer un style personnalisé au formulaire de paiement et à la page de paiement.\nLe style est défini dans les paramètres de votre espace dans le portail."
+msgid "This field allows you to apply custom styling to the payment form and payment page. The styling is defined in your Space settings in the Portal."
+msgstr "Ce champ vous permet d'appliquer un style personnalisé au formulaire de paiement et à la page de paiement. Le style est défini dans les paramètres de votre espace dans le portail."
 
 #: includes/admin/class-wc-postfinancecheckout-admin-settings-page.php:242
 msgid "Space View Options"
-msgstr "Space View Options"
+msgstr "Options Space View"
 
 #: includes/admin/class-wc-postfinancecheckout-admin-settings-page.php:248
 msgid "Space View Id"
@@ -889,3 +889,75 @@ msgstr "Contrôle le titre affiché au client lors du paiement."
 #: includes/class-wc-postfinancecheckout-zero-gateway.php:55
 msgid "Order completed automatically – no payment needed."
 msgstr "Commande finalisée automatiquement – aucun paiement requis."
+
+#: includes/class-wc-postfinancecheckout-subscription.php:365
+msgid "Payment Method Change"
+msgstr "Modification du mode de paiement"
+
+#: includes/class-wc-postfinancecheckout-subscription-gateway.php:242
+msgid "The token space and the configured space are not equal."
+msgstr "L’espace du jeton et l’espace configuré ne correspondent pas."
+
+#: includes/class-wc-postfinancecheckout-subscription-gateway.php:152
+msgid "The PostFinance Checkout Space Id value is required."
+msgstr "La valeur PostFinance Checkout Space Id est obligatoire."
+
+#: includes/class-wc-postfinancecheckout-subscription-gateway.php:154
+msgid "The PostFinance Checkout Space Id needs to be in the same space as configured in the main configuration."
+msgstr "La valeur PostFinance Checkout Space Id doit se trouver dans le même espace que celui configuré dans la configuration principale."
+
+#: includes/class-wc-postfinancecheckout-subscription-gateway.php:157
+msgid "The PostFinance Checkout Token Id value is required."
+msgstr "La valeur PostFinance Checkout Token Id est obligatoire."
+
+#: includes/class-wc-postfinancecheckout-subscription-gateway.php:232
+msgid "No Space Id is found."
+msgstr "Aucun Space Id n’a été trouvé."
+
+#: includes/class-wc-postfinancecheckout-subscription-gateway.php:237
+msgid "No Token Id is found."
+msgstr "Aucun Token Id n’a été trouvé."
+
+#: includes/admin/class-wc-postfinancecheckout-admin-settings-page.php:394
+msgid "Reference Options"
+msgstr "Options de référence"
+
+#: includes/admin/class-wc-postfinancecheckout-admin-settings-page.php:400
+msgid "Order Reference Type"
+msgstr "Type de référence de commande"
+
+#: includes/admin/class-wc-postfinancecheckout-admin-settings-page.php:421
+msgid "Virtual Order Status Options"
+msgstr "Options de statut de commande virtuelle"
+
+#: includes/admin/class-wc-postfinancecheckout-admin-settings-page.php:427
+msgid "Change Virtual Order Status On Completion"
+msgstr "Changer le statut de commande virtuelle à l’achèvement"
+
+#: includes/admin/class-wc-postfinancecheckout-admin-settings-page.php:483
+msgid "Enable Custom Status Mapping"
+msgstr "Activer le mappage personnalisé des statuts"
+
+#: includes/admin/class-wc-postfinancecheckout-admin-settings-page.php:484
+msgid "If enabled, custom statuses (Manual Decision, etc.) will be used instead of WooCommerce defaults."
+msgstr "Si activé, les statuts personnalisés (Décision manuelle, etc.) seront utilisés à la place des valeurs par défaut de WooCommerce."
+
+#: includes/admin/class-wc-postfinancecheckout-admin-settings-page.php:486
+msgid "Control how WooCommerce order statuses are mapped to PostFinanceCheckout transaction states."
+msgstr "Contrôlez la façon dont les statuts de commande WooCommerce sont associés aux statuts de transaction PostFinanceCheckout."
+
+#: includes/admin/class-wc-postfinancecheckout-admin-settings-page.php:491
+msgid "If enabled, custom statuses (such as Manual Decision) will be used instead of the default WooCommerce statuses."
+msgstr "Si cette option est activée, des statuts personnalisés (comme Décision manuelle) seront utilisés à la place des statuts par défaut de WooCommerce."
+
+#: includes/admin/class-wc-postfinancecheckout-admin-settings-page.php:500
+msgid "Status Mappings"
+msgstr "Correspondances de statuts"
+
+#: includes/admin/class-wc-postfinancecheckout-admin-settings-page.php:503
+msgid "Choose which WooCommerce order status should be used for each PostFinanceCheckout transaction status."
+msgstr "Choisissez quel statut de commande WooCommerce doit être utilisé pour chaque statut de transaction PostFinanceCheckout."
+
+#: views/admin-notices/subscription-plugin-deactivate.php:11
+msgid "PostFinance Checkout Subscription plugin has been deactivated because subscriptions are now handled directly by the PostFinance Checkout plugin. You can safely remove the old plugin"
+msgstr "L’extension PostFinance Checkout Subscription a été désactivée, car les abonnements sont désormais gérés directement par l’extension PostFinance Checkout. Vous pouvez supprimer sans risque l’ancien plugin."

@@ -127,6 +127,13 @@ class WC_PostFinanceCheckout_Admin {
 				'handle_woocommerce_active',
 			)
 		);
+		add_action(
+			'admin_init',
+			array(
+				$this,
+				'handle_subscription_plugin_active',
+			)
+		);
 
 		add_action(
 			'woocommerce_admin_order_actions',
@@ -171,6 +178,37 @@ class WC_PostFinanceCheckout_Admin {
 				array(
 					'WC_PostFinanceCheckout_Admin_Notices',
 					'plugin_deactivated',
+				)
+			);
+		}
+	}
+
+	/**
+	 * Handle subscriptions plugin deactivation
+	 */
+	public function handle_subscription_plugin_active() {
+
+		// Check if subscriptions integration is active.
+		if ( ! WooCommerce_PostFinanceCheckout::is_subscriptions_compatible() ) {
+			return;
+		}
+
+		$plugin_name = 'woocommerce-postfinancecheckout-subscription.php';
+		$subscriptions_legacy_plugin = WooCommerce_PostFinanceCheckout::find_plugin_path( $plugin_name );
+		// Check if legacy subscriptions plugin was found.
+		if ( ! $subscriptions_legacy_plugin ) {
+			return;
+		}
+
+		// Check if legacy subscriptions plugin is active.
+		if ( is_plugin_active( $subscriptions_legacy_plugin ) ) {
+			// Deactivate legacy subscriptions plugin.
+			deactivate_plugins( $subscriptions_legacy_plugin );
+			add_action(
+				'admin_notices',
+				array(
+					'WC_PostFinanceCheckout_Admin_Notices',
+					'subscription_plugin_deactivated',
 				)
 			);
 		}
@@ -284,8 +322,6 @@ class WC_PostFinanceCheckout_Admin {
 	 * Update the order
 	 */
 	public function update_order() {
-		ob_start();
-
 		check_ajax_referer( 'order-item', 'security' );
 
 		if ( ! current_user_can( 'edit_shop_orders' ) ) {// phpcs:ignore

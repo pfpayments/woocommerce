@@ -92,8 +92,6 @@ class WC_PostFinanceCheckout_Admin_Order_Completion {
 	 * @throws Exception Exception.
 	 */
 	public static function execute_completion() {
-		ob_start();
-
 		check_ajax_referer( 'order-item', 'security' );
 
 		if ( ! current_user_can( 'edit_shop_orders' ) ) { // phpcs:ignore

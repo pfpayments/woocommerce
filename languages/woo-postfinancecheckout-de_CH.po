@@ -488,8 +488,8 @@ msgid "Enable this setting to allow customers to download invoices directly from
 msgstr "Aktivieren Sie diese Einstellung, um Kunden das direkte Herunterladen von Rechnungen aus Ihrem Shop zu ermöglichen."
 
 #: includes/admin/class-wc-postfinancecheckout-admin-settings-page.php:300
-msgid "This field allows you to apply custom styling to the payment form and payment page.\nThe styling is defined in your Space settings in the Portal."
-msgstr "Dieses Feld ermöglicht es Ihnen, benutzerdefiniertes Styling auf das Zahlungsformular und die Zahlungsseite anzuwenden.\nDas Styling wird in den Einstellungen Ihres Space im Portal definiert."
+msgid "This field allows you to apply custom styling to the payment form and payment page. The styling is defined in your Space settings in the Portal."
+msgstr "Dieses Feld ermöglicht es Ihnen, benutzerdefiniertes Styling auf das Zahlungsformular und die Zahlungsseite anzuwenden. Das Styling wird in den Einstellungen Ihres Space im Portal definiert."
 
 #: includes/admin/class-wc-postfinancecheckout-admin-settings-page.php:228
 msgid "Packing Slip Download"
@@ -501,7 +501,7 @@ msgstr "Aktivieren Sie diese Einstellung, um Kunden das direkte Herunterladen de
 
 #: includes/admin/class-wc-postfinancecheckout-admin-settings-page.php:242
 msgid "Space View Options"
-msgstr "Space View Options"
+msgstr "Space View Optionen"
 
 #: includes/admin/class-wc-postfinancecheckout-admin-settings-page.php:248
 msgid "Space View Id"
@@ -945,3 +945,75 @@ msgstr "Legt den Titel fest, den der Kunde beim Bezahlen sieht."
 #: includes/class-wc-postfinancecheckout-zero-gateway.php:55
 msgid "Order completed automatically – no payment needed."
 msgstr "Bestellung automatisch abgeschlossen – keine Zahlung erforderlich."
+
+#: includes/class-wc-postfinancecheckout-subscription.php:365
+msgid "Payment Method Change"
+msgstr "Änderung der Zahlungsmethode"
+
+#: includes/class-wc-postfinancecheckout-subscription-gateway.php:242
+msgid "The token space and the configured space are not equal."
+msgstr "Der Tokenraum und der konfigurierte Raum sind nicht gleich."
+
+#: includes/class-wc-postfinancecheckout-subscription-gateway.php:152
+msgid "The PostFinance Checkout Space Id value is required."
+msgstr "Der Wert PostFinance Checkout Space Id ist erforderlich."
+
+#: includes/class-wc-postfinancecheckout-subscription-gateway.php:154
+msgid "The PostFinance Checkout Space Id needs to be in the same space as configured in the main configuration."
+msgstr "Die PostFinance Checkout Space Id muss in demselben Space liegen, der in der Hauptkonfiguration konfiguriert wurde."
+
+#: includes/class-wc-postfinancecheckout-subscription-gateway.php:157
+msgid "The PostFinance Checkout Token Id value is required."
+msgstr "Der Wert PostFinance Checkout Token Id ist erforderlich."
+
+#: includes/class-wc-postfinancecheckout-subscription-gateway.php:232
+msgid "No Space Id is found."
+msgstr "Es wurde keine Space Id gefunden."
+
+#: includes/class-wc-postfinancecheckout-subscription-gateway.php:237
+msgid "No Token Id is found."
+msgstr "Es wurde keine Token Id gefunden."
+
+#: includes/admin/class-wc-postfinancecheckout-admin-settings-page.php:394
+msgid "Reference Options"
+msgstr "Referenzoptionen"
+
+#: includes/admin/class-wc-postfinancecheckout-admin-settings-page.php:400
+msgid "Order Reference Type"
+msgstr "Bestellreferenz-Typ"
+
+#: includes/admin/class-wc-postfinancecheckout-admin-settings-page.php:421
+msgid "Virtual Order Status Options"
+msgstr "Optionen für den virtuellen Bestellstatus"
+
+#: includes/admin/class-wc-postfinancecheckout-admin-settings-page.php:427
+msgid "Change Virtual Order Status On Completion"
+msgstr "Virtuellen Bestellstatus bei Abschluss ändern"
+
+#: includes/admin/class-wc-postfinancecheckout-admin-settings-page.php:483
+msgid "Enable Custom Status Mapping"
+msgstr "Benutzerdefinierte Statuszuordnung aktivieren"
+
+#: includes/admin/class-wc-postfinancecheckout-admin-settings-page.php:484
+msgid "If enabled, custom statuses (Manual Decision, etc.) will be used instead of WooCommerce defaults."
+msgstr "Wenn aktiviert, werden benutzerdefinierte Status (Manuelle Entscheidung usw.) anstelle der WooCommerce-Standardwerte verwendet."
+
+#: includes/admin/class-wc-postfinancecheckout-admin-settings-page.php:486
+msgid "Control how WooCommerce order statuses are mapped to PostFinanceCheckout transaction states."
+msgstr "Steuern Sie, wie WooCommerce-Bestellstatus den PostFinanceCheckout-Transaktionsstatus zugeordnet werden."
+
+#: includes/admin/class-wc-postfinancecheckout-admin-settings-page.php:491
+msgid "If enabled, custom statuses (such as Manual Decision) will be used instead of the default WooCommerce statuses."
+msgstr "Wenn aktiviert, werden benutzerdefinierte Status (wie Manuelle Entscheidung) anstelle der standardmäßigen WooCommerce-Status verwendet."
+
+#: includes/admin/class-wc-postfinancecheckout-admin-settings-page.php:500
+msgid "Status Mappings"
+msgstr "Statuszuordnungen"
+
+#: includes/admin/class-wc-postfinancecheckout-admin-settings-page.php:503
+msgid "Choose which WooCommerce order status should be used for each PostFinanceCheckout transaction status."
+msgstr "Wählen Sie aus, welcher WooCommerce-Bestellstatus für jeden PostFinanceCheckout-Transaktionsstatus verwendet werden soll."
+
+#: views/admin-notices/subscription-plugin-deactivate.php:11
+msgid "PostFinance Checkout Subscription plugin has been deactivated because subscriptions are now handled directly by the PostFinance Checkout plugin. You can safely remove the old plugin"
+msgstr "Das PostFinance Checkout Subscription-Plugin wurde deaktiviert, da Abonnements jetzt direkt vom PostFinance Checkout-Plugin verwaltet werden. Sie können das alte Plugin bedenkenlos entfernen."

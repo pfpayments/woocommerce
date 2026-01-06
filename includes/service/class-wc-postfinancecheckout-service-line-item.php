@@ -39,7 +39,8 @@ class WC_PostFinanceCheckout_Service_Line_Item extends WC_PostFinanceCheckout_Se
 		$fees = $this->create_fee_lines_items_from_session( $cart, $currency );
 		$shipping = $this->create_shipping_line_items_from_session( $packages, $chosen_methods, $currency );
 		$coupons = $this->create_coupons_line_items_from_session();
-		$combined = array_merge( $items, $fees, $shipping, $coupons );
+		$gift_cards = $this->create_gift_card_line_items_from_session();
+		$combined = array_merge( $items, $fees, $shipping, $coupons, $gift_cards );
 
 		return WC_PostFinanceCheckout_Helper::instance()->cleanup_line_items( $combined, $cart->total, $currency );
 	}
@@ -415,7 +416,8 @@ class WC_PostFinanceCheckout_Service_Line_Item extends WC_PostFinanceCheckout_Se
 		$fees = $this->create_fee_lines_items_from_order( $order );
 		$shipping = $this->create_shipping_line_items_from_order( $order );
 		$coupons = $this->create_coupons_line_items_from_order( $order );
-		return array_merge( $items, $fees, $shipping, $coupons );
+		$gift_cards = $this->create_gift_card_line_items_from_order( $order );
+		return array_merge( $items, $fees, $shipping, $coupons, $gift_cards );
 	}
 
 	/**
@@ -987,5 +989,160 @@ class WC_PostFinanceCheckout_Service_Line_Item extends WC_PostFinanceCheckout_Se
 	 */
 	private function clean_attribute_key( $key ) {
 		return preg_replace( '/[^a-z0-9_]+/i', '_', $key );
+	}
+
+	/**
+	 * Returns the line items from the given cart for order renewal.
+	 *
+	 * @param WC_Order $order order.
+	 * @param mixed $order_total Order total.
+	 * @param \PostFinanceCheckout\Sdk\Model\AbstractTransactionPending $transaction Transaction.
+	 *
+	 * @return \PostFinanceCheckout\Sdk\Model\LineItemCreate[]
+	 * @throws WC_PostFinanceCheckout_Exception_Invalid_Transaction_Amount WC_PostFinanceCheckout_Exception_Invalid_Transaction_Amount.
+	 */
+	public function get_items_for_renewal( WC_Order $order, $order_total, \PostFinanceCheckout\Sdk\Model\AbstractTransactionPending $transaction ) {
+		$raw_items = $this->get_raw_items_from_order( $order );
+		return WC_PostFinanceCheckout_Helper::instance()->cleanup_line_items( $raw_items, $order_total, $order->get_currency(), true );
+	}
+
+	/**
+	 * Create gift card line items from the current session (checkout context).
+	 *
+	 * @return \PostFinanceCheckout\Sdk\Model\LineItemCreate[]
+	 */
+	protected function create_gift_card_line_items_from_session() {
+		if ( ! class_exists( 'WC_GC_Gift_Card_Data' ) || ! function_exists( 'WC' ) ) {
+			return array();
+		}
+
+		$gift_card_items = array();
+
+		$redeemed = WC()->session->get('_wc_gc_giftcards', []);
+
+		if ( empty( $redeemed ) ) {
+			return $gift_card_items;
+		}
+
+		foreach ( $redeemed as $item ) {
+
+			if ( isset( $item['giftcard'] ) ) {
+				if ( ! $item['giftcard'] instanceof WC_GC_Gift_Card_Data ) {
+					continue;
+				}
+			}
+
+			$data = $item['giftcard']->get_data();
+
+			$code = $data['code'] ?? 'unknown';
+
+			if ( ! $code ) {
+				continue;
+			}
+
+			// Receive the amount debited from the card for this order
+			$used_amount = $item['amount'];
+
+			if ( $used_amount <= 0 ) {
+				continue;
+			}
+
+			// Prevent rounding errors from sdk
+			$used_amount = round($used_amount, 2);
+
+			// Create Line Items for gift cards
+			$line_item = new \PostFinanceCheckout\Sdk\Model\LineItemCreate();
+			$line_item->setAmountIncludingTax( -1 * abs( $used_amount ) );
+			$line_item->setName( sprintf( __( 'Gift Card (%s)', 'woocommerce' ), $code ) );
+			$line_item->setQuantity( 1 );
+			$line_item->setShippingRequired( false );
+			$line_item->setSku( 'gift-card-' . $code );
+			$line_item->setUniqueId( 'gift-card-' . $code );
+			$line_item->setType( \PostFinanceCheckout\Sdk\Model\LineItemType::DISCOUNT );
+
+			// Zero tax for gift card
+			$tax_rate = new \PostFinanceCheckout\Sdk\Model\TaxCreate(
+				array(
+					'title' => 'Gift Card Tax',
+					'rate'  => 0,
+				)
+			);
+			$line_item->setTaxes( array( $tax_rate ) );
+
+			$gift_card_items[] = $line_item;
+		}
+
+		return $gift_card_items;
+	}
+
+	/**
+	 * Create gift card line items from an order object (used in backend or sync).
+	 *
+	 * @return \PostFinanceCheckout\Sdk\Model\LineItemCreate[]
+	 */
+	protected function create_gift_card_line_items_from_order( $order) {
+		if ( ! function_exists( 'WC_GC' ) ) {
+			return array();
+		}
+
+		$gift_card_items = array();
+
+		//Get array of strings with codes used in current order
+		$used_codes = WC_GC()->order->get_gift_cards( $order );
+
+		if ( empty( $used_codes['codes'] ) ) {
+			return $gift_card_items;
+		}
+
+		$order_gift_cards = [];
+
+		//Initialize appropriate Gift Card Objects for each code
+		foreach ( $used_codes['codes'] as $item ) {
+			$order_gift_cards[] = wc_gc_get_gift_card_by_code( $item );
+		}
+
+		if ( empty( $order_gift_cards ) ) {
+			return $gift_card_items;
+		}
+
+		$items = $order->get_items('gift_card');
+
+		foreach ( $items as $giftcard_item ) {
+
+			$code = $giftcard_item->get_code();
+
+			if ( empty( $code ) ) {
+				continue;
+			}
+
+			$used_amount = (float) $giftcard_item->get_amount();
+
+			if ( $used_amount <= 0 ) {
+				continue;
+			}
+
+			$line_item = new \PostFinanceCheckout\Sdk\Model\LineItemCreate();
+			// PostFinanceCheckout expects discounts as negative values
+			$line_item->setAmountIncludingTax( -1 * abs( $used_amount ) );
+			$line_item->setName( sprintf( __( 'Gift Card (%s)', 'woocommerce' ), $code ) );
+			$line_item->setQuantity( 1 );
+			$line_item->setShippingRequired( false );
+			$line_item->setSku( 'gift-card-' . $code );
+			$line_item->setUniqueId( 'gift-card-' . $code );
+			$line_item->setType( \PostFinanceCheckout\Sdk\Model\LineItemType::DISCOUNT );
+
+			// Zero tax for gift card
+			$tax_rate = new \PostFinanceCheckout\Sdk\Model\TaxCreate(
+				array(
+					'title' => 'Gift Card Tax',
+					'rate'  => 0,
+				)
+			);
+			$line_item->setTaxes( array( $tax_rate ) );
+
+			$gift_card_items[] = $line_item;
+		}
+
+		return $gift_card_items;
 	}
 }

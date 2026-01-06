@@ -57,7 +57,7 @@ final class WC_PostFinanceCheckout_Blocks_Support extends AbstractPaymentMethodT
 	 */
 	public function get_payment_method_script_handles() {
 		$dependencies = array();
-		$version = '3.3.23';
+		$version = '3.4.0';
 
 		wp_register_script(
 			'WooCommerce_PostFinanceCheckout_blocks_support',
@@ -101,10 +101,15 @@ final class WC_PostFinanceCheckout_Blocks_Support extends AbstractPaymentMethodT
 	public static function get_payment_methods(): array {
 		try {
 			$update_transaction = isset( $_POST['updateTransaction'] ) ? (bool) sanitize_key( wp_unslash( $_POST['updateTransaction'] ) ) : false; // phpcs:ignore WordPress.Security.NonceVerification.Missing
-
+			$enqueue_portal_scripts = isset( $_POST['enqueuePortalScripts'] ) ? (bool) sanitize_key( wp_unslash( $_POST['enqueuePortalScripts'] ) ) : false; // phpcs:ignore WordPress.Security.NonceVerification.Missing
+			
 			if ( true === $update_transaction ) {
 				$transaction_service = WC_PostFinanceCheckout_Service_Transaction::instance();
 				$transaction_service->load_and_update_transaction_from_session();
+			}
+
+			if ( true === $enqueue_portal_scripts ) {
+				self::enqueue_portal_scripts();
 			}
 
 			$payment_gateways = WC()->payment_gateways()->payment_gateways();
@@ -122,7 +127,11 @@ final class WC_PostFinanceCheckout_Blocks_Support extends AbstractPaymentMethodT
 				function ( $payment_gateway ) use ( $available_payment_methods ) {
 					$has_subscription = WC_PostFinanceCheckout_Zero_Gateway::cart_has_subscription();
 					$cartTotal = (WC()->cart && WC()->cart->total) ?? 0;
+
 					$isPaymentMethodVisibleOnCheckout = $payment_gateway->get_payment_configuration_id() === WC_PostFinanceCheckout_Zero_Gateway::ZERO_PAYMENT_CONF_ID && $cartTotal == 0;
+					$integration_mode = $payment_gateway->get_payment_configuration_id() === WC_PostFinanceCheckout_Zero_Gateway::ZERO_PAYMENT_CONF_ID
+						? WC_PostFinanceCheckout_Integration::POSTFINANCECHECKOUT_PAYMENTPAGE
+						: get_option( WooCommerce_PostFinanceCheckout::POSTFINANCECHECKOUT_CK_INTEGRATION );
 
 					if ( !$isPaymentMethodVisibleOnCheckout ) {
 						$isPaymentMethodVisibleOnCheckout = in_array( $payment_gateway->get_payment_configuration_id(), $available_payment_methods, true ) && ( $cartTotal > 0 || $has_subscription );
@@ -134,7 +143,7 @@ final class WC_PostFinanceCheckout_Blocks_Support extends AbstractPaymentMethodT
 					  'ariaLabel' => $payment_gateway->get_title(),
 					  'description' => $payment_gateway->get_description(),
 					  'configuration_id' => $payment_gateway->get_payment_configuration_id(),
-					  'integration_mode' => get_option( WooCommerce_PostFinanceCheckout::POSTFINANCECHECKOUT_CK_INTEGRATION ),
+					  'integration_mode' => $integration_mode,
 					  'supports' => $payment_gateway->supports,
 					  'icon' => $payment_gateway->get_icon(),
 					  'isActive' => $isPaymentMethodVisibleOnCheckout
@@ -203,32 +212,25 @@ final class WC_PostFinanceCheckout_Blocks_Support extends AbstractPaymentMethodT
 
 		try {
 			$js_url = '';
-			$zeroPaymentMethod = new WC_PostFinanceCheckout_Zero_Gateway();
-			if ( !$zeroPaymentMethod->is_available() || $zeroPaymentMethod->cart_has_subscription() ) {
-				$transaction_service = WC_PostFinanceCheckout_Service_Transaction::instance();
-				$transaction = $transaction_service->get_transaction_from_session();
-				switch( get_option( WooCommerce_PostFinanceCheckout::POSTFINANCECHECKOUT_CK_INTEGRATION ) ) {
-					case WC_PostFinanceCheckout_Integration::POSTFINANCECHECKOUT_IFRAME:
-						$js_url = $transaction_service->get_javascript_url_for_transaction( $transaction );
-						break;
-					case WC_PostFinanceCheckout_Integration::POSTFINANCECHECKOUT_LIGHTBOX:
-						$js_url = $transaction_service->get_lightbox_url_for_transaction( $transaction );
-						break;
-				}
+			$transaction_service = WC_PostFinanceCheckout_Service_Transaction::instance();
+			$transaction = $transaction_service->get_transaction_from_session();
+			switch( get_option( WooCommerce_PostFinanceCheckout::POSTFINANCECHECKOUT_CK_INTEGRATION ) ) {
+				case WC_PostFinanceCheckout_Integration::POSTFINANCECHECKOUT_IFRAME:
+					$js_url = $transaction_service->get_javascript_url_for_transaction( $transaction );
+					break;
+				case WC_PostFinanceCheckout_Integration::POSTFINANCECHECKOUT_LIGHTBOX:
+					$js_url = $transaction_service->get_lightbox_url_for_transaction( $transaction );
+					break;
 			}
-
-			if ( $js_url ) {
-				// Add the JS URL to the response.
-				wp_enqueue_script(
-					'postfinancecheckout-remote-checkout-js',
-					$js_url,
-					array(
-						'jquery',
-					),
-					1,
-					true
-				);
-			}
+			wp_enqueue_script(
+				'postfinancecheckout-remote-checkout-js',
+				$js_url,
+				array(
+					'jquery',
+				),
+				1,
+				true
+			);
 		} catch ( Exception $e ) {
 			WooCommerce_PostFinanceCheckout::instance()->log( $e->getMessage(), WC_Log_Levels::DEBUG );
 		}

@@ -138,8 +138,11 @@ class WC_PostFinanceCheckout_Order_Status_Adapter
 		//Build the array with the desired structure.
 		foreach ( $results as $row ) {
 			$status_label = ucfirst( str_replace( array( 'wc-', '_' ), array( '', ' ' ), $row['option_value'] ) );
-			// translators: %s represents the dynamically generated order status label.
-			$order_statuses[ $row['option_value'] ] = _x( $status_label, 'Order status', 'woocommerce' ); // phpcs:ignore
+			$order_statuses[ $row['option_value'] ] = sprintf(
+				/* translators: %s is the custom order status label stored in wp_options. */
+				_x( '%s', 'Order status label', 'woo-postfinancecheckout' ),
+				$status_label
+			);
 		}
 
 		return $order_statuses;
