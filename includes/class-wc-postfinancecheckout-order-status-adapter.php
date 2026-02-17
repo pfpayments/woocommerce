@@ -138,11 +138,7 @@ class WC_PostFinanceCheckout_Order_Status_Adapter
 		//Build the array with the desired structure.
 		foreach ( $results as $row ) {
 			$status_label = ucfirst( str_replace( array( 'wc-', '_' ), array( '', ' ' ), $row['option_value'] ) );
-			$order_statuses[ $row['option_value'] ] = sprintf(
-				/* translators: %s is the custom order status label stored in wp_options. */
-				_x( '%s', 'Order status label', 'woo-postfinancecheckout' ),
-				$status_label
-			);
+			$order_statuses[ $row['option_value'] ] = $status_label;
 		}
 
 		return $order_statuses;
@@ -385,7 +381,7 @@ class WC_PostFinanceCheckout_Order_Status_Adapter
 				}
 			}
 		}
-		
+
 		return str_replace( 'wc-', '', $status ); //Return legacy status or original (ensuring WC prefix is stripped).
 	}
 
@@ -450,7 +446,7 @@ class WC_PostFinanceCheckout_Order_Status_Adapter
 		if ( $change_setting_enabled && $is_virtual_order && $is_fulfilled ) {
 			return self::POSTFINANCECHECKOUT_STATUS_COMPLETED;
 		}
-		
+
 		// Check if the transaction status is mapped in WooCommerce
 		$mapped_status = $this->map_postfinancecheckout_status_to_woocommerce( \PostFinanceCheckout\Sdk\Model\TransactionState::FULFILL );
 

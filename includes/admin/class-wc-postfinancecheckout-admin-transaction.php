@@ -60,7 +60,7 @@ class WC_PostFinanceCheckout_Admin_Transaction {
 			: 'shop_order';
 		add_meta_box(
 			'woocommerce-order-postfinancecheckout-transaction',
-			__( 'PostFinance Checkout Transaction', 'woocommerce-postfinancecheckout' ),
+			__( 'PostFinance Checkout Transaction', 'woo-postfinancecheckout' ),
 			array(
 				__CLASS__,
 				'output',

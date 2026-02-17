@@ -3,7 +3,7 @@ Contributors: postfinancecheckout AG
 Tags: payment, PostFinance Checkout, e-commerce, invoice, psp
 Requires at least: 6.0
 Tested up to: 6.7
-Stable tag: 3.4.0
+Stable tag: 3.4.1
 License: Apache-2.0
 License URI: http://www.apache.org/licenses/LICENSE-2.0
 
@@ -81,7 +81,7 @@ Benefit from the following features when you use Checkout:
 * Get started
 
 == Links to instructions/tutorials ==
-[here](https://plugin-documentation.postfinance-checkout.ch/pfpayments/woocommerce/3.4.0/docs/en/documentation.html).
+[here](https://plugin-documentation.postfinance-checkout.ch/pfpayments/woocommerce/3.4.1/docs/en/documentation.html).
 
 == About us ==
 PostFinance is one of Switzerland’s leading financial institutions and is a reliable financial partner for around 2.5 million private and business customers. We offer our customers fresh solutions and smart innovations.
@@ -134,13 +134,11 @@ Enquiries about our terms of use can be made on the PostFinance Checkout terms o
 == Changelog ==
 Initial release with multilingual readme integration.
 
-= 3.4.0 - January 5th 2026 =
-- [Feature] Integrate subscriptions plugin
-- [Feature] Compatibility with official Woocommerce Gift Cards plugin
-- [Feature] Compatibility with Wordpress 6.9
-- [Feature] Compatibility with Woocommerce 10.4.x
-- [Bugfix] Fixed issue with 100% coupon still trying to capture payment
+= 3.4.1 - February 16th 2026 =
+- [Feature] Integrate checkout metrics
+- [Feature] 10.5 compatibility
+- [Bugfix] Fixed some rendering issues
 - [Tested Against] PHP 8.2
 - [Tested Against] Wordpress 6.9
-- [Tested Against] Woocommerce 10.4.3
+- [Tested Against] Woocommerce 10.5.1
 - [Tested Against] PHP SDK 4.8.1

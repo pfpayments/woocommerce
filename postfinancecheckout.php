@@ -3,16 +3,16 @@
  * Plugin Name: PostFinance Checkout
  * Plugin URI: https://wordpress.org/plugins/woo-postfinance-checkout
  * Description: Process WooCommerce payments with PostFinance Checkout.
- * Version: 3.4.0
+ * Version: 3.4.1
  * Author: postfinancecheckout AG
  * Author URI: https://postfinance.ch/en/business/products/e-commerce/postfinance-checkout-all-in-one.html
- * Text Domain: postfinancecheckout
+ * Text Domain: woo-postfinancecheckout
  * Domain Path: /languages/
  * Requires at least: 6.0
  * Requires PHP: 7.4
  * Requires Plugins: woocommerce
  * WC requires at least: 8.0.0
- * WC tested up to 10.4.3
+ * WC tested up to 10.5.1
  * License: Apache-2.0
  * License URI: http://www.apache.org/licenses/LICENSE-2.0
  */
@@ -43,7 +43,7 @@ if ( ! class_exists( 'WooCommerce_PostFinanceCheckout' ) ) {
 		const POSTFINANCECHECKOUT_CK_DISABLE_PENDING_EMAIL = 'wc_postfinancecheckout_disable_pending_email';
 		const POSTFINANCECHECKOUT_CK_ENABLE_CUSTOM_STATUS_MAPPING = 'wc_postfinancecheckout_enable_custom_status_mapping';
 		const POSTFINANCECHECKOUT_UPGRADE_VERSION = '3.1.1';
-		const WC_MAXIMUM_VERSION = '10.4.3';
+		const WC_MAXIMUM_VERSION = '10.5.1';
 		const REQUIRED_WC_SUBSCRIPTION_VERSION = '2.5';
 
 		/**
@@ -51,7 +51,7 @@ if ( ! class_exists( 'WooCommerce_PostFinanceCheckout' ) ) {
 		 *
 		 * @var string
 		 */
-		private $version = '3.4.0';
+		private $version = '3.4.1';
 
 		/**
 		 * The single instance of the class.
@@ -521,11 +521,6 @@ if ( ! class_exists( 'WooCommerce_PostFinanceCheckout' ) ) {
 		 * - WP_LANG_DIR/woo-postfinancecheckout/woo-postfinancecheckout-LOCALE.mo
 		 */
 		public function load_plugin_textdomain() {
-			$locale = is_admin() && function_exists( 'get_user_locale' ) ? get_user_locale() : get_locale();
-			$locale = apply_filters( 'plugin_locale', $locale, 'woo-postfinancecheckout' );
-
-			load_textdomain( 'woo-postfinancecheckout', WP_LANG_DIR . '/woo-postfinancecheckout/woo-postfinancecheckout' . $locale . '.mo' );
-			load_plugin_textdomain( 'woo-postfinancecheckout', false, plugin_basename( __DIR__ ) . '/languages' );
 		}
 
 		/**
@@ -533,8 +528,8 @@ if ( ! class_exists( 'WooCommerce_PostFinanceCheckout' ) ) {
 		 */
 		public function loaded() {
 
-			// Set up localisation.
-			$this->load_plugin_textdomain();
+			// WordPress.org will auto-load translations. No need to call load_plugin_textdomain().
+			// $this->load_plugin_textdomain();
 			add_action('plugins_loaded', function () {
 				if (class_exists('WC_Payment_Gateway')) {
 					require_once WC_POSTFINANCECHECKOUT_ABSPATH . 'includes/class-wc-postfinancecheckout-zero-gateway.php';
@@ -1480,13 +1475,17 @@ if ( ! class_exists( 'WooCommerce_PostFinanceCheckout' ) ) {
 		 * Edit through REST API is handled in woocommerce_rest_insert_product_attribute, as we can not get the rest request object otherwise.
 		 */
 		public function woocommerce_attribute_added( $attribute_id, $data ) { //phpcs:ignore
-			if ( did_action( 'product_page_product_attributes' ) ) {
-				// edit through backend form, check POST data.
-				$option_set = isset( $_POST['postfinancecheckout_attribute_option_send'] );
-				$attribute_option_send = wp_unslash( $option_set ) ?? false;
-				$send = wp_verify_nonce( $attribute_option_send ) ? 1 : 0;
-				$this->update_attribute_options( $attribute_id, $send );
+			if ( ! did_action( 'product_page_product_attributes' ) ) {
+				return;
 			}
+			$nonce = isset( $_POST['postfinancecheckout_attribute_option_send_nonce'] )
+				? sanitize_text_field( wp_unslash( $_POST['postfinancecheckout_attribute_option_send_nonce'] ) )
+				: '';
+			if ( ! $nonce || ! wp_verify_nonce( $nonce, 'postfinancecheckout_attribute_option_send' ) ) {
+				return;
+			}
+			$send = ! empty( $_POST['postfinancecheckout_attribute_option_send'] ) ? 1 : 0;
+			$this->update_attribute_options( $attribute_id, $send );
 		}
 
 		/**

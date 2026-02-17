@@ -228,20 +228,20 @@ class WC_PostFinanceCheckout_Gateway extends WC_Payment_Gateway {
 	public function init_form_fields() {
 		$this->form_fields = array(
 			'enabled' => array(
-				'title' => esc_html__( 'Enable/Disable', 'woocommerce' ),
+				'title' => esc_html__( 'Enable/Disable', 'woo-postfinancecheckout' ),
 				'type' => 'checkbox',
 				/* translators: %s: method title */
 				'label' => sprintf( esc_html__( 'Enable %s', 'woo-postfinancecheckout' ), $this->method_title ),
 				'default' => 'yes',
 			),
 			'title_value' => array(
-				'title' => esc_html__( 'Title', 'woocommerce' ),
+				'title' => esc_html__( 'Title', 'woo-postfinancecheckout' ),
 				'type' => 'info',
 				'value' => $this->get_title(),
 				'description' => esc_html__( 'This controls the title which the user sees during checkout.', 'woo-postfinancecheckout' ),
 			),
 			'description_value' => array(
-				'title' => esc_html__( 'Description', 'woocommerce' ),
+				'title' => esc_html__( 'Description', 'woo-postfinancecheckout' ),
 				'type' => 'info',
 				'value' => ! empty( $this->get_description() ) ? esc_attr( $this->get_description() ) : esc_html__( '[not set]', 'woo-postfinancecheckout' ),
 				'description' => esc_html__( 'Payment method description that the customer will see on your checkout.', 'woo-postfinancecheckout' ),
@@ -275,44 +275,43 @@ class WC_PostFinanceCheckout_Gateway extends WC_Payment_Gateway {
 	public function generate_info_html( $key, $data ) {
 		$field_key = $this->get_field_key( $key );
 		$defaults = array(
-			'title'             => '',
-			'class'             => '',
-			'css'               => '',
-			'placeholder'       => '',
-			'desc_tip'          => true,
-			'description'       => '',
+			'title' 			=> '',
+			'class' 			=> '',
+			'css' 				=> '',
+			'placeholder' 		=> '',
+			'desc_tip' 			=> true,
+			'description'		=> '',
 			'custom_attributes' => array(),
 		);
-	
 		$data = wp_parse_args( $data, $defaults );
-	
 		ob_start();
 		?>
-	<tr valign="top">
-		<th scope="row" class="titledesc">
-			<?php echo $this->get_tooltip_html( $data ); // Output the tooltip HTML directly ?>
-			<label for="<?php echo esc_attr( $field_key ); ?>"><?php echo esc_html( $data['title'] ); ?></label>
-		</th>
-		<td class="forminp">
-			<fieldset>
-				<legend class="screen-reader-text">
-					<span><?php echo esc_html( $data['title'] ); ?></span>
-				</legend>
-				<div
-					class="input-text regular-input <?php echo esc_attr( $data['class'] ); ?>"
-					id="<?php echo esc_attr( $field_key ); ?>"
-					style="<?php echo esc_attr( $data['css'] ); ?>"
-					<?php echo $this->get_custom_attribute_html( $data ); // Output custom attributes ?>
-				>
-					<?php echo wp_kses_post( $data['value'] ); ?>
-				</div>
-			</fieldset>
-		</td>
-	</tr>
+		<tr valign="top">
+			<th scope="row" class="titledesc">
+				<label for="<?php echo esc_attr( $field_key ); ?>"><?php echo esc_html( $data['title'] ); ?></label>
+				<?php echo $this->get_tooltip_html( $data ); ?>
+			</th>
+			<td class="forminp">
+				<fieldset>
+					<legend class="screen-reader-text">
+						<span><?php echo esc_html( $data['title'] ); ?></span>
+					</legend>
+					<div
+						class="input-text regular-input <?php echo esc_attr( $data['class'] ); ?>" 
+						id="<?php echo esc_attr( $field_key ); ?>" 
+						style="<?php echo esc_attr( $data['css'] ); ?>" 
+						<?php echo $this->get_custom_attribute_html( $data ); ?>
+						>
+						<?php echo wp_kses_post( $data['value'] ); ?>
+					</div>
+				</fieldset>
+			</td>
+		</tr>
 		<?php
-	
 		return ob_get_clean();
-	}	/**
+	}
+
+	/**
 	 * Validate Info Field.
 	 *
 	 * @param  string      $key Field key++.

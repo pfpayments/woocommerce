@@ -47,7 +47,7 @@ class WC_PostFinanceCheckout_Cron {
 	public static function add_custom_cron_schedule( $schedules ) {
 		$schedules['five_minutes'] = array(
 			'interval' => 300,
-			'display'  => esc_html__( 'Every Five Minutes' ),
+			'display'  => esc_html__( 'Every Five Minutes', 'woo-postfinancecheckout' ),
 		);
 		return $schedules;
 	}

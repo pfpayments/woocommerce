@@ -637,7 +637,7 @@ class WC_PostFinanceCheckout_Helper {
 		$version = WC_VERSION;
 
 		$shop_version = str_replace( 'v', '', $version );
-		$plugin_version = '3.4.0';
+		$plugin_version = '3.4.1';
 		list ($major_version, $minor_version) = explode( '.', $shop_version, 3 );
 		return array(
 			self::POSTFINANCECHECKOUT_SHOP_SYSTEM => 'woocommerce',

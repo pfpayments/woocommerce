@@ -198,7 +198,7 @@ msgstr "Einstellungen"
 
 #: includes/admin/class-wc-postfinancecheckout-admin.php:256
 #: includes/admin/class-wc-postfinancecheckout-admin.php:267
-msgid "Send attribute to PostFinance Checkout."
+msgid "Send attribute to PostFinance Checkout"
 msgstr "Eigenschaft an PostFinance Checkout senden."
 
 #: includes/admin/class-wc-postfinancecheckout-admin-refund.php:60

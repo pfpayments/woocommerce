@@ -205,7 +205,7 @@ class WC_PostFinanceCheckout_Admin_Settings_Page extends WC_Settings_Page {
 		$settings = array(
 			array(
 				'links' => array(
-					'https://plugin-documentation.postfinance-checkout.ch/pfpayments/woocommerce/3.4.0/docs/en/documentation.html' => esc_html__( 'Documentation', 'woo-postfinancecheckout' ),
+					'https://plugin-documentation.postfinance-checkout.ch/pfpayments/woocommerce/3.4.1/docs/en/documentation.html' => esc_html__( 'Documentation', 'woo-postfinancecheckout' ),
 					'https://checkout.postfinance.ch/en-ch/user/signup' => esc_html__( 'Sign Up', 'woo-postfinancecheckout' ),
 				),
 				'type'  => 'postfinancecheckout_links',
@@ -336,17 +336,12 @@ class WC_PostFinanceCheckout_Admin_Settings_Page extends WC_Settings_Page {
 
 			array(
 				'title' => esc_html__( 'Integration Type', 'woo-postfinancecheckout' ),
-				'desc_tip' => esc_html__(
-			    <<<TEXT
-				The Integration Options setting determines how the payment form is displayed during the WooCommerce checkout process. Choose the option that best suits your store’s needs:
-				
-				IFrame: Embeds the payment form directly within the WooCommerce checkout page for a seamless experience.
-				
-				Lightbox: Opens a secure popup window for customers to complete their payment without leaving the checkout page.
-				
-				Payment Page: Redirects customers to a dedicated payment page hosted by the payment provider.
-				TEXT
-				, 'woo-postfinancecheckout' ),
+				'desc_tip' => wp_kses_post(
+					__(
+					  'The Integration Options setting determines how the payment form is displayed during the WooCommerce checkout process.<br><br><strong>IFrame</strong>: Embeds the payment form directly within the WooCommerce checkout page for a seamless experience.<br><br><strong>Lightbox</strong>: Opens a secure popup window for customers to complete their payment without leaving the checkout page.<br><br><strong>Payment Page</strong>: Redirects customers to a dedicated payment page hosted by the payment provider.',
+					  'woo-postfinancecheckout'
+					)
+				),
 				'id'  => WooCommerce_PostFinanceCheckout::POSTFINANCECHECKOUT_CK_INTEGRATION,
 				'type' => 'select',
 				'css' => 'min-width:300px;',
@@ -373,12 +368,9 @@ class WC_PostFinanceCheckout_Admin_Settings_Page extends WC_Settings_Page {
 			'title' => esc_html__( 'Enforce Consistency', 'woo-postfinancecheckout' ),
 			'desc' => esc_html__( 'Enable this setting to require that the sum of all line items matches the order total value.', 'woo-postfinancecheckout' ),
 			'desc_tip' => esc_html__(
-			  <<<TEXT
-WooCommerce calculates taxes at the line-item level, which may result in minor discrepancies (typically a few cents) between the order's total tax and the displayed price. This occurs due to rounding differences during individual line-item calculations.
-
-If the "Enforce consistency" setting is enabled, the portal will automatically reject orders with such discrepancies. To avoid payment processing issues, we recommend disabling this setting unless strict tax total validation is required.
-TEXT
-			  , 'woo-postfinancecheckout' ),
+				"WooCommerce calculates taxes at the line-item level, which may result in minor discrepancies (typically a few cents) between the order's total tax and the displayed price. This occurs due to rounding differences during individual line-item calculations.\n\nIf the \"Enforce consistency\" setting is enabled, the portal will automatically reject orders with such discrepancies. To avoid payment processing issues, we recommend disabling this setting unless strict tax total validation is required.",
+				'woo-postfinancecheckout'
+			),
 			'id' => WooCommerce_PostFinanceCheckout::POSTFINANCECHECKOUT_CK_ENFORCE_CONSISTENCY,
 			'type' => 'checkbox',
 			'default' => 'yes',
@@ -507,9 +499,9 @@ TEXT
 						},
 						$woocommerce_statuses
 					),
-					/* translators: %s: replaces string */
 					'default' => esc_html( sanitize_text_field( $default_mapped_status ) ), // phpcs:ignore
 					'desc' => sprintf(
+						/* translators: %s: replaces string */
 						__( 'Set a custom WooCommerce order status to be applied automatically when a transaction is in the %s state.', 'woo-postfinancecheckout' ),
 						strtolower( $sanitized_status_label )
 					),
@@ -628,22 +620,5 @@ TEXT
 			'postfinancecheckoutOrderStatusesLocalizeScript',
 			$localized_object
 		);
-		echo '
-		<style>
-			.postfinancecheckout-status-mapping-header {
-				display: flex;
-				font-weight: 600;
-				font-size: 1.3em;
-				margin: 1em 0;
-				color: #1d2327;
-			}
-			.postfinancecheckout-status-mapping-col-left {
-				width: 200px;
-				padding-right: 24px;
-			}
-			.postfinancecheckout-status-mapping-col-right {
-				padding: 0 10px;
-			}
-		</style>';
 	}
 }
