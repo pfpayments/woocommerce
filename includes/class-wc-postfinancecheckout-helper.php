@@ -282,7 +282,7 @@ class WC_PostFinanceCheckout_Helper {
 				$sum += $line_item->getAmountIncludingTax();
 			}
 			else {
-				$sum += abs( $line_item->getAmountIncludingTax() );
+				$sum += $line_item->getAmountIncludingTax();
 			}
 		}
 		return $sum;
@@ -298,13 +298,9 @@ class WC_PostFinanceCheckout_Helper {
 	 * @throws WC_PostFinanceCheckout_Exception_Invalid_Transaction_Amount WC_PostFinanceCheckout_Exception_Invalid_Transaction_Amount.
 	 */
 	public function cleanup_line_items( array $line_items, $expected_sum, $currency, bool $is_recurrent = false ) {
-		// Check if coupon is applied to order depending whether new order is created from session, or existing order.
-		if ( $is_recurrent ) {
-			$has_coupons = apply_filters( 'wc_postfinancecheckout_packages_coupon_line_items_have_coupon_discounts', $line_items, $currency );
-		} else {
-			$has_coupons = apply_filters( 'wc_postfinancecheckout_packages_coupon_cart_has_coupon_discounts_applied', $currency ); //phpcs:ignore
-		}
-		// ensure that the effective sum coincides with the total discounted by the coupons.
+		// Check if coupon is applied to order. Session cart might be empty during webhook processing.
+		$has_coupons = apply_filters( 'wc_postfinancecheckout_packages_coupon_line_items_have_coupon_discounts', $line_items, $currency );
+ 		// ensure that the effective sum coincides with the total discounted by the coupons.
 		$effective_sum = $this->round_amount( $this->get_total_amount_including_tax( $line_items, $has_coupons ), $currency );
 		$rounded_expected_sum = $this->round_amount( $expected_sum, $currency );
 
@@ -637,7 +633,7 @@ class WC_PostFinanceCheckout_Helper {
 		$version = WC_VERSION;
 
 		$shop_version = str_replace( 'v', '', $version );
-		$plugin_version = '3.4.1';
+		$plugin_version = '3.4.2';
 		list ($major_version, $minor_version) = explode( '.', $shop_version, 3 );
 		return array(
 			self::POSTFINANCECHECKOUT_SHOP_SYSTEM => 'woocommerce',
@@ -700,7 +696,7 @@ class WC_PostFinanceCheckout_Helper {
 	 * @return void
 	 */
 	public static function set_virtual_zero_total_orders_to_complete( $order ) {
-		if ( 'yes' === get_option( WooCommerce_PostFinanceCheckout::POSTFINANCECHECKOUT_CK_CHANGE_ORDER_STATUS ) 
+		if ( 'yes' === get_option( WooCommerce_PostFinanceCheckout::POSTFINANCECHECKOUT_CK_CHANGE_ORDER_STATUS )
 		&& $order->get_total() <= 0 && self::is_order_virtual( $order ) ) {
 			$order->update_status( 'completed' );
 		}

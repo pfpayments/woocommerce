@@ -38,15 +38,7 @@ class WC_PostFinanceCheckout_Packages_Coupon_Discount {
 			10,
 			4
 		);
-		add_filter(
-			'wc_postfinancecheckout_packages_coupon_discount_totals_including_tax_from_cart',
-			array(
-				__CLASS__,
-				'get_coupons_discount_totals_including_tax_from_cart',
-			),
-			10,
-			1
-		);
+
 		add_filter(
 			'wc_postfinancecheckout_packages_coupon_discount_totals_including_tax_from_line_items',
 			array(
@@ -56,15 +48,7 @@ class WC_PostFinanceCheckout_Packages_Coupon_Discount {
 			10,
 			2
 		);
-		add_filter(
-			'wc_postfinancecheckout_packages_coupon_cart_has_coupon_discounts_applied',
-			array(
-				__CLASS__,
-				'cart_has_coupon_discounts_applied',
-			),
-			10,
-			1
-		);
+
 		add_filter(
 			'wc_postfinancecheckout_packages_coupon_line_items_have_coupon_discounts',
 			array(
@@ -119,55 +103,6 @@ class WC_PostFinanceCheckout_Packages_Coupon_Discount {
 		return $item;
 	}
 
-	/**
-	 * Get the total coupons discounts amount applied to the cart.
-	 *
-	 * @param string $currency The currency code.
-	 * @return float|int The total coupons' discounts' amount including tax.
-	 */
-	public static function get_coupons_discount_totals_including_tax_from_cart( $currency ) {
-		$coupons_discount_total = 0;
-
-		// guard clause if the order doesn't exists, nothing to do here.
-		$session = WC()->session;
-		if ( ! class_exists( 'WC_Session' ) || ! ( $session instanceof WC_Session ) ) {
-			return $coupons_discount_total;
-		}
-
-		$order_id = $session->get( 'postfinancecheckout_order_id' );
-		$cart = WC()->cart;
-		if ( ! class_exists( 'WC_Cart' ) || ! ( $cart instanceof WC_Cart ) ) {
-			return $coupons_discount_total;
-		}
-		if ( $cart->get_cart_contents_count() == 0 && ! is_null( $order_id ) ) {
-			$order = wc_get_order( $order_id );
-			if ( $order ) {
-				$coupons_discount_total += $order->get_total_discount();
-			}
-		}
-
-		// guard clause if the cart is empty, nothing to do here. This applies to subscription renewals.
-		if ( empty( $cart->get_cart_contents_count() ) ) {
-			return $coupons_discount_total;
-		}
-
-		foreach ( $cart->get_coupon_discount_totals() as $coupon_discount_total ) {
-			$coupons_discount_total += WC_PostFinanceCheckout_Helper::instance()->round_amount( $coupon_discount_total, $currency );
-		}
-
-		return $coupons_discount_total;
-	}
-
-	/**
-	 * Check if the cart has any coupons.
-	 *
-	 * @param string $currency currency.
-	 * @return bool
-	 */
-	public static function cart_has_coupon_discounts_applied( $currency ) {
-		$discount = apply_filters( 'wc_postfinancecheckout_packages_coupon_discount_totals_including_tax_from_cart', $currency ); //phpcs:ignore
-		return $discount > 0;
-	}
 
 	/**
 	 * Get the total coupons discounts amount from line items.

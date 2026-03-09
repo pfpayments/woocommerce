@@ -935,6 +935,10 @@ class WC_PostFinanceCheckout_Service_Line_Item extends WC_PostFinanceCheckout_Se
 		foreach ( $products_to_check as $id ) {
 			$product = wc_get_product( $id );
 
+			if ( ! $product instanceof WC_Product ) {
+				continue;
+			}
+
 			$product_attributes = $product->get_attributes( 'edit' );
 
 			// code block to do check for ean code for invoice.
