@@ -159,6 +159,21 @@
 	float: left;
 }
 
+.postfinancecheckout-status-mapping-header {
+	display: flex;
+	font-weight: 600;
+	font-size: 1.3em;
+	margin: 1em 0;
+	color: #1d2327;
+}
+.postfinancecheckout-status-mapping-col-left {
+	width: 200px;
+	padding-right: 24px;
+}
+.postfinancecheckout-status-mapping-col-right {
+	padding: 0 10px;
+}
+
 .postfinancecheckout-refund-state-pending {
 	background-color: rgba(255, 186, 0, 0.55);
 }
@@ -166,3 +181,4 @@
 .postfinancecheckout-refund-state-failue {
 	background-color: rgba(170, 0, 0, 0.55);
 }
+

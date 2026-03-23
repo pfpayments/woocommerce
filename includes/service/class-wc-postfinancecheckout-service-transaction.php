@@ -458,11 +458,15 @@ class WC_PostFinanceCheckout_Service_Transaction extends WC_PostFinanceCheckout_
 				}
 
 				$integration_method = get_option( WooCommerce_PostFinanceCheckout::POSTFINANCECHECKOUT_CK_INTEGRATION );
+
+				$this->add_performance_metrics_headers( $this->get_transaction_service()->getApiClient() );
+
 				$payment_methods = $this->get_transaction_service()->fetchPaymentMethods(
 					$transaction->getLinkedSpaceId(),
 					$transaction->getId(),
 					$integration_method
 				);
+				$this->store_performance_metric( 'payment_methods', microtime( true ), $transaction->getId() );
 
 				$method_configuration_service = WC_PostFinanceCheckout_Service_Method_Configuration::instance();
 				$possible_methods = array();
@@ -547,6 +551,9 @@ class WC_PostFinanceCheckout_Service_Transaction extends WC_PostFinanceCheckout_
 				$this->assemble_order_transaction_data( $order, $pending_transaction );
 				$pending_transaction->setAllowedPaymentMethodConfigurations( array( $method_configuration_id ) );
 				$pending_transaction = apply_filters( 'wc_postfinancecheckout_modify_confirm_transaction', $pending_transaction, $order ); //phpcs:ignore
+
+				$this->add_performance_metrics_headers( $this->get_transaction_service()->getApiClient() );
+
 				return $this->get_transaction_service()->confirm( $space_id, $pending_transaction );
 			} catch ( \Exception $e ) {
 				$last = $e;
@@ -561,9 +568,10 @@ class WC_PostFinanceCheckout_Service_Transaction extends WC_PostFinanceCheckout_
 	 *
 	 * @param WC_Order                                                    $order order.
 	 * @param \PostFinanceCheckout\Sdk\Model\AbstractTransactionPending $transaction transaction.
+	 * @param bool $set_line_items Set line items.
 	 * @throws WC_PostFinanceCheckout_Exception_Invalid_Transaction_Amount WC_PostFinanceCheckout_Exception_Invalid_Transaction_Amount.
 	 */
-	protected function assemble_order_transaction_data( WC_Order $order, \PostFinanceCheckout\Sdk\Model\AbstractTransactionPending $transaction ) {
+	protected function assemble_order_transaction_data( WC_Order $order, \PostFinanceCheckout\Sdk\Model\AbstractTransactionPending $transaction, bool $set_line_items = true ) {
 		$transaction->setCurrency( $order->get_currency() );
 		$transaction->setBillingAddress( $this->get_order_billing_address( $order ) );
 		$transaction->setShippingAddress( $this->get_order_shipping_address( $order ) );
@@ -586,7 +594,9 @@ class WC_PostFinanceCheckout_Service_Transaction extends WC_PostFinanceCheckout_
 		$order_reference = $this->getOrderReference( $order );
 		$transaction->setMerchantReference( $order_reference );
 		$transaction->setInvoiceMerchantReference( $this->fix_length( $this->remove_non_ascii( $order->get_order_number() ), 100 ) );
-		$this->set_order_line_items( $order, $transaction );
+		if ( $set_line_items ) {
+			$this->set_order_line_items( $order, $transaction );
+		}
 		$this->set_order_return_urls( $order, $transaction );
 	}
 
@@ -857,7 +867,10 @@ class WC_PostFinanceCheckout_Service_Transaction extends WC_PostFinanceCheckout_
 		}
 		$this->assemble_order_transaction_data( $order, $create_transaction );
 		$create_transaction = apply_filters( 'wc_postfinancecheckout_modify_order_create_transaction', $create_transaction, $order ); //phpcs:ignore
+
 		$transaction = $this->get_transaction_service()->create( $space_id, $create_transaction );
+		$this->store_performance_metric( 'transaction_create', microtime( true ), $transaction->getId() );
+
 		$this->update_transaction_info( $transaction, $order );
 		$this->store_transaction_ids_in_session( $transaction );
 
@@ -885,7 +898,10 @@ class WC_PostFinanceCheckout_Service_Transaction extends WC_PostFinanceCheckout_
 		}
 		$this->assemble_session_transaction_data( $create_transaction );
 		$create_transaction = apply_filters( 'wc_postfinancecheckout_modify_session_create_transaction', $create_transaction ); //phpcs:ignore
+
 		$transaction = $this->get_transaction_service()->create( $space_id, $create_transaction );
+		$this->store_performance_metric( 'transaction_create', microtime( true ), $transaction->getId() );
+
 		$this->store_transaction_ids_in_session( $transaction );
 		return $transaction;
 	}
@@ -915,7 +931,11 @@ class WC_PostFinanceCheckout_Service_Transaction extends WC_PostFinanceCheckout_
 				$pending_transaction->setVersion( $transaction->getVersion() );
 				$this->assemble_order_transaction_data( $order, $pending_transaction );
 				$pending_transaction = apply_filters( 'wc_postfinancecheckout_modify_order_pending_transaction', $pending_transaction, $order ); //phpcs:ignore
-				return $this->get_transaction_service()->update( $space_id, $pending_transaction );
+
+				$updated_transaction = $this->get_transaction_service()->update( $space_id, $pending_transaction );
+				$this->store_performance_metric( 'transaction_update', microtime( true ), $updated_transaction->getId() );
+
+				return $updated_transaction;
 			} catch ( \Exception $e ) {
 				$last = $e;
 			}
@@ -951,7 +971,11 @@ class WC_PostFinanceCheckout_Service_Transaction extends WC_PostFinanceCheckout_
 				$pending_transaction->setVersion( $transaction->getVersion() );
 				$this->assemble_session_transaction_data( $pending_transaction );
 				$pending_transaction = apply_filters( 'wc_postfinancecheckout_modify_session_pending_transaction', $pending_transaction ); //phpcs:ignore
-				return $this->get_transaction_service()->update( $space_id, $pending_transaction );
+
+				$updated_transaction = $this->get_transaction_service()->update( $space_id, $pending_transaction );
+				$this->store_performance_metric( 'transaction_update', microtime( true ), $updated_transaction->getId() );
+
+				return $updated_transaction;
 			} catch ( \Exception $e ) {
 				$last = $e;
 			}
@@ -1176,6 +1200,145 @@ class WC_PostFinanceCheckout_Service_Transaction extends WC_PostFinanceCheckout_
 			} elseif ( strtolower( $gender_string ) == 'f' || strtolower( $gender_string ) == 'female' ) {
 				$address->setGender( \PostFinanceCheckout\Sdk\Model\Gender::FEMALE );
 			}
+		}
+	}
+
+	/**
+	 * Set modified order line items.
+	 *
+	 * @param WC_Order                                                    $order       Order.
+	 * @param mixed                                                       $order_total Order total.
+	 * @param \PostFinanceCheckout\Sdk\Model\AbstractTransactionPending $transaction Transaction.
+	 *
+	 * @return void
+	 */
+	protected function set_modified_order_line_items( WC_Order $order, $order_total, \PostFinanceCheckout\Sdk\Model\AbstractTransactionPending $transaction ) {
+		$transaction->setLineItems( WC_PostFinanceCheckout_Service_Line_Item::instance()->get_items_for_renewal( $order, $order_total, $transaction ) );
+	}
+
+	/**
+	 * Creates a transaction for the given order.
+	 *
+	 * @param WC_Order $order Order.
+	 * @param mixed $order_total Order total.
+	 * @param int $token_id Token id.
+	 *
+	 * @return \PostFinanceCheckout\Sdk\Model\Transaction
+	 * @throws Exception
+	 * 	 If the transaction being created is not valid.
+	 */
+	public function create_transaction_by_renewal_order( WC_Order $order, $order_total, $token_id ) {
+		$space_id = get_option( WooCommerce_PostFinanceCheckout::POSTFINANCECHECKOUT_CK_SPACE_ID );
+		$create_transaction = new \PostFinanceCheckout\Sdk\Model\TransactionCreate();
+		$create_transaction->setCustomersPresence( \PostFinanceCheckout\Sdk\Model\CustomersPresence::VIRTUAL_PRESENT );
+		$space_view_id = get_option( WooCommerce_PostFinanceCheckout::POSTFINANCECHECKOUT_CK_SPACE_VIEW_ID );
+		if ( is_numeric( $space_view_id ) ) {
+			$create_transaction->setSpaceViewId( $space_view_id );
+		}
+		$create_transaction->setToken( $token_id );
+		$this->assemble_order_transaction_data( $order, $create_transaction, false );
+		$this->set_modified_order_line_items( $order, $order_total, $create_transaction );
+
+		$create_transaction = apply_filters( 'wc_postfinancecheckout_subscription_create_transaction', $create_transaction, $order );
+		if (!$create_transaction->valid()) {
+			throw new Exception("The transaction you are trying to create is not valid.");
+		}
+		WC_PostFinanceCheckout_Helper::instance()->add_headers( $this->api_client, [
+			WC_PostFinanceCheckout_Helper::SUBSCRIPTION_TRANSACTION => true
+		]);
+		$transaction = $this->get_transaction_service()->create( $space_id, $create_transaction );
+		$this->update_transaction_info( $transaction, $order );
+		return $transaction;
+	}
+
+	/**
+	 * Creates a transaction for the given order.
+	 *
+	 * @param WC_Order                                     $order       Order.
+	 * @param mixed                                        $order_total Order total.
+	 * @param int                                          $token_id    Token id.
+	 * @param \PostFinanceCheckout\Sdk\Model\Transaction $transaction Transaction.
+	 *
+	 * @return \PostFinanceCheckout\Sdk\Model\Transaction
+	 *
+	 * @throws Exception Exception.
+	 */
+	public function update_transaction_by_renewal_order( WC_Order $order, $order_total, $token_id, \PostFinanceCheckout\Sdk\Model\Transaction $transaction ) {
+		$last = new \PostFinanceCheckout\Sdk\VersioningException();
+		for ( $i = 0; $i < 5; $i++ ) {
+			try {
+				$pending_transaction = new \PostFinanceCheckout\Sdk\Model\TransactionPending();
+				$pending_transaction->setId( $transaction->getId() );
+				$pending_transaction->setVersion( $transaction->getVersion() );
+				$pending_transaction->setToken( $token_id );
+				$this->assemble_order_transaction_data( $order, $pending_transaction, false );
+				$this->set_modified_order_line_items( $order, $order_total, $pending_transaction );
+				$pending_transaction = apply_filters( 'wc_postfinancecheckout_subscription_update_transaction', $pending_transaction, $order );
+				WC_PostFinanceCheckout_Helper::instance()->add_headers( $this->api_client, [
+					WC_PostFinanceCheckout_Helper::SUBSCRIPTION_TRANSACTION => true
+				]);
+				return $this->get_transaction_service()->update( $transaction->getLinkedSpaceId(), $pending_transaction );
+			} catch ( \PostFinanceCheckout\Sdk\VersioningException $e ) {
+				$last = $e;
+			}
+		}
+		throw $last;
+	}
+
+	/**
+	 * Process transaction without user interaction.
+	 *
+	 * @param mixed $space_id       Space id.
+	 * @param mixed $transaction_id Transaction id.
+	 *
+	 * @return mixed
+	 */
+	public function process_transaction_without_user_interaction( $space_id, $transaction_id ) {
+		return $this->get_transaction_service()->processWithoutUserInteraction( $space_id, $transaction_id );
+	}
+
+	/**
+	 * Stores a performance metric in the session.
+	 *
+	 * @param string $metric The name of the metric.
+	 * @param float  $timestamp The timestamp.
+	 * @param int    $transaction_id The transaction id.
+	 */
+	public function store_performance_metric( $metric, $timestamp, $transaction_id ) {
+		$session = WC()->session;
+		if ( ! $session ) {
+			return;
+		}
+		$metrics = $session->get( 'postfinancecheckout_performance_metrics', array() );
+		$metrics[] = array(
+			'metric' => $metric,
+			'timestamp' => $timestamp,
+			'transaction_id' => $transaction_id,
+		);
+		$session->set( 'postfinancecheckout_performance_metrics', $metrics );
+	}
+
+	/**
+	 * Adds performance metrics headers to the API client.
+	 *
+	 * @param \PostFinanceCheckout\Sdk\ApiClient $api_client The API client.
+	 */
+	private function add_performance_metrics_headers( \PostFinanceCheckout\Sdk\ApiClient $api_client ) {
+		$session = WC()->session;
+		if ( ! $session ) {
+			return;
+		}
+		$metrics = $session->get( 'postfinancecheckout_performance_metrics', array() );
+		foreach ( $metrics as $index => $metric_data ) {
+			$metric = str_replace( '_', '-', $metric_data['metric'] );
+			$header_name = 'x-meta-time-' . $index . '-' . $metric;
+			$header_value = json_encode(
+				array(
+					'transaction_id' => $metric_data['transaction_id'],
+					'timestamp' => $metric_data['timestamp'],
+				)
+			);
+			$api_client->addDefaultHeader( $header_name, $header_value );
 		}
 	}
 }

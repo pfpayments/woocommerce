@@ -205,7 +205,7 @@ class WC_PostFinanceCheckout_Admin_Settings_Page extends WC_Settings_Page {
 		$settings = array(
 			array(
 				'links' => array(
-					'https://plugin-documentation.postfinance-checkout.ch/pfpayments/woocommerce/3.3.23/docs/en/documentation.html' => esc_html__( 'Documentation', 'woo-postfinancecheckout' ),
+					'https://plugin-documentation.postfinance-checkout.ch/pfpayments/woocommerce/3.4.2/docs/en/documentation.html' => esc_html__( 'Documentation', 'woo-postfinancecheckout' ),
 					'https://checkout.postfinance.ch/en-ch/user/signup' => esc_html__( 'Sign Up', 'woo-postfinancecheckout' ),
 				),
 				'type'  => 'postfinancecheckout_links',
@@ -317,7 +317,7 @@ class WC_PostFinanceCheckout_Admin_Settings_Page extends WC_Settings_Page {
 
 			array(
 				'title' => esc_html__( 'Space View Id', 'woo-postfinancecheckout' ),
-				'desc_tip' => esc_html__( 'This field allows you to apply custom styling to the payment form and payment page.\nThe styling is defined in your Space settings in the Portal.', 'woo-postfinancecheckout' ),
+				'desc_tip' => esc_html__( 'This field allows you to apply custom styling to the payment form and payment page. The styling is defined in your Space settings in the Portal.', 'woo-postfinancecheckout' ),
 				'id' => WooCommerce_PostFinanceCheckout::POSTFINANCECHECKOUT_CK_SPACE_VIEW_ID,
 				'type' => 'number',
 				'css' => 'min-width:300px;',
@@ -336,17 +336,12 @@ class WC_PostFinanceCheckout_Admin_Settings_Page extends WC_Settings_Page {
 
 			array(
 				'title' => esc_html__( 'Integration Type', 'woo-postfinancecheckout' ),
-				'desc_tip' => esc_html__(
-			    <<<TEXT
-				The Integration Options setting determines how the payment form is displayed during the WooCommerce checkout process. Choose the option that best suits your store’s needs:
-				
-				IFrame: Embeds the payment form directly within the WooCommerce checkout page for a seamless experience.
-				
-				Lightbox: Opens a secure popup window for customers to complete their payment without leaving the checkout page.
-				
-				Payment Page: Redirects customers to a dedicated payment page hosted by the payment provider.
-				TEXT
-				, 'woo-postfinancecheckout' ),
+				'desc_tip' => wp_kses_post(
+					__(
+					  'The Integration Options setting determines how the payment form is displayed during the WooCommerce checkout process.<br><br><strong>IFrame</strong>: Embeds the payment form directly within the WooCommerce checkout page for a seamless experience.<br><br><strong>Lightbox</strong>: Opens a secure popup window for customers to complete their payment without leaving the checkout page.<br><br><strong>Payment Page</strong>: Redirects customers to a dedicated payment page hosted by the payment provider.',
+					  'woo-postfinancecheckout'
+					)
+				),
 				'id'  => WooCommerce_PostFinanceCheckout::POSTFINANCECHECKOUT_CK_INTEGRATION,
 				'type' => 'select',
 				'css' => 'min-width:300px;',
@@ -373,12 +368,9 @@ class WC_PostFinanceCheckout_Admin_Settings_Page extends WC_Settings_Page {
 			'title' => esc_html__( 'Enforce Consistency', 'woo-postfinancecheckout' ),
 			'desc' => esc_html__( 'Enable this setting to require that the sum of all line items matches the order total value.', 'woo-postfinancecheckout' ),
 			'desc_tip' => esc_html__(
-			  <<<TEXT
-WooCommerce calculates taxes at the line-item level, which may result in minor discrepancies (typically a few cents) between the order's total tax and the displayed price. This occurs due to rounding differences during individual line-item calculations.
-
-If the "Enforce consistency" setting is enabled, the portal will automatically reject orders with such discrepancies. To avoid payment processing issues, we recommend disabling this setting unless strict tax total validation is required.
-TEXT
-			  , 'woo-postfinancecheckout' ),
+				"WooCommerce calculates taxes at the line-item level, which may result in minor discrepancies (typically a few cents) between the order's total tax and the displayed price. This occurs due to rounding differences during individual line-item calculations.\n\nIf the \"Enforce consistency\" setting is enabled, the portal will automatically reject orders with such discrepancies. To avoid payment processing issues, we recommend disabling this setting unless strict tax total validation is required.",
+				'woo-postfinancecheckout'
+			),
 			'id' => WooCommerce_PostFinanceCheckout::POSTFINANCECHECKOUT_CK_ENFORCE_CONSISTENCY,
 			'type' => 'checkbox',
 			'default' => 'yes',
@@ -451,58 +443,79 @@ TEXT
 		$is_custom_status_mapping_enabled = WC_PostFinanceCheckout_Helper::is_custom_status_mapping_enabled();
 
 		$settings[] = array(
-		  'title'   => esc_html__( 'Enable Custom Status Mapping', 'woo-postfinancecheckout' ),
-		  'desc'    => esc_html__( 'If enabled, custom statuses (Manual Decision, etc.) will be used instead of WooCommerce defaults.', 'woo-postfinancecheckout' ),
-		  'id'      => WooCommerce_PostFinanceCheckout::POSTFINANCECHECKOUT_CK_ENABLE_CUSTOM_STATUS_MAPPING,
-		  'type'    => 'checkbox',
-		  'default' => 'no',
-		  'css'     => 'min-width:300px;',
+			'title' => esc_html__( 'Order Status Settings', 'woo-postfinancecheckout' ),
+			'type' => 'title',
+			'id' => 'order_status_mapping_options',
+			'desc' => esc_html__( 'Control how WooCommerce order statuses are mapped to PostFinanceCheckout transaction states.', 'woo-postfinancecheckout' ),
 		);
 
 		$settings[] = array(
-			'title' => __( 'Order Status Settings', 'woo-postfinancecheckout' ),
-			'type' => 'title',
-			'id' => 'order_status_mapping_options',
-			'desc' => $is_custom_status_mapping_enabled
-				? __( 'Map WooCommerce Order Statuses to PostFinanceCheckout Transaction Statuses to ensure seamless integration and consistent order tracking across both platforms.', 'woo-postfinancecheckout' ) . '
-					<table class="form-table" style="width: 100%;">
-						<thead>
-							<tr style="">
-								<th scope="row" class="titledesc">' . __( 'PostFinanceCheckout payment status', 'woo-postfinancecheckout' ) . '</th>
-								<th class="forminp forminp-select" style="width: 100%;"><label style="margin: 0 10px;">' . __( 'WooCommerce Order Status', 'woo-postfinancecheckout' ) . '</label></th>
-							</tr>
-						</thead>
-					</table>'
-				: __( 'Custom statuses are disabled. Enable custom status mapping above to configure individual mappings.', 'woo-postfinancecheckout' ),
+			'title' => esc_html__( 'Enable Custom Status Mapping', 'woo-postfinancecheckout' ),
+			'desc' => esc_html__( 'If enabled, custom statuses (such as Manual Decision) will be used instead of the default WooCommerce statuses.', 'woo-postfinancecheckout' ),
+			'id' => WooCommerce_PostFinanceCheckout::POSTFINANCECHECKOUT_CK_ENABLE_CUSTOM_STATUS_MAPPING,
+			'type'    => 'checkbox',
+			'default' => 'no',
+			'css'     => 'min-width:300px;',
 		);
 
 		if ( $is_custom_status_mapping_enabled ) {
+			$settings[] = array(
+				'title' => esc_html__( 'Status Mappings', 'woo-postfinancecheckout' ),
+				'type' => 'title',
+				'id' => 'order_status_mappings',
+				'desc' => esc_html__( 'Choose which WooCommerce order status should be used for each PostFinanceCheckout transaction status.', 'woo-postfinancecheckout' ),
+			);
+
+			$settings[] = array(
+				'title' => '',
+				'type' => 'title',
+				'id' => 'order_status_mappings_header',
+				'desc'  => sprintf(
+					'<div class="postfinancecheckout-status-mapping-header">
+						<span class="postfinancecheckout-status-mapping-col-left">%s</span>
+						<span class="postfinancecheckout-status-mapping-col-right">%s</span>
+					</div>'
+					,
+					esc_html__( 'PostFinanceCheckout payment status', 'woo-postfinancecheckout' ),
+					esc_html__( 'WooCommerce Order Status', 'woo-postfinancecheckout' )
+				),
+			);
+
 			$woocommerce_statuses = apply_filters( 'postfinancecheckout_woocommerce_statuses', array() );
 			$postfinancecheckout_statuses = apply_filters( 'postfinancecheckout_order_statuses', array() );
 			$default_mappings = apply_filters( 'postfinancecheckout_default_order_status_mappings', array() );
 
 			foreach ( $postfinancecheckout_statuses as $status_key => $status_label ) {
 				$default_mapped_status = isset( $default_mappings[ $status_key ] ) ? $default_mappings[ $status_key ] : '';
+				$sanitized_status_label = sanitize_text_field( $status_label );
 
 				$settings[] = array(
-					'title' => __( $status_label, 'woo-postfinancecheckout' ), // phpcs:ignore
+					'title' => esc_html( $sanitized_status_label ),
 					'id' => WC_PostFinanceCheckout_Order_Status_Adapter::POSTFINANCECHECKOUT_ORDER_STATUS_MAPPING_PREFIX . $status_key,
 					'type' => 'select',
-					'options' => array_map( function ( $status ) {
-							return __( $status, 'woo-postfinancecheckout' ); // phpcs:ignore
+					'options' => array_map(
+						function ( $status ) {
+							return esc_html( sanitize_text_field( $status ) );
 						},
 						$woocommerce_statuses
 					),
-					/* translators: %s: replaces string */
-					'default' => sprintf( __( '%s', 'woo-postfinancecheckout' ), $default_mapped_status ), // phpcs:ignore
-					'desc' => sprintf( __( 'Set a custom WooCommerce order status to be applied automatically when a transaction is in the %s state.', 'woo-postfinancecheckout' ), strtolower( __( $status_label, 'woo-postfinancecheckout' ) ) ), // phpcs:ignore
+					'default' => esc_html( sanitize_text_field( $default_mapped_status ) ), // phpcs:ignore
+					'desc' => sprintf(
+						/* translators: %s: replaces string */
+						__( 'Set a custom WooCommerce order status to be applied automatically when a transaction is in the %s state.', 'woo-postfinancecheckout' ),
+						strtolower( $sanitized_status_label )
+					),
 				);
 			}
+			$settings[] = array(
+				'type' => 'sectionend',
+				'id' => 'order_status_mappings',
+			);
 		}
 
 		$settings[] = array(
 			'type' => 'sectionend',
-			'id' => 'status_mapping_options',
+			'id' => 'order_status_mapping_options',
 		);
 
 
@@ -556,7 +569,6 @@ TEXT
 	private function format_display_string( $display_string ) {
 		return ucwords( str_replace( '_', ' ', $display_string ) );
 	}
-
 
 	/**
 	 * Enqueue scripts.

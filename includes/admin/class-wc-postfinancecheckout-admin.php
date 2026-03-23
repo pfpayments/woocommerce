@@ -127,6 +127,13 @@ class WC_PostFinanceCheckout_Admin {
 				'handle_woocommerce_active',
 			)
 		);
+		add_action(
+			'admin_init',
+			array(
+				$this,
+				'handle_subscription_plugin_active',
+			)
+		);
 
 		add_action(
 			'woocommerce_admin_order_actions',
@@ -171,6 +178,37 @@ class WC_PostFinanceCheckout_Admin {
 				array(
 					'WC_PostFinanceCheckout_Admin_Notices',
 					'plugin_deactivated',
+				)
+			);
+		}
+	}
+
+	/**
+	 * Handle subscriptions plugin deactivation
+	 */
+	public function handle_subscription_plugin_active() {
+
+		// Check if subscriptions integration is active.
+		if ( ! WooCommerce_PostFinanceCheckout::is_subscriptions_compatible() ) {
+			return;
+		}
+
+		$plugin_name = 'woocommerce-postfinancecheckout-subscription.php';
+		$subscriptions_legacy_plugin = WooCommerce_PostFinanceCheckout::find_plugin_path( $plugin_name );
+		// Check if legacy subscriptions plugin was found.
+		if ( ! $subscriptions_legacy_plugin ) {
+			return;
+		}
+
+		// Check if legacy subscriptions plugin is active.
+		if ( is_plugin_active( $subscriptions_legacy_plugin ) ) {
+			// Deactivate legacy subscriptions plugin.
+			deactivate_plugins( $subscriptions_legacy_plugin );
+			add_action(
+				'admin_notices',
+				array(
+					'WC_PostFinanceCheckout_Admin_Notices',
+					'subscription_plugin_deactivated',
 				)
 			);
 		}
@@ -284,8 +322,6 @@ class WC_PostFinanceCheckout_Admin {
 	 * Update the order
 	 */
 	public function update_order() {
-		ob_start();
-
 		check_ajax_referer( 'order-item', 'security' );
 
 		if ( ! current_user_can( 'edit_shop_orders' ) ) {// phpcs:ignore
@@ -352,51 +388,55 @@ class WC_PostFinanceCheckout_Admin {
 	 * Display attribute options edit screen
 	 */
 	public function display_attribute_options_edit() {
-		if ( ! isset( $_GET['edit'] ) ) {// phpcs:ignore
+		if ( ! isset( $_GET['edit'] ) ) {
 			return;
 		} else {
-			$edit = esc_url_raw( wp_unslash( $_GET['edit'] ) );// phpcs:ignore
+			$edit = absint( $_GET['edit'] );
 		}
-		$edit = absint( $edit );
 		$checked = false;
 		$attribute_options = WC_PostFinanceCheckout_Entity_Attribute_Options::load_by_attribute_id( $edit );
 		if ( $attribute_options->get_id() > 0 && $attribute_options->get_send() ) {
 			$checked = true;
 		}
-		echo esc_html(
-			'<tr class="form-field form-required">
-					<th scope="row" valign="top">
-							<label for="postfinancecheckout_attribute_option_send">'
-			) . esc_html__( 'Send attribute to PostFinance Checkout.', 'woo-postfinancecheckout' ) . esc_html(
-						'</label>
-					</th>
-						<td>
-								<input name="postfinancecheckout_attribute_option_send" id="postfinancecheckout_attribute_option_send" type="checkbox" value="1" '
-			) . esc_attr( checked( $checked, true, false ) ) . esc_html(
-							'/>
-							<p class="description">'
-			) . esc_html__( 'Should this product attribute be sent to PostFinance Checkout as line item attribute?', 'woo-postfinancecheckout' ) . esc_html(
-							'</p>
-						</td>
-				</tr>'
-			);
+		?>
+		<tr class="form-field form-required">
+			<th scope="row" valign="top">
+				<label for="postfinancecheckout_attribute_option_send">
+				<?php esc_html_e( 'Send attribute to PostFinance Checkout', 'woo-postfinancecheckout' ); ?>
+				</label>
+			</th>
+			<td>
+				<?php wp_nonce_field('postfinancecheckout_attribute_option_send', 'postfinancecheckout_attribute_option_send_nonce' ); ?>
+				<input
+					name="postfinancecheckout_attribute_option_send" 
+					id="postfinancecheckout_attribute_option_send" 
+					type="checkbox" 
+					value="1"
+					<?php echo checked( $checked, true, false ); ?> >
+				<p class="description">
+					<?php esc_html_e( 'Should this product attribute be sent to PostFinance Checkout as line item attribute?', 'woo-postfinancecheckout' ); ?>
+				</p>
+			</td>
+		</tr>
+		<?php
 	}
 
 	/**
 	 * Display attribute options add screen
 	 */
 	public function display_attribute_options_add() {
-		echo esc_html(
-			'<div class="form-field">
-				<label for="postfinancecheckout_attribute_option_send"><input name="postfinancecheckout_attribute_option_send" id="postfinancecheckout_attribute_option_send" type="checkbox" value="1">'
-		) . esc_html__( 'Send attribute to PostFinance Checkout.', 'woo-postfinancecheckout' ) . esc_html(
-				'</label>
-				<p class="description">'
-		) . esc_html__( 'Should this product attribute be sent to PostFinance Checkout as line item attribute?', 'woo-postfinancecheckout' ) .
-		esc_html(
-				'</p>
-			</div>'
-		);
+		?>
+			<div class="form-field">
+				<label for="postfinancecheckout_attribute_option_send">
+					<?php wp_nonce_field('postfinancecheckout_attribute_option_send', 'postfinancecheckout_attribute_option_send_nonce' ); ?>
+					<input name="postfinancecheckout_attribute_option_send" id="postfinancecheckout_attribute_option_send" type="checkbox" value="1">
+					<?php esc_html_e( 'Send attribute to PostFinance Checkout', 'woo-postfinancecheckout' ); ?>
+				</label>
+				<p class="description">
+					<?php esc_html_e( 'Should this product attribute be sent to PostFinance Checkout as line item attribute?', 'woo-postfinancecheckout' ); ?>
+				</p>
+			</div>
+		<?php
 	}
 }
 

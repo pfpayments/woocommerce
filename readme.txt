@@ -3,7 +3,7 @@ Contributors: postfinancecheckout AG
 Tags: payment, PostFinance Checkout, e-commerce, invoice, psp
 Requires at least: 6.0
 Tested up to: 6.7
-Stable tag: 3.3.23
+Stable tag: 3.4.2
 License: Apache-2.0
 License URI: http://www.apache.org/licenses/LICENSE-2.0
 
@@ -81,7 +81,7 @@ Benefit from the following features when you use Checkout:
 * Get started
 
 == Links to instructions/tutorials ==
-[here](https://plugin-documentation.postfinance-checkout.ch/pfpayments/woocommerce/3.3.23/docs/en/documentation.html).
+[here](https://plugin-documentation.postfinance-checkout.ch/pfpayments/woocommerce/3.4.2/docs/en/documentation.html).
 
 == About us ==
 PostFinance is one of Switzerland’s leading financial institutions and is a reliable financial partner for around 2.5 million private and business customers. We offer our customers fresh solutions and smart innovations.
@@ -134,9 +134,11 @@ Enquiries about our terms of use can be made on the PostFinance Checkout terms o
 == Changelog ==
 Initial release with multilingual readme integration.
 
-= 3.3.23 - November 5th 2025 =
-- [Feature] Updated plugin metada and description
+= 3.4.2 - March 9th 2026 =
+- [Feature] Tested against Wordpress 7
+- [Bugfix] Fixed issue with rounding leading to totals discrepency
+- [Bugfix] Fixed fatal error with missing attribute when using the Polylang plugin
 - [Tested Against] PHP 8.2
-- [Tested Against] Wordpress 6.7
-- [Tested Against] Woocommerce 10.3.0
+- [Tested Against] Wordpress 7.x-beta 
+- [Tested Against] Woocommerce 10.5.1
 - [Tested Against] PHP SDK 4.8.1
