@@ -97,7 +97,7 @@ class WC_PostFinanceCheckout_Packages_Coupon_Discount {
 	 *
 	 * @return WC_Order_Item_Product $item item
 	 */
-	public static function copy_total_coupon_discount_meta_data_to_order_item( WC_Order_Item_Product $item, $cart_item_key, $values, WC_Order $order = null ) { //phpcs:ignore
+	public static function copy_total_coupon_discount_meta_data_to_order_item( WC_Order_Item_Product $item, $cart_item_key, $values, ?WC_Order $order = null ) { //phpcs:ignore
 		$coupon_discount = apply_filters( 'wc_postfinancecheckout_packages_coupon_percentage_discounts_by_item', $cart_item_key ); //phpcs:ignore
 		$item->add_meta_data( '_postfinancecheckout_coupon_discount_line_item_discounts', $coupon_discount );
 		return $item;
