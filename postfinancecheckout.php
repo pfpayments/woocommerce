@@ -1120,7 +1120,7 @@ if ( ! class_exists( 'WooCommerce_PostFinanceCheckout' ) ) {
 		 * @param WC_Order|null $order order.
 		 * @return false|mixed
 		 */
-		public function order_editable_check( $allowed, WC_Order $order = null ) {
+		public function order_editable_check( $allowed, ?WC_Order $order = null ) {
 			if ( is_null( $order ) ) {
 				return $allowed;
 			}
@@ -1137,7 +1137,7 @@ if ( ! class_exists( 'WooCommerce_PostFinanceCheckout' ) ) {
 		 * @param WC_Order|null $order order.
 		 * @return mixed
 		 */
-		public function valid_order_status_for_completion( $statuses, WC_Order $order = null ) { //phpcs:ignore
+		public function valid_order_status_for_completion( $statuses, ?WC_Order $order = null ) { //phpcs:ignore
 			if ( WC_PostFinanceCheckout_Helper::is_custom_status_mapping_enabled() ) {
 				$statuses[] = 'postfi-waiting';
 				$statuses[] = 'postfi-manual';
