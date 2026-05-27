@@ -81,8 +81,7 @@ Benefit from the following features when you use Checkout:
 * Get started
 
 == Links to instructions/tutorials ==
-[here](https://plugin-documentation.postfinance-checkout.ch/pfpayments/woocommerce/3.4.4
-/docs/en/documentation.html).
+[here](https://plugin-documentation.postfinance-checkout.ch/pfpayments/woocommerce/3.4.4/docs/en/documentation.html).
 
 == About us ==
 PostFinance is one of Switzerland’s leading financial institutions and is a reliable financial partner for around 2.5 million private and business customers. We offer our customers fresh solutions and smart innovations.
