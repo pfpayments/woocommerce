@@ -16,6 +16,8 @@
 
 defined( 'ABSPATH' ) || exit;
 
+use Automattic\WooCommerce\StoreApi\SessionHandler as StoreApiSessionHandler;
+
 /**
  * Class WC_PostFinanceCheckout_Gateway.
  * This class implements the PostFinance Checkout gateways
@@ -333,12 +335,12 @@ class WC_PostFinanceCheckout_Gateway extends WC_Payment_Gateway {
 		$checking = true;
 
 		try {
-			// Step 1: Respect parent availability
+			// Respect parent availability
 			if ( ! parent::is_available() ) {
 				return false;
 			}
 
-			// Step 2: Prevent conflict with tax rounding
+			// Prevent conflict with tax rounding
 			if ( wc_tax_enabled() && 'yes' === get_option( 'woocommerce_tax_round_at_subtotal' ) ) {
 				if ( 'yes' === get_option( WooCommerce_PostFinanceCheckout::POSTFINANCECHECKOUT_CK_ENFORCE_CONSISTENCY ) ) {
 					$error_message = esc_html__( "'WooCommerce > Settings > PostFinanceCheckout > Enforce Consistency' and 'WooCommerce > Settings > Tax > Rounding' are both enabled. Please disable at least one of them.", 'woo-postfinancecheckout' );
@@ -347,8 +349,8 @@ class WC_PostFinanceCheckout_Gateway extends WC_Payment_Gateway {
 				}
 			}
 
-			// Step 3: Use session cache if available
-			$gateway_available = WC()->session && WC()->session->has_session()
+			// Use session cache if available
+			$gateway_available = WC()->session && $this->has_session()
 				? WC()->session->get( 'postfinancecheckout_payment_gateways' )
 				: array();
 
@@ -356,7 +358,7 @@ class WC_PostFinanceCheckout_Gateway extends WC_Payment_Gateway {
 				return $gateway_available[ $this->pfc_payment_method_configuration_id ];
 			}
 
-			// Step 4: Allow admin and non-checkout pages to pass
+			// Allow admin and non-checkout pages to pass
 			if ( apply_filters(
 				'postfinancecheckout_is_method_available',
 				is_admin() || ! is_checkout() || ( isset( $GLOBALS['_postfinancecheckout_calculating'] ) && $GLOBALS['_postfinancecheckout_calculating'] ),
@@ -365,13 +367,13 @@ class WC_PostFinanceCheckout_Gateway extends WC_Payment_Gateway {
 				return $this->get_payment_method_configuration()->get_state() === WC_PostFinanceCheckout_Entity_Method_Configuration::POSTFINANCECHECKOUT_STATE_ACTIVE;
 			}
 
-			// Step 5: Handle "order received" page logic
+			// Handle "order received" page logic
 			global $wp;
 			if ( is_checkout() && isset( $wp->query_vars['order-received'] ) ) {
 				return ! empty( $gateway_available[ $this->pfc_payment_method_configuration_id ] );
 			}
 
-			// Step 6: Handle "order pay" endpoint
+			// Handle "order pay" endpoint
 			if ( apply_filters( 'wc_postfinancecheckout_is_order_pay_endpoint', is_checkout_pay_page() ) ) {
 				$order = WC_Order_Factory::get_order( $wp->query_vars['order-pay'] ?? 0 );
 				if ( ! $order ) {
@@ -382,7 +384,7 @@ class WC_PostFinanceCheckout_Gateway extends WC_Payment_Gateway {
 				$possible_methods = $this->get_safe_possible_payment_methods_for_cart();
 			}
 
-			// Step 7: Check if this gateway is among the possible ones
+			// Check if this gateway is among the possible ones
 			$possible = false;
 			foreach ( $possible_methods as $method_id ) {
 				if ( $method_id == $this->get_payment_method_configuration()->get_configuration_id() ) {
@@ -395,8 +397,8 @@ class WC_PostFinanceCheckout_Gateway extends WC_Payment_Gateway {
 				return false;
 			}
 
-			// Step 8: Cache success in session
-			if ( WC()->session && WC()->session->has_session() ) {
+			// Cache success in session
+			if ( WC()->session && $this->has_session() ) {
 				$gateway_available[ $this->pfc_payment_method_configuration_id ] = true;
 				WC()->session->set( 'postfinancecheckout_payment_gateways', $gateway_available );
 			}
@@ -465,6 +467,32 @@ class WC_PostFinanceCheckout_Gateway extends WC_Payment_Gateway {
 	 */
 	public function has_fields() {
 		return true;
+	}
+
+	/**
+	 * Check if WooCommerce session is active and has an initialized session.
+	 *
+	 * Traditional WC_Session_Handler uses cookies to check for an active session.
+	 * However, the headless Store API session handler identifies sessions using the
+	 * HTTP Cart-Token header instead, and does not implement the has_session method.
+	 * We verify the instance type to determine if a valid session exists in either context.
+	 *
+	 * @return bool
+	 */
+	private function has_session(): bool {
+		if ( ! WC()->session ) {
+			return false;
+		}
+		if ( WC()->session instanceof WC_Session_Handler ) {
+			return (bool) WC()->session->has_session();
+		}
+		if ( WC()->session instanceof StoreApiSessionHandler ) {
+			return true;
+		}
+		if ( method_exists( WC()->session, 'has_session' ) ) {
+			return (bool) WC()->session->has_session();
+		}
+		return false;
 	}
 
 	/**
