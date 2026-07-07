@@ -1,7 +1,7 @@
 <?php
 /**
  * Plugin Name: PostFinanceCheckout
- * Author: postfinancecheckout AG
+ * Author: PostFinance Ltd
  * Text Domain: postfinancecheckout
  * Domain Path: /languages/
  *
@@ -10,7 +10,7 @@
  *
  * @category Class
  * @package  PostFinanceCheckout
- * @author   postfinancecheckout AG (https://postfinance.ch/en/business/products/e-commerce/postfinance-checkout-all-in-one.html)
+ * @author   PostFinance Ltd (https://postfinance.ch/en/business/products/e-commerce/postfinance-checkout-all-in-one.html)
  * @license  http://www.apache.org/licenses/LICENSE-2.0 Apache Software License (ASL 2.0)
  */
 
@@ -56,6 +56,15 @@ class WC_PostFinanceCheckout_Webhook_Transaction_Strategy extends WC_PostFinance
 	public function process( WC_PostFinanceCheckout_Webhook_Request $request ) {
 		$order = $this->get_order( $request );
 		$entity = $this->load_entity( $request );
+
+		// retry orphaned transaction, fall back to merchant reference
+		if ( ( false === $order || ! $order->get_id() ) && $entity ) {
+			$merchant_ref = $entity->getMerchantReference();
+			if ( ! empty( $merchant_ref ) ) {
+				$order = WC_Order_Factory::get_order( (int) $merchant_ref );
+			}
+		}
+
 		if ( false != $order && $order->get_id() ) {
 			$this->process_order_related_inner( $order, $entity );
 			if ($request->get_state() === \PostFinanceCheckout\Sdk\Model\TransactionState::AUTHORIZED) {
@@ -194,6 +203,9 @@ class WC_PostFinanceCheckout_Webhook_Transaction_Strategy extends WC_PostFinance
 	 * @return void
 	 */
 	protected function decline( \PostFinanceCheckout\Sdk\Model\Transaction $transaction, WC_Order $order ) {
+		if ( $order->has_status( array( 'processing', 'completed' ) ) ) {
+			return;
+		}
 		do_action( 'wc_postfinancecheckout_declined', $transaction, $order );
 		$default_status = apply_filters( 'wc_postfinancecheckout_decline_status', 'cancelled', $order );
 		apply_filters( 'postfinancecheckout_order_update_status', $order, \PostFinanceCheckout\Sdk\Model\TransactionState::DECLINE, $default_status );
@@ -265,6 +277,9 @@ class WC_PostFinanceCheckout_Webhook_Transaction_Strategy extends WC_PostFinance
 	 * @return void
 	 */
 	protected function voided( \PostFinanceCheckout\Sdk\Model\Transaction $transaction, WC_Order $order ) {
+		if ( $order->has_status( array( 'processing', 'completed' ) ) ) {
+			return;
+		}
 		$default_status = apply_filters( 'wc_postfinancecheckout_voided_status', 'cancelled', $order );
 		apply_filters( 'postfinancecheckout_order_update_status', $order, \PostFinanceCheckout\Sdk\Model\TransactionState::VOIDED, $default_status );
 		do_action( 'wc_postfinancecheckout_voided', $transaction, $order );
