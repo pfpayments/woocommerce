@@ -57,6 +57,7 @@ jobs:
         file: ${{ vars.WORDPRESS_ORG_SLUG }}.zip
         asset_name: ${{ vars.WORDPRESS_ORG_SLUG }}
         tag: ${{ github.ref }}
+        overwrite: true
 
     - name: WordPress Plugin Deploy
       id: deploy
