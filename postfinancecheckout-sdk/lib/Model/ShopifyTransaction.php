@@ -19,6 +19,8 @@
 
 
 namespace PostFinanceCheckout\Sdk\Model;
+
+use \ArrayAccess;
 use \PostFinanceCheckout\Sdk\ObjectSerializer;
 
 /**
@@ -30,7 +32,7 @@ use \PostFinanceCheckout\Sdk\ObjectSerializer;
  * @author      wallee AG
  * @license     http://www.apache.org/licenses/LICENSE-2.0 Apache License v2
  */
-class ShopifyTransaction extends TransactionAwareEntity 
+class ShopifyTransaction implements ModelInterface, ArrayAccess
 {
     const DISCRIMINATOR = null;
 
@@ -51,7 +53,10 @@ class ShopifyTransaction extends TransactionAwareEntity
         'created_on' => '\DateTime',
         'draft_order_id' => 'string',
         'draft_order_legacy_id' => 'string',
+        'id' => 'int',
         'integration' => '\PostFinanceCheckout\Sdk\Model\ShopifyV1Integration',
+        'linked_space_id' => 'int',
+        'linked_transaction' => 'int',
         'order_legacy_id' => 'string',
         'order_name' => 'string',
         'planned_purge_date' => '\DateTime',
@@ -70,7 +75,10 @@ class ShopifyTransaction extends TransactionAwareEntity
         'created_on' => 'date-time',
         'draft_order_id' => null,
         'draft_order_legacy_id' => null,
+        'id' => 'int64',
         'integration' => null,
+        'linked_space_id' => 'int64',
+        'linked_transaction' => 'int64',
         'order_legacy_id' => null,
         'order_name' => null,
         'planned_purge_date' => 'date-time',
@@ -90,7 +98,10 @@ class ShopifyTransaction extends TransactionAwareEntity
         'created_on' => 'createdOn',
         'draft_order_id' => 'draftOrderId',
         'draft_order_legacy_id' => 'draftOrderLegacyId',
+        'id' => 'id',
         'integration' => 'integration',
+        'linked_space_id' => 'linkedSpaceId',
+        'linked_transaction' => 'linkedTransaction',
         'order_legacy_id' => 'orderLegacyId',
         'order_name' => 'orderName',
         'planned_purge_date' => 'plannedPurgeDate',
@@ -109,7 +120,10 @@ class ShopifyTransaction extends TransactionAwareEntity
         'created_on' => 'setCreatedOn',
         'draft_order_id' => 'setDraftOrderId',
         'draft_order_legacy_id' => 'setDraftOrderLegacyId',
+        'id' => 'setId',
         'integration' => 'setIntegration',
+        'linked_space_id' => 'setLinkedSpaceId',
+        'linked_transaction' => 'setLinkedTransaction',
         'order_legacy_id' => 'setOrderLegacyId',
         'order_name' => 'setOrderName',
         'planned_purge_date' => 'setPlannedPurgeDate',
@@ -128,7 +142,10 @@ class ShopifyTransaction extends TransactionAwareEntity
         'created_on' => 'getCreatedOn',
         'draft_order_id' => 'getDraftOrderId',
         'draft_order_legacy_id' => 'getDraftOrderLegacyId',
+        'id' => 'getId',
         'integration' => 'getIntegration',
+        'linked_space_id' => 'getLinkedSpaceId',
+        'linked_transaction' => 'getLinkedTransaction',
         'order_legacy_id' => 'getOrderLegacyId',
         'order_name' => 'getOrderName',
         'planned_purge_date' => 'getPlannedPurgeDate',
@@ -139,17 +156,21 @@ class ShopifyTransaction extends TransactionAwareEntity
 
     
 
+    /**
+     * Associative array for storing property values
+     *
+     * @var mixed[]
+     */
+    protected $container = [];
 
     /**
      * Constructor
      *
-     * @param mixed[] $data Associated array of property values
+     * @param mixed[]|null $data Associated array of property values
      *                      initializing the model
      */
-    public function __construct(array $data = null)
+    public function __construct(?array $data = null)
     {
-        parent::__construct($data);
-
         
         $this->container['checkout_id'] = isset($data['checkout_id']) ? $data['checkout_id'] : null;
         
@@ -159,7 +180,13 @@ class ShopifyTransaction extends TransactionAwareEntity
         
         $this->container['draft_order_legacy_id'] = isset($data['draft_order_legacy_id']) ? $data['draft_order_legacy_id'] : null;
         
+        $this->container['id'] = isset($data['id']) ? $data['id'] : null;
+        
         $this->container['integration'] = isset($data['integration']) ? $data['integration'] : null;
+        
+        $this->container['linked_space_id'] = isset($data['linked_space_id']) ? $data['linked_space_id'] : null;
+        
+        $this->container['linked_transaction'] = isset($data['linked_transaction']) ? $data['linked_transaction'] : null;
         
         $this->container['order_legacy_id'] = isset($data['order_legacy_id']) ? $data['order_legacy_id'] : null;
         
@@ -182,7 +209,7 @@ class ShopifyTransaction extends TransactionAwareEntity
      */
     public function listInvalidProperties()
     {
-        $invalidProperties = parent::listInvalidProperties();
+        $invalidProperties = [];
 
         return $invalidProperties;
     }
@@ -194,7 +221,7 @@ class ShopifyTransaction extends TransactionAwareEntity
      */
     public static function swaggerTypes()
     {
-        return self::$swaggerTypes + parent::swaggerTypes();
+        return self::$swaggerTypes;
     }
 
     /**
@@ -204,7 +231,7 @@ class ShopifyTransaction extends TransactionAwareEntity
      */
     public static function swaggerFormats()
     {
-        return self::$swaggerFormats + parent::swaggerFormats();
+        return self::$swaggerFormats;
     }
 
 
@@ -216,7 +243,7 @@ class ShopifyTransaction extends TransactionAwareEntity
      */
     public static function attributeMap()
     {
-        return parent::attributeMap() + self::$attributeMap;
+        return self::$attributeMap;
     }
 
     /**
@@ -226,7 +253,7 @@ class ShopifyTransaction extends TransactionAwareEntity
      */
     public static function setters()
     {
-        return parent::setters() + self::$setters;
+        return self::$setters;
     }
 
     /**
@@ -236,7 +263,7 @@ class ShopifyTransaction extends TransactionAwareEntity
      */
     public static function getters()
     {
-        return parent::getters() + self::$getters;
+        return self::$getters;
     }
 
     /**
@@ -365,6 +392,31 @@ class ShopifyTransaction extends TransactionAwareEntity
     
 
     /**
+     * Gets id
+     *
+     * @return int
+     */
+    public function getId()
+    {
+        return $this->container['id'];
+    }
+
+    /**
+     * Sets id
+     *
+     * @param int $id A unique identifier for the object.
+     *
+     * @return $this
+     */
+    public function setId($id)
+    {
+        $this->container['id'] = $id;
+
+        return $this;
+    }
+    
+
+    /**
      * Gets integration
      *
      * @return \PostFinanceCheckout\Sdk\Model\ShopifyV1Integration
@@ -384,6 +436,56 @@ class ShopifyTransaction extends TransactionAwareEntity
     public function setIntegration($integration)
     {
         $this->container['integration'] = $integration;
+
+        return $this;
+    }
+    
+
+    /**
+     * Gets linked_space_id
+     *
+     * @return int
+     */
+    public function getLinkedSpaceId()
+    {
+        return $this->container['linked_space_id'];
+    }
+
+    /**
+     * Sets linked_space_id
+     *
+     * @param int $linked_space_id The ID of the space this object belongs to.
+     *
+     * @return $this
+     */
+    public function setLinkedSpaceId($linked_space_id)
+    {
+        $this->container['linked_space_id'] = $linked_space_id;
+
+        return $this;
+    }
+    
+
+    /**
+     * Gets linked_transaction
+     *
+     * @return int
+     */
+    public function getLinkedTransaction()
+    {
+        return $this->container['linked_transaction'];
+    }
+
+    /**
+     * Sets linked_transaction
+     *
+     * @param int $linked_transaction The payment transaction this object is linked to.
+     *
+     * @return $this
+     */
+    public function setLinkedTransaction($linked_transaction)
+    {
+        $this->container['linked_transaction'] = $linked_transaction;
 
         return $this;
     }

@@ -191,10 +191,10 @@ class BankTransaction implements ModelInterface, ArrayAccess
     /**
      * Constructor
      *
-     * @param mixed[] $data Associated array of property values
+     * @param mixed[]|null $data Associated array of property values
      *                      initializing the model
      */
-    public function __construct(array $data = null)
+    public function __construct(?array $data = null)
     {
         
         $this->container['adjustments'] = isset($data['adjustments']) ? $data['adjustments'] : null;
@@ -347,7 +347,7 @@ class BankTransaction implements ModelInterface, ArrayAccess
     /**
      * Sets adjustments
      *
-     * @param \PostFinanceCheckout\Sdk\Model\PaymentAdjustment[] $adjustments The adjustments applied on this bank transaction.
+     * @param \PostFinanceCheckout\Sdk\Model\PaymentAdjustment[] $adjustments Adjustments are changes made to the initial transaction amount, such as fees or corrections.
      *
      * @return $this
      */
@@ -372,7 +372,7 @@ class BankTransaction implements ModelInterface, ArrayAccess
     /**
      * Sets created_by
      *
-     * @param int $created_by The created by indicates the user which has created the bank transaction.
+     * @param int $created_by The ID of the user the bank transaction was created by.
      *
      * @return $this
      */
@@ -422,7 +422,7 @@ class BankTransaction implements ModelInterface, ArrayAccess
     /**
      * Sets currency_bank_account
      *
-     * @param \PostFinanceCheckout\Sdk\Model\CurrencyBankAccount $currency_bank_account The currency bank account which is used to handle money flow.
+     * @param \PostFinanceCheckout\Sdk\Model\CurrencyBankAccount $currency_bank_account The currency bank account that sends or receives money based on the bank transaction's flow direction.
      *
      * @return $this
      */
@@ -447,7 +447,7 @@ class BankTransaction implements ModelInterface, ArrayAccess
     /**
      * Sets external_id
      *
-     * @param string $external_id 
+     * @param string $external_id A client generated nonce which identifies the entity to be created. Subsequent creation requests with the same external ID will not create new entities but return the initially created entity instead.
      *
      * @return $this
      */
@@ -479,7 +479,7 @@ class BankTransaction implements ModelInterface, ArrayAccess
     /**
      * Sets flow_direction
      *
-     * @param \PostFinanceCheckout\Sdk\Model\BankTransactionFlowDirection $flow_direction 
+     * @param \PostFinanceCheckout\Sdk\Model\BankTransactionFlowDirection $flow_direction Indicates the direction of a bank transaction, specifying whether the amount flows into or out of the bank account.
      *
      * @return $this
      */
@@ -554,7 +554,7 @@ class BankTransaction implements ModelInterface, ArrayAccess
     /**
      * Sets payment_date
      *
-     * @param \DateTime $payment_date The payment date describes the date when the transaction was made.
+     * @param \DateTime $payment_date The payment date specifies the date on which the payment was processed.
      *
      * @return $this
      */
@@ -604,7 +604,7 @@ class BankTransaction implements ModelInterface, ArrayAccess
     /**
      * Sets posting_amount
      *
-     * @param float $posting_amount The posting amount indicates the amount including adjustments.
+     * @param float $posting_amount The posting amount refers to the monetary value recorded for the bank transaction prior to any adjustments.
      *
      * @return $this
      */
@@ -629,7 +629,7 @@ class BankTransaction implements ModelInterface, ArrayAccess
     /**
      * Sets reference
      *
-     * @param string $reference 
+     * @param string $reference A unique reference to identify the bank transaction.
      *
      * @return $this
      */
@@ -654,7 +654,7 @@ class BankTransaction implements ModelInterface, ArrayAccess
     /**
      * Sets source
      *
-     * @param int $source 
+     * @param int $source The source indicates how the bank transaction was created.
      *
      * @return $this
      */
@@ -704,7 +704,7 @@ class BankTransaction implements ModelInterface, ArrayAccess
     /**
      * Sets total_adjustment_amount_including_tax
      *
-     * @param float $total_adjustment_amount_including_tax 
+     * @param float $total_adjustment_amount_including_tax Represents the total value of all adjustments to the bank transaction, including tax.
      *
      * @return $this
      */
@@ -729,7 +729,7 @@ class BankTransaction implements ModelInterface, ArrayAccess
     /**
      * Sets type
      *
-     * @param int $type 
+     * @param int $type The bank transaction's type.
      *
      * @return $this
      */
@@ -754,7 +754,7 @@ class BankTransaction implements ModelInterface, ArrayAccess
     /**
      * Sets value_amount
      *
-     * @param float $value_amount 
+     * @param float $value_amount The value amount represents the net monetary value of the transaction after applicable deductions.
      *
      * @return $this
      */
@@ -779,7 +779,7 @@ class BankTransaction implements ModelInterface, ArrayAccess
     /**
      * Sets value_date
      *
-     * @param \DateTime $value_date The value date describes the date the amount is effective on the account.
+     * @param \DateTime $value_date The value date indicates the date on which the transaction amount becomes effective.
      *
      * @return $this
      */

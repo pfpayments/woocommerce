@@ -146,10 +146,10 @@ class RefundComment implements ModelInterface, ArrayAccess
     /**
      * Constructor
      *
-     * @param mixed[] $data Associated array of property values
+     * @param mixed[]|null $data Associated array of property values
      *                      initializing the model
      */
-    public function __construct(array $data = null)
+    public function __construct(?array $data = null)
     {
         
         $this->container['content'] = isset($data['content']) ? $data['content'] : null;
@@ -484,7 +484,7 @@ class RefundComment implements ModelInterface, ArrayAccess
     /**
      * Sets refund
      *
-     * @param int $refund 
+     * @param int $refund The refund that the comment belongs to.
      *
      * @return $this
      */

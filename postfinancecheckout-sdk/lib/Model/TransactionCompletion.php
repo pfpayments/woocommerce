@@ -19,6 +19,8 @@
 
 
 namespace PostFinanceCheckout\Sdk\Model;
+
+use \ArrayAccess;
 use \PostFinanceCheckout\Sdk\ObjectSerializer;
 
 /**
@@ -30,7 +32,7 @@ use \PostFinanceCheckout\Sdk\ObjectSerializer;
  * @author      wallee AG
  * @license     http://www.apache.org/licenses/LICENSE-2.0 Apache License v2
  */
-class TransactionCompletion extends TransactionAwareEntity 
+class TransactionCompletion implements ModelInterface, ArrayAccess
 {
     const DISCRIMINATOR = null;
 
@@ -54,12 +56,15 @@ class TransactionCompletion extends TransactionAwareEntity
         'external_id' => 'string',
         'failed_on' => '\DateTime',
         'failure_reason' => '\PostFinanceCheckout\Sdk\Model\FailureReason',
+        'id' => 'int',
         'invoice_merchant_reference' => 'string',
         'labels' => '\PostFinanceCheckout\Sdk\Model\Label[]',
         'language' => 'string',
         'last_completion' => 'bool',
         'line_item_version' => '\PostFinanceCheckout\Sdk\Model\TransactionLineItemVersion',
         'line_items' => '\PostFinanceCheckout\Sdk\Model\LineItem[]',
+        'linked_space_id' => 'int',
+        'linked_transaction' => 'int',
         'mode' => '\PostFinanceCheckout\Sdk\Model\TransactionCompletionMode',
         'next_update_on' => '\DateTime',
         'payment_information' => 'string',
@@ -90,12 +95,15 @@ class TransactionCompletion extends TransactionAwareEntity
         'external_id' => null,
         'failed_on' => 'date-time',
         'failure_reason' => null,
+        'id' => 'int64',
         'invoice_merchant_reference' => null,
         'labels' => null,
         'language' => null,
         'last_completion' => null,
         'line_item_version' => null,
         'line_items' => null,
+        'linked_space_id' => 'int64',
+        'linked_transaction' => 'int64',
         'mode' => null,
         'next_update_on' => 'date-time',
         'payment_information' => null,
@@ -127,12 +135,15 @@ class TransactionCompletion extends TransactionAwareEntity
         'external_id' => 'externalId',
         'failed_on' => 'failedOn',
         'failure_reason' => 'failureReason',
+        'id' => 'id',
         'invoice_merchant_reference' => 'invoiceMerchantReference',
         'labels' => 'labels',
         'language' => 'language',
         'last_completion' => 'lastCompletion',
         'line_item_version' => 'lineItemVersion',
         'line_items' => 'lineItems',
+        'linked_space_id' => 'linkedSpaceId',
+        'linked_transaction' => 'linkedTransaction',
         'mode' => 'mode',
         'next_update_on' => 'nextUpdateOn',
         'payment_information' => 'paymentInformation',
@@ -163,12 +174,15 @@ class TransactionCompletion extends TransactionAwareEntity
         'external_id' => 'setExternalId',
         'failed_on' => 'setFailedOn',
         'failure_reason' => 'setFailureReason',
+        'id' => 'setId',
         'invoice_merchant_reference' => 'setInvoiceMerchantReference',
         'labels' => 'setLabels',
         'language' => 'setLanguage',
         'last_completion' => 'setLastCompletion',
         'line_item_version' => 'setLineItemVersion',
         'line_items' => 'setLineItems',
+        'linked_space_id' => 'setLinkedSpaceId',
+        'linked_transaction' => 'setLinkedTransaction',
         'mode' => 'setMode',
         'next_update_on' => 'setNextUpdateOn',
         'payment_information' => 'setPaymentInformation',
@@ -199,12 +213,15 @@ class TransactionCompletion extends TransactionAwareEntity
         'external_id' => 'getExternalId',
         'failed_on' => 'getFailedOn',
         'failure_reason' => 'getFailureReason',
+        'id' => 'getId',
         'invoice_merchant_reference' => 'getInvoiceMerchantReference',
         'labels' => 'getLabels',
         'language' => 'getLanguage',
         'last_completion' => 'getLastCompletion',
         'line_item_version' => 'getLineItemVersion',
         'line_items' => 'getLineItems',
+        'linked_space_id' => 'getLinkedSpaceId',
+        'linked_transaction' => 'getLinkedTransaction',
         'mode' => 'getMode',
         'next_update_on' => 'getNextUpdateOn',
         'payment_information' => 'getPaymentInformation',
@@ -224,17 +241,21 @@ class TransactionCompletion extends TransactionAwareEntity
 
     
 
+    /**
+     * Associative array for storing property values
+     *
+     * @var mixed[]
+     */
+    protected $container = [];
 
     /**
      * Constructor
      *
-     * @param mixed[] $data Associated array of property values
+     * @param mixed[]|null $data Associated array of property values
      *                      initializing the model
      */
-    public function __construct(array $data = null)
+    public function __construct(?array $data = null)
     {
-        parent::__construct($data);
-
         
         $this->container['amount'] = isset($data['amount']) ? $data['amount'] : null;
         
@@ -250,6 +271,8 @@ class TransactionCompletion extends TransactionAwareEntity
         
         $this->container['failure_reason'] = isset($data['failure_reason']) ? $data['failure_reason'] : null;
         
+        $this->container['id'] = isset($data['id']) ? $data['id'] : null;
+        
         $this->container['invoice_merchant_reference'] = isset($data['invoice_merchant_reference']) ? $data['invoice_merchant_reference'] : null;
         
         $this->container['labels'] = isset($data['labels']) ? $data['labels'] : null;
@@ -261,6 +284,10 @@ class TransactionCompletion extends TransactionAwareEntity
         $this->container['line_item_version'] = isset($data['line_item_version']) ? $data['line_item_version'] : null;
         
         $this->container['line_items'] = isset($data['line_items']) ? $data['line_items'] : null;
+        
+        $this->container['linked_space_id'] = isset($data['linked_space_id']) ? $data['linked_space_id'] : null;
+        
+        $this->container['linked_transaction'] = isset($data['linked_transaction']) ? $data['linked_transaction'] : null;
         
         $this->container['mode'] = isset($data['mode']) ? $data['mode'] : null;
         
@@ -301,7 +328,7 @@ class TransactionCompletion extends TransactionAwareEntity
      */
     public function listInvalidProperties()
     {
-        $invalidProperties = parent::listInvalidProperties();
+        $invalidProperties = [];
 
         if (!is_null($this->container['external_id']) && (mb_strlen($this->container['external_id']) > 100)) {
             $invalidProperties[] = "invalid value for 'external_id', the character length must be smaller than or equal to 100.";
@@ -329,7 +356,7 @@ class TransactionCompletion extends TransactionAwareEntity
      */
     public static function swaggerTypes()
     {
-        return self::$swaggerTypes + parent::swaggerTypes();
+        return self::$swaggerTypes;
     }
 
     /**
@@ -339,7 +366,7 @@ class TransactionCompletion extends TransactionAwareEntity
      */
     public static function swaggerFormats()
     {
-        return self::$swaggerFormats + parent::swaggerFormats();
+        return self::$swaggerFormats;
     }
 
 
@@ -351,7 +378,7 @@ class TransactionCompletion extends TransactionAwareEntity
      */
     public static function attributeMap()
     {
-        return parent::attributeMap() + self::$attributeMap;
+        return self::$attributeMap;
     }
 
     /**
@@ -361,7 +388,7 @@ class TransactionCompletion extends TransactionAwareEntity
      */
     public static function setters()
     {
-        return parent::setters() + self::$setters;
+        return self::$setters;
     }
 
     /**
@@ -371,7 +398,7 @@ class TransactionCompletion extends TransactionAwareEntity
      */
     public static function getters()
     {
-        return parent::getters() + self::$getters;
+        return self::$getters;
     }
 
     /**
@@ -412,7 +439,7 @@ class TransactionCompletion extends TransactionAwareEntity
     /**
      * Sets amount
      *
-     * @param float $amount The amount which is captured. The amount represents sum of line items including taxes.
+     * @param float $amount The total amount to be captured in this completion, including taxes.
      *
      * @return $this
      */
@@ -437,7 +464,7 @@ class TransactionCompletion extends TransactionAwareEntity
     /**
      * Sets base_line_items
      *
-     * @param \PostFinanceCheckout\Sdk\Model\LineItem[] $base_line_items The base line items on which the completion is applied on.
+     * @param \PostFinanceCheckout\Sdk\Model\LineItem[] $base_line_items The original line items from the transaction that serve as the baseline for this completion.
      *
      * @return $this
      */
@@ -462,7 +489,7 @@ class TransactionCompletion extends TransactionAwareEntity
     /**
      * Sets created_by
      *
-     * @param int $created_by 
+     * @param int $created_by The ID of the user the transaction completion was created by.
      *
      * @return $this
      */
@@ -512,7 +539,7 @@ class TransactionCompletion extends TransactionAwareEntity
     /**
      * Sets external_id
      *
-     * @param string $external_id The external ID helps to identify the entity and a subsequent creation of an entity with the same ID will not create a new entity.
+     * @param string $external_id A client-generated nonce which uniquely identifies some action to be executed. Subsequent requests with the same external ID do not execute the action again, but return the original result.
      *
      * @return $this
      */
@@ -544,7 +571,7 @@ class TransactionCompletion extends TransactionAwareEntity
     /**
      * Sets failed_on
      *
-     * @param \DateTime $failed_on 
+     * @param \DateTime $failed_on The date and time when the transaction completion failed.
      *
      * @return $this
      */
@@ -569,13 +596,38 @@ class TransactionCompletion extends TransactionAwareEntity
     /**
      * Sets failure_reason
      *
-     * @param \PostFinanceCheckout\Sdk\Model\FailureReason $failure_reason 
+     * @param \PostFinanceCheckout\Sdk\Model\FailureReason $failure_reason The reason for the failure of the transaction completion.
      *
      * @return $this
      */
     public function setFailureReason($failure_reason)
     {
         $this->container['failure_reason'] = $failure_reason;
+
+        return $this;
+    }
+    
+
+    /**
+     * Gets id
+     *
+     * @return int
+     */
+    public function getId()
+    {
+        return $this->container['id'];
+    }
+
+    /**
+     * Sets id
+     *
+     * @param int $id A unique identifier for the object.
+     *
+     * @return $this
+     */
+    public function setId($id)
+    {
+        $this->container['id'] = $id;
 
         return $this;
     }
@@ -594,7 +646,7 @@ class TransactionCompletion extends TransactionAwareEntity
     /**
      * Sets invoice_merchant_reference
      *
-     * @param string $invoice_merchant_reference 
+     * @param string $invoice_merchant_reference The merchant's reference used to identify the invoice.
      *
      * @return $this
      */
@@ -673,7 +725,7 @@ class TransactionCompletion extends TransactionAwareEntity
     /**
      * Sets last_completion
      *
-     * @param bool $last_completion Indicates if this is the last completion. After the last completion is created the transaction cannot be completed anymore.
+     * @param bool $last_completion Whether this is the final completion for the transaction. After the last completion is successfully created, the transaction enters its final state, and no further completions can occur.
      *
      * @return $this
      */
@@ -698,7 +750,7 @@ class TransactionCompletion extends TransactionAwareEntity
     /**
      * Sets line_item_version
      *
-     * @param \PostFinanceCheckout\Sdk\Model\TransactionLineItemVersion $line_item_version 
+     * @param \PostFinanceCheckout\Sdk\Model\TransactionLineItemVersion $line_item_version The specific version of the line items that are being used for this completion.
      *
      * @return $this
      */
@@ -723,13 +775,63 @@ class TransactionCompletion extends TransactionAwareEntity
     /**
      * Sets line_items
      *
-     * @param \PostFinanceCheckout\Sdk\Model\LineItem[] $line_items The line items which are captured.
+     * @param \PostFinanceCheckout\Sdk\Model\LineItem[] $line_items The line items captured in this transaction completion.
      *
      * @return $this
      */
     public function setLineItems($line_items)
     {
         $this->container['line_items'] = $line_items;
+
+        return $this;
+    }
+    
+
+    /**
+     * Gets linked_space_id
+     *
+     * @return int
+     */
+    public function getLinkedSpaceId()
+    {
+        return $this->container['linked_space_id'];
+    }
+
+    /**
+     * Sets linked_space_id
+     *
+     * @param int $linked_space_id The ID of the space this object belongs to.
+     *
+     * @return $this
+     */
+    public function setLinkedSpaceId($linked_space_id)
+    {
+        $this->container['linked_space_id'] = $linked_space_id;
+
+        return $this;
+    }
+    
+
+    /**
+     * Gets linked_transaction
+     *
+     * @return int
+     */
+    public function getLinkedTransaction()
+    {
+        return $this->container['linked_transaction'];
+    }
+
+    /**
+     * Sets linked_transaction
+     *
+     * @param int $linked_transaction The payment transaction this object is linked to.
+     *
+     * @return $this
+     */
+    public function setLinkedTransaction($linked_transaction)
+    {
+        $this->container['linked_transaction'] = $linked_transaction;
 
         return $this;
     }
@@ -748,7 +850,7 @@ class TransactionCompletion extends TransactionAwareEntity
     /**
      * Sets mode
      *
-     * @param \PostFinanceCheckout\Sdk\Model\TransactionCompletionMode $mode 
+     * @param \PostFinanceCheckout\Sdk\Model\TransactionCompletionMode $mode The mode of transaction completion, such as online or offline, determining how the completion process is executed.
      *
      * @return $this
      */
@@ -773,7 +875,7 @@ class TransactionCompletion extends TransactionAwareEntity
     /**
      * Sets next_update_on
      *
-     * @param \DateTime $next_update_on 
+     * @param \DateTime $next_update_on The date and time when the next update of the object's state is planned.
      *
      * @return $this
      */
@@ -798,7 +900,7 @@ class TransactionCompletion extends TransactionAwareEntity
     /**
      * Sets payment_information
      *
-     * @param string $payment_information 
+     * @param string $payment_information Payment-specific details related to this transaction completion such as payment instructions or references needed for processing.
      *
      * @return $this
      */
@@ -848,7 +950,7 @@ class TransactionCompletion extends TransactionAwareEntity
     /**
      * Sets processing_on
      *
-     * @param \DateTime $processing_on 
+     * @param \DateTime $processing_on The date and time when the processing of the transaction completion was started.
      *
      * @return $this
      */
@@ -873,7 +975,7 @@ class TransactionCompletion extends TransactionAwareEntity
     /**
      * Sets processor_reference
      *
-     * @param string $processor_reference 
+     * @param string $processor_reference The reference ID provided by the payment processor, used to trace the completion through the external payment system.
      *
      * @return $this
      */
@@ -898,7 +1000,7 @@ class TransactionCompletion extends TransactionAwareEntity
     /**
      * Sets remaining_line_items
      *
-     * @param \PostFinanceCheckout\Sdk\Model\LineItem[] $remaining_line_items 
+     * @param \PostFinanceCheckout\Sdk\Model\LineItem[] $remaining_line_items The line items yet to be captured in the transaction.
      *
      * @return $this
      */
@@ -973,7 +1075,7 @@ class TransactionCompletion extends TransactionAwareEntity
     /**
      * Sets statement_descriptor
      *
-     * @param string $statement_descriptor The statement descriptor explain charges or payments on bank statements.
+     * @param string $statement_descriptor The statement descriptor that appears on a customer's bank statement, providing an explanation for charges or payments, helping customers identify the transaction.
      *
      * @return $this
      */
@@ -1002,7 +1104,7 @@ class TransactionCompletion extends TransactionAwareEntity
     /**
      * Sets succeeded_on
      *
-     * @param \DateTime $succeeded_on 
+     * @param \DateTime $succeeded_on The date and time when the transaction completion succeeded.
      *
      * @return $this
      */
@@ -1027,7 +1129,7 @@ class TransactionCompletion extends TransactionAwareEntity
     /**
      * Sets tax_amount
      *
-     * @param float $tax_amount The total sum of all taxes of line items.
+     * @param float $tax_amount The portion of the captured amount that corresponds to taxes.
      *
      * @return $this
      */
@@ -1052,7 +1154,7 @@ class TransactionCompletion extends TransactionAwareEntity
     /**
      * Sets time_zone
      *
-     * @param string $time_zone 
+     * @param string $time_zone The time zone that this object is associated with.
      *
      * @return $this
      */
@@ -1077,7 +1179,7 @@ class TransactionCompletion extends TransactionAwareEntity
     /**
      * Sets timeout_on
      *
-     * @param \DateTime $timeout_on 
+     * @param \DateTime $timeout_on The date and time when the object will expire.
      *
      * @return $this
      */

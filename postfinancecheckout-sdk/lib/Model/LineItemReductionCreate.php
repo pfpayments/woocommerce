@@ -111,10 +111,10 @@ class LineItemReductionCreate implements ModelInterface, ArrayAccess
     /**
      * Constructor
      *
-     * @param mixed[] $data Associated array of property values
+     * @param mixed[]|null $data Associated array of property values
      *                      initializing the model
      */
-    public function __construct(array $data = null)
+    public function __construct(?array $data = null)
     {
         
         $this->container['line_item_unique_id'] = isset($data['line_item_unique_id']) ? $data['line_item_unique_id'] : null;
@@ -240,7 +240,7 @@ class LineItemReductionCreate implements ModelInterface, ArrayAccess
     /**
      * Sets line_item_unique_id
      *
-     * @param string $line_item_unique_id The unique id identifies the line item on which the reduction is applied on.
+     * @param string $line_item_unique_id The unique identifier of the line item to which the reduction is applied. This ID ensures the reduction is accurately associated with the correct item.
      *
      * @return $this
      */
@@ -269,7 +269,7 @@ class LineItemReductionCreate implements ModelInterface, ArrayAccess
     /**
      * Sets quantity_reduction
      *
-     * @param float $quantity_reduction 
+     * @param float $quantity_reduction The quantity removed or reduced from the line item. This value reflects the decrease in the item count due to the reduction.
      *
      * @return $this
      */
@@ -294,7 +294,7 @@ class LineItemReductionCreate implements ModelInterface, ArrayAccess
     /**
      * Sets unit_price_reduction
      *
-     * @param float $unit_price_reduction 
+     * @param float $unit_price_reduction The monetary amount by which the line item's unit price is discounted. This reduction adjusts the price without altering the quantity.
      *
      * @return $this
      */

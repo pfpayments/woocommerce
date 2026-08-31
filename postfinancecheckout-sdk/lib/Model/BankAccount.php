@@ -136,10 +136,10 @@ class BankAccount implements ModelInterface, ArrayAccess
     /**
      * Constructor
      *
-     * @param mixed[] $data Associated array of property values
+     * @param mixed[]|null $data Associated array of property values
      *                      initializing the model
      */
-    public function __construct(array $data = null)
+    public function __construct(?array $data = null)
     {
         
         $this->container['description'] = isset($data['description']) ? $data['description'] : null;
@@ -270,7 +270,7 @@ class BankAccount implements ModelInterface, ArrayAccess
     /**
      * Sets description
      *
-     * @param string $description The optional description is shown along the identifier. The intention of the description is to give an alternative name to the bank account.
+     * @param string $description The description serves as an alternative name for the bank account.
      *
      * @return $this
      */
@@ -324,7 +324,7 @@ class BankAccount implements ModelInterface, ArrayAccess
     /**
      * Sets identifier
      *
-     * @param string $identifier The bank account identifier is responsible to uniquely identify the bank account.
+     * @param string $identifier The identifier is used to uniquely identify the bank account.
      *
      * @return $this
      */
@@ -428,7 +428,7 @@ class BankAccount implements ModelInterface, ArrayAccess
     /**
      * Sets type
      *
-     * @param int $type 
+     * @param int $type The bank account's type
      *
      * @return $this
      */

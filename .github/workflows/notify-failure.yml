@@ -1,0 +1,17 @@
+name: Notify on Release Failure
+
+on:
+  workflow_run:
+    workflows: ["Release Plugin", "Soft Release Plugin"]
+    types: [completed]
+
+jobs:
+  notify:
+    runs-on: ubuntu-latest
+    if: ${{ github.event.workflow_run.conclusion == 'failure' }}
+    steps:
+      - name: Notify on failure
+        run: |
+          curl -X POST -H 'Content-type: application/json' \
+            --data '{"text": "${{ github.event.workflow_run.name }} workflow failed on ${{ github.repository }}: ${{ github.event.workflow_run.html_url }}"}' \
+            ${{ secrets.SLACK_WEBHOOK_URL }}

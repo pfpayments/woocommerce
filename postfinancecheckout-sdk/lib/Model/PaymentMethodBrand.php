@@ -126,10 +126,10 @@ class PaymentMethodBrand implements ModelInterface, ArrayAccess
     /**
      * Constructor
      *
-     * @param mixed[] $data Associated array of property values
+     * @param mixed[]|null $data Associated array of property values
      *                      initializing the model
      */
-    public function __construct(array $data = null)
+    public function __construct(?array $data = null)
     {
         
         $this->container['description'] = isset($data['description']) ? $data['description'] : null;
@@ -273,7 +273,7 @@ class PaymentMethodBrand implements ModelInterface, ArrayAccess
     /**
      * Sets gray_image_path
      *
-     * @param string $gray_image_path 
+     * @param string $gray_image_path The path to the payment method brand's grayscale image.
      *
      * @return $this
      */
@@ -323,7 +323,7 @@ class PaymentMethodBrand implements ModelInterface, ArrayAccess
     /**
      * Sets image_path
      *
-     * @param string $image_path The path to the payment brand's image which is displayed to the customer.
+     * @param string $image_path The path to the payment method brand's image.
      *
      * @return $this
      */

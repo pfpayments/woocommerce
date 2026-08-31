@@ -50,7 +50,6 @@ class RestCountryState implements ModelInterface, ArrayAccess
       */
     protected static $swaggerTypes = [
         'code' => 'string',
-        'country' => 'string',
         'country_code' => 'string',
         'id' => 'string',
         'name' => 'string'
@@ -63,7 +62,6 @@ class RestCountryState implements ModelInterface, ArrayAccess
       */
     protected static $swaggerFormats = [
         'code' => null,
-        'country' => null,
         'country_code' => null,
         'id' => null,
         'name' => null
@@ -77,7 +75,6 @@ class RestCountryState implements ModelInterface, ArrayAccess
      */
     protected static $attributeMap = [
         'code' => 'code',
-        'country' => 'country',
         'country_code' => 'countryCode',
         'id' => 'id',
         'name' => 'name'
@@ -90,7 +87,6 @@ class RestCountryState implements ModelInterface, ArrayAccess
      */
     protected static $setters = [
         'code' => 'setCode',
-        'country' => 'setCountry',
         'country_code' => 'setCountryCode',
         'id' => 'setId',
         'name' => 'setName'
@@ -103,7 +99,6 @@ class RestCountryState implements ModelInterface, ArrayAccess
      */
     protected static $getters = [
         'code' => 'getCode',
-        'country' => 'getCountry',
         'country_code' => 'getCountryCode',
         'id' => 'getId',
         'name' => 'getName'
@@ -121,15 +116,13 @@ class RestCountryState implements ModelInterface, ArrayAccess
     /**
      * Constructor
      *
-     * @param mixed[] $data Associated array of property values
+     * @param mixed[]|null $data Associated array of property values
      *                      initializing the model
      */
-    public function __construct(array $data = null)
+    public function __construct(?array $data = null)
     {
         
         $this->container['code'] = isset($data['code']) ? $data['code'] : null;
-        
-        $this->container['country'] = isset($data['country']) ? $data['country'] : null;
         
         $this->container['country_code'] = isset($data['country_code']) ? $data['country_code'] : null;
         
@@ -248,31 +241,6 @@ class RestCountryState implements ModelInterface, ArrayAccess
     public function setCode($code)
     {
         $this->container['code'] = $code;
-
-        return $this;
-    }
-    
-
-    /**
-     * Gets country
-     *
-     * @return string
-     */
-    public function getCountry()
-    {
-        return $this->container['country'];
-    }
-
-    /**
-     * Sets country
-     *
-     * @param string $country 
-     *
-     * @return $this
-     */
-    public function setCountry($country)
-    {
-        $this->container['country'] = $country;
 
         return $this;
     }

@@ -116,10 +116,10 @@ class PaymentTerminalTransactionSummaryReference implements ModelInterface, Arra
     /**
      * Constructor
      *
-     * @param mixed[] $data Associated array of property values
+     * @param mixed[]|null $data Associated array of property values
      *                      initializing the model
      */
-    public function __construct(array $data = null)
+    public function __construct(?array $data = null)
     {
         
         $this->container['id'] = isset($data['id']) ? $data['id'] : null;
@@ -284,7 +284,7 @@ class PaymentTerminalTransactionSummaryReference implements ModelInterface, Arra
     /**
      * Sets terminal_id
      *
-     * @param int $terminal_id 
+     * @param int $terminal_id The unique identifier of the terminal.
      *
      * @return $this
      */
@@ -309,7 +309,7 @@ class PaymentTerminalTransactionSummaryReference implements ModelInterface, Arra
     /**
      * Sets terminal_identifier
      *
-     * @param string $terminal_identifier 
+     * @param string $terminal_identifier The unique identifier of the terminal, that is displayed on the device.
      *
      * @return $this
      */

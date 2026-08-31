@@ -27,7 +27,7 @@ use \PostFinanceCheckout\Sdk\ObjectSerializer;
  * PaymentMethodConfiguration model
  *
  * @category    Class
- * @description The payment method configuration builds the base to connect with different payment method connectors.
+ * @description 
  * @package     PostFinanceCheckout\Sdk
  * @author      wallee AG
  * @license     http://www.apache.org/licenses/LICENSE-2.0 Apache License v2
@@ -181,10 +181,10 @@ class PaymentMethodConfiguration implements ModelInterface, ArrayAccess
     /**
      * Constructor
      *
-     * @param mixed[] $data Associated array of property values
+     * @param mixed[]|null $data Associated array of property values
      *                      initializing the model
      */
-    public function __construct(array $data = null)
+    public function __construct(?array $data = null)
     {
         
         $this->container['data_collection_type'] = isset($data['data_collection_type']) ? $data['data_collection_type'] : null;
@@ -354,7 +354,7 @@ class PaymentMethodConfiguration implements ModelInterface, ArrayAccess
     /**
      * Sets description
      *
-     * @param map[string,string] $description A custom description for the payment method which is displayed to the customer.
+     * @param map[string,string] $description A customer-facing custom description for the payment method.
      *
      * @return $this
      */
@@ -404,7 +404,7 @@ class PaymentMethodConfiguration implements ModelInterface, ArrayAccess
     /**
      * Sets image_resource_path
      *
-     * @param \PostFinanceCheckout\Sdk\Model\ModelResourcePath $image_resource_path The resource path to a custom image for the payment method which is displayed to the customer.
+     * @param \PostFinanceCheckout\Sdk\Model\ModelResourcePath $image_resource_path The resource path to a custom image for the payment method, displayed to the customer for visual identification.
      *
      * @return $this
      */
@@ -558,7 +558,7 @@ class PaymentMethodConfiguration implements ModelInterface, ArrayAccess
     /**
      * Sets resolved_description
      *
-     * @param map[string,string] $resolved_description The description for the payment method that is actually displayed to the customer. This is either the custom description, if defined, or otherwise the payment method's default one.
+     * @param map[string,string] $resolved_description The description of the payment method displayed to the customer. If a custom description is defined, it will be used; otherwise, the default description of the payment method will be shown.
      *
      * @return $this
      */
@@ -583,7 +583,7 @@ class PaymentMethodConfiguration implements ModelInterface, ArrayAccess
     /**
      * Sets resolved_image_url
      *
-     * @param string $resolved_image_url The image URL for the payment method that is actually displayed to the customer. This is either the custom image, if defined, or otherwise the payment method's default one.
+     * @param string $resolved_image_url The URL to the image of the payment method displayed to the customer. If a custom image is defined, it will be used; otherwise, the default image of the payment method will be shown.
      *
      * @return $this
      */
@@ -608,7 +608,7 @@ class PaymentMethodConfiguration implements ModelInterface, ArrayAccess
     /**
      * Sets resolved_title
      *
-     * @param map[string,string] $resolved_title The title for the payment method that is actually displayed to the customer. This is either the custom title, if defined, or otherwise the payment method's default one.
+     * @param map[string,string] $resolved_title The title of the payment method displayed to the customer. If a custom title is defined, it will be used; otherwise, the default title of the payment method will be shown.
      *
      * @return $this
      */
@@ -708,7 +708,7 @@ class PaymentMethodConfiguration implements ModelInterface, ArrayAccess
     /**
      * Sets title
      *
-     * @param map[string,string] $title A custom title for the payment method which is displayed to the customer.
+     * @param map[string,string] $title A customer-facing custom title for the payment method.
      *
      * @return $this
      */

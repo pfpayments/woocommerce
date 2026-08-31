@@ -166,10 +166,10 @@ class ShopifySubscriptionCreationRequest implements ModelInterface, ArrayAccess
     /**
      * Constructor
      *
-     * @param mixed[] $data Associated array of property values
+     * @param mixed[]|null $data Associated array of property values
      *                      initializing the model
      */
-    public function __construct(array $data = null)
+    public function __construct(?array $data = null)
     {
         
         $this->container['billing_address'] = isset($data['billing_address']) ? $data['billing_address'] : null;
@@ -403,7 +403,7 @@ class ShopifySubscriptionCreationRequest implements ModelInterface, ArrayAccess
     /**
      * Sets external_id
      *
-     * @param string $external_id A client generated nonce which identifies the entity to be created. Subsequent creation requests with the same external ID will not create new entities but return the initially created entity instead.
+     * @param string $external_id A client-generated nonce which uniquely identifies some action to be executed. Subsequent requests with the same external ID do not execute the action again, but return the original result.
      *
      * @return $this
      */

@@ -19,6 +19,8 @@
 
 
 namespace PostFinanceCheckout\Sdk\Model;
+
+use \ArrayAccess;
 use \PostFinanceCheckout\Sdk\ObjectSerializer;
 
 /**
@@ -30,7 +32,7 @@ use \PostFinanceCheckout\Sdk\ObjectSerializer;
  * @author      wallee AG
  * @license     http://www.apache.org/licenses/LICENSE-2.0 Apache License v2
  */
-class ChargeBankTransaction extends TransactionAwareEntity 
+class ChargeBankTransaction implements ModelInterface, ArrayAccess
 {
     const DISCRIMINATOR = null;
 
@@ -49,7 +51,10 @@ class ChargeBankTransaction extends TransactionAwareEntity
     protected static $swaggerTypes = [
         'bank_transaction' => '\PostFinanceCheckout\Sdk\Model\BankTransaction',
         'completion' => 'int',
+        'id' => 'int',
         'language' => 'string',
+        'linked_space_id' => 'int',
+        'linked_transaction' => 'int',
         'space_view_id' => 'int',
         'transaction' => '\PostFinanceCheckout\Sdk\Model\Transaction',
         'transaction_currency_amount' => 'float',
@@ -65,7 +70,10 @@ class ChargeBankTransaction extends TransactionAwareEntity
     protected static $swaggerFormats = [
         'bank_transaction' => null,
         'completion' => 'int64',
+        'id' => 'int64',
         'language' => null,
+        'linked_space_id' => 'int64',
+        'linked_transaction' => 'int64',
         'space_view_id' => 'int64',
         'transaction' => null,
         'transaction_currency_amount' => null,
@@ -82,7 +90,10 @@ class ChargeBankTransaction extends TransactionAwareEntity
     protected static $attributeMap = [
         'bank_transaction' => 'bankTransaction',
         'completion' => 'completion',
+        'id' => 'id',
         'language' => 'language',
+        'linked_space_id' => 'linkedSpaceId',
+        'linked_transaction' => 'linkedTransaction',
         'space_view_id' => 'spaceViewId',
         'transaction' => 'transaction',
         'transaction_currency_amount' => 'transactionCurrencyAmount',
@@ -98,7 +109,10 @@ class ChargeBankTransaction extends TransactionAwareEntity
     protected static $setters = [
         'bank_transaction' => 'setBankTransaction',
         'completion' => 'setCompletion',
+        'id' => 'setId',
         'language' => 'setLanguage',
+        'linked_space_id' => 'setLinkedSpaceId',
+        'linked_transaction' => 'setLinkedTransaction',
         'space_view_id' => 'setSpaceViewId',
         'transaction' => 'setTransaction',
         'transaction_currency_amount' => 'setTransactionCurrencyAmount',
@@ -114,7 +128,10 @@ class ChargeBankTransaction extends TransactionAwareEntity
     protected static $getters = [
         'bank_transaction' => 'getBankTransaction',
         'completion' => 'getCompletion',
+        'id' => 'getId',
         'language' => 'getLanguage',
+        'linked_space_id' => 'getLinkedSpaceId',
+        'linked_transaction' => 'getLinkedTransaction',
         'space_view_id' => 'getSpaceViewId',
         'transaction' => 'getTransaction',
         'transaction_currency_amount' => 'getTransactionCurrencyAmount',
@@ -124,23 +141,33 @@ class ChargeBankTransaction extends TransactionAwareEntity
 
     
 
+    /**
+     * Associative array for storing property values
+     *
+     * @var mixed[]
+     */
+    protected $container = [];
 
     /**
      * Constructor
      *
-     * @param mixed[] $data Associated array of property values
+     * @param mixed[]|null $data Associated array of property values
      *                      initializing the model
      */
-    public function __construct(array $data = null)
+    public function __construct(?array $data = null)
     {
-        parent::__construct($data);
-
         
         $this->container['bank_transaction'] = isset($data['bank_transaction']) ? $data['bank_transaction'] : null;
         
         $this->container['completion'] = isset($data['completion']) ? $data['completion'] : null;
         
+        $this->container['id'] = isset($data['id']) ? $data['id'] : null;
+        
         $this->container['language'] = isset($data['language']) ? $data['language'] : null;
+        
+        $this->container['linked_space_id'] = isset($data['linked_space_id']) ? $data['linked_space_id'] : null;
+        
+        $this->container['linked_transaction'] = isset($data['linked_transaction']) ? $data['linked_transaction'] : null;
         
         $this->container['space_view_id'] = isset($data['space_view_id']) ? $data['space_view_id'] : null;
         
@@ -161,7 +188,7 @@ class ChargeBankTransaction extends TransactionAwareEntity
      */
     public function listInvalidProperties()
     {
-        $invalidProperties = parent::listInvalidProperties();
+        $invalidProperties = [];
 
         return $invalidProperties;
     }
@@ -173,7 +200,7 @@ class ChargeBankTransaction extends TransactionAwareEntity
      */
     public static function swaggerTypes()
     {
-        return self::$swaggerTypes + parent::swaggerTypes();
+        return self::$swaggerTypes;
     }
 
     /**
@@ -183,7 +210,7 @@ class ChargeBankTransaction extends TransactionAwareEntity
      */
     public static function swaggerFormats()
     {
-        return self::$swaggerFormats + parent::swaggerFormats();
+        return self::$swaggerFormats;
     }
 
 
@@ -195,7 +222,7 @@ class ChargeBankTransaction extends TransactionAwareEntity
      */
     public static function attributeMap()
     {
-        return parent::attributeMap() + self::$attributeMap;
+        return self::$attributeMap;
     }
 
     /**
@@ -205,7 +232,7 @@ class ChargeBankTransaction extends TransactionAwareEntity
      */
     public static function setters()
     {
-        return parent::setters() + self::$setters;
+        return self::$setters;
     }
 
     /**
@@ -215,7 +242,7 @@ class ChargeBankTransaction extends TransactionAwareEntity
      */
     public static function getters()
     {
-        return parent::getters() + self::$getters;
+        return self::$getters;
     }
 
     /**
@@ -256,7 +283,7 @@ class ChargeBankTransaction extends TransactionAwareEntity
     /**
      * Sets bank_transaction
      *
-     * @param \PostFinanceCheckout\Sdk\Model\BankTransaction $bank_transaction 
+     * @param \PostFinanceCheckout\Sdk\Model\BankTransaction $bank_transaction Provides general information about the bank transaction.
      *
      * @return $this
      */
@@ -281,13 +308,38 @@ class ChargeBankTransaction extends TransactionAwareEntity
     /**
      * Sets completion
      *
-     * @param int $completion 
+     * @param int $completion The transaction completion this bank transaction is belongs to.
      *
      * @return $this
      */
     public function setCompletion($completion)
     {
         $this->container['completion'] = $completion;
+
+        return $this;
+    }
+    
+
+    /**
+     * Gets id
+     *
+     * @return int
+     */
+    public function getId()
+    {
+        return $this->container['id'];
+    }
+
+    /**
+     * Sets id
+     *
+     * @param int $id A unique identifier for the object.
+     *
+     * @return $this
+     */
+    public function setId($id)
+    {
+        $this->container['id'] = $id;
 
         return $this;
     }
@@ -313,6 +365,56 @@ class ChargeBankTransaction extends TransactionAwareEntity
     public function setLanguage($language)
     {
         $this->container['language'] = $language;
+
+        return $this;
+    }
+    
+
+    /**
+     * Gets linked_space_id
+     *
+     * @return int
+     */
+    public function getLinkedSpaceId()
+    {
+        return $this->container['linked_space_id'];
+    }
+
+    /**
+     * Sets linked_space_id
+     *
+     * @param int $linked_space_id The ID of the space this object belongs to.
+     *
+     * @return $this
+     */
+    public function setLinkedSpaceId($linked_space_id)
+    {
+        $this->container['linked_space_id'] = $linked_space_id;
+
+        return $this;
+    }
+    
+
+    /**
+     * Gets linked_transaction
+     *
+     * @return int
+     */
+    public function getLinkedTransaction()
+    {
+        return $this->container['linked_transaction'];
+    }
+
+    /**
+     * Sets linked_transaction
+     *
+     * @param int $linked_transaction The payment transaction this object is linked to.
+     *
+     * @return $this
+     */
+    public function setLinkedTransaction($linked_transaction)
+    {
+        $this->container['linked_transaction'] = $linked_transaction;
 
         return $this;
     }
@@ -356,7 +458,7 @@ class ChargeBankTransaction extends TransactionAwareEntity
     /**
      * Sets transaction
      *
-     * @param \PostFinanceCheckout\Sdk\Model\Transaction $transaction 
+     * @param \PostFinanceCheckout\Sdk\Model\Transaction $transaction The payment transaction this bank transaction belongs to.
      *
      * @return $this
      */
@@ -381,7 +483,7 @@ class ChargeBankTransaction extends TransactionAwareEntity
     /**
      * Sets transaction_currency_amount
      *
-     * @param float $transaction_currency_amount Specify the posting amount in the transaction's currency.
+     * @param float $transaction_currency_amount The posting amount represents the monetary value of the bank transaction, recorded in the payment transaction's currency, before applying any adjustments.
      *
      * @return $this
      */
@@ -406,7 +508,7 @@ class ChargeBankTransaction extends TransactionAwareEntity
     /**
      * Sets transaction_currency_value_amount
      *
-     * @param float $transaction_currency_value_amount 
+     * @param float $transaction_currency_value_amount The value amount represents the net monetary value of the bank transaction, recorded in the payment transaction's currency, after applicable deductions.
      *
      * @return $this
      */

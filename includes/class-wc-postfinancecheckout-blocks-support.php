@@ -57,7 +57,7 @@ final class WC_PostFinanceCheckout_Blocks_Support extends AbstractPaymentMethodT
 	 */
 	public function get_payment_method_script_handles() {
 		$dependencies = array();
-		$version = '3.4.6';
+		$version = '3.4.7';
 
 		wp_register_script(
 			'WooCommerce_PostFinanceCheckout_blocks_support',
@@ -72,6 +72,10 @@ final class WC_PostFinanceCheckout_Blocks_Support extends AbstractPaymentMethodT
 			'postfinancecheckout_block_params',
 			array(
 				'postfinancecheckout_nonce' => wp_create_nonce( 'postfinancecheckout_nonce_block' ),
+				'i18n' => array(
+					'loading' => __( 'Loading payment method...', 'woo-postfinancecheckout' ),
+					'load_error' => __( 'Unable to load this payment method. Please refresh the page and try again.', 'woo-postfinancecheckout' ),
+				),
 			)
 		);
 

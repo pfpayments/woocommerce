@@ -27,7 +27,7 @@ use \PostFinanceCheckout\Sdk\ObjectSerializer;
  * CardCryptogramCreate model
  *
  * @category    Class
- * @description This model holds the additional card authentication.
+ * @description 
  * @package     PostFinanceCheckout\Sdk
  * @author      wallee AG
  * @license     http://www.apache.org/licenses/LICENSE-2.0 Apache License v2
@@ -106,10 +106,10 @@ class CardCryptogramCreate implements ModelInterface, ArrayAccess
     /**
      * Constructor
      *
-     * @param mixed[] $data Associated array of property values
+     * @param mixed[]|null $data Associated array of property values
      *                      initializing the model
      */
-    public function __construct(array $data = null)
+    public function __construct(?array $data = null)
     {
         
         $this->container['eci'] = isset($data['eci']) ? $data['eci'] : null;
@@ -223,7 +223,7 @@ class CardCryptogramCreate implements ModelInterface, ArrayAccess
     /**
      * Sets eci
      *
-     * @param string $eci 
+     * @param string $eci The Electronic Commerce Indicator (ECI) represents the authentication level and indicates liability shift during online or card-not-present transactions.
      *
      * @return $this
      */
@@ -248,7 +248,7 @@ class CardCryptogramCreate implements ModelInterface, ArrayAccess
     /**
      * Sets value
      *
-     * @param string $value 
+     * @param string $value The cryptogram value used for securing card transactions, format varying based on the PAN type.
      *
      * @return $this
      */

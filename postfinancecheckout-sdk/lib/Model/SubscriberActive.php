@@ -19,20 +19,18 @@
 
 
 namespace PostFinanceCheckout\Sdk\Model;
-
-use \ArrayAccess;
 use \PostFinanceCheckout\Sdk\ObjectSerializer;
 
 /**
- * TransactionAwareEntity model
+ * SubscriberActive model
  *
  * @category    Class
- * @description 
+ * @description A subscriber represents everyone who is subscribed to a product.
  * @package     PostFinanceCheckout\Sdk
  * @author      wallee AG
  * @license     http://www.apache.org/licenses/LICENSE-2.0 Apache License v2
  */
-class TransactionAwareEntity implements ModelInterface, ArrayAccess
+class SubscriberActive extends SubscriberUpdate 
 {
     const DISCRIMINATOR = null;
 
@@ -41,7 +39,7 @@ class TransactionAwareEntity implements ModelInterface, ArrayAccess
       *
       * @var string
       */
-    protected static $swaggerModelName = 'TransactionAwareEntity';
+    protected static $swaggerModelName = 'Subscriber.Active';
 
     /**
       * Array of property to type mappings. Used for (de)serialization
@@ -49,9 +47,7 @@ class TransactionAwareEntity implements ModelInterface, ArrayAccess
       * @var string[]
       */
     protected static $swaggerTypes = [
-        'id' => 'int',
-        'linked_space_id' => 'int',
-        'linked_transaction' => 'int'
+        'state' => '\PostFinanceCheckout\Sdk\Model\CreationEntityState'
     ];
 
     /**
@@ -60,9 +56,7 @@ class TransactionAwareEntity implements ModelInterface, ArrayAccess
       * @var string[]
       */
     protected static $swaggerFormats = [
-        'id' => 'int64',
-        'linked_space_id' => 'int64',
-        'linked_transaction' => 'int64'
+        'state' => null
     ];
 
     /**
@@ -72,9 +66,7 @@ class TransactionAwareEntity implements ModelInterface, ArrayAccess
      * @var string[]
      */
     protected static $attributeMap = [
-        'id' => 'id',
-        'linked_space_id' => 'linkedSpaceId',
-        'linked_transaction' => 'linkedTransaction'
+        'state' => 'state'
     ];
 
     /**
@@ -83,9 +75,7 @@ class TransactionAwareEntity implements ModelInterface, ArrayAccess
      * @var string[]
      */
     protected static $setters = [
-        'id' => 'setId',
-        'linked_space_id' => 'setLinkedSpaceId',
-        'linked_transaction' => 'setLinkedTransaction'
+        'state' => 'setState'
     ];
 
     /**
@@ -94,34 +84,24 @@ class TransactionAwareEntity implements ModelInterface, ArrayAccess
      * @var string[]
      */
     protected static $getters = [
-        'id' => 'getId',
-        'linked_space_id' => 'getLinkedSpaceId',
-        'linked_transaction' => 'getLinkedTransaction'
+        'state' => 'getState'
     ];
 
     
 
-    /**
-     * Associative array for storing property values
-     *
-     * @var mixed[]
-     */
-    protected $container = [];
 
     /**
      * Constructor
      *
-     * @param mixed[] $data Associated array of property values
+     * @param mixed[]|null $data Associated array of property values
      *                      initializing the model
      */
-    public function __construct(array $data = null)
+    public function __construct(?array $data = null)
     {
+        parent::__construct($data);
+
         
-        $this->container['id'] = isset($data['id']) ? $data['id'] : null;
-        
-        $this->container['linked_space_id'] = isset($data['linked_space_id']) ? $data['linked_space_id'] : null;
-        
-        $this->container['linked_transaction'] = isset($data['linked_transaction']) ? $data['linked_transaction'] : null;
+        $this->container['state'] = isset($data['state']) ? $data['state'] : null;
         
     }
 
@@ -132,7 +112,25 @@ class TransactionAwareEntity implements ModelInterface, ArrayAccess
      */
     public function listInvalidProperties()
     {
-        $invalidProperties = [];
+        $invalidProperties = parent::listInvalidProperties();
+
+        if ($this->container['id'] === null) {
+            $invalidProperties[] = "'id' can't be null";
+        }
+        if ($this->container['version'] === null) {
+            $invalidProperties[] = "'version' can't be null";
+        }
+        if (!is_null($this->container['description']) && (mb_strlen($this->container['description']) > 200)) {
+            $invalidProperties[] = "invalid value for 'description', the character length must be smaller than or equal to 200.";
+        }
+
+        if (!is_null($this->container['email_address']) && (mb_strlen($this->container['email_address']) > 254)) {
+            $invalidProperties[] = "invalid value for 'email_address', the character length must be smaller than or equal to 254.";
+        }
+
+        if (!is_null($this->container['reference']) && (mb_strlen($this->container['reference']) > 100)) {
+            $invalidProperties[] = "invalid value for 'reference', the character length must be smaller than or equal to 100.";
+        }
 
         return $invalidProperties;
     }
@@ -144,7 +142,7 @@ class TransactionAwareEntity implements ModelInterface, ArrayAccess
      */
     public static function swaggerTypes()
     {
-        return self::$swaggerTypes;
+        return self::$swaggerTypes + parent::swaggerTypes();
     }
 
     /**
@@ -154,7 +152,7 @@ class TransactionAwareEntity implements ModelInterface, ArrayAccess
      */
     public static function swaggerFormats()
     {
-        return self::$swaggerFormats;
+        return self::$swaggerFormats + parent::swaggerFormats();
     }
 
 
@@ -166,7 +164,7 @@ class TransactionAwareEntity implements ModelInterface, ArrayAccess
      */
     public static function attributeMap()
     {
-        return self::$attributeMap;
+        return parent::attributeMap() + self::$attributeMap;
     }
 
     /**
@@ -176,7 +174,7 @@ class TransactionAwareEntity implements ModelInterface, ArrayAccess
      */
     public static function setters()
     {
-        return self::$setters;
+        return parent::setters() + self::$setters;
     }
 
     /**
@@ -186,7 +184,7 @@ class TransactionAwareEntity implements ModelInterface, ArrayAccess
      */
     public static function getters()
     {
-        return self::$getters;
+        return parent::getters() + self::$getters;
     }
 
     /**
@@ -215,75 +213,25 @@ class TransactionAwareEntity implements ModelInterface, ArrayAccess
     
 
     /**
-     * Gets id
+     * Gets state
      *
-     * @return int
+     * @return \PostFinanceCheckout\Sdk\Model\CreationEntityState
      */
-    public function getId()
+    public function getState()
     {
-        return $this->container['id'];
+        return $this->container['state'];
     }
 
     /**
-     * Sets id
+     * Sets state
      *
-     * @param int $id A unique identifier for the object.
+     * @param \PostFinanceCheckout\Sdk\Model\CreationEntityState $state The object's current state.
      *
      * @return $this
      */
-    public function setId($id)
+    public function setState($state)
     {
-        $this->container['id'] = $id;
-
-        return $this;
-    }
-    
-
-    /**
-     * Gets linked_space_id
-     *
-     * @return int
-     */
-    public function getLinkedSpaceId()
-    {
-        return $this->container['linked_space_id'];
-    }
-
-    /**
-     * Sets linked_space_id
-     *
-     * @param int $linked_space_id The ID of the space this object belongs to.
-     *
-     * @return $this
-     */
-    public function setLinkedSpaceId($linked_space_id)
-    {
-        $this->container['linked_space_id'] = $linked_space_id;
-
-        return $this;
-    }
-    
-
-    /**
-     * Gets linked_transaction
-     *
-     * @return int
-     */
-    public function getLinkedTransaction()
-    {
-        return $this->container['linked_transaction'];
-    }
-
-    /**
-     * Sets linked_transaction
-     *
-     * @param int $linked_transaction 
-     *
-     * @return $this
-     */
-    public function setLinkedTransaction($linked_transaction)
-    {
-        $this->container['linked_transaction'] = $linked_transaction;
+        $this->container['state'] = $state;
 
         return $this;
     }

@@ -19,6 +19,8 @@
 
 
 namespace PostFinanceCheckout\Sdk\Model;
+
+use \ArrayAccess;
 use \PostFinanceCheckout\Sdk\ObjectSerializer;
 
 /**
@@ -30,7 +32,7 @@ use \PostFinanceCheckout\Sdk\ObjectSerializer;
  * @author      wallee AG
  * @license     http://www.apache.org/licenses/LICENSE-2.0 Apache License v2
  */
-class ShopifyRecurringOrder extends TransactionAwareEntity 
+class ShopifyRecurringOrder implements ModelInterface, ArrayAccess
 {
     const DISCRIMINATOR = null;
 
@@ -52,6 +54,9 @@ class ShopifyRecurringOrder extends TransactionAwareEntity
         'created_on' => '\DateTime',
         'draft_order_id' => 'string',
         'failure_reason' => '\PostFinanceCheckout\Sdk\Model\FailureReason',
+        'id' => 'int',
+        'linked_space_id' => 'int',
+        'linked_transaction' => 'int',
         'order_id' => 'string',
         'order_legacy_id' => 'string',
         'order_name' => 'string',
@@ -76,6 +81,9 @@ class ShopifyRecurringOrder extends TransactionAwareEntity
         'created_on' => 'date-time',
         'draft_order_id' => null,
         'failure_reason' => null,
+        'id' => 'int64',
+        'linked_space_id' => 'int64',
+        'linked_transaction' => 'int64',
         'order_id' => null,
         'order_legacy_id' => null,
         'order_name' => null,
@@ -101,6 +109,9 @@ class ShopifyRecurringOrder extends TransactionAwareEntity
         'created_on' => 'createdOn',
         'draft_order_id' => 'draftOrderId',
         'failure_reason' => 'failureReason',
+        'id' => 'id',
+        'linked_space_id' => 'linkedSpaceId',
+        'linked_transaction' => 'linkedTransaction',
         'order_id' => 'orderId',
         'order_legacy_id' => 'orderLegacyId',
         'order_name' => 'orderName',
@@ -125,6 +136,9 @@ class ShopifyRecurringOrder extends TransactionAwareEntity
         'created_on' => 'setCreatedOn',
         'draft_order_id' => 'setDraftOrderId',
         'failure_reason' => 'setFailureReason',
+        'id' => 'setId',
+        'linked_space_id' => 'setLinkedSpaceId',
+        'linked_transaction' => 'setLinkedTransaction',
         'order_id' => 'setOrderId',
         'order_legacy_id' => 'setOrderLegacyId',
         'order_name' => 'setOrderName',
@@ -149,6 +163,9 @@ class ShopifyRecurringOrder extends TransactionAwareEntity
         'created_on' => 'getCreatedOn',
         'draft_order_id' => 'getDraftOrderId',
         'failure_reason' => 'getFailureReason',
+        'id' => 'getId',
+        'linked_space_id' => 'getLinkedSpaceId',
+        'linked_transaction' => 'getLinkedTransaction',
         'order_id' => 'getOrderId',
         'order_legacy_id' => 'getOrderLegacyId',
         'order_name' => 'getOrderName',
@@ -164,17 +181,21 @@ class ShopifyRecurringOrder extends TransactionAwareEntity
 
     
 
+    /**
+     * Associative array for storing property values
+     *
+     * @var mixed[]
+     */
+    protected $container = [];
 
     /**
      * Constructor
      *
-     * @param mixed[] $data Associated array of property values
+     * @param mixed[]|null $data Associated array of property values
      *                      initializing the model
      */
-    public function __construct(array $data = null)
+    public function __construct(?array $data = null)
     {
-        parent::__construct($data);
-
         
         $this->container['billed_on'] = isset($data['billed_on']) ? $data['billed_on'] : null;
         
@@ -185,6 +206,12 @@ class ShopifyRecurringOrder extends TransactionAwareEntity
         $this->container['draft_order_id'] = isset($data['draft_order_id']) ? $data['draft_order_id'] : null;
         
         $this->container['failure_reason'] = isset($data['failure_reason']) ? $data['failure_reason'] : null;
+        
+        $this->container['id'] = isset($data['id']) ? $data['id'] : null;
+        
+        $this->container['linked_space_id'] = isset($data['linked_space_id']) ? $data['linked_space_id'] : null;
+        
+        $this->container['linked_transaction'] = isset($data['linked_transaction']) ? $data['linked_transaction'] : null;
         
         $this->container['order_id'] = isset($data['order_id']) ? $data['order_id'] : null;
         
@@ -217,7 +244,7 @@ class ShopifyRecurringOrder extends TransactionAwareEntity
      */
     public function listInvalidProperties()
     {
-        $invalidProperties = parent::listInvalidProperties();
+        $invalidProperties = [];
 
         return $invalidProperties;
     }
@@ -229,7 +256,7 @@ class ShopifyRecurringOrder extends TransactionAwareEntity
      */
     public static function swaggerTypes()
     {
-        return self::$swaggerTypes + parent::swaggerTypes();
+        return self::$swaggerTypes;
     }
 
     /**
@@ -239,7 +266,7 @@ class ShopifyRecurringOrder extends TransactionAwareEntity
      */
     public static function swaggerFormats()
     {
-        return self::$swaggerFormats + parent::swaggerFormats();
+        return self::$swaggerFormats;
     }
 
 
@@ -251,7 +278,7 @@ class ShopifyRecurringOrder extends TransactionAwareEntity
      */
     public static function attributeMap()
     {
-        return parent::attributeMap() + self::$attributeMap;
+        return self::$attributeMap;
     }
 
     /**
@@ -261,7 +288,7 @@ class ShopifyRecurringOrder extends TransactionAwareEntity
      */
     public static function setters()
     {
-        return parent::setters() + self::$setters;
+        return self::$setters;
     }
 
     /**
@@ -271,7 +298,7 @@ class ShopifyRecurringOrder extends TransactionAwareEntity
      */
     public static function getters()
     {
-        return parent::getters() + self::$getters;
+        return self::$getters;
     }
 
     /**
@@ -419,6 +446,81 @@ class ShopifyRecurringOrder extends TransactionAwareEntity
     public function setFailureReason($failure_reason)
     {
         $this->container['failure_reason'] = $failure_reason;
+
+        return $this;
+    }
+    
+
+    /**
+     * Gets id
+     *
+     * @return int
+     */
+    public function getId()
+    {
+        return $this->container['id'];
+    }
+
+    /**
+     * Sets id
+     *
+     * @param int $id A unique identifier for the object.
+     *
+     * @return $this
+     */
+    public function setId($id)
+    {
+        $this->container['id'] = $id;
+
+        return $this;
+    }
+    
+
+    /**
+     * Gets linked_space_id
+     *
+     * @return int
+     */
+    public function getLinkedSpaceId()
+    {
+        return $this->container['linked_space_id'];
+    }
+
+    /**
+     * Sets linked_space_id
+     *
+     * @param int $linked_space_id The ID of the space this object belongs to.
+     *
+     * @return $this
+     */
+    public function setLinkedSpaceId($linked_space_id)
+    {
+        $this->container['linked_space_id'] = $linked_space_id;
+
+        return $this;
+    }
+    
+
+    /**
+     * Gets linked_transaction
+     *
+     * @return int
+     */
+    public function getLinkedTransaction()
+    {
+        return $this->container['linked_transaction'];
+    }
+
+    /**
+     * Sets linked_transaction
+     *
+     * @param int $linked_transaction The payment transaction this object is linked to.
+     *
+     * @return $this
+     */
+    public function setLinkedTransaction($linked_transaction)
+    {
+        $this->container['linked_transaction'] = $linked_transaction;
 
         return $this;
     }

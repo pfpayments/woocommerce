@@ -27,7 +27,7 @@ use \PostFinanceCheckout\Sdk\ObjectSerializer;
  * AuthenticatedCardDataCreate model
  *
  * @category    Class
- * @description This model holds the card data and optional cardholder authentication details.
+ * @description 
  * @package     PostFinanceCheckout\Sdk
  * @author      wallee AG
  * @license     http://www.apache.org/licenses/LICENSE-2.0 Apache License v2
@@ -146,10 +146,10 @@ class AuthenticatedCardDataCreate implements ModelInterface, ArrayAccess
     /**
      * Constructor
      *
-     * @param mixed[] $data Associated array of property values
+     * @param mixed[]|null $data Associated array of property values
      *                      initializing the model
      */
-    public function __construct(array $data = null)
+    public function __construct(?array $data = null)
     {
         
         $this->container['card_holder_name'] = isset($data['card_holder_name']) ? $data['card_holder_name'] : null;
@@ -303,7 +303,7 @@ class AuthenticatedCardDataCreate implements ModelInterface, ArrayAccess
     /**
      * Sets card_holder_name
      *
-     * @param string $card_holder_name The card holder name is the name printed onto the card. It identifies the person who owns the card.
+     * @param string $card_holder_name The name of the cardholder, as printed on the card, identifying the card owner.
      *
      * @return $this
      */
@@ -332,7 +332,7 @@ class AuthenticatedCardDataCreate implements ModelInterface, ArrayAccess
     /**
      * Sets card_verification_code
      *
-     * @param string $card_verification_code The card verification code (CVC) is a 3 to 4 digit code typically printed on the back of the card. It helps to ensure that the card holder is authorizing the transaction. For card not-present transactions this field is optional.
+     * @param string $card_verification_code The security code used to validate the card during transactions.
      *
      * @return $this
      */
@@ -364,7 +364,7 @@ class AuthenticatedCardDataCreate implements ModelInterface, ArrayAccess
     /**
      * Sets cardholder_authentication
      *
-     * @param \PostFinanceCheckout\Sdk\Model\CardholderAuthenticationCreate $cardholder_authentication The cardholder authentication information. The authentication is optional and can be provided if the cardholder has been already authenticated (e.g. in 3-D Secure system).
+     * @param \PostFinanceCheckout\Sdk\Model\CardholderAuthenticationCreate $cardholder_authentication Optional authentication details for the cardholder, such as 3D Secure authentication, used when the cardholder has already been verified during the transaction for added security.
      *
      * @return $this
      */
@@ -389,7 +389,7 @@ class AuthenticatedCardDataCreate implements ModelInterface, ArrayAccess
     /**
      * Sets cryptogram
      *
-     * @param \PostFinanceCheckout\Sdk\Model\CardCryptogramCreate $cryptogram The additional authentication value used to secure the tokenized card transactions.
+     * @param \PostFinanceCheckout\Sdk\Model\CardCryptogramCreate $cryptogram An additional authentication value that enhances the security of tokenized card transactions.
      *
      * @return $this
      */
@@ -414,7 +414,7 @@ class AuthenticatedCardDataCreate implements ModelInterface, ArrayAccess
     /**
      * Sets expiry_date
      *
-     * @param string $expiry_date The card expiry date indicates when the card expires. The format is the format yyyy-mm where yyyy is the year (e.g. 2019) and the mm is the month (e.g. 09).
+     * @param string $expiry_date The expiry date of the card, indicating its validity period in yyyy-mm format (e.g., 2023-09).
      *
      * @return $this
      */
@@ -439,7 +439,7 @@ class AuthenticatedCardDataCreate implements ModelInterface, ArrayAccess
     /**
      * Sets pan_type
      *
-     * @param \PostFinanceCheckout\Sdk\Model\PanType $pan_type 
+     * @param \PostFinanceCheckout\Sdk\Model\PanType $pan_type The type of PAN or token, indicating the source or security method of the card information.
      *
      * @return $this
      */
@@ -464,7 +464,7 @@ class AuthenticatedCardDataCreate implements ModelInterface, ArrayAccess
     /**
      * Sets primary_account_number
      *
-     * @param string $primary_account_number The primary account number (PAN) identifies the card. The number is numeric and typically printed on the front of the card.
+     * @param string $primary_account_number The card's primary account number (PAN), the unique identifier of the card.
      *
      * @return $this
      */
@@ -496,7 +496,7 @@ class AuthenticatedCardDataCreate implements ModelInterface, ArrayAccess
     /**
      * Sets recurring_indicator
      *
-     * @param \PostFinanceCheckout\Sdk\Model\RecurringIndicator $recurring_indicator 
+     * @param \PostFinanceCheckout\Sdk\Model\RecurringIndicator $recurring_indicator The indicator used to distinguish between recurring and one-time transactions. If omitted, it will be automatically determined based on the transaction's properties.
      *
      * @return $this
      */
@@ -521,7 +521,7 @@ class AuthenticatedCardDataCreate implements ModelInterface, ArrayAccess
     /**
      * Sets scheme_transaction_reference
      *
-     * @param string $scheme_transaction_reference 
+     * @param string $scheme_transaction_reference A reference specific to the card's transaction within its payment scheme.
      *
      * @return $this
      */
@@ -550,7 +550,7 @@ class AuthenticatedCardDataCreate implements ModelInterface, ArrayAccess
     /**
      * Sets token_requestor_id
      *
-     * @param string $token_requestor_id 
+     * @param string $token_requestor_id The token requestor identifier (TRID) identifies the entity requesting tokenization for a card transaction.
      *
      * @return $this
      */

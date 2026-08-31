@@ -126,10 +126,10 @@ class RestCountry implements ModelInterface, ArrayAccess
     /**
      * Constructor
      *
-     * @param mixed[] $data Associated array of property values
+     * @param mixed[]|null $data Associated array of property values
      *                      initializing the model
      */
-    public function __construct(array $data = null)
+    public function __construct(?array $data = null)
     {
         
         $this->container['address_format'] = isset($data['address_format']) ? $data['address_format'] : null;
@@ -248,7 +248,7 @@ class RestCountry implements ModelInterface, ArrayAccess
     /**
      * Sets address_format
      *
-     * @param \PostFinanceCheckout\Sdk\Model\RestAddressFormat $address_format Specifies the country's way of formatting addresses.
+     * @param \PostFinanceCheckout\Sdk\Model\RestAddressFormat $address_format The country's way of formatting addresses.
      *
      * @return $this
      */

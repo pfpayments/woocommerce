@@ -93,10 +93,10 @@ class TransactionCommentCreate extends AbstractTransactionCommentActive
     /**
      * Constructor
      *
-     * @param mixed[] $data Associated array of property values
+     * @param mixed[]|null $data Associated array of property values
      *                      initializing the model
      */
-    public function __construct(array $data = null)
+    public function __construct(?array $data = null)
     {
         parent::__construct($data);
 
@@ -214,7 +214,7 @@ class TransactionCommentCreate extends AbstractTransactionCommentActive
     /**
      * Sets transaction
      *
-     * @param int $transaction 
+     * @param int $transaction The transaction that the comment belongs to.
      *
      * @return $this
      */

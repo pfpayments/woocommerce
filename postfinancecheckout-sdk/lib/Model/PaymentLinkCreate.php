@@ -25,7 +25,7 @@ use \PostFinanceCheckout\Sdk\ObjectSerializer;
  * PaymentLinkCreate model
  *
  * @category    Class
- * @description The payment link defines an URL to automatically create transactions.
+ * @description 
  * @package     PostFinanceCheckout\Sdk
  * @author      wallee AG
  * @license     http://www.apache.org/licenses/LICENSE-2.0 Apache License v2
@@ -103,10 +103,10 @@ class PaymentLinkCreate extends AbstractPaymentLinkUpdate
     /**
      * Constructor
      *
-     * @param mixed[] $data Associated array of property values
+     * @param mixed[]|null $data Associated array of property values
      *                      initializing the model
      */
-    public function __construct(array $data = null)
+    public function __construct(?array $data = null)
     {
         parent::__construct($data);
 
@@ -256,7 +256,7 @@ class PaymentLinkCreate extends AbstractPaymentLinkUpdate
     /**
      * Sets external_id
      *
-     * @param string $external_id A client generated nonce which identifies the entity to be created. Subsequent creation requests with the same external ID will not create new entities but return the initially created entity instead.
+     * @param string $external_id A client-generated nonce which uniquely identifies some action to be executed. Subsequent requests with the same external ID do not execute the action again, but return the original result.
      *
      * @return $this
      */
@@ -281,7 +281,7 @@ class PaymentLinkCreate extends AbstractPaymentLinkUpdate
     /**
      * Sets protection_mode
      *
-     * @param \PostFinanceCheckout\Sdk\Model\PaymentLinkProtectionMode $protection_mode The protection mode determines if the payment link is protected against tampering and in what way.
+     * @param \PostFinanceCheckout\Sdk\Model\PaymentLinkProtectionMode $protection_mode The protection mode defines whether the payment link is protected against tampering and specifies the protection method.
      *
      * @return $this
      */

@@ -131,10 +131,10 @@ class ExternalTransferBankTransaction implements ModelInterface, ArrayAccess
     /**
      * Constructor
      *
-     * @param mixed[] $data Associated array of property values
+     * @param mixed[]|null $data Associated array of property values
      *                      initializing the model
      */
-    public function __construct(array $data = null)
+    public function __construct(?array $data = null)
     {
         
         $this->container['bank_transaction'] = isset($data['bank_transaction']) ? $data['bank_transaction'] : null;
@@ -255,7 +255,7 @@ class ExternalTransferBankTransaction implements ModelInterface, ArrayAccess
     /**
      * Sets bank_transaction
      *
-     * @param \PostFinanceCheckout\Sdk\Model\BankTransaction $bank_transaction 
+     * @param \PostFinanceCheckout\Sdk\Model\BankTransaction $bank_transaction Provides general information about the bank transaction.
      *
      * @return $this
      */
@@ -280,7 +280,7 @@ class ExternalTransferBankTransaction implements ModelInterface, ArrayAccess
     /**
      * Sets external_account_identifier
      *
-     * @param string $external_account_identifier 
+     * @param string $external_account_identifier The identifier is used to uniquely identify the external bank account.
      *
      * @return $this
      */
@@ -305,7 +305,7 @@ class ExternalTransferBankTransaction implements ModelInterface, ArrayAccess
     /**
      * Sets external_account_type
      *
-     * @param string $external_account_type 
+     * @param string $external_account_type The external bank account's type.
      *
      * @return $this
      */
@@ -330,7 +330,7 @@ class ExternalTransferBankTransaction implements ModelInterface, ArrayAccess
     /**
      * Sets external_bank_name
      *
-     * @param string $external_bank_name 
+     * @param string $external_bank_name The external bank account's name.
      *
      * @return $this
      */

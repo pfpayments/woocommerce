@@ -27,7 +27,7 @@ use \PostFinanceCheckout\Sdk\ObjectSerializer;
  * PaymentLinkUpdate model
  *
  * @category    Class
- * @description The payment link defines an URL to automatically create transactions.
+ * @description 
  * @package     PostFinanceCheckout\Sdk
  * @author      wallee AG
  * @license     http://www.apache.org/licenses/LICENSE-2.0 Apache License v2
@@ -52,6 +52,7 @@ class PaymentLinkUpdate implements ModelInterface, ArrayAccess
         'id' => 'int',
         'version' => 'int',
         'allowed_payment_method_configurations' => '\PostFinanceCheckout\Sdk\Model\PaymentMethodConfiguration[]',
+        'allowed_redirection_domains' => 'string[]',
         'applied_space_view' => 'int',
         'available_from' => '\DateTime',
         'available_until' => '\DateTime',
@@ -73,6 +74,7 @@ class PaymentLinkUpdate implements ModelInterface, ArrayAccess
         'id' => 'int64',
         'version' => 'int64',
         'allowed_payment_method_configurations' => null,
+        'allowed_redirection_domains' => null,
         'applied_space_view' => 'int64',
         'available_from' => 'date-time',
         'available_until' => 'date-time',
@@ -95,6 +97,7 @@ class PaymentLinkUpdate implements ModelInterface, ArrayAccess
         'id' => 'id',
         'version' => 'version',
         'allowed_payment_method_configurations' => 'allowedPaymentMethodConfigurations',
+        'allowed_redirection_domains' => 'allowedRedirectionDomains',
         'applied_space_view' => 'appliedSpaceView',
         'available_from' => 'availableFrom',
         'available_until' => 'availableUntil',
@@ -116,6 +119,7 @@ class PaymentLinkUpdate implements ModelInterface, ArrayAccess
         'id' => 'setId',
         'version' => 'setVersion',
         'allowed_payment_method_configurations' => 'setAllowedPaymentMethodConfigurations',
+        'allowed_redirection_domains' => 'setAllowedRedirectionDomains',
         'applied_space_view' => 'setAppliedSpaceView',
         'available_from' => 'setAvailableFrom',
         'available_until' => 'setAvailableUntil',
@@ -137,6 +141,7 @@ class PaymentLinkUpdate implements ModelInterface, ArrayAccess
         'id' => 'getId',
         'version' => 'getVersion',
         'allowed_payment_method_configurations' => 'getAllowedPaymentMethodConfigurations',
+        'allowed_redirection_domains' => 'getAllowedRedirectionDomains',
         'applied_space_view' => 'getAppliedSpaceView',
         'available_from' => 'getAvailableFrom',
         'available_until' => 'getAvailableUntil',
@@ -161,10 +166,10 @@ class PaymentLinkUpdate implements ModelInterface, ArrayAccess
     /**
      * Constructor
      *
-     * @param mixed[] $data Associated array of property values
+     * @param mixed[]|null $data Associated array of property values
      *                      initializing the model
      */
-    public function __construct(array $data = null)
+    public function __construct(?array $data = null)
     {
         
         $this->container['id'] = isset($data['id']) ? $data['id'] : null;
@@ -172,6 +177,8 @@ class PaymentLinkUpdate implements ModelInterface, ArrayAccess
         $this->container['version'] = isset($data['version']) ? $data['version'] : null;
         
         $this->container['allowed_payment_method_configurations'] = isset($data['allowed_payment_method_configurations']) ? $data['allowed_payment_method_configurations'] : null;
+        
+        $this->container['allowed_redirection_domains'] = isset($data['allowed_redirection_domains']) ? $data['allowed_redirection_domains'] : null;
         
         $this->container['applied_space_view'] = isset($data['applied_space_view']) ? $data['applied_space_view'] : null;
         
@@ -357,13 +364,38 @@ class PaymentLinkUpdate implements ModelInterface, ArrayAccess
     /**
      * Sets allowed_payment_method_configurations
      *
-     * @param \PostFinanceCheckout\Sdk\Model\PaymentMethodConfiguration[] $allowed_payment_method_configurations The allowed payment method configurations restrict the payment methods which can be used with this payment link.
+     * @param \PostFinanceCheckout\Sdk\Model\PaymentMethodConfiguration[] $allowed_payment_method_configurations The payment method configurations that customers can use for making payments.
      *
      * @return $this
      */
     public function setAllowedPaymentMethodConfigurations($allowed_payment_method_configurations)
     {
         $this->container['allowed_payment_method_configurations'] = $allowed_payment_method_configurations;
+
+        return $this;
+    }
+    
+
+    /**
+     * Gets allowed_redirection_domains
+     *
+     * @return string[]
+     */
+    public function getAllowedRedirectionDomains()
+    {
+        return $this->container['allowed_redirection_domains'];
+    }
+
+    /**
+     * Sets allowed_redirection_domains
+     *
+     * @param string[] $allowed_redirection_domains The domains to which the user is allowed to be redirected after the payment is completed. The following options can be configured: Exact domain: enter a full domain, e.g. (https://example.com). Wildcard domain: use to allow subdomains, e.g. (https://_*.example.com). All domains: use (ALL) to allow redirection to any domain (not recommended for security reasons). No domains : use (NONE) to disallow any redirection. Only one option per line is allowed. Invalid entries will be rejected.
+     *
+     * @return $this
+     */
+    public function setAllowedRedirectionDomains($allowed_redirection_domains)
+    {
+        $this->container['allowed_redirection_domains'] = $allowed_redirection_domains;
 
         return $this;
     }
@@ -382,7 +414,7 @@ class PaymentLinkUpdate implements ModelInterface, ArrayAccess
     /**
      * Sets applied_space_view
      *
-     * @param int $applied_space_view The payment link can be conducted in a specific space view. The space view may apply a specific design to the payment page.
+     * @param int $applied_space_view The payment link can be used within a specific space view, which may apply a customized design to the payment page.
      *
      * @return $this
      */
@@ -407,7 +439,7 @@ class PaymentLinkUpdate implements ModelInterface, ArrayAccess
     /**
      * Sets available_from
      *
-     * @param \DateTime $available_from The available from date defines the earliest date on which the payment link can be used. When no date is specified there will be no restriction.
+     * @param \DateTime $available_from The earliest date the payment link can be used to initiate a transaction. If no date is provided, the link will be available immediately.
      *
      * @return $this
      */
@@ -432,7 +464,7 @@ class PaymentLinkUpdate implements ModelInterface, ArrayAccess
     /**
      * Sets available_until
      *
-     * @param \DateTime $available_until The available from date defines the latest date on which the payment link can be used to initialize a transaction. When no date is specified there will be no restriction.
+     * @param \DateTime $available_until The latest date the payment link can be used to initiate a transaction. If no date is provided, the link will remain available indefinitely.
      *
      * @return $this
      */
@@ -457,7 +489,7 @@ class PaymentLinkUpdate implements ModelInterface, ArrayAccess
     /**
      * Sets billing_address_handling_mode
      *
-     * @param \PostFinanceCheckout\Sdk\Model\PaymentLinkAddressHandlingMode $billing_address_handling_mode The billing address handling mode controls if the address is collected or not and how it is collected.
+     * @param \PostFinanceCheckout\Sdk\Model\PaymentLinkAddressHandlingMode $billing_address_handling_mode The handling mode defines whether a billing address is required and specifies how it should be provided.
      *
      * @return $this
      */
@@ -482,7 +514,7 @@ class PaymentLinkUpdate implements ModelInterface, ArrayAccess
     /**
      * Sets currency
      *
-     * @param string $currency The currency defines in which currency the payment is executed in. If no currency is defined it has to be specified within the request parameter 'currency'.
+     * @param string $currency The three-letter currency code (ISO 4217). If not specified, it must be provided in the 'currency' request parameter.
      *
      * @return $this
      */
@@ -507,7 +539,7 @@ class PaymentLinkUpdate implements ModelInterface, ArrayAccess
     /**
      * Sets language
      *
-     * @param string $language The language defines the language of the payment page. If no language is provided it can be provided through the request parameter.
+     * @param string $language The language for displaying the payment page. If not specified, it can be supplied via the 'language' request parameter.
      *
      * @return $this
      */
@@ -532,7 +564,7 @@ class PaymentLinkUpdate implements ModelInterface, ArrayAccess
     /**
      * Sets line_items
      *
-     * @param \PostFinanceCheckout\Sdk\Model\LineItemCreate[] $line_items The line items allows to define the line items for this payment link. When the line items are defined they cannot be overridden through the request parameters. If no amount for the payment link is defined, the additional checkout page to enter the amount is shown to the consumer.
+     * @param \PostFinanceCheckout\Sdk\Model\LineItemCreate[] $line_items The line items representing what is being sold. If not specified, they can be supplied via request parameters.
      *
      * @return $this
      */
@@ -557,7 +589,7 @@ class PaymentLinkUpdate implements ModelInterface, ArrayAccess
     /**
      * Sets maximal_number_of_transactions
      *
-     * @param int $maximal_number_of_transactions The maximal number of transactions limits the number of transactions which can be created with this payment link.
+     * @param int $maximal_number_of_transactions The maximum number of transactions that can be initiated using the payment link.
      *
      * @return $this
      */
@@ -582,7 +614,7 @@ class PaymentLinkUpdate implements ModelInterface, ArrayAccess
     /**
      * Sets name
      *
-     * @param string $name The payment link name is used internally to identify the payment link. For example the name is used within search fields and hence it should be distinct and descriptive.
+     * @param string $name The name used to identify the payment link.
      *
      * @return $this
      */
@@ -611,7 +643,7 @@ class PaymentLinkUpdate implements ModelInterface, ArrayAccess
     /**
      * Sets shipping_address_handling_mode
      *
-     * @param \PostFinanceCheckout\Sdk\Model\PaymentLinkAddressHandlingMode $shipping_address_handling_mode The shipping address handling mode controls if the address is collected or not and how it is collected.
+     * @param \PostFinanceCheckout\Sdk\Model\PaymentLinkAddressHandlingMode $shipping_address_handling_mode The handling mode defines whether a shipping address is required and specifies how it should be provided.
      *
      * @return $this
      */

@@ -19,6 +19,8 @@
 
 
 namespace PostFinanceCheckout\Sdk\Model;
+
+use \ArrayAccess;
 use \PostFinanceCheckout\Sdk\ObjectSerializer;
 
 /**
@@ -30,7 +32,7 @@ use \PostFinanceCheckout\Sdk\ObjectSerializer;
  * @author      wallee AG
  * @license     http://www.apache.org/licenses/LICENSE-2.0 Apache License v2
  */
-class TransactionVoid extends TransactionAwareEntity 
+class TransactionVoid implements ModelInterface, ArrayAccess
 {
     const DISCRIMINATOR = null;
 
@@ -51,8 +53,11 @@ class TransactionVoid extends TransactionAwareEntity
         'created_on' => '\DateTime',
         'failed_on' => '\DateTime',
         'failure_reason' => '\PostFinanceCheckout\Sdk\Model\FailureReason',
+        'id' => 'int',
         'labels' => '\PostFinanceCheckout\Sdk\Model\Label[]',
         'language' => 'string',
+        'linked_space_id' => 'int',
+        'linked_transaction' => 'int',
         'mode' => '\PostFinanceCheckout\Sdk\Model\TransactionVoidMode',
         'next_update_on' => '\DateTime',
         'planned_purge_date' => '\DateTime',
@@ -75,8 +80,11 @@ class TransactionVoid extends TransactionAwareEntity
         'created_on' => 'date-time',
         'failed_on' => 'date-time',
         'failure_reason' => null,
+        'id' => 'int64',
         'labels' => null,
         'language' => null,
+        'linked_space_id' => 'int64',
+        'linked_transaction' => 'int64',
         'mode' => null,
         'next_update_on' => 'date-time',
         'planned_purge_date' => 'date-time',
@@ -100,8 +108,11 @@ class TransactionVoid extends TransactionAwareEntity
         'created_on' => 'createdOn',
         'failed_on' => 'failedOn',
         'failure_reason' => 'failureReason',
+        'id' => 'id',
         'labels' => 'labels',
         'language' => 'language',
+        'linked_space_id' => 'linkedSpaceId',
+        'linked_transaction' => 'linkedTransaction',
         'mode' => 'mode',
         'next_update_on' => 'nextUpdateOn',
         'planned_purge_date' => 'plannedPurgeDate',
@@ -124,8 +135,11 @@ class TransactionVoid extends TransactionAwareEntity
         'created_on' => 'setCreatedOn',
         'failed_on' => 'setFailedOn',
         'failure_reason' => 'setFailureReason',
+        'id' => 'setId',
         'labels' => 'setLabels',
         'language' => 'setLanguage',
+        'linked_space_id' => 'setLinkedSpaceId',
+        'linked_transaction' => 'setLinkedTransaction',
         'mode' => 'setMode',
         'next_update_on' => 'setNextUpdateOn',
         'planned_purge_date' => 'setPlannedPurgeDate',
@@ -148,8 +162,11 @@ class TransactionVoid extends TransactionAwareEntity
         'created_on' => 'getCreatedOn',
         'failed_on' => 'getFailedOn',
         'failure_reason' => 'getFailureReason',
+        'id' => 'getId',
         'labels' => 'getLabels',
         'language' => 'getLanguage',
+        'linked_space_id' => 'getLinkedSpaceId',
+        'linked_transaction' => 'getLinkedTransaction',
         'mode' => 'getMode',
         'next_update_on' => 'getNextUpdateOn',
         'planned_purge_date' => 'getPlannedPurgeDate',
@@ -164,17 +181,21 @@ class TransactionVoid extends TransactionAwareEntity
 
     
 
+    /**
+     * Associative array for storing property values
+     *
+     * @var mixed[]
+     */
+    protected $container = [];
 
     /**
      * Constructor
      *
-     * @param mixed[] $data Associated array of property values
+     * @param mixed[]|null $data Associated array of property values
      *                      initializing the model
      */
-    public function __construct(array $data = null)
+    public function __construct(?array $data = null)
     {
-        parent::__construct($data);
-
         
         $this->container['created_by'] = isset($data['created_by']) ? $data['created_by'] : null;
         
@@ -184,9 +205,15 @@ class TransactionVoid extends TransactionAwareEntity
         
         $this->container['failure_reason'] = isset($data['failure_reason']) ? $data['failure_reason'] : null;
         
+        $this->container['id'] = isset($data['id']) ? $data['id'] : null;
+        
         $this->container['labels'] = isset($data['labels']) ? $data['labels'] : null;
         
         $this->container['language'] = isset($data['language']) ? $data['language'] : null;
+        
+        $this->container['linked_space_id'] = isset($data['linked_space_id']) ? $data['linked_space_id'] : null;
+        
+        $this->container['linked_transaction'] = isset($data['linked_transaction']) ? $data['linked_transaction'] : null;
         
         $this->container['mode'] = isset($data['mode']) ? $data['mode'] : null;
         
@@ -217,7 +244,7 @@ class TransactionVoid extends TransactionAwareEntity
      */
     public function listInvalidProperties()
     {
-        $invalidProperties = parent::listInvalidProperties();
+        $invalidProperties = [];
 
         return $invalidProperties;
     }
@@ -229,7 +256,7 @@ class TransactionVoid extends TransactionAwareEntity
      */
     public static function swaggerTypes()
     {
-        return self::$swaggerTypes + parent::swaggerTypes();
+        return self::$swaggerTypes;
     }
 
     /**
@@ -239,7 +266,7 @@ class TransactionVoid extends TransactionAwareEntity
      */
     public static function swaggerFormats()
     {
-        return self::$swaggerFormats + parent::swaggerFormats();
+        return self::$swaggerFormats;
     }
 
 
@@ -251,7 +278,7 @@ class TransactionVoid extends TransactionAwareEntity
      */
     public static function attributeMap()
     {
-        return parent::attributeMap() + self::$attributeMap;
+        return self::$attributeMap;
     }
 
     /**
@@ -261,7 +288,7 @@ class TransactionVoid extends TransactionAwareEntity
      */
     public static function setters()
     {
-        return parent::setters() + self::$setters;
+        return self::$setters;
     }
 
     /**
@@ -271,7 +298,7 @@ class TransactionVoid extends TransactionAwareEntity
      */
     public static function getters()
     {
-        return parent::getters() + self::$getters;
+        return self::$getters;
     }
 
     /**
@@ -312,7 +339,7 @@ class TransactionVoid extends TransactionAwareEntity
     /**
      * Sets created_by
      *
-     * @param int $created_by 
+     * @param int $created_by The ID of the user the transaction void was created by.
      *
      * @return $this
      */
@@ -362,7 +389,7 @@ class TransactionVoid extends TransactionAwareEntity
     /**
      * Sets failed_on
      *
-     * @param \DateTime $failed_on 
+     * @param \DateTime $failed_on The date and time when the transaction void failed.
      *
      * @return $this
      */
@@ -387,13 +414,38 @@ class TransactionVoid extends TransactionAwareEntity
     /**
      * Sets failure_reason
      *
-     * @param \PostFinanceCheckout\Sdk\Model\FailureReason $failure_reason 
+     * @param \PostFinanceCheckout\Sdk\Model\FailureReason $failure_reason The reason for the failure of the transaction void.
      *
      * @return $this
      */
     public function setFailureReason($failure_reason)
     {
         $this->container['failure_reason'] = $failure_reason;
+
+        return $this;
+    }
+    
+
+    /**
+     * Gets id
+     *
+     * @return int
+     */
+    public function getId()
+    {
+        return $this->container['id'];
+    }
+
+    /**
+     * Sets id
+     *
+     * @param int $id A unique identifier for the object.
+     *
+     * @return $this
+     */
+    public function setId($id)
+    {
+        $this->container['id'] = $id;
 
         return $this;
     }
@@ -450,6 +502,56 @@ class TransactionVoid extends TransactionAwareEntity
     
 
     /**
+     * Gets linked_space_id
+     *
+     * @return int
+     */
+    public function getLinkedSpaceId()
+    {
+        return $this->container['linked_space_id'];
+    }
+
+    /**
+     * Sets linked_space_id
+     *
+     * @param int $linked_space_id The ID of the space this object belongs to.
+     *
+     * @return $this
+     */
+    public function setLinkedSpaceId($linked_space_id)
+    {
+        $this->container['linked_space_id'] = $linked_space_id;
+
+        return $this;
+    }
+    
+
+    /**
+     * Gets linked_transaction
+     *
+     * @return int
+     */
+    public function getLinkedTransaction()
+    {
+        return $this->container['linked_transaction'];
+    }
+
+    /**
+     * Sets linked_transaction
+     *
+     * @param int $linked_transaction The payment transaction this object is linked to.
+     *
+     * @return $this
+     */
+    public function setLinkedTransaction($linked_transaction)
+    {
+        $this->container['linked_transaction'] = $linked_transaction;
+
+        return $this;
+    }
+    
+
+    /**
      * Gets mode
      *
      * @return \PostFinanceCheckout\Sdk\Model\TransactionVoidMode
@@ -462,7 +564,7 @@ class TransactionVoid extends TransactionAwareEntity
     /**
      * Sets mode
      *
-     * @param \PostFinanceCheckout\Sdk\Model\TransactionVoidMode $mode 
+     * @param \PostFinanceCheckout\Sdk\Model\TransactionVoidMode $mode The mode of transaction void, such as online or offline, determining how the void process is executed.
      *
      * @return $this
      */
@@ -487,7 +589,7 @@ class TransactionVoid extends TransactionAwareEntity
     /**
      * Sets next_update_on
      *
-     * @param \DateTime $next_update_on 
+     * @param \DateTime $next_update_on The date and time when the next update of the object's state is planned.
      *
      * @return $this
      */
@@ -537,7 +639,7 @@ class TransactionVoid extends TransactionAwareEntity
     /**
      * Sets processor_reference
      *
-     * @param string $processor_reference 
+     * @param string $processor_reference The reference ID provided by the payment processor, used to trace the void through the external payment system.
      *
      * @return $this
      */
@@ -612,7 +714,7 @@ class TransactionVoid extends TransactionAwareEntity
     /**
      * Sets succeeded_on
      *
-     * @param \DateTime $succeeded_on 
+     * @param \DateTime $succeeded_on The date and time when the transaction void succeeded.
      *
      * @return $this
      */
@@ -637,7 +739,7 @@ class TransactionVoid extends TransactionAwareEntity
     /**
      * Sets timeout_on
      *
-     * @param \DateTime $timeout_on 
+     * @param \DateTime $timeout_on The date and time when the object will expire.
      *
      * @return $this
      */
@@ -662,7 +764,7 @@ class TransactionVoid extends TransactionAwareEntity
     /**
      * Sets transaction
      *
-     * @param \PostFinanceCheckout\Sdk\Model\Transaction $transaction 
+     * @param \PostFinanceCheckout\Sdk\Model\Transaction $transaction The transaction that the void belongs to.
      *
      * @return $this
      */

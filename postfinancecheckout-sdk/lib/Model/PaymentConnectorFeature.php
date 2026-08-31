@@ -106,10 +106,10 @@ class PaymentConnectorFeature implements ModelInterface, ArrayAccess
     /**
      * Constructor
      *
-     * @param mixed[] $data Associated array of property values
+     * @param mixed[]|null $data Associated array of property values
      *                      initializing the model
      */
-    public function __construct(array $data = null)
+    public function __construct(?array $data = null)
     {
         
         $this->container['display_name'] = isset($data['display_name']) ? $data['display_name'] : null;
@@ -220,7 +220,7 @@ class PaymentConnectorFeature implements ModelInterface, ArrayAccess
     /**
      * Sets display_name
      *
-     * @param string $display_name The name of the feature.
+     * @param string $display_name The localized name of the feature.
      *
      * @return $this
      */

@@ -19,6 +19,8 @@
 
 
 namespace PostFinanceCheckout\Sdk\Model;
+
+use \ArrayAccess;
 use \PostFinanceCheckout\Sdk\ObjectSerializer;
 
 /**
@@ -30,7 +32,7 @@ use \PostFinanceCheckout\Sdk\ObjectSerializer;
  * @author      wallee AG
  * @license     http://www.apache.org/licenses/LICENSE-2.0 Apache License v2
  */
-class ChargeAttempt extends TransactionAwareEntity 
+class ChargeAttempt implements ModelInterface, ArrayAccess
 {
     const DISCRIMINATOR = null;
 
@@ -55,10 +57,13 @@ class ChargeAttempt extends TransactionAwareEntity
         'environment' => '\PostFinanceCheckout\Sdk\Model\ChargeAttemptEnvironment',
         'failed_on' => '\DateTime',
         'failure_reason' => '\PostFinanceCheckout\Sdk\Model\FailureReason',
+        'id' => 'int',
         'initializing_token_version' => 'bool',
         'invocation' => '\PostFinanceCheckout\Sdk\Model\ConnectorInvocation',
         'labels' => '\PostFinanceCheckout\Sdk\Model\Label[]',
         'language' => 'string',
+        'linked_space_id' => 'int',
+        'linked_transaction' => 'int',
         'next_update_on' => '\DateTime',
         'planned_purge_date' => '\DateTime',
         'redirection_url' => 'string',
@@ -89,10 +94,13 @@ class ChargeAttempt extends TransactionAwareEntity
         'environment' => null,
         'failed_on' => 'date-time',
         'failure_reason' => null,
+        'id' => 'int64',
         'initializing_token_version' => null,
         'invocation' => null,
         'labels' => null,
         'language' => null,
+        'linked_space_id' => 'int64',
+        'linked_transaction' => 'int64',
         'next_update_on' => 'date-time',
         'planned_purge_date' => 'date-time',
         'redirection_url' => null,
@@ -124,10 +132,13 @@ class ChargeAttempt extends TransactionAwareEntity
         'environment' => 'environment',
         'failed_on' => 'failedOn',
         'failure_reason' => 'failureReason',
+        'id' => 'id',
         'initializing_token_version' => 'initializingTokenVersion',
         'invocation' => 'invocation',
         'labels' => 'labels',
         'language' => 'language',
+        'linked_space_id' => 'linkedSpaceId',
+        'linked_transaction' => 'linkedTransaction',
         'next_update_on' => 'nextUpdateOn',
         'planned_purge_date' => 'plannedPurgeDate',
         'redirection_url' => 'redirectionUrl',
@@ -158,10 +169,13 @@ class ChargeAttempt extends TransactionAwareEntity
         'environment' => 'setEnvironment',
         'failed_on' => 'setFailedOn',
         'failure_reason' => 'setFailureReason',
+        'id' => 'setId',
         'initializing_token_version' => 'setInitializingTokenVersion',
         'invocation' => 'setInvocation',
         'labels' => 'setLabels',
         'language' => 'setLanguage',
+        'linked_space_id' => 'setLinkedSpaceId',
+        'linked_transaction' => 'setLinkedTransaction',
         'next_update_on' => 'setNextUpdateOn',
         'planned_purge_date' => 'setPlannedPurgeDate',
         'redirection_url' => 'setRedirectionUrl',
@@ -192,10 +206,13 @@ class ChargeAttempt extends TransactionAwareEntity
         'environment' => 'getEnvironment',
         'failed_on' => 'getFailedOn',
         'failure_reason' => 'getFailureReason',
+        'id' => 'getId',
         'initializing_token_version' => 'getInitializingTokenVersion',
         'invocation' => 'getInvocation',
         'labels' => 'getLabels',
         'language' => 'getLanguage',
+        'linked_space_id' => 'getLinkedSpaceId',
+        'linked_transaction' => 'getLinkedTransaction',
         'next_update_on' => 'getNextUpdateOn',
         'planned_purge_date' => 'getPlannedPurgeDate',
         'redirection_url' => 'getRedirectionUrl',
@@ -214,17 +231,21 @@ class ChargeAttempt extends TransactionAwareEntity
 
     
 
+    /**
+     * Associative array for storing property values
+     *
+     * @var mixed[]
+     */
+    protected $container = [];
 
     /**
      * Constructor
      *
-     * @param mixed[] $data Associated array of property values
+     * @param mixed[]|null $data Associated array of property values
      *                      initializing the model
      */
-    public function __construct(array $data = null)
+    public function __construct(?array $data = null)
     {
-        parent::__construct($data);
-
         
         $this->container['charge'] = isset($data['charge']) ? $data['charge'] : null;
         
@@ -242,6 +263,8 @@ class ChargeAttempt extends TransactionAwareEntity
         
         $this->container['failure_reason'] = isset($data['failure_reason']) ? $data['failure_reason'] : null;
         
+        $this->container['id'] = isset($data['id']) ? $data['id'] : null;
+        
         $this->container['initializing_token_version'] = isset($data['initializing_token_version']) ? $data['initializing_token_version'] : null;
         
         $this->container['invocation'] = isset($data['invocation']) ? $data['invocation'] : null;
@@ -249,6 +272,10 @@ class ChargeAttempt extends TransactionAwareEntity
         $this->container['labels'] = isset($data['labels']) ? $data['labels'] : null;
         
         $this->container['language'] = isset($data['language']) ? $data['language'] : null;
+        
+        $this->container['linked_space_id'] = isset($data['linked_space_id']) ? $data['linked_space_id'] : null;
+        
+        $this->container['linked_transaction'] = isset($data['linked_transaction']) ? $data['linked_transaction'] : null;
         
         $this->container['next_update_on'] = isset($data['next_update_on']) ? $data['next_update_on'] : null;
         
@@ -287,7 +314,7 @@ class ChargeAttempt extends TransactionAwareEntity
      */
     public function listInvalidProperties()
     {
-        $invalidProperties = parent::listInvalidProperties();
+        $invalidProperties = [];
 
         if (!is_null($this->container['user_failure_message']) && (mb_strlen($this->container['user_failure_message']) > 2000)) {
             $invalidProperties[] = "invalid value for 'user_failure_message', the character length must be smaller than or equal to 2000.";
@@ -303,7 +330,7 @@ class ChargeAttempt extends TransactionAwareEntity
      */
     public static function swaggerTypes()
     {
-        return self::$swaggerTypes + parent::swaggerTypes();
+        return self::$swaggerTypes;
     }
 
     /**
@@ -313,7 +340,7 @@ class ChargeAttempt extends TransactionAwareEntity
      */
     public static function swaggerFormats()
     {
-        return self::$swaggerFormats + parent::swaggerFormats();
+        return self::$swaggerFormats;
     }
 
 
@@ -325,7 +352,7 @@ class ChargeAttempt extends TransactionAwareEntity
      */
     public static function attributeMap()
     {
-        return parent::attributeMap() + self::$attributeMap;
+        return self::$attributeMap;
     }
 
     /**
@@ -335,7 +362,7 @@ class ChargeAttempt extends TransactionAwareEntity
      */
     public static function setters()
     {
-        return parent::setters() + self::$setters;
+        return self::$setters;
     }
 
     /**
@@ -345,7 +372,7 @@ class ChargeAttempt extends TransactionAwareEntity
      */
     public static function getters()
     {
-        return parent::getters() + self::$getters;
+        return self::$getters;
     }
 
     /**
@@ -386,7 +413,7 @@ class ChargeAttempt extends TransactionAwareEntity
     /**
      * Sets charge
      *
-     * @param \PostFinanceCheckout\Sdk\Model\Charge $charge 
+     * @param \PostFinanceCheckout\Sdk\Model\Charge $charge The charge that the charge attempt belongs to.
      *
      * @return $this
      */
@@ -411,7 +438,7 @@ class ChargeAttempt extends TransactionAwareEntity
     /**
      * Sets completion_behavior
      *
-     * @param \PostFinanceCheckout\Sdk\Model\TransactionCompletionBehavior $completion_behavior 
+     * @param \PostFinanceCheckout\Sdk\Model\TransactionCompletionBehavior $completion_behavior The behavior that controls when the transaction is completed.
      *
      * @return $this
      */
@@ -436,7 +463,7 @@ class ChargeAttempt extends TransactionAwareEntity
     /**
      * Sets connector_configuration
      *
-     * @param \PostFinanceCheckout\Sdk\Model\PaymentConnectorConfiguration $connector_configuration 
+     * @param \PostFinanceCheckout\Sdk\Model\PaymentConnectorConfiguration $connector_configuration The payment connector configuration that was used for the charge attempt.
      *
      * @return $this
      */
@@ -486,7 +513,7 @@ class ChargeAttempt extends TransactionAwareEntity
     /**
      * Sets customers_presence
      *
-     * @param \PostFinanceCheckout\Sdk\Model\CustomersPresence $customers_presence The customer's presence indicates which kind of customer interaction was used during the charge attempt.
+     * @param \PostFinanceCheckout\Sdk\Model\CustomersPresence $customers_presence The customer's presence indicates whether and in what way the charge attempt's customer is present.
      *
      * @return $this
      */
@@ -511,7 +538,7 @@ class ChargeAttempt extends TransactionAwareEntity
     /**
      * Sets environment
      *
-     * @param \PostFinanceCheckout\Sdk\Model\ChargeAttemptEnvironment $environment 
+     * @param \PostFinanceCheckout\Sdk\Model\ChargeAttemptEnvironment $environment The environment in which the charge attempt is executed.
      *
      * @return $this
      */
@@ -536,7 +563,7 @@ class ChargeAttempt extends TransactionAwareEntity
     /**
      * Sets failed_on
      *
-     * @param \DateTime $failed_on 
+     * @param \DateTime $failed_on The date and time when the charge attempt failed.
      *
      * @return $this
      */
@@ -561,13 +588,38 @@ class ChargeAttempt extends TransactionAwareEntity
     /**
      * Sets failure_reason
      *
-     * @param \PostFinanceCheckout\Sdk\Model\FailureReason $failure_reason 
+     * @param \PostFinanceCheckout\Sdk\Model\FailureReason $failure_reason The reason for the failure of the charge attempt.
      *
      * @return $this
      */
     public function setFailureReason($failure_reason)
     {
         $this->container['failure_reason'] = $failure_reason;
+
+        return $this;
+    }
+    
+
+    /**
+     * Gets id
+     *
+     * @return int
+     */
+    public function getId()
+    {
+        return $this->container['id'];
+    }
+
+    /**
+     * Sets id
+     *
+     * @param int $id A unique identifier for the object.
+     *
+     * @return $this
+     */
+    public function setId($id)
+    {
+        $this->container['id'] = $id;
 
         return $this;
     }
@@ -586,7 +638,7 @@ class ChargeAttempt extends TransactionAwareEntity
     /**
      * Sets initializing_token_version
      *
-     * @param bool $initializing_token_version 
+     * @param bool $initializing_token_version Whether a new token version is being initialized.
      *
      * @return $this
      */
@@ -611,7 +663,7 @@ class ChargeAttempt extends TransactionAwareEntity
     /**
      * Sets invocation
      *
-     * @param \PostFinanceCheckout\Sdk\Model\ConnectorInvocation $invocation 
+     * @param \PostFinanceCheckout\Sdk\Model\ConnectorInvocation $invocation The connector invocation that the charge attempt belongs to.
      *
      * @return $this
      */
@@ -674,6 +726,56 @@ class ChargeAttempt extends TransactionAwareEntity
     
 
     /**
+     * Gets linked_space_id
+     *
+     * @return int
+     */
+    public function getLinkedSpaceId()
+    {
+        return $this->container['linked_space_id'];
+    }
+
+    /**
+     * Sets linked_space_id
+     *
+     * @param int $linked_space_id The ID of the space this object belongs to.
+     *
+     * @return $this
+     */
+    public function setLinkedSpaceId($linked_space_id)
+    {
+        $this->container['linked_space_id'] = $linked_space_id;
+
+        return $this;
+    }
+    
+
+    /**
+     * Gets linked_transaction
+     *
+     * @return int
+     */
+    public function getLinkedTransaction()
+    {
+        return $this->container['linked_transaction'];
+    }
+
+    /**
+     * Sets linked_transaction
+     *
+     * @param int $linked_transaction The payment transaction this object is linked to.
+     *
+     * @return $this
+     */
+    public function setLinkedTransaction($linked_transaction)
+    {
+        $this->container['linked_transaction'] = $linked_transaction;
+
+        return $this;
+    }
+    
+
+    /**
      * Gets next_update_on
      *
      * @return \DateTime
@@ -686,7 +788,7 @@ class ChargeAttempt extends TransactionAwareEntity
     /**
      * Sets next_update_on
      *
-     * @param \DateTime $next_update_on 
+     * @param \DateTime $next_update_on The date and time when the next update of the object's state is planned.
      *
      * @return $this
      */
@@ -736,7 +838,7 @@ class ChargeAttempt extends TransactionAwareEntity
     /**
      * Sets redirection_url
      *
-     * @param string $redirection_url 
+     * @param string $redirection_url The URL to redirect the customer to after payment processing.
      *
      * @return $this
      */
@@ -761,7 +863,7 @@ class ChargeAttempt extends TransactionAwareEntity
     /**
      * Sets sales_channel
      *
-     * @param int $sales_channel 
+     * @param int $sales_channel The sales channel through which the charge attempt was made.
      *
      * @return $this
      */
@@ -836,7 +938,7 @@ class ChargeAttempt extends TransactionAwareEntity
     /**
      * Sets succeeded_on
      *
-     * @param \DateTime $succeeded_on 
+     * @param \DateTime $succeeded_on The date and time when the charge attempt succeeded.
      *
      * @return $this
      */
@@ -861,7 +963,7 @@ class ChargeAttempt extends TransactionAwareEntity
     /**
      * Sets terminal
      *
-     * @param \PostFinanceCheckout\Sdk\Model\PaymentTerminal $terminal 
+     * @param \PostFinanceCheckout\Sdk\Model\PaymentTerminal $terminal The payment terminal through which the charge attempt was made.
      *
      * @return $this
      */
@@ -886,7 +988,7 @@ class ChargeAttempt extends TransactionAwareEntity
     /**
      * Sets time_zone
      *
-     * @param string $time_zone 
+     * @param string $time_zone The time zone that this object is associated with.
      *
      * @return $this
      */
@@ -911,7 +1013,7 @@ class ChargeAttempt extends TransactionAwareEntity
     /**
      * Sets timeout_on
      *
-     * @param \DateTime $timeout_on 
+     * @param \DateTime $timeout_on The date and time when the object will expire.
      *
      * @return $this
      */
@@ -936,7 +1038,7 @@ class ChargeAttempt extends TransactionAwareEntity
     /**
      * Sets token_version
      *
-     * @param \PostFinanceCheckout\Sdk\Model\TokenVersion $token_version 
+     * @param \PostFinanceCheckout\Sdk\Model\TokenVersion $token_version The token version used for the charge attempt.
      *
      * @return $this
      */
@@ -961,7 +1063,7 @@ class ChargeAttempt extends TransactionAwareEntity
     /**
      * Sets user_failure_message
      *
-     * @param string $user_failure_message The user failure message contains the message for the user in case the attempt failed. The message is localized into the language specified on the transaction.
+     * @param string $user_failure_message The message that can be displayed to the customer explaining why the charge attempt failed, in the customer's language.
      *
      * @return $this
      */
@@ -1015,7 +1117,7 @@ class ChargeAttempt extends TransactionAwareEntity
     /**
      * Sets wallet
      *
-     * @param \PostFinanceCheckout\Sdk\Model\WalletType $wallet 
+     * @param \PostFinanceCheckout\Sdk\Model\WalletType $wallet The type of wallet used to make the charge attempt.
      *
      * @return $this
      */

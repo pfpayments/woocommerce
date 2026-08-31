@@ -80,7 +80,7 @@ class WC_PostFinanceCheckout_Unique_Id {
 	 *
 	 * @return WC_Order_Item_Product $item item
 	 */
-	public static function copy_unqiue_id_to_order_item( WC_Order_Item_Product $item, $cart_item_key, $values, WC_Order $order = null ) { //phpcs:ignore
+	public static function copy_unqiue_id_to_order_item( WC_Order_Item_Product $item, $cart_item_key, $values, ?WC_Order $order = null ) { //phpcs:ignore
 		// We do not use the cart_item_key as it is deprecated.
 		$item->add_meta_data( '_postfinancecheckout_unique_line_item_id', self::get_uuid(), true );
 		return $item;
@@ -96,7 +96,7 @@ class WC_PostFinanceCheckout_Unique_Id {
 	 *
 	 * @return WC_Order_Item_Shipping $item item
 	 */
-	public static function copy_unqiue_id_to_order_shipping( WC_Order_Item_Shipping $item, $package_key, $package, WC_Order $order = null ) { //phpcs:ignore
+	public static function copy_unqiue_id_to_order_shipping( WC_Order_Item_Shipping $item, $package_key, $package, ?WC_Order $order = null ) { //phpcs:ignore
 		$item->add_meta_data( '_postfinancecheckout_unique_line_item_id', self::get_uuid(), true );
 		return $item;
 	}
@@ -111,7 +111,7 @@ class WC_PostFinanceCheckout_Unique_Id {
 	 *
 	 * @return WC_Order_Item_Shipping $item item
 	 */
-	public static function copy_unqiue_id_to_order_fee( WC_Order_Item_Fee $item, $fee_key, $fee, WC_Order $order = null ) { //phpcs:ignore
+	public static function copy_unqiue_id_to_order_fee( WC_Order_Item_Fee $item, $fee_key, $fee, ?WC_Order $order = null ) { //phpcs:ignore
 		$unique_id = null;
 		if ( $fee->amount < 0 ) {
 			$unique_id = 'discount-' . $fee->id;

@@ -50,8 +50,11 @@ class WalletType implements ModelInterface, ArrayAccess
       */
     protected static $swaggerTypes = [
         'description' => 'map[string,string]',
+        'feature' => '\PostFinanceCheckout\Sdk\Model\Feature',
         'id' => 'int',
-        'name' => 'map[string,string]'
+        'name' => 'map[string,string]',
+        'navigation_path' => 'string',
+        'sort_order' => 'int'
     ];
 
     /**
@@ -61,8 +64,11 @@ class WalletType implements ModelInterface, ArrayAccess
       */
     protected static $swaggerFormats = [
         'description' => null,
+        'feature' => null,
         'id' => 'int64',
-        'name' => null
+        'name' => null,
+        'navigation_path' => null,
+        'sort_order' => 'int32'
     ];
 
     /**
@@ -73,8 +79,11 @@ class WalletType implements ModelInterface, ArrayAccess
      */
     protected static $attributeMap = [
         'description' => 'description',
+        'feature' => 'feature',
         'id' => 'id',
-        'name' => 'name'
+        'name' => 'name',
+        'navigation_path' => 'navigationPath',
+        'sort_order' => 'sortOrder'
     ];
 
     /**
@@ -84,8 +93,11 @@ class WalletType implements ModelInterface, ArrayAccess
      */
     protected static $setters = [
         'description' => 'setDescription',
+        'feature' => 'setFeature',
         'id' => 'setId',
-        'name' => 'setName'
+        'name' => 'setName',
+        'navigation_path' => 'setNavigationPath',
+        'sort_order' => 'setSortOrder'
     ];
 
     /**
@@ -95,8 +107,11 @@ class WalletType implements ModelInterface, ArrayAccess
      */
     protected static $getters = [
         'description' => 'getDescription',
+        'feature' => 'getFeature',
         'id' => 'getId',
-        'name' => 'getName'
+        'name' => 'getName',
+        'navigation_path' => 'getNavigationPath',
+        'sort_order' => 'getSortOrder'
     ];
 
     
@@ -111,17 +126,23 @@ class WalletType implements ModelInterface, ArrayAccess
     /**
      * Constructor
      *
-     * @param mixed[] $data Associated array of property values
+     * @param mixed[]|null $data Associated array of property values
      *                      initializing the model
      */
-    public function __construct(array $data = null)
+    public function __construct(?array $data = null)
     {
         
         $this->container['description'] = isset($data['description']) ? $data['description'] : null;
         
+        $this->container['feature'] = isset($data['feature']) ? $data['feature'] : null;
+        
         $this->container['id'] = isset($data['id']) ? $data['id'] : null;
         
         $this->container['name'] = isset($data['name']) ? $data['name'] : null;
+        
+        $this->container['navigation_path'] = isset($data['navigation_path']) ? $data['navigation_path'] : null;
+        
+        $this->container['sort_order'] = isset($data['sort_order']) ? $data['sort_order'] : null;
         
     }
 
@@ -240,6 +261,31 @@ class WalletType implements ModelInterface, ArrayAccess
     
 
     /**
+     * Gets feature
+     *
+     * @return \PostFinanceCheckout\Sdk\Model\Feature
+     */
+    public function getFeature()
+    {
+        return $this->container['feature'];
+    }
+
+    /**
+     * Sets feature
+     *
+     * @param \PostFinanceCheckout\Sdk\Model\Feature $feature 
+     *
+     * @return $this
+     */
+    public function setFeature($feature)
+    {
+        $this->container['feature'] = $feature;
+
+        return $this;
+    }
+    
+
+    /**
      * Gets id
      *
      * @return int
@@ -284,6 +330,56 @@ class WalletType implements ModelInterface, ArrayAccess
     public function setName($name)
     {
         $this->container['name'] = $name;
+
+        return $this;
+    }
+    
+
+    /**
+     * Gets navigation_path
+     *
+     * @return string
+     */
+    public function getNavigationPath()
+    {
+        return $this->container['navigation_path'];
+    }
+
+    /**
+     * Sets navigation_path
+     *
+     * @param string $navigation_path 
+     *
+     * @return $this
+     */
+    public function setNavigationPath($navigation_path)
+    {
+        $this->container['navigation_path'] = $navigation_path;
+
+        return $this;
+    }
+    
+
+    /**
+     * Gets sort_order
+     *
+     * @return int
+     */
+    public function getSortOrder()
+    {
+        return $this->container['sort_order'];
+    }
+
+    /**
+     * Sets sort_order
+     *
+     * @param int $sort_order 
+     *
+     * @return $this
+     */
+    public function setSortOrder($sort_order)
+    {
+        $this->container['sort_order'] = $sort_order;
 
         return $this;
     }

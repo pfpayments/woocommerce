@@ -27,7 +27,7 @@ use \PostFinanceCheckout\Sdk\ObjectSerializer;
  * Refund model
  *
  * @category    Class
- * @description The refund represents a credit back to the customer. It can be issued by the merchant or by the customer (reversal).
+ * @description A refund is a credit issued to the customer, which can be initiated either by the merchant or by the customer as a reversal.
  * @package     PostFinanceCheckout\Sdk
  * @author      wallee AG
  * @license     http://www.apache.org/licenses/LICENSE-2.0 Apache License v2
@@ -256,10 +256,10 @@ class Refund implements ModelInterface, ArrayAccess
     /**
      * Constructor
      *
-     * @param mixed[] $data Associated array of property values
+     * @param mixed[]|null $data Associated array of property values
      *                      initializing the model
      */
-    public function __construct(array $data = null)
+    public function __construct(?array $data = null)
     {
         
         $this->container['amount'] = isset($data['amount']) ? $data['amount'] : null;
@@ -446,7 +446,7 @@ class Refund implements ModelInterface, ArrayAccess
     /**
      * Sets amount
      *
-     * @param float $amount 
+     * @param float $amount The total monetary amount of the refund, representing the exact credit issued to the customer.
      *
      * @return $this
      */
@@ -471,7 +471,7 @@ class Refund implements ModelInterface, ArrayAccess
     /**
      * Sets base_line_items
      *
-     * @param \PostFinanceCheckout\Sdk\Model\LineItem[] $base_line_items 
+     * @param \PostFinanceCheckout\Sdk\Model\LineItem[] $base_line_items The original base line items from the transaction prior to the refund, serving as a reference for the refunded amounts.
      *
      * @return $this
      */
@@ -496,7 +496,7 @@ class Refund implements ModelInterface, ArrayAccess
     /**
      * Sets completion
      *
-     * @param int $completion 
+     * @param int $completion The transaction completion that the refund belongs to.
      *
      * @return $this
      */
@@ -521,7 +521,7 @@ class Refund implements ModelInterface, ArrayAccess
     /**
      * Sets created_by
      *
-     * @param int $created_by 
+     * @param int $created_by The ID of the user the refund was created by.
      *
      * @return $this
      */
@@ -571,7 +571,7 @@ class Refund implements ModelInterface, ArrayAccess
     /**
      * Sets environment
      *
-     * @param \PostFinanceCheckout\Sdk\Model\Environment $environment 
+     * @param \PostFinanceCheckout\Sdk\Model\Environment $environment The environment used when rendering resources.
      *
      * @return $this
      */
@@ -596,7 +596,7 @@ class Refund implements ModelInterface, ArrayAccess
     /**
      * Sets external_id
      *
-     * @param string $external_id The external id helps to identify duplicate calls to the refund service. As such the external ID has to be unique per transaction.
+     * @param string $external_id A client-generated nonce which uniquely identifies some action to be executed. Subsequent requests with the same external ID do not execute the action again, but return the original result.
      *
      * @return $this
      */
@@ -628,7 +628,7 @@ class Refund implements ModelInterface, ArrayAccess
     /**
      * Sets failed_on
      *
-     * @param \DateTime $failed_on 
+     * @param \DateTime $failed_on The date and time when the refund failed.
      *
      * @return $this
      */
@@ -653,7 +653,7 @@ class Refund implements ModelInterface, ArrayAccess
     /**
      * Sets failure_reason
      *
-     * @param \PostFinanceCheckout\Sdk\Model\FailureReason $failure_reason 
+     * @param \PostFinanceCheckout\Sdk\Model\FailureReason $failure_reason The reason for the failure of the refund.
      *
      * @return $this
      */
@@ -753,7 +753,7 @@ class Refund implements ModelInterface, ArrayAccess
     /**
      * Sets line_items
      *
-     * @param \PostFinanceCheckout\Sdk\Model\LineItem[] $line_items 
+     * @param \PostFinanceCheckout\Sdk\Model\LineItem[] $line_items The line items included in the refund, representing the reductions.
      *
      * @return $this
      */
@@ -803,7 +803,7 @@ class Refund implements ModelInterface, ArrayAccess
     /**
      * Sets merchant_reference
      *
-     * @param string $merchant_reference 
+     * @param string $merchant_reference The merchant's reference used to identify the refund.
      *
      * @return $this
      */
@@ -832,7 +832,7 @@ class Refund implements ModelInterface, ArrayAccess
     /**
      * Sets next_update_on
      *
-     * @param \DateTime $next_update_on 
+     * @param \DateTime $next_update_on The date and time when the next update of the object's state is planned.
      *
      * @return $this
      */
@@ -882,7 +882,7 @@ class Refund implements ModelInterface, ArrayAccess
     /**
      * Sets processing_on
      *
-     * @param \DateTime $processing_on 
+     * @param \DateTime $processing_on The date and time when the processing of the refund was started.
      *
      * @return $this
      */
@@ -907,7 +907,7 @@ class Refund implements ModelInterface, ArrayAccess
     /**
      * Sets processor_reference
      *
-     * @param string $processor_reference 
+     * @param string $processor_reference The reference ID provided by the payment processor, used to trace the refund through the external payment system.
      *
      * @return $this
      */
@@ -936,7 +936,7 @@ class Refund implements ModelInterface, ArrayAccess
     /**
      * Sets reduced_line_items
      *
-     * @param \PostFinanceCheckout\Sdk\Model\LineItem[] $reduced_line_items 
+     * @param \PostFinanceCheckout\Sdk\Model\LineItem[] $reduced_line_items The line items from the original transaction, adjusted to reflect any reductions applied during the refund process.
      *
      * @return $this
      */
@@ -961,7 +961,7 @@ class Refund implements ModelInterface, ArrayAccess
     /**
      * Sets reductions
      *
-     * @param \PostFinanceCheckout\Sdk\Model\LineItemReduction[] $reductions 
+     * @param \PostFinanceCheckout\Sdk\Model\LineItemReduction[] $reductions The reductions applied on the original transaction items, detailing specific adjustments associated with the refund.
      *
      * @return $this
      */
@@ -1011,7 +1011,7 @@ class Refund implements ModelInterface, ArrayAccess
     /**
      * Sets succeeded_on
      *
-     * @param \DateTime $succeeded_on 
+     * @param \DateTime $succeeded_on The date and time when the refund succeeded.
      *
      * @return $this
      */
@@ -1036,7 +1036,7 @@ class Refund implements ModelInterface, ArrayAccess
     /**
      * Sets taxes
      *
-     * @param \PostFinanceCheckout\Sdk\Model\Tax[] $taxes 
+     * @param \PostFinanceCheckout\Sdk\Model\Tax[] $taxes The tax breakdown applied to the refund amount, helping with tax calculations or reporting.
      *
      * @return $this
      */
@@ -1061,7 +1061,7 @@ class Refund implements ModelInterface, ArrayAccess
     /**
      * Sets time_zone
      *
-     * @param string $time_zone 
+     * @param string $time_zone The time zone that this object is associated with.
      *
      * @return $this
      */
@@ -1086,7 +1086,7 @@ class Refund implements ModelInterface, ArrayAccess
     /**
      * Sets timeout_on
      *
-     * @param \DateTime $timeout_on 
+     * @param \DateTime $timeout_on The date and time when the object will expire.
      *
      * @return $this
      */
@@ -1111,7 +1111,7 @@ class Refund implements ModelInterface, ArrayAccess
     /**
      * Sets total_applied_fees
      *
-     * @param float $total_applied_fees The total applied fees is the sum of all fees that have been applied so far.
+     * @param float $total_applied_fees The sum of fees applied to the refund transaction, such as processing or service charges.
      *
      * @return $this
      */
@@ -1136,7 +1136,7 @@ class Refund implements ModelInterface, ArrayAccess
     /**
      * Sets total_settled_amount
      *
-     * @param float $total_settled_amount The total settled amount is the total amount which has been settled so far.
+     * @param float $total_settled_amount The total amount settled for the refund, factoring in reductions, taxes, and any additional applied fees.
      *
      * @return $this
      */
@@ -1161,7 +1161,7 @@ class Refund implements ModelInterface, ArrayAccess
     /**
      * Sets transaction
      *
-     * @param \PostFinanceCheckout\Sdk\Model\Transaction $transaction 
+     * @param \PostFinanceCheckout\Sdk\Model\Transaction $transaction The transaction that the refund belongs to.
      *
      * @return $this
      */
@@ -1186,7 +1186,7 @@ class Refund implements ModelInterface, ArrayAccess
     /**
      * Sets type
      *
-     * @param \PostFinanceCheckout\Sdk\Model\RefundType $type 
+     * @param \PostFinanceCheckout\Sdk\Model\RefundType $type The type specifying the method and origin of the refund (e.g., initiated by the customer or merchant).
      *
      * @return $this
      */
@@ -1211,7 +1211,7 @@ class Refund implements ModelInterface, ArrayAccess
     /**
      * Sets updated_invoice
      *
-     * @param int $updated_invoice 
+     * @param int $updated_invoice An updated invoice reflecting adjustments made by the refund.
      *
      * @return $this
      */

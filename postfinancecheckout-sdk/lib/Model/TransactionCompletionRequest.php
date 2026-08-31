@@ -126,10 +126,10 @@ class TransactionCompletionRequest implements ModelInterface, ArrayAccess
     /**
      * Constructor
      *
-     * @param mixed[] $data Associated array of property values
+     * @param mixed[]|null $data Associated array of property values
      *                      initializing the model
      */
-    public function __construct(array $data = null)
+    public function __construct(?array $data = null)
     {
         
         $this->container['external_id'] = isset($data['external_id']) ? $data['external_id'] : null;
@@ -384,7 +384,7 @@ class TransactionCompletionRequest implements ModelInterface, ArrayAccess
     /**
      * Sets statement_descriptor
      *
-     * @param string $statement_descriptor The statement descriptor explain charges or payments on bank statements.
+     * @param string $statement_descriptor The statement descriptor that appears on a customer's bank statement, providing an explanation for charges or payments, helping customers identify the transaction.
      *
      * @return $this
      */

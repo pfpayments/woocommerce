@@ -36,6 +36,7 @@ class PanType
      * Possible values of this enum
      */
     const PLAIN = 'PLAIN';
+    const PLAIN_GOOGLE_PAY = 'PLAIN_GOOGLE_PAY';
     const SCHEME_TOKEN = 'SCHEME_TOKEN';
     const SCHEME_TOKEN_CLICK_TO_PAY = 'SCHEME_TOKEN_CLICK_TO_PAY';
     const DEVICE_TOKEN_APPLE_PAY = 'DEVICE_TOKEN_APPLE_PAY';
@@ -51,6 +52,7 @@ class PanType
     {
         return [
             self::PLAIN,
+            self::PLAIN_GOOGLE_PAY,
             self::SCHEME_TOKEN,
             self::SCHEME_TOKEN_CLICK_TO_PAY,
             self::DEVICE_TOKEN_APPLE_PAY,

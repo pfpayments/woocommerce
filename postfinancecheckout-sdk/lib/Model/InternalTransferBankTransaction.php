@@ -121,10 +121,10 @@ class InternalTransferBankTransaction implements ModelInterface, ArrayAccess
     /**
      * Constructor
      *
-     * @param mixed[] $data Associated array of property values
+     * @param mixed[]|null $data Associated array of property values
      *                      initializing the model
      */
-    public function __construct(array $data = null)
+    public function __construct(?array $data = null)
     {
         
         $this->container['id'] = isset($data['id']) ? $data['id'] : null;
@@ -291,7 +291,7 @@ class InternalTransferBankTransaction implements ModelInterface, ArrayAccess
     /**
      * Sets source_bank_transaction
      *
-     * @param \PostFinanceCheckout\Sdk\Model\BankTransaction $source_bank_transaction 
+     * @param \PostFinanceCheckout\Sdk\Model\BankTransaction $source_bank_transaction The bank transaction from which funds are being transferred out.
      *
      * @return $this
      */
@@ -316,7 +316,7 @@ class InternalTransferBankTransaction implements ModelInterface, ArrayAccess
     /**
      * Sets target_bank_transaction
      *
-     * @param \PostFinanceCheckout\Sdk\Model\BankTransaction $target_bank_transaction 
+     * @param \PostFinanceCheckout\Sdk\Model\BankTransaction $target_bank_transaction The bank transaction to which funds are being transferred in.
      *
      * @return $this
      */

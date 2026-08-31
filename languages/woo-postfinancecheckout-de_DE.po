@@ -1020,3 +1020,11 @@ msgstr "Wählen Sie aus, welcher WooCommerce-Bestellstatus für jeden PostFinanc
 #: views/admin-notices/subscription-plugin-deactivate.php:11
 msgid "PostFinance Checkout Subscription plugin has been deactivated because subscriptions are now handled directly by the PostFinance Checkout plugin. You can safely remove the old plugin"
 msgstr "Das PostFinance Checkout Subscription-Plugin wurde deaktiviert, da Abonnements jetzt direkt vom PostFinance Checkout-Plugin verwaltet werden. Sie können das alte Plugin bedenkenlos entfernen."
+
+#: includes/class-wc-postfinancecheckout-blocks-support.php:67
+msgid "Loading payment method..."
+msgstr "Zahlungsmethode wird geladen..."
+
+#: includes/class-wc-postfinancecheckout-blocks-support.php:68
+msgid "Unable to load this payment method. Please refresh the page and try again."
+msgstr "Diese Zahlungsmethode konnte nicht geladen werden. Bitte laden Sie die Seite neu und versuchen Sie es erneut."

@@ -146,10 +146,10 @@ class ChargeFlowLevelConfiguration implements ModelInterface, ArrayAccess
     /**
      * Constructor
      *
-     * @param mixed[] $data Associated array of property values
+     * @param mixed[]|null $data Associated array of property values
      *                      initializing the model
      */
-    public function __construct(array $data = null)
+    public function __construct(?array $data = null)
     {
         
         $this->container['flow'] = isset($data['flow']) ? $data['flow'] : null;
@@ -280,7 +280,7 @@ class ChargeFlowLevelConfiguration implements ModelInterface, ArrayAccess
     /**
      * Sets flow
      *
-     * @param \PostFinanceCheckout\Sdk\Model\ChargeFlow $flow The charge flow level configuration to which the flow is associated.
+     * @param \PostFinanceCheckout\Sdk\Model\ChargeFlow $flow The charge flow that this level configuration belongs to.
      *
      * @return $this
      */
@@ -355,7 +355,7 @@ class ChargeFlowLevelConfiguration implements ModelInterface, ArrayAccess
     /**
      * Sets name
      *
-     * @param string $name The charge flow level configuration name is used internally to identify the charge flow level configuration. For example the name is used within search fields and hence it should be distinct and descriptive.
+     * @param string $name The name used to identify the charge flow level configuration.
      *
      * @return $this
      */
@@ -384,7 +384,7 @@ class ChargeFlowLevelConfiguration implements ModelInterface, ArrayAccess
     /**
      * Sets period
      *
-     * @param string $period The duration of the level before switching to the next one.
+     * @param string $period The duration specifies how long the level remains active before transitioning to the next one.
      *
      * @return $this
      */
@@ -434,7 +434,7 @@ class ChargeFlowLevelConfiguration implements ModelInterface, ArrayAccess
     /**
      * Sets priority
      *
-     * @param int $priority The priority indicates the sort order of the level configurations. A low value indicates that the level configuration is executed before any level with a higher value. Any change to this value affects future level configuration selections.
+     * @param int $priority The priority that determines the order in which level configurations are taken into account when processing a charge flow. Low values are considered first.
      *
      * @return $this
      */
@@ -484,7 +484,7 @@ class ChargeFlowLevelConfiguration implements ModelInterface, ArrayAccess
     /**
      * Sets type
      *
-     * @param int $type The type determines how the payment link is delivered to the customer. Once the type is defined it cannot be changed anymore.
+     * @param int $type The type defines the method of delivering the payment link to the customer.
      *
      * @return $this
      */

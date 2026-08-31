@@ -161,10 +161,10 @@ class ShopifySubscriptionSuspension implements ModelInterface, ArrayAccess
     /**
      * Constructor
      *
-     * @param mixed[] $data Associated array of property values
+     * @param mixed[]|null $data Associated array of property values
      *                      initializing the model
      */
-    public function __construct(array $data = null)
+    public function __construct(?array $data = null)
     {
         
         $this->container['created_by'] = isset($data['created_by']) ? $data['created_by'] : null;

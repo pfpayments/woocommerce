@@ -25,7 +25,7 @@ use \PostFinanceCheckout\Sdk\ObjectSerializer;
  * PaymentLinkActive model
  *
  * @category    Class
- * @description The payment link defines an URL to automatically create transactions.
+ * @description 
  * @package     PostFinanceCheckout\Sdk
  * @author      wallee AG
  * @license     http://www.apache.org/licenses/LICENSE-2.0 Apache License v2
@@ -93,10 +93,10 @@ class PaymentLinkActive extends PaymentLinkUpdate
     /**
      * Constructor
      *
-     * @param mixed[] $data Associated array of property values
+     * @param mixed[]|null $data Associated array of property values
      *                      initializing the model
      */
-    public function __construct(array $data = null)
+    public function __construct(?array $data = null)
     {
         parent::__construct($data);
 

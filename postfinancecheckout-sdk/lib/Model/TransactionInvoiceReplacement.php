@@ -126,10 +126,10 @@ class TransactionInvoiceReplacement implements ModelInterface, ArrayAccess
     /**
      * Constructor
      *
-     * @param mixed[] $data Associated array of property values
+     * @param mixed[]|null $data Associated array of property values
      *                      initializing the model
      */
-    public function __construct(array $data = null)
+    public function __construct(?array $data = null)
     {
         
         $this->container['billing_address'] = isset($data['billing_address']) ? $data['billing_address'] : null;
@@ -266,7 +266,7 @@ class TransactionInvoiceReplacement implements ModelInterface, ArrayAccess
     /**
      * Sets billing_address
      *
-     * @param \PostFinanceCheckout\Sdk\Model\AddressCreate $billing_address 
+     * @param \PostFinanceCheckout\Sdk\Model\AddressCreate $billing_address The address associated with the invoice, used for billing purposes.
      *
      * @return $this
      */
@@ -291,7 +291,7 @@ class TransactionInvoiceReplacement implements ModelInterface, ArrayAccess
     /**
      * Sets due_on
      *
-     * @param \DateTime $due_on The date on which the invoice should be paid on.
+     * @param \DateTime $due_on The due date for payment of the invoice.
      *
      * @return $this
      */
@@ -316,7 +316,7 @@ class TransactionInvoiceReplacement implements ModelInterface, ArrayAccess
     /**
      * Sets external_id
      *
-     * @param string $external_id The external id helps to identify the entity and a subsequent creation of an entity with the same ID will not create a new entity.
+     * @param string $external_id A client-generated nonce which uniquely identifies some action to be executed. Subsequent requests with the same external ID do not execute the action again, but return the original result.
      *
      * @return $this
      */
@@ -348,7 +348,7 @@ class TransactionInvoiceReplacement implements ModelInterface, ArrayAccess
     /**
      * Sets line_items
      *
-     * @param \PostFinanceCheckout\Sdk\Model\LineItemCreate[] $line_items 
+     * @param \PostFinanceCheckout\Sdk\Model\LineItemCreate[] $line_items The invoiced line items that will appear on the invoice document.
      *
      * @return $this
      */
@@ -373,7 +373,7 @@ class TransactionInvoiceReplacement implements ModelInterface, ArrayAccess
     /**
      * Sets merchant_reference
      *
-     * @param string $merchant_reference 
+     * @param string $merchant_reference The merchant's reference used to identify the invoice.
      *
      * @return $this
      */
@@ -402,7 +402,7 @@ class TransactionInvoiceReplacement implements ModelInterface, ArrayAccess
     /**
      * Sets sent_to_customer
      *
-     * @param bool $sent_to_customer When the connector is configured to send the invoice to the customer and this property is true the customer will receive an email with the updated invoice. When this property is false no invoice is sent.
+     * @param bool $sent_to_customer Whether the invoice will be sent to the customer via email.
      *
      * @return $this
      */

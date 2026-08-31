@@ -19,6 +19,8 @@
 
 
 namespace PostFinanceCheckout\Sdk\Model;
+
+use \ArrayAccess;
 use \PostFinanceCheckout\Sdk\ObjectSerializer;
 
 /**
@@ -30,7 +32,7 @@ use \PostFinanceCheckout\Sdk\ObjectSerializer;
  * @author      wallee AG
  * @license     http://www.apache.org/licenses/LICENSE-2.0 Apache License v2
  */
-class ChargeFlowLevelPaymentLink extends TransactionAwareEntity 
+class ChargeFlowLevelPaymentLink implements ModelInterface, ArrayAccess
 {
     const DISCRIMINATOR = null;
 
@@ -48,6 +50,8 @@ class ChargeFlowLevelPaymentLink extends TransactionAwareEntity
       */
     protected static $swaggerTypes = [
         'charge_flow_level' => '\PostFinanceCheckout\Sdk\Model\ChargeFlowLevel',
+        'id' => 'int',
+        'linked_space_id' => 'int',
         'payment_link' => 'string'
     ];
 
@@ -58,6 +62,8 @@ class ChargeFlowLevelPaymentLink extends TransactionAwareEntity
       */
     protected static $swaggerFormats = [
         'charge_flow_level' => null,
+        'id' => 'int64',
+        'linked_space_id' => 'int64',
         'payment_link' => null
     ];
 
@@ -69,6 +75,8 @@ class ChargeFlowLevelPaymentLink extends TransactionAwareEntity
      */
     protected static $attributeMap = [
         'charge_flow_level' => 'chargeFlowLevel',
+        'id' => 'id',
+        'linked_space_id' => 'linkedSpaceId',
         'payment_link' => 'paymentLink'
     ];
 
@@ -79,6 +87,8 @@ class ChargeFlowLevelPaymentLink extends TransactionAwareEntity
      */
     protected static $setters = [
         'charge_flow_level' => 'setChargeFlowLevel',
+        'id' => 'setId',
+        'linked_space_id' => 'setLinkedSpaceId',
         'payment_link' => 'setPaymentLink'
     ];
 
@@ -89,24 +99,34 @@ class ChargeFlowLevelPaymentLink extends TransactionAwareEntity
      */
     protected static $getters = [
         'charge_flow_level' => 'getChargeFlowLevel',
+        'id' => 'getId',
+        'linked_space_id' => 'getLinkedSpaceId',
         'payment_link' => 'getPaymentLink'
     ];
 
     
 
+    /**
+     * Associative array for storing property values
+     *
+     * @var mixed[]
+     */
+    protected $container = [];
 
     /**
      * Constructor
      *
-     * @param mixed[] $data Associated array of property values
+     * @param mixed[]|null $data Associated array of property values
      *                      initializing the model
      */
-    public function __construct(array $data = null)
+    public function __construct(?array $data = null)
     {
-        parent::__construct($data);
-
         
         $this->container['charge_flow_level'] = isset($data['charge_flow_level']) ? $data['charge_flow_level'] : null;
+        
+        $this->container['id'] = isset($data['id']) ? $data['id'] : null;
+        
+        $this->container['linked_space_id'] = isset($data['linked_space_id']) ? $data['linked_space_id'] : null;
         
         $this->container['payment_link'] = isset($data['payment_link']) ? $data['payment_link'] : null;
         
@@ -119,7 +139,7 @@ class ChargeFlowLevelPaymentLink extends TransactionAwareEntity
      */
     public function listInvalidProperties()
     {
-        $invalidProperties = parent::listInvalidProperties();
+        $invalidProperties = [];
 
         return $invalidProperties;
     }
@@ -131,7 +151,7 @@ class ChargeFlowLevelPaymentLink extends TransactionAwareEntity
      */
     public static function swaggerTypes()
     {
-        return self::$swaggerTypes + parent::swaggerTypes();
+        return self::$swaggerTypes;
     }
 
     /**
@@ -141,7 +161,7 @@ class ChargeFlowLevelPaymentLink extends TransactionAwareEntity
      */
     public static function swaggerFormats()
     {
-        return self::$swaggerFormats + parent::swaggerFormats();
+        return self::$swaggerFormats;
     }
 
 
@@ -153,7 +173,7 @@ class ChargeFlowLevelPaymentLink extends TransactionAwareEntity
      */
     public static function attributeMap()
     {
-        return parent::attributeMap() + self::$attributeMap;
+        return self::$attributeMap;
     }
 
     /**
@@ -163,7 +183,7 @@ class ChargeFlowLevelPaymentLink extends TransactionAwareEntity
      */
     public static function setters()
     {
-        return parent::setters() + self::$setters;
+        return self::$setters;
     }
 
     /**
@@ -173,7 +193,7 @@ class ChargeFlowLevelPaymentLink extends TransactionAwareEntity
      */
     public static function getters()
     {
-        return parent::getters() + self::$getters;
+        return self::$getters;
     }
 
     /**
@@ -214,13 +234,63 @@ class ChargeFlowLevelPaymentLink extends TransactionAwareEntity
     /**
      * Sets charge_flow_level
      *
-     * @param \PostFinanceCheckout\Sdk\Model\ChargeFlowLevel $charge_flow_level 
+     * @param \PostFinanceCheckout\Sdk\Model\ChargeFlowLevel $charge_flow_level The charge flow level that the payment link belongs to.
      *
      * @return $this
      */
     public function setChargeFlowLevel($charge_flow_level)
     {
         $this->container['charge_flow_level'] = $charge_flow_level;
+
+        return $this;
+    }
+    
+
+    /**
+     * Gets id
+     *
+     * @return int
+     */
+    public function getId()
+    {
+        return $this->container['id'];
+    }
+
+    /**
+     * Sets id
+     *
+     * @param int $id A unique identifier for the object.
+     *
+     * @return $this
+     */
+    public function setId($id)
+    {
+        $this->container['id'] = $id;
+
+        return $this;
+    }
+    
+
+    /**
+     * Gets linked_space_id
+     *
+     * @return int
+     */
+    public function getLinkedSpaceId()
+    {
+        return $this->container['linked_space_id'];
+    }
+
+    /**
+     * Sets linked_space_id
+     *
+     * @param int $linked_space_id The ID of the space this object belongs to.
+     *
+     * @return $this
+     */
+    public function setLinkedSpaceId($linked_space_id)
+    {
+        $this->container['linked_space_id'] = $linked_space_id;
 
         return $this;
     }
@@ -239,7 +309,7 @@ class ChargeFlowLevelPaymentLink extends TransactionAwareEntity
     /**
      * Sets payment_link
      *
-     * @param string $payment_link 
+     * @param string $payment_link The URL provided to the customer for entering their payment details and completing the transaction.
      *
      * @return $this
      */

@@ -27,7 +27,7 @@ use \PostFinanceCheckout\Sdk\ObjectSerializer;
  * RefundCreate model
  *
  * @category    Class
- * @description The refund represents a credit back to the customer. It can be issued by the merchant or by the customer (reversal).
+ * @description A refund is a credit issued to the customer, which can be initiated either by the merchant or by the customer as a reversal.
  * @package     PostFinanceCheckout\Sdk
  * @author      wallee AG
  * @license     http://www.apache.org/licenses/LICENSE-2.0 Apache License v2
@@ -131,10 +131,10 @@ class RefundCreate implements ModelInterface, ArrayAccess
     /**
      * Constructor
      *
-     * @param mixed[] $data Associated array of property values
+     * @param mixed[]|null $data Associated array of property values
      *                      initializing the model
      */
-    public function __construct(array $data = null)
+    public function __construct(?array $data = null)
     {
         
         $this->container['amount'] = isset($data['amount']) ? $data['amount'] : null;
@@ -273,7 +273,7 @@ class RefundCreate implements ModelInterface, ArrayAccess
     /**
      * Sets amount
      *
-     * @param float $amount 
+     * @param float $amount The total monetary amount of the refund, representing the exact credit issued to the customer.
      *
      * @return $this
      */
@@ -298,7 +298,7 @@ class RefundCreate implements ModelInterface, ArrayAccess
     /**
      * Sets completion
      *
-     * @param int $completion 
+     * @param int $completion The transaction completion that the refund belongs to.
      *
      * @return $this
      */
@@ -323,7 +323,7 @@ class RefundCreate implements ModelInterface, ArrayAccess
     /**
      * Sets external_id
      *
-     * @param string $external_id The external id helps to identify duplicate calls to the refund service. As such the external ID has to be unique per transaction.
+     * @param string $external_id A client-generated nonce which uniquely identifies some action to be executed. Subsequent requests with the same external ID do not execute the action again, but return the original result.
      *
      * @return $this
      */
@@ -355,7 +355,7 @@ class RefundCreate implements ModelInterface, ArrayAccess
     /**
      * Sets merchant_reference
      *
-     * @param string $merchant_reference 
+     * @param string $merchant_reference The merchant's reference used to identify the refund.
      *
      * @return $this
      */
@@ -384,7 +384,7 @@ class RefundCreate implements ModelInterface, ArrayAccess
     /**
      * Sets reductions
      *
-     * @param \PostFinanceCheckout\Sdk\Model\LineItemReductionCreate[] $reductions 
+     * @param \PostFinanceCheckout\Sdk\Model\LineItemReductionCreate[] $reductions The reductions applied on the original transaction items, detailing specific adjustments associated with the refund.
      *
      * @return $this
      */
@@ -409,7 +409,7 @@ class RefundCreate implements ModelInterface, ArrayAccess
     /**
      * Sets transaction
      *
-     * @param int $transaction 
+     * @param int $transaction The transaction that the refund belongs to.
      *
      * @return $this
      */
@@ -434,7 +434,7 @@ class RefundCreate implements ModelInterface, ArrayAccess
     /**
      * Sets type
      *
-     * @param \PostFinanceCheckout\Sdk\Model\RefundType $type 
+     * @param \PostFinanceCheckout\Sdk\Model\RefundType $type The type specifying the method and origin of the refund (e.g., initiated by the customer or merchant).
      *
      * @return $this
      */

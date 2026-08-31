@@ -116,10 +116,10 @@ class ChargeFlowLevelConfigurationType implements ModelInterface, ArrayAccess
     /**
      * Constructor
      *
-     * @param mixed[] $data Associated array of property values
+     * @param mixed[]|null $data Associated array of property values
      *                      initializing the model
      */
-    public function __construct(array $data = null)
+    public function __construct(?array $data = null)
     {
         
         $this->container['description'] = isset($data['description']) ? $data['description'] : null;
@@ -284,7 +284,7 @@ class ChargeFlowLevelConfigurationType implements ModelInterface, ArrayAccess
     /**
      * Sets label
      *
-     * @param map[string,string] $label 
+     * @param map[string,string] $label The localized label that describes the action triggered by the configuration type.
      *
      * @return $this
      */

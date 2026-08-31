@@ -49,6 +49,7 @@ class PaymentTerminalTransactionSummary implements ModelInterface, ArrayAccess
       * @var string[]
       */
     protected static $swaggerTypes = [
+        'balance_amount_per_currency' => 'map[string,float]',
         'dcc_transaction_sums' => '\PostFinanceCheckout\Sdk\Model\PaymentTerminalDccTransactionSum[]',
         'ended_on' => '\DateTime',
         'id' => 'int',
@@ -68,6 +69,7 @@ class PaymentTerminalTransactionSummary implements ModelInterface, ArrayAccess
       * @var string[]
       */
     protected static $swaggerFormats = [
+        'balance_amount_per_currency' => null,
         'dcc_transaction_sums' => null,
         'ended_on' => 'date-time',
         'id' => 'int64',
@@ -88,6 +90,7 @@ class PaymentTerminalTransactionSummary implements ModelInterface, ArrayAccess
      * @var string[]
      */
     protected static $attributeMap = [
+        'balance_amount_per_currency' => 'balanceAmountPerCurrency',
         'dcc_transaction_sums' => 'dccTransactionSums',
         'ended_on' => 'endedOn',
         'id' => 'id',
@@ -107,6 +110,7 @@ class PaymentTerminalTransactionSummary implements ModelInterface, ArrayAccess
      * @var string[]
      */
     protected static $setters = [
+        'balance_amount_per_currency' => 'setBalanceAmountPerCurrency',
         'dcc_transaction_sums' => 'setDccTransactionSums',
         'ended_on' => 'setEndedOn',
         'id' => 'setId',
@@ -126,6 +130,7 @@ class PaymentTerminalTransactionSummary implements ModelInterface, ArrayAccess
      * @var string[]
      */
     protected static $getters = [
+        'balance_amount_per_currency' => 'getBalanceAmountPerCurrency',
         'dcc_transaction_sums' => 'getDccTransactionSums',
         'ended_on' => 'getEndedOn',
         'id' => 'getId',
@@ -151,11 +156,13 @@ class PaymentTerminalTransactionSummary implements ModelInterface, ArrayAccess
     /**
      * Constructor
      *
-     * @param mixed[] $data Associated array of property values
+     * @param mixed[]|null $data Associated array of property values
      *                      initializing the model
      */
-    public function __construct(array $data = null)
+    public function __construct(?array $data = null)
     {
+        
+        $this->container['balance_amount_per_currency'] = isset($data['balance_amount_per_currency']) ? $data['balance_amount_per_currency'] : null;
         
         $this->container['dcc_transaction_sums'] = isset($data['dcc_transaction_sums']) ? $data['dcc_transaction_sums'] : null;
         
@@ -268,6 +275,31 @@ class PaymentTerminalTransactionSummary implements ModelInterface, ArrayAccess
         return count($this->listInvalidProperties()) === 0;
     }
 
+    
+
+    /**
+     * Gets balance_amount_per_currency
+     *
+     * @return map[string,float]
+     */
+    public function getBalanceAmountPerCurrency()
+    {
+        return $this->container['balance_amount_per_currency'];
+    }
+
+    /**
+     * Sets balance_amount_per_currency
+     *
+     * @param map[string,float] $balance_amount_per_currency The transactions amount per currency.
+     *
+     * @return $this
+     */
+    public function setBalanceAmountPerCurrency($balance_amount_per_currency)
+    {
+        $this->container['balance_amount_per_currency'] = $balance_amount_per_currency;
+
+        return $this;
+    }
     
 
     /**
@@ -408,7 +440,7 @@ class PaymentTerminalTransactionSummary implements ModelInterface, ArrayAccess
     /**
      * Sets payment_terminal
      *
-     * @param int $payment_terminal 
+     * @param int $payment_terminal The payment terminal of the transaction summary.
      *
      * @return $this
      */

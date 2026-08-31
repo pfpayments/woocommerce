@@ -56,6 +56,8 @@ class Scope implements ModelInterface, ArrayAccess
         'name' => 'string',
         'planned_purge_date' => '\DateTime',
         'port' => 'int',
+        'preprod_domain_name' => 'string',
+        'sandbox_domain_name' => 'string',
         'ssl_active' => 'bool',
         'state' => '\PostFinanceCheckout\Sdk\Model\CreationEntityState',
         'themes' => 'string[]',
@@ -76,6 +78,8 @@ class Scope implements ModelInterface, ArrayAccess
         'name' => null,
         'planned_purge_date' => 'date-time',
         'port' => 'int32',
+        'preprod_domain_name' => null,
+        'sandbox_domain_name' => null,
         'ssl_active' => null,
         'state' => null,
         'themes' => null,
@@ -97,6 +101,8 @@ class Scope implements ModelInterface, ArrayAccess
         'name' => 'name',
         'planned_purge_date' => 'plannedPurgeDate',
         'port' => 'port',
+        'preprod_domain_name' => 'preprodDomainName',
+        'sandbox_domain_name' => 'sandboxDomainName',
         'ssl_active' => 'sslActive',
         'state' => 'state',
         'themes' => 'themes',
@@ -117,6 +123,8 @@ class Scope implements ModelInterface, ArrayAccess
         'name' => 'setName',
         'planned_purge_date' => 'setPlannedPurgeDate',
         'port' => 'setPort',
+        'preprod_domain_name' => 'setPreprodDomainName',
+        'sandbox_domain_name' => 'setSandboxDomainName',
         'ssl_active' => 'setSslActive',
         'state' => 'setState',
         'themes' => 'setThemes',
@@ -137,6 +145,8 @@ class Scope implements ModelInterface, ArrayAccess
         'name' => 'getName',
         'planned_purge_date' => 'getPlannedPurgeDate',
         'port' => 'getPort',
+        'preprod_domain_name' => 'getPreprodDomainName',
+        'sandbox_domain_name' => 'getSandboxDomainName',
         'ssl_active' => 'getSslActive',
         'state' => 'getState',
         'themes' => 'getThemes',
@@ -156,10 +166,10 @@ class Scope implements ModelInterface, ArrayAccess
     /**
      * Constructor
      *
-     * @param mixed[] $data Associated array of property values
+     * @param mixed[]|null $data Associated array of property values
      *                      initializing the model
      */
-    public function __construct(array $data = null)
+    public function __construct(?array $data = null)
     {
         
         $this->container['domain_name'] = isset($data['domain_name']) ? $data['domain_name'] : null;
@@ -175,6 +185,10 @@ class Scope implements ModelInterface, ArrayAccess
         $this->container['planned_purge_date'] = isset($data['planned_purge_date']) ? $data['planned_purge_date'] : null;
         
         $this->container['port'] = isset($data['port']) ? $data['port'] : null;
+        
+        $this->container['preprod_domain_name'] = isset($data['preprod_domain_name']) ? $data['preprod_domain_name'] : null;
+        
+        $this->container['sandbox_domain_name'] = isset($data['sandbox_domain_name']) ? $data['sandbox_domain_name'] : null;
         
         $this->container['ssl_active'] = isset($data['ssl_active']) ? $data['ssl_active'] : null;
         
@@ -207,6 +221,14 @@ class Scope implements ModelInterface, ArrayAccess
 
         if (!is_null($this->container['name']) && (mb_strlen($this->container['name']) > 50)) {
             $invalidProperties[] = "invalid value for 'name', the character length must be smaller than or equal to 50.";
+        }
+
+        if (!is_null($this->container['preprod_domain_name']) && (mb_strlen($this->container['preprod_domain_name']) > 40)) {
+            $invalidProperties[] = "invalid value for 'preprod_domain_name', the character length must be smaller than or equal to 40.";
+        }
+
+        if (!is_null($this->container['sandbox_domain_name']) && (mb_strlen($this->container['sandbox_domain_name']) > 40)) {
+            $invalidProperties[] = "invalid value for 'sandbox_domain_name', the character length must be smaller than or equal to 40.";
         }
 
         return $invalidProperties;
@@ -471,6 +493,64 @@ class Scope implements ModelInterface, ArrayAccess
     public function setPort($port)
     {
         $this->container['port'] = $port;
+
+        return $this;
+    }
+    
+
+    /**
+     * Gets preprod_domain_name
+     *
+     * @return string
+     */
+    public function getPreprodDomainName()
+    {
+        return $this->container['preprod_domain_name'];
+    }
+
+    /**
+     * Sets preprod_domain_name
+     *
+     * @param string $preprod_domain_name The preprod domain name that belongs to the scope.
+     *
+     * @return $this
+     */
+    public function setPreprodDomainName($preprod_domain_name)
+    {
+        if (!is_null($preprod_domain_name) && (mb_strlen($preprod_domain_name) > 40)) {
+            throw new \InvalidArgumentException('invalid length for $preprod_domain_name when calling Scope., must be smaller than or equal to 40.');
+        }
+
+        $this->container['preprod_domain_name'] = $preprod_domain_name;
+
+        return $this;
+    }
+    
+
+    /**
+     * Gets sandbox_domain_name
+     *
+     * @return string
+     */
+    public function getSandboxDomainName()
+    {
+        return $this->container['sandbox_domain_name'];
+    }
+
+    /**
+     * Sets sandbox_domain_name
+     *
+     * @param string $sandbox_domain_name The sandbox domain name that belongs to the scope.
+     *
+     * @return $this
+     */
+    public function setSandboxDomainName($sandbox_domain_name)
+    {
+        if (!is_null($sandbox_domain_name) && (mb_strlen($sandbox_domain_name) > 40)) {
+            throw new \InvalidArgumentException('invalid length for $sandbox_domain_name when calling Scope., must be smaller than or equal to 40.');
+        }
+
+        $this->container['sandbox_domain_name'] = $sandbox_domain_name;
 
         return $this;
     }

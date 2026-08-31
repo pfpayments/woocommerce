@@ -19,6 +19,8 @@
 
 
 namespace PostFinanceCheckout\Sdk\Model;
+
+use \ArrayAccess;
 use \PostFinanceCheckout\Sdk\ObjectSerializer;
 
 /**
@@ -30,7 +32,7 @@ use \PostFinanceCheckout\Sdk\ObjectSerializer;
  * @author      wallee AG
  * @license     http://www.apache.org/licenses/LICENSE-2.0 Apache License v2
  */
-class Charge extends TransactionAwareEntity 
+class Charge implements ModelInterface, ArrayAccess
 {
     const DISCRIMINATOR = null;
 
@@ -49,7 +51,9 @@ class Charge extends TransactionAwareEntity
     protected static $swaggerTypes = [
         'created_on' => '\DateTime',
         'failure_reason' => '\PostFinanceCheckout\Sdk\Model\FailureReason',
+        'id' => 'int',
         'language' => 'string',
+        'linked_space_id' => 'int',
         'planned_purge_date' => '\DateTime',
         'space_view_id' => 'int',
         'state' => '\PostFinanceCheckout\Sdk\Model\ChargeState',
@@ -69,7 +73,9 @@ class Charge extends TransactionAwareEntity
     protected static $swaggerFormats = [
         'created_on' => 'date-time',
         'failure_reason' => null,
+        'id' => 'int64',
         'language' => null,
+        'linked_space_id' => 'int64',
         'planned_purge_date' => 'date-time',
         'space_view_id' => 'int64',
         'state' => null,
@@ -90,7 +96,9 @@ class Charge extends TransactionAwareEntity
     protected static $attributeMap = [
         'created_on' => 'createdOn',
         'failure_reason' => 'failureReason',
+        'id' => 'id',
         'language' => 'language',
+        'linked_space_id' => 'linkedSpaceId',
         'planned_purge_date' => 'plannedPurgeDate',
         'space_view_id' => 'spaceViewId',
         'state' => 'state',
@@ -110,7 +118,9 @@ class Charge extends TransactionAwareEntity
     protected static $setters = [
         'created_on' => 'setCreatedOn',
         'failure_reason' => 'setFailureReason',
+        'id' => 'setId',
         'language' => 'setLanguage',
+        'linked_space_id' => 'setLinkedSpaceId',
         'planned_purge_date' => 'setPlannedPurgeDate',
         'space_view_id' => 'setSpaceViewId',
         'state' => 'setState',
@@ -130,7 +140,9 @@ class Charge extends TransactionAwareEntity
     protected static $getters = [
         'created_on' => 'getCreatedOn',
         'failure_reason' => 'getFailureReason',
+        'id' => 'getId',
         'language' => 'getLanguage',
+        'linked_space_id' => 'getLinkedSpaceId',
         'planned_purge_date' => 'getPlannedPurgeDate',
         'space_view_id' => 'getSpaceViewId',
         'state' => 'getState',
@@ -144,23 +156,31 @@ class Charge extends TransactionAwareEntity
 
     
 
+    /**
+     * Associative array for storing property values
+     *
+     * @var mixed[]
+     */
+    protected $container = [];
 
     /**
      * Constructor
      *
-     * @param mixed[] $data Associated array of property values
+     * @param mixed[]|null $data Associated array of property values
      *                      initializing the model
      */
-    public function __construct(array $data = null)
+    public function __construct(?array $data = null)
     {
-        parent::__construct($data);
-
         
         $this->container['created_on'] = isset($data['created_on']) ? $data['created_on'] : null;
         
         $this->container['failure_reason'] = isset($data['failure_reason']) ? $data['failure_reason'] : null;
         
+        $this->container['id'] = isset($data['id']) ? $data['id'] : null;
+        
         $this->container['language'] = isset($data['language']) ? $data['language'] : null;
+        
+        $this->container['linked_space_id'] = isset($data['linked_space_id']) ? $data['linked_space_id'] : null;
         
         $this->container['planned_purge_date'] = isset($data['planned_purge_date']) ? $data['planned_purge_date'] : null;
         
@@ -189,7 +209,7 @@ class Charge extends TransactionAwareEntity
      */
     public function listInvalidProperties()
     {
-        $invalidProperties = parent::listInvalidProperties();
+        $invalidProperties = [];
 
         return $invalidProperties;
     }
@@ -201,7 +221,7 @@ class Charge extends TransactionAwareEntity
      */
     public static function swaggerTypes()
     {
-        return self::$swaggerTypes + parent::swaggerTypes();
+        return self::$swaggerTypes;
     }
 
     /**
@@ -211,7 +231,7 @@ class Charge extends TransactionAwareEntity
      */
     public static function swaggerFormats()
     {
-        return self::$swaggerFormats + parent::swaggerFormats();
+        return self::$swaggerFormats;
     }
 
 
@@ -223,7 +243,7 @@ class Charge extends TransactionAwareEntity
      */
     public static function attributeMap()
     {
-        return parent::attributeMap() + self::$attributeMap;
+        return self::$attributeMap;
     }
 
     /**
@@ -233,7 +253,7 @@ class Charge extends TransactionAwareEntity
      */
     public static function setters()
     {
-        return parent::setters() + self::$setters;
+        return self::$setters;
     }
 
     /**
@@ -243,7 +263,7 @@ class Charge extends TransactionAwareEntity
      */
     public static function getters()
     {
-        return parent::getters() + self::$getters;
+        return self::$getters;
     }
 
     /**
@@ -284,7 +304,7 @@ class Charge extends TransactionAwareEntity
     /**
      * Sets created_on
      *
-     * @param \DateTime $created_on The date on which the charge was created on.
+     * @param \DateTime $created_on The date and time when the object was created.
      *
      * @return $this
      */
@@ -309,13 +329,38 @@ class Charge extends TransactionAwareEntity
     /**
      * Sets failure_reason
      *
-     * @param \PostFinanceCheckout\Sdk\Model\FailureReason $failure_reason 
+     * @param \PostFinanceCheckout\Sdk\Model\FailureReason $failure_reason The reason for the failure of the charge.
      *
      * @return $this
      */
     public function setFailureReason($failure_reason)
     {
         $this->container['failure_reason'] = $failure_reason;
+
+        return $this;
+    }
+    
+
+    /**
+     * Gets id
+     *
+     * @return int
+     */
+    public function getId()
+    {
+        return $this->container['id'];
+    }
+
+    /**
+     * Sets id
+     *
+     * @param int $id A unique identifier for the object.
+     *
+     * @return $this
+     */
+    public function setId($id)
+    {
+        $this->container['id'] = $id;
 
         return $this;
     }
@@ -341,6 +386,31 @@ class Charge extends TransactionAwareEntity
     public function setLanguage($language)
     {
         $this->container['language'] = $language;
+
+        return $this;
+    }
+    
+
+    /**
+     * Gets linked_space_id
+     *
+     * @return int
+     */
+    public function getLinkedSpaceId()
+    {
+        return $this->container['linked_space_id'];
+    }
+
+    /**
+     * Sets linked_space_id
+     *
+     * @param int $linked_space_id The ID of the space this object belongs to.
+     *
+     * @return $this
+     */
+    public function setLinkedSpaceId($linked_space_id)
+    {
+        $this->container['linked_space_id'] = $linked_space_id;
 
         return $this;
     }
@@ -434,7 +504,7 @@ class Charge extends TransactionAwareEntity
     /**
      * Sets time_zone
      *
-     * @param string $time_zone 
+     * @param string $time_zone The time zone that this object is associated with.
      *
      * @return $this
      */
@@ -459,7 +529,7 @@ class Charge extends TransactionAwareEntity
     /**
      * Sets timeout_on
      *
-     * @param \DateTime $timeout_on 
+     * @param \DateTime $timeout_on The date and time when the charge will expire.
      *
      * @return $this
      */
@@ -484,7 +554,7 @@ class Charge extends TransactionAwareEntity
     /**
      * Sets transaction
      *
-     * @param \PostFinanceCheckout\Sdk\Model\Transaction $transaction 
+     * @param \PostFinanceCheckout\Sdk\Model\Transaction $transaction The transaction that the charge belongs to.
      *
      * @return $this
      */
@@ -509,7 +579,7 @@ class Charge extends TransactionAwareEntity
     /**
      * Sets type
      *
-     * @param \PostFinanceCheckout\Sdk\Model\ChargeType $type 
+     * @param \PostFinanceCheckout\Sdk\Model\ChargeType $type The type specifying how the customer was charged.
      *
      * @return $this
      */
@@ -534,7 +604,7 @@ class Charge extends TransactionAwareEntity
     /**
      * Sets user_failure_message
      *
-     * @param string $user_failure_message The failure message describes for an end user why the charge is failed in the language of the user. This is only provided when the charge is marked as failed.
+     * @param string $user_failure_message The message that can be displayed to the customer explaining why the charge failed, in the customer's language.
      *
      * @return $this
      */

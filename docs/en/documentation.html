@@ -23,7 +23,7 @@
 		</a>
 	</li>
 	<li>
-		<a href="https://github.com/pfpayments/woocommerce/releases/tag/3.4.6/">
+		<a href="https://github.com/pfpayments/woocommerce/releases/tag/3.4.7/">
 			Source
 		</a>
 	</li>
@@ -363,16 +363,58 @@ No manual activation is required—if WooCommerce Subscriptions is active, PostF
 <p>The extension uses the default WooCommerce logging functions which are automatically active in your WooCommerce store.
 The extension will log various unexpected errors or information which can help identify the cause of the error. You can find the logs in your WooCommerce backend in Woocommerce &gt; Status &gt; Logs.</p>
 </div>					</div>
+</div>	<div class="chapter" id="_gdpr">
+	<div class="chapter-title">
+		<h1>
+			<span class="title-number">8</span>GDPR					</h1>
+	</div>
+	<div class="chapter-body">
+					<div class="paragraph">
+<p>This plugin use cookies for the purposes described below:</p>
+</div><table class="tableblock frame-all grid-all spread">
+<colgroup>
+<col style="width: 16%;"/>
+<col style="width: 16%;"/>
+<col style="width: 16%;"/>
+<col style="width: 16%;"/>
+<col style="width: 33%;"/>
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">Name</th>
+<th class="tableblock halign-left valign-top">Purpose</th>
+<th class="tableblock halign-left valign-top">Duration</th>
+<th class="tableblock halign-left valign-top">Origin</th>
+<th class="tableblock halign-left valign-top">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>wc_postfinancecheckout_device_id</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Necessary</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Persistent (1 year)</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">PostFinance Checkout</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Device/session ID for fraud prevention during payment. Set/updated by the plugin on the WordPress init hook.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>postfinancecheckoutNewUi</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Functional</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Persistent (10 years)</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">PostFinance Checkout</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">UI-version toggle for the PostFinance Checkout merchant portal (old vs. new UI). Set automatically on every login based on the user&#8217;s stored preference, and can be toggled by the user. HttpOnly, Secure on HTTPS.</p></td>
+</tr>
+</tbody>
+</table>					</div>
 </div>	<div class="chapter" id="_faq">
 	<div class="chapter-title">
 		<h1>
-			<span class="title-number">8</span>FAQ					</h1>
+			<span class="title-number">9</span>FAQ					</h1>
 	</div>
 	<div class="chapter-body">
 							<div class="section" id="_how_can_i_make_the_payment_methods_appear_in_the_checkout">
 	<div class="section-title">
 		<h2>
-			<span class="title-number">8.1</span>How can I make the payment methods appear in the checkout?					</h2>
+			<span class="title-number">9.1</span>How can I make the payment methods appear in the checkout?					</h2>
 	</div>
 	<div class="section-body">
 					<div class="paragraph">
@@ -384,7 +426,7 @@ Ensure the payment method are visible in the WooCommerce Settings &gt; Payment s
 </div>					<div class="section" id="_how_can_i_send_the_product_attributes_to_whitelabelname">
 	<div class="section-title">
 		<h2>
-			<span class="title-number">8.2</span>How can I send the product attributes to PostFinance Checkout?					</h2>
+			<span class="title-number">9.2</span>How can I send the product attributes to PostFinance Checkout?					</h2>
 	</div>
 	<div class="section-body">
 					<div class="admonitionblock note">
@@ -404,7 +446,7 @@ It is only possible to send the global product attributes to PostFinance Checkou
 </div>					<div class="section" id="_how_can_i_update_the_plugin">
 	<div class="section-title">
 		<h2>
-			<span class="title-number">8.3</span>How can I update the plugin?					</h2>
+			<span class="title-number">9.3</span>How can I update the plugin?					</h2>
 	</div>
 	<div class="section-body">
 					<div class="paragraph">
@@ -414,7 +456,7 @@ Search for the plugin PostFinance Checkout and click on <code>update now</code>.
 </div>					<div class="section" id="_how_can_i_translate_the_plugin">
 	<div class="section-title">
 		<h2>
-			<span class="title-number">8.4</span>How can I translate the plugin?					</h2>
+			<span class="title-number">9.4</span>How can I translate the plugin?					</h2>
 	</div>
 	<div class="section-body">
 					<div class="olist arabic">
@@ -443,13 +485,13 @@ Search for the plugin PostFinance Checkout and click on <code>update now</code>.
 </div>					<div class="section" id="_how_can_i_add_the_value_of_a_strong_date_of_birth_strong_or_strong_gender_strong_input_field_from_my_checkout_form_to_the_whitelabelname_addresses">
 	<div class="section-title">
 		<h2>
-			<span class="title-number">8.5</span>How can I add the value of a <strong>Date Of Birth</strong> or <strong>Gender</strong> input field from my checkout form to the PostFinance Checkout addresses?					</h2>
+			<span class="title-number">9.5</span>How can I add the value of a <strong>Date Of Birth</strong> or <strong>Gender</strong> input field from my checkout form to the PostFinance Checkout addresses?					</h2>
 	</div>
 	<div class="section-body">
 							<div class="section" id="_billing_address_date_of_birth">
 	<div class="section-title">
 		<h3>
-			<span class="title-number">8.5.1</span>Billing Address Date of Birth					</h3>
+			<span class="title-number">9.5.1</span>Billing Address Date of Birth					</h3>
 	</div>
 	<div class="section-body">
 					<div class="paragraph">
@@ -473,7 +515,7 @@ Search for the plugin PostFinance Checkout and click on <code>update now</code>.
 </div>					<div class="section" id="_billing_address_gender">
 	<div class="section-title">
 		<h3>
-			<span class="title-number">8.5.2</span>Billing Address Gender					</h3>
+			<span class="title-number">9.5.2</span>Billing Address Gender					</h3>
 	</div>
 	<div class="section-body">
 					<div class="paragraph">
@@ -497,7 +539,7 @@ Search for the plugin PostFinance Checkout and click on <code>update now</code>.
 </div>					<div class="section" id="_shipping_address_date_of_birth">
 	<div class="section-title">
 		<h3>
-			<span class="title-number">8.5.3</span>Shipping Address Date of Birth					</h3>
+			<span class="title-number">9.5.3</span>Shipping Address Date of Birth					</h3>
 	</div>
 	<div class="section-body">
 					<div class="paragraph">
@@ -521,7 +563,7 @@ Search for the plugin PostFinance Checkout and click on <code>update now</code>.
 </div>					<div class="section" id="_shipping_address_gender">
 	<div class="section-title">
 		<h3>
-			<span class="title-number">8.5.4</span>Shipping Address Gender					</h3>
+			<span class="title-number">9.5.4</span>Shipping Address Gender					</h3>
 	</div>
 	<div class="section-body">
 					<div class="paragraph">
@@ -547,7 +589,7 @@ Search for the plugin PostFinance Checkout and click on <code>update now</code>.
 </div>	<div class="chapter" id="_support">
 	<div class="chapter-title">
 		<h1>
-			<span class="title-number">9</span>Support					</h1>
+			<span class="title-number">10</span>Support					</h1>
 	</div>
 	<div class="chapter-body">
 					<div class="paragraph">
@@ -645,62 +687,67 @@ Search for the plugin PostFinance Checkout and click on <code>update now</code>.
 		<span class="item-title">Error logging</span>
 			</a>
     </li>					<li class="nav-level-1">
-	<a href="#_faq">
+	<a href="#_gdpr">
 		<span class="item-number">8</span>
+		<span class="item-title">GDPR</span>
+			</a>
+    </li>					<li class="nav-level-1">
+	<a href="#_faq">
+		<span class="item-number">9</span>
 		<span class="item-title">FAQ</span>
 			</a>
         	<ul  class="nav">
     		    			<li class="nav-level-2">
 	<a href="#_how_can_i_make_the_payment_methods_appear_in_the_checkout">
-		<span class="item-number">8.1</span>
+		<span class="item-number">9.1</span>
 		<span class="item-title">How can I make the payment methods appear in the checkout?</span>
 			</a>
     </li>    		    			<li class="nav-level-2">
 	<a href="#_how_can_i_send_the_product_attributes_to_whitelabelname">
-		<span class="item-number">8.2</span>
+		<span class="item-number">9.2</span>
 		<span class="item-title">How can I send the product attributes to PostFinance Checkout?</span>
 			</a>
     </li>    		    			<li class="nav-level-2">
 	<a href="#_how_can_i_update_the_plugin">
-		<span class="item-number">8.3</span>
+		<span class="item-number">9.3</span>
 		<span class="item-title">How can I update the plugin?</span>
 			</a>
     </li>    		    			<li class="nav-level-2">
 	<a href="#_how_can_i_translate_the_plugin">
-		<span class="item-number">8.4</span>
+		<span class="item-number">9.4</span>
 		<span class="item-title">How can I translate the plugin?</span>
 			</a>
     </li>    		    			<li class="nav-level-2">
 	<a href="#_how_can_i_add_the_value_of_a_strong_date_of_birth_strong_or_strong_gender_strong_input_field_from_my_checkout_form_to_the_whitelabelname_addresses">
-		<span class="item-number">8.5</span>
+		<span class="item-number">9.5</span>
 		<span class="item-title">How can I add the value of a &lt;strong&gt;Date Of Birth&lt;/strong&gt; or &lt;strong&gt;Gender&lt;/strong&gt; input field from my checkout form to the PostFinance Checkout addresses?</span>
 			</a>
         	<ul  class="nav">
     		    			<li class="nav-level-3">
 	<a href="#_billing_address_date_of_birth">
-		<span class="item-number">8.5.1</span>
+		<span class="item-number">9.5.1</span>
 		<span class="item-title">Billing Address Date of Birth</span>
 			</a>
     </li>    		    			<li class="nav-level-3">
 	<a href="#_billing_address_gender">
-		<span class="item-number">8.5.2</span>
+		<span class="item-number">9.5.2</span>
 		<span class="item-title">Billing Address Gender</span>
 			</a>
     </li>    		    			<li class="nav-level-3">
 	<a href="#_shipping_address_date_of_birth">
-		<span class="item-number">8.5.3</span>
+		<span class="item-number">9.5.3</span>
 		<span class="item-title">Shipping Address Date of Birth</span>
 			</a>
     </li>    		    			<li class="nav-level-3">
 	<a href="#_shipping_address_gender">
-		<span class="item-number">8.5.4</span>
+		<span class="item-number">9.5.4</span>
 		<span class="item-title">Shipping Address Gender</span>
 			</a>
     </li>    		    	</ul>
     </li>    		    	</ul>
     </li>					<li class="nav-level-1">
 	<a href="#_support">
-		<span class="item-number">9</span>
+		<span class="item-number">10</span>
 		<span class="item-title">Support</span>
 			</a>
     </li>			</ul>

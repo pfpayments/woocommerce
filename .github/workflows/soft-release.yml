@@ -11,7 +11,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout code
-        uses: actions/checkout@v2
+        uses: actions/checkout@v7
       - name: Pre-Release Notice
         run: |
           echo "Pre-release tag detected. Skipping full release steps. Only pre-release actions will be performed."

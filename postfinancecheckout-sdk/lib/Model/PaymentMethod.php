@@ -131,10 +131,10 @@ class PaymentMethod implements ModelInterface, ArrayAccess
     /**
      * Constructor
      *
-     * @param mixed[] $data Associated array of property values
+     * @param mixed[]|null $data Associated array of property values
      *                      initializing the model
      */
-    public function __construct(array $data = null)
+    public function __construct(?array $data = null)
     {
         
         $this->container['data_collection_types'] = isset($data['data_collection_types']) ? $data['data_collection_types'] : null;
@@ -255,7 +255,7 @@ class PaymentMethod implements ModelInterface, ArrayAccess
     /**
      * Sets data_collection_types
      *
-     * @param \PostFinanceCheckout\Sdk\Model\DataCollectionType[] $data_collection_types The data collection types that are supported by the payment method.
+     * @param \PostFinanceCheckout\Sdk\Model\DataCollectionType[] $data_collection_types The data collection types that payment method supports.
      *
      * @return $this
      */
@@ -330,7 +330,7 @@ class PaymentMethod implements ModelInterface, ArrayAccess
     /**
      * Sets image_path
      *
-     * @param string $image_path The path to the payment method's image which is displayed to the customer.
+     * @param string $image_path The path to the payment method's image.
      *
      * @return $this
      */
@@ -355,7 +355,7 @@ class PaymentMethod implements ModelInterface, ArrayAccess
     /**
      * Sets merchant_description
      *
-     * @param map[string,string] $merchant_description 
+     * @param map[string,string] $merchant_description A merchant-focused, localized description of the payment method, providing its purpose and details.
      *
      * @return $this
      */
@@ -405,7 +405,7 @@ class PaymentMethod implements ModelInterface, ArrayAccess
     /**
      * Sets supported_currencies
      *
-     * @param string[] $supported_currencies The currencies that are supported by the payment method.
+     * @param string[] $supported_currencies The currencies that the payment method supports.
      *
      * @return $this
      */

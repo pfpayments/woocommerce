@@ -27,7 +27,7 @@ use \PostFinanceCheckout\Sdk\ObjectSerializer;
  * Condition model
  *
  * @category    Class
- * @description A condition allows you to define a criteria that a transaction must fulfill in order for a connector configuration to be considered for processing the payment.
+ * @description A connector condition defines criteria that a transaction must meet for a connector configuration to process the payment.
  * @package     PostFinanceCheckout\Sdk
  * @author      wallee AG
  * @license     http://www.apache.org/licenses/LICENSE-2.0 Apache License v2
@@ -131,10 +131,10 @@ class Condition implements ModelInterface, ArrayAccess
     /**
      * Constructor
      *
-     * @param mixed[] $data Associated array of property values
+     * @param mixed[]|null $data Associated array of property values
      *                      initializing the model
      */
-    public function __construct(array $data = null)
+    public function __construct(?array $data = null)
     {
         
         $this->container['condition_type'] = isset($data['condition_type']) ? $data['condition_type'] : null;

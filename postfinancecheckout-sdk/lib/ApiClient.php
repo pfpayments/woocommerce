@@ -48,7 +48,7 @@ final class ApiClient {
 	 * @var array
 	 */
 	private $defaultHeaders = [
-        'x-meta-sdk-version' => "4.8.0",
+        'x-meta-sdk-version' => "4.9.1",
         'x-meta-sdk-language' => 'php',
         'x-meta-sdk-provider' => "PostFinance Checkout",
     ];
@@ -58,7 +58,7 @@ final class ApiClient {
 	 *
 	 * @var string
 	 */
-	private $userAgent = 'PHP-Client/4.8.0/php';
+	private $userAgent = 'PHP-Client/4.9.1/php';
 
 	/**
 	 * The path to the certificate authority file.
@@ -825,6 +825,54 @@ final class ApiClient {
         return $this->documentTemplateTypeService;
     }
     
+    protected $dunningCaseLevelService;
+
+    /**
+     * @return \PostFinanceCheckout\Sdk\Service\DunningCaseLevelService
+     */
+    public function getDunningCaseLevelService() {
+        if(is_null($this->dunningCaseLevelService)){
+            $this->dunningCaseLevelService = new \PostFinanceCheckout\Sdk\Service\DunningCaseLevelService($this);
+        }
+        return $this->dunningCaseLevelService;
+    }
+    
+    protected $dunningCaseService;
+
+    /**
+     * @return \PostFinanceCheckout\Sdk\Service\DunningCaseService
+     */
+    public function getDunningCaseService() {
+        if(is_null($this->dunningCaseService)){
+            $this->dunningCaseService = new \PostFinanceCheckout\Sdk\Service\DunningCaseService($this);
+        }
+        return $this->dunningCaseService;
+    }
+    
+    protected $dunningFlowLevelService;
+
+    /**
+     * @return \PostFinanceCheckout\Sdk\Service\DunningFlowLevelService
+     */
+    public function getDunningFlowLevelService() {
+        if(is_null($this->dunningFlowLevelService)){
+            $this->dunningFlowLevelService = new \PostFinanceCheckout\Sdk\Service\DunningFlowLevelService($this);
+        }
+        return $this->dunningFlowLevelService;
+    }
+    
+    protected $dunningFlowService;
+
+    /**
+     * @return \PostFinanceCheckout\Sdk\Service\DunningFlowService
+     */
+    public function getDunningFlowService() {
+        if(is_null($this->dunningFlowService)){
+            $this->dunningFlowService = new \PostFinanceCheckout\Sdk\Service\DunningFlowService($this);
+        }
+        return $this->dunningFlowService;
+    }
+    
     protected $externalTransferBankTransactionService;
 
     /**
@@ -1255,6 +1303,246 @@ final class ApiClient {
             $this->staticValueService = new \PostFinanceCheckout\Sdk\Service\StaticValueService($this);
         }
         return $this->staticValueService;
+    }
+    
+    protected $subscriberService;
+
+    /**
+     * @return \PostFinanceCheckout\Sdk\Service\SubscriberService
+     */
+    public function getSubscriberService() {
+        if(is_null($this->subscriberService)){
+            $this->subscriberService = new \PostFinanceCheckout\Sdk\Service\SubscriberService($this);
+        }
+        return $this->subscriberService;
+    }
+    
+    protected $subscriptionAffiliateService;
+
+    /**
+     * @return \PostFinanceCheckout\Sdk\Service\SubscriptionAffiliateService
+     */
+    public function getSubscriptionAffiliateService() {
+        if(is_null($this->subscriptionAffiliateService)){
+            $this->subscriptionAffiliateService = new \PostFinanceCheckout\Sdk\Service\SubscriptionAffiliateService($this);
+        }
+        return $this->subscriptionAffiliateService;
+    }
+    
+    protected $subscriptionChargeService;
+
+    /**
+     * @return \PostFinanceCheckout\Sdk\Service\SubscriptionChargeService
+     */
+    public function getSubscriptionChargeService() {
+        if(is_null($this->subscriptionChargeService)){
+            $this->subscriptionChargeService = new \PostFinanceCheckout\Sdk\Service\SubscriptionChargeService($this);
+        }
+        return $this->subscriptionChargeService;
+    }
+    
+    protected $subscriptionLedgerEntryService;
+
+    /**
+     * @return \PostFinanceCheckout\Sdk\Service\SubscriptionLedgerEntryService
+     */
+    public function getSubscriptionLedgerEntryService() {
+        if(is_null($this->subscriptionLedgerEntryService)){
+            $this->subscriptionLedgerEntryService = new \PostFinanceCheckout\Sdk\Service\SubscriptionLedgerEntryService($this);
+        }
+        return $this->subscriptionLedgerEntryService;
+    }
+    
+    protected $subscriptionMetricService;
+
+    /**
+     * @return \PostFinanceCheckout\Sdk\Service\SubscriptionMetricService
+     */
+    public function getSubscriptionMetricService() {
+        if(is_null($this->subscriptionMetricService)){
+            $this->subscriptionMetricService = new \PostFinanceCheckout\Sdk\Service\SubscriptionMetricService($this);
+        }
+        return $this->subscriptionMetricService;
+    }
+    
+    protected $subscriptionMetricUsageService;
+
+    /**
+     * @return \PostFinanceCheckout\Sdk\Service\SubscriptionMetricUsageService
+     */
+    public function getSubscriptionMetricUsageService() {
+        if(is_null($this->subscriptionMetricUsageService)){
+            $this->subscriptionMetricUsageService = new \PostFinanceCheckout\Sdk\Service\SubscriptionMetricUsageService($this);
+        }
+        return $this->subscriptionMetricUsageService;
+    }
+    
+    protected $subscriptionPeriodBillService;
+
+    /**
+     * @return \PostFinanceCheckout\Sdk\Service\SubscriptionPeriodBillService
+     */
+    public function getSubscriptionPeriodBillService() {
+        if(is_null($this->subscriptionPeriodBillService)){
+            $this->subscriptionPeriodBillService = new \PostFinanceCheckout\Sdk\Service\SubscriptionPeriodBillService($this);
+        }
+        return $this->subscriptionPeriodBillService;
+    }
+    
+    protected $subscriptionProductComponentGroupService;
+
+    /**
+     * @return \PostFinanceCheckout\Sdk\Service\SubscriptionProductComponentGroupService
+     */
+    public function getSubscriptionProductComponentGroupService() {
+        if(is_null($this->subscriptionProductComponentGroupService)){
+            $this->subscriptionProductComponentGroupService = new \PostFinanceCheckout\Sdk\Service\SubscriptionProductComponentGroupService($this);
+        }
+        return $this->subscriptionProductComponentGroupService;
+    }
+    
+    protected $subscriptionProductComponentService;
+
+    /**
+     * @return \PostFinanceCheckout\Sdk\Service\SubscriptionProductComponentService
+     */
+    public function getSubscriptionProductComponentService() {
+        if(is_null($this->subscriptionProductComponentService)){
+            $this->subscriptionProductComponentService = new \PostFinanceCheckout\Sdk\Service\SubscriptionProductComponentService($this);
+        }
+        return $this->subscriptionProductComponentService;
+    }
+    
+    protected $subscriptionProductFeeTierService;
+
+    /**
+     * @return \PostFinanceCheckout\Sdk\Service\SubscriptionProductFeeTierService
+     */
+    public function getSubscriptionProductFeeTierService() {
+        if(is_null($this->subscriptionProductFeeTierService)){
+            $this->subscriptionProductFeeTierService = new \PostFinanceCheckout\Sdk\Service\SubscriptionProductFeeTierService($this);
+        }
+        return $this->subscriptionProductFeeTierService;
+    }
+    
+    protected $subscriptionProductMeteredFeeService;
+
+    /**
+     * @return \PostFinanceCheckout\Sdk\Service\SubscriptionProductMeteredFeeService
+     */
+    public function getSubscriptionProductMeteredFeeService() {
+        if(is_null($this->subscriptionProductMeteredFeeService)){
+            $this->subscriptionProductMeteredFeeService = new \PostFinanceCheckout\Sdk\Service\SubscriptionProductMeteredFeeService($this);
+        }
+        return $this->subscriptionProductMeteredFeeService;
+    }
+    
+    protected $subscriptionProductPeriodFeeService;
+
+    /**
+     * @return \PostFinanceCheckout\Sdk\Service\SubscriptionProductPeriodFeeService
+     */
+    public function getSubscriptionProductPeriodFeeService() {
+        if(is_null($this->subscriptionProductPeriodFeeService)){
+            $this->subscriptionProductPeriodFeeService = new \PostFinanceCheckout\Sdk\Service\SubscriptionProductPeriodFeeService($this);
+        }
+        return $this->subscriptionProductPeriodFeeService;
+    }
+    
+    protected $subscriptionProductRetirementService;
+
+    /**
+     * @return \PostFinanceCheckout\Sdk\Service\SubscriptionProductRetirementService
+     */
+    public function getSubscriptionProductRetirementService() {
+        if(is_null($this->subscriptionProductRetirementService)){
+            $this->subscriptionProductRetirementService = new \PostFinanceCheckout\Sdk\Service\SubscriptionProductRetirementService($this);
+        }
+        return $this->subscriptionProductRetirementService;
+    }
+    
+    protected $subscriptionProductService;
+
+    /**
+     * @return \PostFinanceCheckout\Sdk\Service\SubscriptionProductService
+     */
+    public function getSubscriptionProductService() {
+        if(is_null($this->subscriptionProductService)){
+            $this->subscriptionProductService = new \PostFinanceCheckout\Sdk\Service\SubscriptionProductService($this);
+        }
+        return $this->subscriptionProductService;
+    }
+    
+    protected $subscriptionProductSetupFeeService;
+
+    /**
+     * @return \PostFinanceCheckout\Sdk\Service\SubscriptionProductSetupFeeService
+     */
+    public function getSubscriptionProductSetupFeeService() {
+        if(is_null($this->subscriptionProductSetupFeeService)){
+            $this->subscriptionProductSetupFeeService = new \PostFinanceCheckout\Sdk\Service\SubscriptionProductSetupFeeService($this);
+        }
+        return $this->subscriptionProductSetupFeeService;
+    }
+    
+    protected $subscriptionProductVersionRetirementService;
+
+    /**
+     * @return \PostFinanceCheckout\Sdk\Service\SubscriptionProductVersionRetirementService
+     */
+    public function getSubscriptionProductVersionRetirementService() {
+        if(is_null($this->subscriptionProductVersionRetirementService)){
+            $this->subscriptionProductVersionRetirementService = new \PostFinanceCheckout\Sdk\Service\SubscriptionProductVersionRetirementService($this);
+        }
+        return $this->subscriptionProductVersionRetirementService;
+    }
+    
+    protected $subscriptionProductVersionService;
+
+    /**
+     * @return \PostFinanceCheckout\Sdk\Service\SubscriptionProductVersionService
+     */
+    public function getSubscriptionProductVersionService() {
+        if(is_null($this->subscriptionProductVersionService)){
+            $this->subscriptionProductVersionService = new \PostFinanceCheckout\Sdk\Service\SubscriptionProductVersionService($this);
+        }
+        return $this->subscriptionProductVersionService;
+    }
+    
+    protected $subscriptionService;
+
+    /**
+     * @return \PostFinanceCheckout\Sdk\Service\SubscriptionService
+     */
+    public function getSubscriptionService() {
+        if(is_null($this->subscriptionService)){
+            $this->subscriptionService = new \PostFinanceCheckout\Sdk\Service\SubscriptionService($this);
+        }
+        return $this->subscriptionService;
+    }
+    
+    protected $subscriptionSuspensionService;
+
+    /**
+     * @return \PostFinanceCheckout\Sdk\Service\SubscriptionSuspensionService
+     */
+    public function getSubscriptionSuspensionService() {
+        if(is_null($this->subscriptionSuspensionService)){
+            $this->subscriptionSuspensionService = new \PostFinanceCheckout\Sdk\Service\SubscriptionSuspensionService($this);
+        }
+        return $this->subscriptionSuspensionService;
+    }
+    
+    protected $subscriptionVersionService;
+
+    /**
+     * @return \PostFinanceCheckout\Sdk\Service\SubscriptionVersionService
+     */
+    public function getSubscriptionVersionService() {
+        if(is_null($this->subscriptionVersionService)){
+            $this->subscriptionVersionService = new \PostFinanceCheckout\Sdk\Service\SubscriptionVersionService($this);
+        }
+        return $this->subscriptionVersionService;
     }
     
     protected $tokenService;

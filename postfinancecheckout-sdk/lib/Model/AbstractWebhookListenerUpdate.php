@@ -48,7 +48,6 @@ class AbstractWebhookListenerUpdate implements ModelInterface, ArrayAccess
       * @var string[]
       */
     protected static $swaggerTypes = [
-        'enable_payload_signature_and_state' => 'bool',
         'entity_states' => 'string[]',
         'name' => 'string',
         'notify_every_change' => 'bool',
@@ -61,7 +60,6 @@ class AbstractWebhookListenerUpdate implements ModelInterface, ArrayAccess
       * @var string[]
       */
     protected static $swaggerFormats = [
-        'enable_payload_signature_and_state' => null,
         'entity_states' => null,
         'name' => null,
         'notify_every_change' => null,
@@ -75,7 +73,6 @@ class AbstractWebhookListenerUpdate implements ModelInterface, ArrayAccess
      * @var string[]
      */
     protected static $attributeMap = [
-        'enable_payload_signature_and_state' => 'enablePayloadSignatureAndState',
         'entity_states' => 'entityStates',
         'name' => 'name',
         'notify_every_change' => 'notifyEveryChange',
@@ -88,7 +85,6 @@ class AbstractWebhookListenerUpdate implements ModelInterface, ArrayAccess
      * @var string[]
      */
     protected static $setters = [
-        'enable_payload_signature_and_state' => 'setEnablePayloadSignatureAndState',
         'entity_states' => 'setEntityStates',
         'name' => 'setName',
         'notify_every_change' => 'setNotifyEveryChange',
@@ -101,7 +97,6 @@ class AbstractWebhookListenerUpdate implements ModelInterface, ArrayAccess
      * @var string[]
      */
     protected static $getters = [
-        'enable_payload_signature_and_state' => 'getEnablePayloadSignatureAndState',
         'entity_states' => 'getEntityStates',
         'name' => 'getName',
         'notify_every_change' => 'getNotifyEveryChange',
@@ -120,13 +115,11 @@ class AbstractWebhookListenerUpdate implements ModelInterface, ArrayAccess
     /**
      * Constructor
      *
-     * @param mixed[] $data Associated array of property values
+     * @param mixed[]|null $data Associated array of property values
      *                      initializing the model
      */
-    public function __construct(array $data = null)
+    public function __construct(?array $data = null)
     {
-        
-        $this->container['enable_payload_signature_and_state'] = isset($data['enable_payload_signature_and_state']) ? $data['enable_payload_signature_and_state'] : null;
         
         $this->container['entity_states'] = isset($data['entity_states']) ? $data['entity_states'] : null;
         
@@ -229,8 +222,6 @@ class AbstractWebhookListenerUpdate implements ModelInterface, ArrayAccess
         return count($this->listInvalidProperties()) === 0;
     }
 
-    
-
     /**
      * Gets enable_payload_signature_and_state
      *
@@ -254,7 +245,6 @@ class AbstractWebhookListenerUpdate implements ModelInterface, ArrayAccess
 
         return $this;
     }
-    
 
     /**
      * Gets entity_states
