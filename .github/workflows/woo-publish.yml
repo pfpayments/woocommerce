@@ -35,6 +35,7 @@ jobs:
         rsync -r --exclude 'build-woo' --exclude '.git' --exclude '.github' --exclude '.travis.yml' --exclude 'README.md' . $GITHUB_WORKSPACE/build-woo/src;
         perl -plne 'print "$ENV{'FEATURES'}" if(/== Installation ==/); print "$ENV{'FAQ_ENTRIES'}" if(/== Changelog ==/);' $GITHUB_WORKSPACE/build-woo/src/readme.txt > $GITHUB_WORKSPACE/build-woo/src/readme_mod.txt;
         mv build-woo/src/readme_mod.txt build-woo/src/readme.txt;
+        sed -i 's/\r$//' $GITHUB_WORKSPACE/build-woo/src/readme.txt
         mkdir build-woo/$WORDPRESS_ORG_SLUG;
         rsync -r build-woo/src/ build-woo/$WORDPRESS_ORG_SLUG/;
 
