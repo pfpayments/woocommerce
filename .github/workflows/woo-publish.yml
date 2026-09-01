@@ -69,5 +69,7 @@ jobs:
       env:
         SVN_USERNAME: ${{ secrets.SVN_USERNAME }}
         SVN_PASSWORD: ${{ secrets.SVN_PASSWORD }}
-        ASSETS_DIR: ${{ vars.WORDPRESS_ORG_SLUG }}/build-woo/src
+        # BUILD_DIR is the directory that contains the plugin files to be deployed to WordPress.org
+        BUILD_DIR: build-woo/${{ vars.WORDPRESS_ORG_SLUG }}
+        ASSETS_DIR: build-woo/${{ vars.WORDPRESS_ORG_SLUG }}/assets
         SLUG: ${{ vars.WORDPRESS_ORG_SLUG }}

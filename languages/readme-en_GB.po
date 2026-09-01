@@ -1,6 +1,6 @@
 msgid ""
 msgstr ""
-"Project-Id-Version: postfinancecheckout-woo\n"
+"Project-Id-Version: whitelabelmachinename-woo\n"
 "Language: en_GB\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 
@@ -202,14 +202,14 @@ msgstr "Additional documentation for this plugin is available here:"
 msgid "This plugin includes an internal script to manage device verification within the WooCommerce store environment."
 msgstr "This plugin includes an internal script to manage device verification within the WooCommerce store environment."
 
-msgid "Support queries can be issued on the PostFinance Checkout support site."
-msgstr "Support queries can be issued on the PostFinance Checkout support site."
+msgid "Support queries can be issued on the WhiteLabelName support site."
+msgstr "Support queries can be issued on the WhiteLabelName support site."
 
-msgid "Enquiries about our privacy policy can be made on the PostFinance Checkout privacy policies site."
-msgstr "Enquiries about our privacy policy can be made on the PostFinance Checkout privacy policies site."
+msgid "Enquiries about our privacy policy can be made on the WhiteLabelName privacy policies site."
+msgstr "Enquiries about our privacy policy can be made on the WhiteLabelName privacy policies site."
 
-msgid "Enquiries about our terms of use can be made on the PostFinance Checkout terms of use site."
-msgstr "Enquiries about our terms of use can be made on the PostFinance Checkout terms of use site."
+msgid "Enquiries about our terms of use can be made on the WhiteLabelName terms of use site."
+msgstr "Enquiries about our terms of use can be made on the WhiteLabelName terms of use site."
 
 msgid "Minimum Requirements:"
 msgstr "Minimum Requirements:"
