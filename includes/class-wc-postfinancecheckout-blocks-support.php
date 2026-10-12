@@ -1,5 +1,4 @@
 <?php
-
 /**
  * Plugin Name: PostFinanceCheckout
  * Author: PostFinance Ltd
@@ -57,7 +56,7 @@ final class WC_PostFinanceCheckout_Blocks_Support extends AbstractPaymentMethodT
 	 */
 	public function get_payment_method_script_handles() {
 		$dependencies = array();
-		$version = '3.4.8';
+		$version = '3.4.9';
 
 		wp_register_script(
 			'WooCommerce_PostFinanceCheckout_blocks_support',
@@ -106,7 +105,7 @@ final class WC_PostFinanceCheckout_Blocks_Support extends AbstractPaymentMethodT
 		try {
 			$update_transaction = isset( $_POST['updateTransaction'] ) ? (bool) sanitize_key( wp_unslash( $_POST['updateTransaction'] ) ) : false; // phpcs:ignore WordPress.Security.NonceVerification.Missing
 			$enqueue_portal_scripts = isset( $_POST['enqueuePortalScripts'] ) ? (bool) sanitize_key( wp_unslash( $_POST['enqueuePortalScripts'] ) ) : false; // phpcs:ignore WordPress.Security.NonceVerification.Missing
-			
+
 			if ( true === $update_transaction ) {
 				$transaction_service = WC_PostFinanceCheckout_Service_Transaction::instance();
 				$transaction_service->load_and_update_transaction_from_session();
@@ -121,44 +120,44 @@ final class WC_PostFinanceCheckout_Blocks_Support extends AbstractPaymentMethodT
 			$available_payment_methods = WC_PostFinanceCheckout_Service_Transaction::instance()->get_possible_payment_methods_for_cart();
 
 			$payment_plugin = array_filter(
-			  $payment_gateways,
-			  fn( $key ) => str_contains( $key, 'postfinancecheckout_' ),
-			  ARRAY_FILTER_USE_KEY
+				$payment_gateways,
+				fn( $key ) => str_contains( $key, 'postfinancecheckout_' ),
+				ARRAY_FILTER_USE_KEY
 			);
 
 			$payments_list =
-			  array_map(
-				function ( $payment_gateway ) use ( $available_payment_methods ) {
-					$has_subscription = WC_PostFinanceCheckout_Zero_Gateway::cart_has_subscription();
-					$cartTotal = (WC()->cart && WC()->cart->total) ?? 0;
+				array_map(
+					function ( $payment_gateway ) use ( $available_payment_methods ) {
+						$has_subscription = WC_PostFinanceCheckout_Zero_Gateway::cart_has_subscription();
+						$cart_total = ( WC()->cart && WC()->cart->total ) ?? 0;
 
-					$isPaymentMethodVisibleOnCheckout = $payment_gateway->get_payment_configuration_id() === WC_PostFinanceCheckout_Zero_Gateway::ZERO_PAYMENT_CONF_ID && $cartTotal == 0;
-					$integration_mode = $payment_gateway->get_payment_configuration_id() === WC_PostFinanceCheckout_Zero_Gateway::ZERO_PAYMENT_CONF_ID
-						? WC_PostFinanceCheckout_Integration::POSTFINANCECHECKOUT_PAYMENTPAGE
-						: get_option( WooCommerce_PostFinanceCheckout::POSTFINANCECHECKOUT_CK_INTEGRATION );
+						$is_payment_method_visible_on_checkout = $payment_gateway->get_payment_configuration_id() === WC_PostFinanceCheckout_Zero_Gateway::ZERO_PAYMENT_CONF_ID && 0 === $cart_total;
+						$integration_mode = $payment_gateway->get_payment_configuration_id() === WC_PostFinanceCheckout_Zero_Gateway::ZERO_PAYMENT_CONF_ID
+							? WC_PostFinanceCheckout_Integration::POSTFINANCECHECKOUT_PAYMENTPAGE
+							: get_option( WooCommerce_PostFinanceCheckout::POSTFINANCECHECKOUT_CK_INTEGRATION );
 
-					if ( !$isPaymentMethodVisibleOnCheckout ) {
-						$isPaymentMethodVisibleOnCheckout = in_array( $payment_gateway->get_payment_configuration_id(), $available_payment_methods, true ) && ( $cartTotal > 0 || $has_subscription );
-					}
+						if ( ! $is_payment_method_visible_on_checkout ) {
+							$is_payment_method_visible_on_checkout = in_array( $payment_gateway->get_payment_configuration_id(), $available_payment_methods, true ) && ( $cart_total > 0 || $has_subscription );
+						}
 
-					return array(
-					  'name' => $payment_gateway->id,
-					  'label' => $payment_gateway->get_title(),
-					  'ariaLabel' => $payment_gateway->get_title(),
-					  'description' => $payment_gateway->get_description(),
-					  'configuration_id' => $payment_gateway->get_payment_configuration_id(),
-					  'integration_mode' => $integration_mode,
-					  'supports' => $payment_gateway->supports,
-					  'icon' => $payment_gateway->get_icon(),
-					  'isActive' => $isPaymentMethodVisibleOnCheckout
-					);
-				},
-				$payment_plugin
-			  );
+						return array(
+							'name' => $payment_gateway->id,
+							'label' => $payment_gateway->get_title(),
+							'ariaLabel' => $payment_gateway->get_title(),
+							'description' => $payment_gateway->get_description(),
+							'configuration_id' => $payment_gateway->get_payment_configuration_id(),
+							'integration_mode' => $integration_mode,
+							'supports' => $payment_gateway->supports,
+							'icon' => $payment_gateway->get_icon(),
+							'isActive' => $is_payment_method_visible_on_checkout,
+						);
+					},
+					$payment_plugin
+				);
 
 			return array_values( $payments_list );
-		} catch (\Exception $e) {
-			return [];
+		} catch ( \Exception $e ) {
+			return array();
 		}
 	}
 
@@ -212,13 +211,15 @@ final class WC_PostFinanceCheckout_Blocks_Support extends AbstractPaymentMethodT
 	 * @return void
 	 */
 	public static function enqueue_portal_scripts() {
-		if ( is_order_received_page() ) return;
+		if ( is_order_received_page() ) {
+			return;
+		}
 
 		try {
 			$js_url = '';
 			$transaction_service = WC_PostFinanceCheckout_Service_Transaction::instance();
 			$transaction = $transaction_service->get_transaction_from_session();
-			switch( get_option( WooCommerce_PostFinanceCheckout::POSTFINANCECHECKOUT_CK_INTEGRATION ) ) {
+			switch ( get_option( WooCommerce_PostFinanceCheckout::POSTFINANCECHECKOUT_CK_INTEGRATION ) ) {
 				case WC_PostFinanceCheckout_Integration::POSTFINANCECHECKOUT_IFRAME:
 					$js_url = $transaction_service->get_javascript_url_for_transaction( $transaction );
 					break;
@@ -279,7 +280,6 @@ final class WC_PostFinanceCheckout_Blocks_Support extends AbstractPaymentMethodT
 		$transaction = $transaction_service->get_transaction_from_session();
 		$transaction_id = $transaction->getId();
 		[$gateway_result, $transaction] = $payment_method_object->process_payment_transaction( $context->order, $transaction_id, $space_id, true, $transaction_service );
-
 
 		$integration_mode = get_option( WooCommerce_PostFinanceCheckout::POSTFINANCECHECKOUT_CK_INTEGRATION );
 		$redirect_url = $gateway_result['redirect'];

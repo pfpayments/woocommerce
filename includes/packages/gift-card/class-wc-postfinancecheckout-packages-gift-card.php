@@ -21,7 +21,6 @@ defined( 'ABSPATH' ) || exit;
  *
  * This class provides constants for Gift Cards and serves as a placeholder for future improvements.
  */
-class WC_PostFinanceCheckout_Packages_Gift_Card
-{
+class WC_PostFinanceCheckout_Packages_Gift_Card {
 	const POSTFINANCECHECKOUT_GIFT_CARD = 'Gift Card';
 }

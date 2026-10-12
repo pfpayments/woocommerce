@@ -53,6 +53,11 @@ final class WC_PostFinanceCheckout_Subscription {
 	public function __construct() {
 	}
 
+	/**
+	 * Boot the subscription integration.
+	 *
+	 * @return void
+	 */
 	public function boot() {
 		add_filter(
 			'wc_postfinancecheckout_enhance_gateway',
@@ -465,7 +470,7 @@ final class WC_PostFinanceCheckout_Subscription {
 	 */
 	public function fulfill_in_progress( \PostFinanceCheckout\Sdk\Model\Transaction $transaction, $order ) {
 		if ( wcs_order_contains_subscription( $order, array( 'parent', 'resubscribe', 'switch', 'renewal' ) ) ) {
-			$GLOBALS['_wc_postfinancecheckout_subscription_fulfill'] = true;
+			$GLOBALS['wc_postfinancecheckout_subscription_fulfill'] = true;
 		}
 	}
 
@@ -477,7 +482,7 @@ final class WC_PostFinanceCheckout_Subscription {
 	 * @return mixed
 	 */
 	public function add_valid_order_statuses_for_subscription_completion( $statuses, $order = null ) {
-		if ( isset( $GLOBALS['_wc_postfinancecheckout_subscription_fulfill'] ) ) {
+		if ( isset( $GLOBALS['wc_postfinancecheckout_subscription_fulfill'] ) ) {
 			$statuses[] = 'postfi-waiting';
 			$statuses[] = 'postfi-manual';
 		}
@@ -489,7 +494,7 @@ final class WC_PostFinanceCheckout_Subscription {
 	 *
 	 * @param WC_PostFinanceCheckout_Entity_Transaction_Info $info Info.
 	 * @param \PostFinanceCheckout\Sdk\Model\Transaction     $transaction Transaction.
-	 * @param WC_Order                                         $order Oder.
+	 * @param WC_Order                                         $order Order.
 	 * @return WC_PostFinanceCheckout_Entity_Transaction_Info
 	 */
 	public function update_transaction_info( WC_PostFinanceCheckout_Entity_Transaction_Info $info, \PostFinanceCheckout\Sdk\Model\Transaction $transaction, WC_Order $order ) {
@@ -564,7 +569,7 @@ final class WC_PostFinanceCheckout_Subscription {
 	 * @return void
 	 */
 	public function before_renewal_setup_cart( $subscriptions, $order ) {
-		$GLOBALS['_wc_postfinancecheckout_renewal_cart_setup'] = true;
+		$GLOBALS['wc_postfinancecheckout_renewal_cart_setup'] = true;
 	}
 
 	/**
@@ -575,7 +580,7 @@ final class WC_PostFinanceCheckout_Subscription {
 	 * @return void
 	 */
 	public function after_renewal_setup_cart( $subscriptions, $order ) {
-		$GLOBALS['_wc_postfinancecheckout_renewal_cart_setup'] = false;
+		$GLOBALS['wc_postfinancecheckout_renewal_cart_setup'] = false;
 	}
 
 	/**
@@ -585,7 +590,7 @@ final class WC_PostFinanceCheckout_Subscription {
 	 * @return bool|mixed
 	 */
 	public function method_available_for_cart_renewal( $available ) {
-		if ( isset( $GLOBALS['_wc_postfinancecheckout_renewal_cart_setup'] ) && $GLOBALS['_wc_postfinancecheckout_renewal_cart_setup'] ) {
+		if ( isset( $GLOBALS['wc_postfinancecheckout_renewal_cart_setup'] ) && $GLOBALS['wc_postfinancecheckout_renewal_cart_setup'] ) {
 			return true;
 		}
 		return $available;
@@ -625,5 +630,3 @@ final class WC_PostFinanceCheckout_Subscription {
 		return $url;
 	}
 }
-
-

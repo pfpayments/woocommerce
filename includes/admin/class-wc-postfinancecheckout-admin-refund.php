@@ -145,7 +145,7 @@ class WC_PostFinanceCheckout_Admin_Refund {
 	/**
 	 * Executes refund.
 	 *
-	 * @param WC_Order $order wc_order.
+	 * @param WC_Order        $order wc_order.
 	 * @param WC_Order_Refund $refund refund.
 	 * @return void
 	 * @throws Exception Exception.
@@ -278,8 +278,8 @@ class WC_PostFinanceCheckout_Admin_Refund {
 	/**
 	 * Creates a new refund job for the given order and refund.
 	 *
-	 * @param WC_Order $order wc_order.
-	 * @param WC_Order_Refund $refund refund.
+	 * @param WC_Order                                      $order wc_order.
+	 * @param WC_Order_Refund                               $refund refund.
 	 * @param \PostFinanceCheckout\Sdk\Model\RefundCreate $refund_create refund_create.
 	 * @return WC_PostFinanceCheckout_Entity_Refund_Job
 	 */

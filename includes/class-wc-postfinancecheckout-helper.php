@@ -75,7 +75,7 @@ class WC_PostFinanceCheckout_Helper {
 	 * Returns the appropriate status slug according to the selected mapping mode.
 	 *
 	 * @param string $status_slug Order status slug, with or without the `wc-` prefix.
-	 * @param bool   $prefixed    When true the returned status contains the `wc-` prefix.
+	 * @param bool   $prefixed When true the returned status contains the `wc-` prefix.
 	 * @return string
 	 */
 	public static function map_status_to_current_mode( $status_slug, $prefixed = false ) {
@@ -120,6 +120,15 @@ class WC_PostFinanceCheckout_Helper {
 	}
 
 	/**
+	 * Delete language transient.
+	 *
+	 * @return void
+	 */
+	public function delete_language_transient() {
+		delete_transient( 'wc_postfinancecheckout_languages' );
+	}
+
+	/**
 	 * Get api client.
 	 *
 	 * @throws Exception Exception.
@@ -143,10 +152,11 @@ class WC_PostFinanceCheckout_Helper {
 	/**
 	 * Add headers to api client.
 	 *
+	 * @param \PostFinanceCheckout\Sdk\ApiClient $api_client api client.
 	 * @param array $additional_headers Additional headers.
 	 * @return void
 	 */
-	public static function add_headers( &$api_client, array $additional_headers = [] ) {
+	public static function add_headers( &$api_client, array $additional_headers = array() ) {
 		$default_header_data = self::get_default_header_data();
 		$default_header_data = array_merge( $default_header_data, $additional_headers );
 		foreach ( $default_header_data as $key => $value ) {
@@ -268,20 +278,18 @@ class WC_PostFinanceCheckout_Helper {
 			$type = $line_item->getType();
 			$name = $line_item->getName();
 
-			// Handle coupons normally
+			// Handle coupons normally.
 			if ( $exclude_discounts && \PostFinanceCheckout\Sdk\Model\LineItemType::DISCOUNT === $type
 				&& strpos( $name, WC_PostFinanceCheckout_Packages_Coupon_Discount::POSTFINANCECHECKOUT_COUPON ) !== false
 			) {
 				// Convert negative values to positive in order to be able to subtract it.
 				$sum -= abs( $line_item->getAmountIncludingTax() );
-			}
-			// Handle gift cards separately (already negative, do not abs())
-			elseif ( \PostFinanceCheckout\Sdk\Model\LineItemType::DISCOUNT === $type
-				&& stripos( $name, WC_PostFinanceCheckout_Packages_Gift_Card::POSTFINANCECHECKOUT_GIFT_CARD) !== false
+			} elseif ( \PostFinanceCheckout\Sdk\Model\LineItemType::DISCOUNT === $type
+				&& stripos( $name, WC_PostFinanceCheckout_Packages_Gift_Card::POSTFINANCECHECKOUT_GIFT_CARD ) !== false
 			) {
+				// Handle gift cards separately (already negative, do not abs()).
 				$sum += $line_item->getAmountIncludingTax();
-			}
-			else {
+			} else {
 				$sum += $line_item->getAmountIncludingTax();
 			}
 		}
@@ -294,13 +302,14 @@ class WC_PostFinanceCheckout_Helper {
 	 * @param array $line_items line items.
 	 * @param mixed $expected_sum expected sum.
 	 * @param mixed $currency currency.
+	 * @param bool  $is_recurrent is recurrent.
 	 * @return \PostFinanceCheckout\Sdk\Model\LineItemCreate[]
 	 * @throws WC_PostFinanceCheckout_Exception_Invalid_Transaction_Amount WC_PostFinanceCheckout_Exception_Invalid_Transaction_Amount.
 	 */
 	public function cleanup_line_items( array $line_items, $expected_sum, $currency, bool $is_recurrent = false ) {
 		// Check if coupon is applied to order. Session cart might be empty during webhook processing.
 		$has_coupons = apply_filters( 'wc_postfinancecheckout_packages_coupon_line_items_have_coupon_discounts', $line_items, $currency );
- 		// ensure that the effective sum coincides with the total discounted by the coupons.
+		// ensure that the effective sum coincides with the total discounted by the coupons.
 		$effective_sum = $this->round_amount( $this->get_total_amount_including_tax( $line_items, $has_coupons ), $currency );
 		$rounded_expected_sum = $this->round_amount( $expected_sum, $currency );
 
@@ -440,7 +449,7 @@ class WC_PostFinanceCheckout_Helper {
 
 		$locked_at = gmdate( 'Y-m-d H:i:s' );
 		$table_transaction_info = $wpdb->prefix . 'postfinancecheckout_transaction_info';
-		// phpcs:disable WordPress.DB.DirectDatabaseQuery.SchemaChange, WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching, WordPress.DB.PreparedSQL.InterpolatedNotPrepared, WordPress.DB.PreparedSQLPlaceholders.UnfinishedPrepare -- Values are escaped in $wpdb->prepare.
+		// phpcs:disable WordPress.DB.DirectDatabaseQuery.SchemaChange, WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching, WordPress.DB.PreparedSQL.InterpolatedNotPrepared, WordPress.DB.PreparedSQLPlaceholders.UnfinishedPrepare, PluginCheck.Security.DirectDB.UnescapedDBParameter -- Values are escaped in $wpdb->prepare.
 		$wpdb->query(
 			$wpdb->prepare(
 				"SELECT * FROM $table_transaction_info WHERE transaction_id = %d and space_id = %d FOR UPDATE",
@@ -449,8 +458,8 @@ class WC_PostFinanceCheckout_Helper {
 			)
 		);
 
-		// phpcs:enable WordPress.DB.DirectDatabaseQuery.SchemaChange, WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching, WordPress.DB.PreparedSQL.InterpolatedNotPrepared, WordPress.DB.PreparedSQLPlaceholders.UnfinishedPrepare.
-		// phpcs:disable WordPress.DB.DirectDatabaseQuery.SchemaChange, WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching, WordPress.DB.PreparedSQL.InterpolatedNotPrepared, WordPress.DB.PreparedSQLPlaceholders.UnfinishedPrepare -- Values are escaped in $wpdb->prepare.
+		// phpcs:enable WordPress.DB.DirectDatabaseQuery.SchemaChange, WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching, WordPress.DB.PreparedSQL.InterpolatedNotPrepared, WordPress.DB.PreparedSQLPlaceholders.UnfinishedPrepare, PluginCheck.Security.DirectDB.UnescapedDBParameter.
+		// phpcs:disable WordPress.DB.DirectDatabaseQuery.SchemaChange, WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching, WordPress.DB.PreparedSQL.InterpolatedNotPrepared, WordPress.DB.PreparedSQLPlaceholders.UnfinishedPrepare, PluginCheck.Security.DirectDB.UnescapedDBParameter -- Values are escaped in $wpdb->prepare.
 		$wpdb->query(
 			$wpdb->prepare(
 				"UPDATE $table_transaction_info
@@ -461,7 +470,7 @@ class WC_PostFinanceCheckout_Helper {
 				$space_id
 			)
 		);
-		// phpcs:enable WordPress.DB.DirectDatabaseQuery.SchemaChange, WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching, WordPress.DB.PreparedSQL.InterpolatedNotPrepared, WordPress.DB.PreparedSQLPlaceholders.UnfinishedPrepare.
+		// phpcs:enable WordPress.DB.DirectDatabaseQuery.SchemaChange, WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching, WordPress.DB.PreparedSQL.InterpolatedNotPrepared, WordPress.DB.PreparedSQLPlaceholders.UnfinishedPrepare, PluginCheck.Security.DirectDB.UnescapedDBParameter.
 	}
 
 
@@ -633,7 +642,7 @@ class WC_PostFinanceCheckout_Helper {
 		$version = WC_VERSION;
 
 		$shop_version = str_replace( 'v', '', $version );
-		$plugin_version = '3.4.8';
+		$plugin_version = '3.4.9';
 		list ($major_version, $minor_version) = explode( '.', $shop_version, 3 );
 		return array(
 			self::POSTFINANCECHECKOUT_SHOP_SYSTEM => 'woocommerce',
@@ -644,17 +653,17 @@ class WC_PostFinanceCheckout_Helper {
 	}
 
 	/**
-	* Get WooCommerce order statuses in JSON format.
-	*
-	* This method retrieves the WooCommerce order statuses, applies any filters,
-	* and returns them as an array with structured data.
-	*
-	* @return array[] An array of WooCommerce order statuses, where each status is represented
-	*                 as an associative array containing:
-	*                 - 'key' (string)   : The order status key.
-	*                 - 'label' (string) : The human-readable label for the status.
-	*                 - 'type' (string)  : The type of status ('core' if it starts with 'wc-', otherwise 'custom').
-	*/
+	 * Get WooCommerce order statuses in JSON format.
+	 *
+	 * This method retrieves the WooCommerce order statuses, applies any filters,
+	 * and returns them as an array with structured data.
+	 *
+	 * @return array[] An array of WooCommerce order statuses, where each status is represented
+	 *                 as an associative array containing:
+	 *                 - 'key' (string)   : The order status key.
+	 *                 - 'label' (string) : The human-readable label for the status.
+	 *                 - 'type' (string)  : The type of status ('core' if it starts with 'wc-', otherwise 'custom').
+	 */
 	public function get_woocommerce_order_statuses_json() {
 		$woocommerce_statuses = apply_filters( 'postfinancecheckout_woocommerce_statuses', array() );
 		$excluded_statuses = array(
@@ -666,7 +675,7 @@ class WC_PostFinanceCheckout_Helper {
 			'wc-refunded',
 			'wc-failed',
 			'wc-trash',
-			'wc-checkout-draft'
+			'wc-checkout-draft',
 		);
 		if ( self::is_custom_status_mapping_enabled() ) {
 			$excluded_statuses = array_merge(
@@ -674,12 +683,13 @@ class WC_PostFinanceCheckout_Helper {
 				array(
 					'wc-postfi-manual',
 					'wc-postfi-redirected',
-					'wc-postfi-waiting'
+					'wc-postfi-waiting',
 				)
 			);
 		}
 
-		return array_map( function( $key, $value ) use ( $excluded_statuses ) {
+		return array_map(
+			function ( $key, $value ) use ( $excluded_statuses ) {
 				return array(
 					'key'  => $key,
 					'label' => ucfirst( $value ),
@@ -692,7 +702,9 @@ class WC_PostFinanceCheckout_Helper {
 	}
 
 	/**
-	 * @param $order
+	 * Set virtual zero total orders to complete.
+	 *
+	 * @param WC_Order $order WC_Order The WooCommerce order object.
 	 * @return void
 	 */
 	public static function set_virtual_zero_total_orders_to_complete( $order ) {
@@ -703,7 +715,9 @@ class WC_PostFinanceCheckout_Helper {
 	}
 
 	/**
-	 * @param $order
+	 * Check if the order is virtual (contains only virtual products).
+	 *
+	 * @param WC_Order $order WC_Order The WooCommerce order object.
 	 * @return bool
 	 */
 	public static function is_order_virtual( $order ) {
@@ -727,7 +741,7 @@ class WC_PostFinanceCheckout_Helper {
 	/**
 	 * Update WooCommerce order status to "Pre-Order" if any product is out of stock or marked as pre-order.
 	 *
-	 * @param WC_Order $order        WooCommerce order object.
+	 * @param WC_Order $order WooCommerce order object.
 	 */
 	public static function update_order_status_for_preorder_if_needed( $order ) {
 		if ( ! $order instanceof WC_Order ) {
@@ -756,12 +770,12 @@ class WC_PostFinanceCheckout_Helper {
 			$is_preorder_yith = ( 'yes' === $product->get_meta( '_ywpo_preorder' ) );
 
 			if ( $is_preorder_wc || $is_preorder_yith ) {
-				// Check if order is marked as pre-ordered
+				// Check if order is marked as pre-ordered.
 				if ( 'yes' !== $order->get_meta( '_order_has_preorder' ) ) {
 					return;
 				}
 
-				// Check if Yith Pre-Order plugin setting
+				// Check if Yith Pre-Order plugin setting.
 				if ( 'default' === get_option( 'ywpo_order_status', 'default' ) ) {
 					return;
 				}
@@ -769,14 +783,14 @@ class WC_PostFinanceCheckout_Helper {
 				break;
 			}
 
-			// Check if product is not out of stock. Edge case: sometimes get_stock_quantity is not set, but then items are available
+			// Check if product is not out of stock. Edge case: sometimes get_stock_quantity is not set, but then items are available.
 			if ( ( $product->get_stock_quantity() ?? 1 ) < 1 ) {
 				$is_out_of_stock = true;
 				break;
 			}
 		}
 
-		if ( !$is_preorder && !$is_out_of_stock ) {
+		if ( ! $is_preorder && ! $is_out_of_stock ) {
 			return;
 		}
 
@@ -795,12 +809,12 @@ class WC_PostFinanceCheckout_Helper {
 			}
 
 			$order->update_status(
-			  $preorder_status_slug,
-			  __( 'Product is on pre-order. Status set automatically.', 'woo-postfinancecheckout' )
+				$preorder_status_slug,
+				__( 'Product is on pre-order. Status set automatically.', 'woo-postfinancecheckout' )
 			);
 
 			$order->add_order_note(
-			  __( 'Order status automatically set to pre-order.', 'woo-postfinancecheckout' )
+				__( 'Order status automatically set to pre-order.', 'woo-postfinancecheckout' )
 			);
 		}
 	}
@@ -822,5 +836,4 @@ class WC_PostFinanceCheckout_Helper {
 		);
 		return $settings;
 	}
-
 }

@@ -244,7 +244,7 @@ class WC_PostFinanceCheckout_Admin {
 	/**
 	 * Remove unwanted order actions
 	 *
-	 * @param array $actions actions.
+	 * @param array    $actions actions.
 	 * @param WC_Order $order order.
 	 * @return array
 	 */
@@ -388,11 +388,13 @@ class WC_PostFinanceCheckout_Admin {
 	 * Display attribute options edit screen
 	 */
 	public function display_attribute_options_edit() {
+		// phpcs:disable WordPress.Security.NonceVerification.Recommended -- read only display function. $_GET['edit'] is a woocommerce admin url param. Nonce is verified in the save handler.
 		if ( ! isset( $_GET['edit'] ) ) {
 			return;
 		} else {
 			$edit = absint( $_GET['edit'] );
 		}
+		// phpcs:enable WordPress.Security.NonceVerification.Recommended
 		$checked = false;
 		$attribute_options = WC_PostFinanceCheckout_Entity_Attribute_Options::load_by_attribute_id( $edit );
 		if ( $attribute_options->get_id() > 0 && $attribute_options->get_send() ) {
@@ -406,7 +408,7 @@ class WC_PostFinanceCheckout_Admin {
 				</label>
 			</th>
 			<td>
-				<?php wp_nonce_field('postfinancecheckout_attribute_option_send', 'postfinancecheckout_attribute_option_send_nonce' ); ?>
+				<?php wp_nonce_field( 'postfinancecheckout_attribute_option_send', 'postfinancecheckout_attribute_option_send_nonce' ); ?>
 				<input
 					name="postfinancecheckout_attribute_option_send" 
 					id="postfinancecheckout_attribute_option_send" 
@@ -428,7 +430,7 @@ class WC_PostFinanceCheckout_Admin {
 		?>
 			<div class="form-field">
 				<label for="postfinancecheckout_attribute_option_send">
-					<?php wp_nonce_field('postfinancecheckout_attribute_option_send', 'postfinancecheckout_attribute_option_send_nonce' ); ?>
+					<?php wp_nonce_field( 'postfinancecheckout_attribute_option_send', 'postfinancecheckout_attribute_option_send_nonce' ); ?>
 					<input name="postfinancecheckout_attribute_option_send" id="postfinancecheckout_attribute_option_send" type="checkbox" value="1">
 					<?php esc_html_e( 'Send attribute to PostFinance Checkout', 'woo-postfinancecheckout' ); ?>
 				</label>

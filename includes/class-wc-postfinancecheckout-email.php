@@ -27,6 +27,8 @@ class WC_PostFinanceCheckout_Email {
 
 	/**
 	 * Allow on hold emails being sent when germanized plugin is installed.
+	 *
+	 * @var bool
 	 */
 	private static $allow_on_hold_emails = false;
 
@@ -38,7 +40,7 @@ class WC_PostFinanceCheckout_Email {
 			'postfinancecheckout_transaction_authorized_send_email',
 			array(
 				__CLASS__,
-		  		'send_on_hold_email_when_authorized'
+				'send_on_hold_email_when_authorized',
 			),
 			10,
 			1
@@ -155,16 +157,18 @@ class WC_PostFinanceCheckout_Email {
 
 		add_filter( 'woocommerce_email_actions', array( __CLASS__, 'add_email_actions' ), 10, 1 );
 		add_filter( 'woocommerce_email_classes', array( __CLASS__, 'add_email_classes' ), 100, 1 );
-        add_filter(
-            'woocommerce_email_enabled_customer_on_hold_order',
-            array( __CLASS__, 'disable_pending_payment_email' ),
-            10,
-            2
-        );
+		add_filter(
+			'woocommerce_email_enabled_customer_on_hold_order',
+			array( __CLASS__, 'disable_pending_payment_email' ),
+			10,
+			2
+		);
 	}
 
 	/**
-	 * @param $order_id
+	 * Trigger the on-hold email when an order is authorized.
+	 *
+	 * @param int $order_id order id.
 	 * @return void
 	 */
 	public static function send_on_hold_email_when_authorized( $order_id ) {
@@ -335,25 +339,25 @@ class WC_PostFinanceCheckout_Email {
 	 */
 	public static function add_email_actions( $actions ) {
 
-	$to_add = array(
-		'woocommerce_order_status_postfi-redirected_to_processing',
-		'woocommerce_order_status_postfi-redirected_to_completed',
-		'woocommerce_order_status_postfi-redirected_to_on-hold',
-		'woocommerce_order_status_postfi-redirected_to_postfinancecheckout-waiting',
-		'woocommerce_order_status_postfi-redirected_to_postfinancecheckout-manual',
-		'woocommerce_order_status_postfi-manual_to_cancelled',
-		'woocommerce_order_status_postfi-waiting_to_cancelled',
-		'woocommerce_order_status_postfi-manual_to_processing',
-		'woocommerce_order_status_postfi-waiting_to_processing',
-	);
+		$to_add = array(
+			'woocommerce_order_status_postfi-redirected_to_processing',
+			'woocommerce_order_status_postfi-redirected_to_completed',
+			'woocommerce_order_status_postfi-redirected_to_on-hold',
+			'woocommerce_order_status_postfi-redirected_to_postfinancecheckout-waiting',
+			'woocommerce_order_status_postfi-redirected_to_postfinancecheckout-manual',
+			'woocommerce_order_status_postfi-manual_to_cancelled',
+			'woocommerce_order_status_postfi-waiting_to_cancelled',
+			'woocommerce_order_status_postfi-manual_to_processing',
+			'woocommerce_order_status_postfi-waiting_to_processing',
+		);
 
-	$authorized_status = self::get_transaction_mapped_status( 'authorized' );
-	$fulfill_status = self::get_transaction_mapped_status( 'fulfill' );
+		$authorized_status = self::get_transaction_mapped_status( 'authorized' );
+		$fulfill_status = self::get_transaction_mapped_status( 'fulfill' );
 
-	if ( $authorized_status && $fulfill_status ) {
-		self::add_unique_action( $to_add, 'woocommerce_order_status_' . $fulfill_status . '_to_' . $authorized_status );
-		self::add_unique_action( $to_add, 'woocommerce_order_status_' . $authorized_status . '_to_' . $fulfill_status );
-	}
+		if ( $authorized_status && $fulfill_status ) {
+			self::add_unique_action( $to_add, 'woocommerce_order_status_' . $fulfill_status . '_to_' . $authorized_status );
+			self::add_unique_action( $to_add, 'woocommerce_order_status_' . $authorized_status . '_to_' . $fulfill_status );
+		}
 
 		if ( class_exists( 'woocommerce_wpml' ) ) {
 			global $woocommerce_wpml; //phpcs:ignore
@@ -536,21 +540,21 @@ class WC_PostFinanceCheckout_Email {
 					add_action( 'woocommerce_order_status_postfi-waiting_to_cancelled_notification', array( $email_object, 'trigger' ), 10, 2 );
 					break;
 
-			case 'WC_Email_Customer_On_Hold_Order':
-				add_action( 'woocommerce_order_status_postfi-redirected_to_on-hold_notification', array( $email_object, 'trigger' ), 10, 2 );
-				if ( $authorized_status && $fulfill_status ) {
-					add_action( 'woocommerce_order_status_' . $fulfill_status . '_to_' . $authorized_status . '_notification', array( __CLASS__, 'maybe_send_on_hold_email_for_manual_status' ), 10, 2 );
-				}
-				break;
+				case 'WC_Email_Customer_On_Hold_Order':
+					add_action( 'woocommerce_order_status_postfi-redirected_to_on-hold_notification', array( $email_object, 'trigger' ), 10, 2 );
+					if ( $authorized_status && $fulfill_status ) {
+						add_action( 'woocommerce_order_status_' . $fulfill_status . '_to_' . $authorized_status . '_notification', array( __CLASS__, 'maybe_send_on_hold_email_for_manual_status' ), 10, 2 );
+					}
+					break;
 
-			case 'WC_Email_Customer_Processing_Order':
-				add_action( 'woocommerce_order_status_postfi-redirected_to_processing_notification', array( $email_object, 'trigger' ), 10, 2 );
-				add_action( 'woocommerce_order_status_postfi-manual_to_processing_notification', array( $email_object, 'trigger' ), 10, 2 );
-				add_action( 'woocommerce_order_status_postfi-waiting_to_processing_notification', array( $email_object, 'trigger' ), 10, 2 );
-				if ( $authorized_status && $fulfill_status ) {
-					add_action( 'woocommerce_order_status_' . $authorized_status . '_to_' . $fulfill_status . '_notification', array( $email_object, 'trigger' ), 10, 2 );
-				}
-				break;
+				case 'WC_Email_Customer_Processing_Order':
+					add_action( 'woocommerce_order_status_postfi-redirected_to_processing_notification', array( $email_object, 'trigger' ), 10, 2 );
+					add_action( 'woocommerce_order_status_postfi-manual_to_processing_notification', array( $email_object, 'trigger' ), 10, 2 );
+					add_action( 'woocommerce_order_status_postfi-waiting_to_processing_notification', array( $email_object, 'trigger' ), 10, 2 );
+					if ( $authorized_status && $fulfill_status ) {
+						add_action( 'woocommerce_order_status_' . $authorized_status . '_to_' . $fulfill_status . '_notification', array( $email_object, 'trigger' ), 10, 2 );
+					}
+					break;
 
 				case 'WC_Email_Customer_Completed_Order':
 					// Order complete are always send independent of the source status.
@@ -574,7 +578,7 @@ class WC_PostFinanceCheckout_Email {
 	 * @param mixed $order order.
 	 * @return bool
 	 */
-	public static function gzd_block_send_instant_order_confirmation ( $email_sent, $order ) {
+	public static function gzd_block_send_instant_order_confirmation( $email_sent, $order ) {
 		if ( ! ( $order instanceof WC_Order ) ) {
 			return $email_sent;
 		}
@@ -622,7 +626,9 @@ class WC_PostFinanceCheckout_Email {
 	}
 
 	/**
-	 * @param WC_Order $order
+	 * Check if the order is an on-hold order and if it is authorized.
+	 *
+	 * @param WC_Order $order WooCommerce order object.
 	 * @return bool
 	 */
 	private static function is_authorized_on_hold_order( WC_Order $order ) {
@@ -638,30 +644,30 @@ class WC_PostFinanceCheckout_Email {
 		return true;
 	}
 
-    /**
-     * This prevents WooCommerce from sending the "customer on hold" email
-     * when the order was placed using any PostFinanceCheckout payment method
-     * and the merchant has disabled this behavior in the plugin settings.
-     *
-     * @param bool     $enabled Whether the email is enabled.
-     * @param WC_Order $order   WooCommerce order object.
-     *
-     * @return bool
-     */
-    public static function disable_pending_payment_email( $enabled, $order ) {
-        if ( ! $enabled || ! is_a( $order, 'WC_Order' ) ) {
-            return $enabled;
-        }
+	/**
+	 * This prevents WooCommerce from sending the "customer on hold" email
+	 * when the order was placed using any PostFinanceCheckout payment method
+	 * and the merchant has disabled this behavior in the plugin settings.
+	 *
+	 * @param bool     $enabled Whether the email is enabled.
+	 * @param WC_Order $order WooCommerce order object.
+	 *
+	 * @return bool
+	 */
+	public static function disable_pending_payment_email( $enabled, $order ) {
+		if ( ! $enabled || ! is_a( $order, 'WC_Order' ) ) {
+			return $enabled;
+		}
 
-        $disable = get_option( WooCommerce_PostFinanceCheckout::POSTFINANCECHECKOUT_CK_DISABLE_PENDING_EMAIL, 'no' );
-        $gateway = wc_get_payment_gateway_by_order( $order );
+		$disable = get_option( WooCommerce_PostFinanceCheckout::POSTFINANCECHECKOUT_CK_DISABLE_PENDING_EMAIL, 'no' );
+		$gateway = wc_get_payment_gateway_by_order( $order );
 
-        if ( $gateway instanceof WC_PostFinanceCheckout_Gateway && $disable === 'yes' ) {
-            return false;
-        }
+		if ( $gateway instanceof WC_PostFinanceCheckout_Gateway && 'yes' === $disable ) {
+			return false;
+		}
 
-        return $enabled;
-    }
+		return $enabled;
+	}
 }
 
 WC_PostFinanceCheckout_Email::init();

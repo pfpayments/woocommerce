@@ -45,7 +45,7 @@ class WC_PostFinanceCheckout_Return_Handler {
 			$order_key = sanitize_text_field( wp_unslash( $_GET['order_key'] ) ); //phpcs:ignore
 			$order_id = absint( wp_unslash( $_GET['order_id'] ) ); //phpcs:ignore
 			$order = WC_Order_Factory::get_order( $order_id );
-			$action = sanitize_text_field( wp_unslash( $_GET['action'] ) );
+			$action = sanitize_text_field( wp_unslash( $_GET['action'] ) ); // phpcs:ignore
 			if ( $order->get_id() === $order_id && $order->get_order_key() === $order_key ) {
 				switch ( $action ) {
 					case 'success':

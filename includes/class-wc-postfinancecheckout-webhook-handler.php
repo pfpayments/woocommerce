@@ -71,6 +71,7 @@ class WC_PostFinanceCheckout_Webhook_Handler {
 		header( 'HTTP/1.1 500 Internal Server Error' );
 		$raw_post_data = $wp_filesystem->get_contents( 'php://input' );
 		$signature = isset( $_SERVER['HTTP_X_SIGNATURE'] ) ? sanitize_text_field( wp_unslash( $_SERVER['HTTP_X_SIGNATURE'] ) ) : '';
+		// phpcs:ignore WordPress.PHP.DevelopmentFunctions.error_log_set_error_handler
 		set_error_handler( array( __CLASS__, 'handle_webhook_errors' ) );
 		try {
 			$clean_data = wp_kses_post( wp_unslash( $raw_post_data ) );
@@ -78,14 +79,14 @@ class WC_PostFinanceCheckout_Webhook_Handler {
 			$client = WC_PostFinanceCheckout_Helper::instance()->get_api_client();
 			$webhook_service = WC_PostFinanceCheckout_Service_Webhook::instance();
 
-			// Handling of payloads without a signature (legacy method).
-			// TODO add config to disable strategy/use default webhooks
-			// Deprecated since 3.0.12.
+			// Handling of payloads without a signature removed since 3.4.9.
+			// Log received unsigned webhook payloads and request that webhook signature to be enabled.
 			if ( empty( $signature ) ) {
-				$webhook_model = $webhook_service->get_webhook_entity_for_id( $request->get_listener_entity_id() );
-				$webhook_handler_class_name = $webhook_model->get_handler_class_name();
-				$webhook_handler = $webhook_handler_class_name::instance();
-				$webhook_handler->process( $request );
+				$signature_missing_message = 'Webhook ' . $request->get_listener_entity_technical_name()
+				. ' lacked a signature. Enable payload signature and state for '
+				. $request->get_listener_entity_technical_name() . ' webhook listener.';
+				WooCommerce_PostFinanceCheckout::instance()->log( $signature_missing_message, WC_Log_Levels::ERROR );
+				echo esc_textarea( $signature_missing_message );
 			}
 
 			// Handling of payloads with a valid signature.

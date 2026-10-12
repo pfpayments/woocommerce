@@ -1,5 +1,4 @@
 <?php
-
 /**
  * Plugin Name: PostFinanceCheckout
  * Author: PostFinance Ltd

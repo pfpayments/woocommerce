@@ -110,8 +110,8 @@ class WC_PostFinanceCheckout_Service_Token extends WC_PostFinanceCheckout_Servic
 			}
 			return;
 		}
-		
-		// need to add a safety check here to see if the $token_version->getPaymentConnectorConfiguration()->getPaymentMethodConfiguration() exists
+
+		// need to add a safety check here to see if the $token_version->getPaymentConnectorConfiguration()->getPaymentMethodConfiguration() exists.
 		if ( $token_version->getPaymentConnectorConfiguration() === null ) {
 			return;
 		}

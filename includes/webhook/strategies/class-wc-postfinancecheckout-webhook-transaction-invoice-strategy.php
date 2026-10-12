@@ -62,18 +62,6 @@ class WC_PostFinanceCheckout_Webhook_Transaction_Invoice_Strategy extends WC_Pos
 	}
 
 	/**
-	 * Meant to bridge code from deprecated processor.
-	 *
-	 * @param WC_Order $order The WooCommerce order linked to the invoice.
-	 * @param \PostFinanceCheckout\Sdk\Model\TransactionInvoice $transaction_invoice The transaction invoice object.
-	 * @param WC_PostFinanceCheckout_Webhook_Request $request The webhook request object.
-	 * @return void
-	 */
-	public function bridge_process_order_related_inner( WC_Order $order, \PostFinanceCheckout\Sdk\Model\TransactionInvoice $transaction_invoice, WC_PostFinanceCheckout_Webhook_Request $request ) {
-        $this->process_order_related_inner( $order, $transaction_invoice, $request, true );
-    }
-
-	/**
 	 * Processes the incoming webhook request pertaining to transaction invoices.
 	 *
 	 * This method retrieves the transaction invoice details from the API and updates the associated
@@ -94,14 +82,13 @@ class WC_PostFinanceCheckout_Webhook_Transaction_Invoice_Strategy extends WC_Pos
 	/**
 	 * Additional processing on the order based on the state of the transaction invoice.
 	 *
-	 * @param WC_Order $order The WooCommerce order linked to the invoice.
+	 * @param WC_Order                                            $order The WooCommerce order linked to the invoice.
 	 * @param \PostFinanceCheckout\Sdk\Model\TransactionInvoice $transaction_invoice The transaction invoice object.
-	 * @param WC_PostFinanceCheckout_Webhook_Request $request The webhook request object.
-	 * @param bool $legacy_mode legacy code used.
+	 * @param WC_PostFinanceCheckout_Webhook_Request            $request The webhook request object.
 	 * @return void
 	 */
-	protected function process_order_related_inner( WC_Order $order, \PostFinanceCheckout\Sdk\Model\TransactionInvoice $transaction_invoice, WC_PostFinanceCheckout_Webhook_Request $request, $legacy_mode = false ) {
-		$entity_state = $legacy_mode ? $transaction_invoice->getState() : $request->get_state();
+	protected function process_order_related_inner( WC_Order $order, \PostFinanceCheckout\Sdk\Model\TransactionInvoice $transaction_invoice, WC_PostFinanceCheckout_Webhook_Request $request ) {
+		$entity_state = $request->get_state();
 		switch ( $entity_state ) {
 			case \PostFinanceCheckout\Sdk\Model\TransactionInvoiceState::DERECOGNIZED:
 				$order->add_order_note( esc_html__( 'Invoice Not Settled', 'woo-postfinancecheckout' ) );

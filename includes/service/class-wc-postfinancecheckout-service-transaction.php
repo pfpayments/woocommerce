@@ -89,8 +89,7 @@ class WC_PostFinanceCheckout_Service_Transaction extends WC_PostFinanceCheckout_
 	 *
 	 * @throws Exception If the API client cannot be initialized.
 	 */
-	public function __construct()
-	{
+	public function __construct() {
 		$this->api_client = WC_PostFinanceCheckout_Helper::instance()->get_api_client();
 	}
 
@@ -502,10 +501,10 @@ class WC_PostFinanceCheckout_Service_Transaction extends WC_PostFinanceCheckout_
 	 * @throws \PostFinanceCheckout\Sdk\ApiException If there is an API exception during the process.
 	 */
 	public function get_possible_payment_methods_for_cart() {
-		$paymentConfigurations = $this->get_possible_payment_methods( null );
-		$paymentConfigurations[] = WC_PostFinanceCheckout_Zero_Gateway::ZERO_PAYMENT_CONF_ID;
+		$payment_configurations = $this->get_possible_payment_methods( null );
+		$payment_configurations[] = WC_PostFinanceCheckout_Zero_Gateway::ZERO_PAYMENT_CONF_ID;
 
-		return $paymentConfigurations;
+		return $payment_configurations;
 	}
 
 	/**
@@ -520,10 +519,10 @@ class WC_PostFinanceCheckout_Service_Transaction extends WC_PostFinanceCheckout_
 	 * @throws \PostFinanceCheckout\Sdk\ApiException If there is an API exception during the process.
 	 */
 	public function get_possible_payment_methods_for_order( WC_Order $order ) {
-		$paymentConfigurations = $this->get_possible_payment_methods( $order );
-		$paymentConfigurations[] = WC_PostFinanceCheckout_Zero_Gateway::ZERO_PAYMENT_CONF_ID;
+		$payment_configurations = $this->get_possible_payment_methods( $order );
+		$payment_configurations[] = WC_PostFinanceCheckout_Zero_Gateway::ZERO_PAYMENT_CONF_ID;
 
-		return $paymentConfigurations;
+		return $payment_configurations;
 	}
 
 
@@ -568,7 +567,7 @@ class WC_PostFinanceCheckout_Service_Transaction extends WC_PostFinanceCheckout_
 	 *
 	 * @param WC_Order                                                    $order order.
 	 * @param \PostFinanceCheckout\Sdk\Model\AbstractTransactionPending $transaction transaction.
-	 * @param bool $set_line_items Set line items.
+	 * @param bool                                                        $set_line_items Set line items.
 	 * @throws WC_PostFinanceCheckout_Exception_Invalid_Transaction_Amount WC_PostFinanceCheckout_Exception_Invalid_Transaction_Amount.
 	 */
 	protected function assemble_order_transaction_data( WC_Order $order, \PostFinanceCheckout\Sdk\Model\AbstractTransactionPending $transaction, bool $set_line_items = true ) {
@@ -578,8 +577,8 @@ class WC_PostFinanceCheckout_Service_Transaction extends WC_PostFinanceCheckout_
 		$transaction->setCustomerEmailAddress( $this->get_order_email_address( $order ) );
 		$transaction->setCustomerId( $this->get_customer_id() );
 		$customer_note = $order->get_customer_note();
-		if (!empty($customer_note)) {
-			$transaction->setMetaData(['customerNotes' => $customer_note]);
+		if ( ! empty( $customer_note ) ) {
+			$transaction->setMetaData( array( 'customerNotes' => $customer_note ) );
 		}
 		$language = null;
 		$language_string = $order->get_meta( 'wpml_language', true, 'edit' );
@@ -785,10 +784,11 @@ class WC_PostFinanceCheckout_Service_Transaction extends WC_PostFinanceCheckout_
 	 *
 	 * If no transaction exists, a new one is created.
 	 *
+	 * @param int|null $current_cart_id current cart id.
 	 * @return \PostFinanceCheckout\Sdk\Model\Transaction
 	 * @throws Exception Exception.
 	 */
-	public function get_transaction_from_session( $current_cart_id = null) {
+	public function get_transaction_from_session( $current_cart_id = null ) {
 
 		if ( null === $current_cart_id ) {
 			$current_cart_id = WC_PostFinanceCheckout_Helper::instance()->get_current_cart_id();
@@ -909,7 +909,7 @@ class WC_PostFinanceCheckout_Service_Transaction extends WC_PostFinanceCheckout_
 	/**
 	 * Load and update transaction for order.
 	 *
-	 * @param WC_Order $order order.
+	 * @param WC_Order                                         $order order.
 	 * @param WC_PostFinanceCheckout_Entity_Transaction_Info $existing_transaction existing transaction.
 	 * @return \PostFinanceCheckout\Sdk\Model\Transaction|\PostFinanceCheckout\Sdk\Model\TransactionCreate
 	 * @throws Exception Exception.
@@ -1206,7 +1206,7 @@ class WC_PostFinanceCheckout_Service_Transaction extends WC_PostFinanceCheckout_
 	/**
 	 * Set modified order line items.
 	 *
-	 * @param WC_Order                                                    $order       Order.
+	 * @param WC_Order                                                    $order Order.
 	 * @param mixed                                                       $order_total Order total.
 	 * @param \PostFinanceCheckout\Sdk\Model\AbstractTransactionPending $transaction Transaction.
 	 *
@@ -1220,12 +1220,11 @@ class WC_PostFinanceCheckout_Service_Transaction extends WC_PostFinanceCheckout_
 	 * Creates a transaction for the given order.
 	 *
 	 * @param WC_Order $order Order.
-	 * @param mixed $order_total Order total.
-	 * @param int $token_id Token id.
+	 * @param mixed    $order_total Order total.
+	 * @param int      $token_id Token id.
 	 *
 	 * @return \PostFinanceCheckout\Sdk\Model\Transaction
-	 * @throws Exception
-	 * 	 If the transaction being created is not valid.
+	 * @throws Exception Exception.
 	 */
 	public function create_transaction_by_renewal_order( WC_Order $order, $order_total, $token_id ) {
 		$space_id = get_option( WooCommerce_PostFinanceCheckout::POSTFINANCECHECKOUT_CK_SPACE_ID );
@@ -1240,12 +1239,15 @@ class WC_PostFinanceCheckout_Service_Transaction extends WC_PostFinanceCheckout_
 		$this->set_modified_order_line_items( $order, $order_total, $create_transaction );
 
 		$create_transaction = apply_filters( 'wc_postfinancecheckout_subscription_create_transaction', $create_transaction, $order );
-		if (!$create_transaction->valid()) {
-			throw new Exception("The transaction you are trying to create is not valid.");
+		if ( ! $create_transaction->valid() ) {
+			throw new Exception( 'The transaction you are trying to create is not valid.' );
 		}
-		WC_PostFinanceCheckout_Helper::instance()->add_headers( $this->api_client, [
-			WC_PostFinanceCheckout_Helper::SUBSCRIPTION_TRANSACTION => true
-		]);
+		WC_PostFinanceCheckout_Helper::instance()->add_headers(
+			$this->api_client,
+			array(
+				WC_PostFinanceCheckout_Helper::SUBSCRIPTION_TRANSACTION => true,
+			)
+		);
 		$transaction = $this->get_transaction_service()->create( $space_id, $create_transaction );
 		$this->update_transaction_info( $transaction, $order );
 		return $transaction;
@@ -1254,9 +1256,9 @@ class WC_PostFinanceCheckout_Service_Transaction extends WC_PostFinanceCheckout_
 	/**
 	 * Creates a transaction for the given order.
 	 *
-	 * @param WC_Order                                     $order       Order.
+	 * @param WC_Order                                     $order Order.
 	 * @param mixed                                        $order_total Order total.
-	 * @param int                                          $token_id    Token id.
+	 * @param int                                          $token_id Token id.
 	 * @param \PostFinanceCheckout\Sdk\Model\Transaction $transaction Transaction.
 	 *
 	 * @return \PostFinanceCheckout\Sdk\Model\Transaction
@@ -1274,9 +1276,12 @@ class WC_PostFinanceCheckout_Service_Transaction extends WC_PostFinanceCheckout_
 				$this->assemble_order_transaction_data( $order, $pending_transaction, false );
 				$this->set_modified_order_line_items( $order, $order_total, $pending_transaction );
 				$pending_transaction = apply_filters( 'wc_postfinancecheckout_subscription_update_transaction', $pending_transaction, $order );
-				WC_PostFinanceCheckout_Helper::instance()->add_headers( $this->api_client, [
-					WC_PostFinanceCheckout_Helper::SUBSCRIPTION_TRANSACTION => true
-				]);
+				WC_PostFinanceCheckout_Helper::instance()->add_headers(
+					$this->api_client,
+					array(
+						WC_PostFinanceCheckout_Helper::SUBSCRIPTION_TRANSACTION => true,
+					)
+				);
 				return $this->get_transaction_service()->update( $transaction->getLinkedSpaceId(), $pending_transaction );
 			} catch ( \PostFinanceCheckout\Sdk\VersioningException $e ) {
 				$last = $e;
@@ -1288,7 +1293,7 @@ class WC_PostFinanceCheckout_Service_Transaction extends WC_PostFinanceCheckout_
 	/**
 	 * Process transaction without user interaction.
 	 *
-	 * @param mixed $space_id       Space id.
+	 * @param mixed $space_id Space id.
 	 * @param mixed $transaction_id Transaction id.
 	 *
 	 * @return mixed

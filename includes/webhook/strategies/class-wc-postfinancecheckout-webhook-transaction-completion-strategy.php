@@ -62,18 +62,6 @@ class WC_PostFinanceCheckout_Webhook_Transaction_Completion_Strategy extends WC_
 	}
 
 	/**
-	 * Meant to bridge code from deprecated processor.
-	 *
-	 * @param WC_Order $order The WooCommerce order linked to the completion.
-	 * @param \PostFinanceCheckout\Sdk\Model\TransactionCompletion $completion The transaction completion object.
-	 * @param WC_PostFinanceCheckout_Webhook_Request $request The webhook request.
-	 * @return void
-	 */
-	public function bridge_process_order_related_inner( WC_Order $order, \PostFinanceCheckout\Sdk\Model\TransactionCompletion $completion, WC_PostFinanceCheckout_Webhook_Request $request ) {
-        $this->process_order_related_inner( $order, $completion, $request, true );
-    }
-
-	/**
 	 * Processes the incoming webhook request pertaining to transaction completions.
 	 *
 	 * This method retrieves the transaction completion details from the API and updates the associated
@@ -97,11 +85,10 @@ class WC_PostFinanceCheckout_Webhook_Transaction_Completion_Strategy extends WC_
 	 * @param WC_Order $order The WooCommerce order linked to the completion.
 	 * @param \PostFinanceCheckout\Sdk\Model\TransactionCompletion $completion The transaction completion object.
 	 * @param WC_PostFinanceCheckout_Webhook_Request $request The webhook request.
-	 * @param bool $legacy_mode legacy code used.
 	 * @return void
 	 */
-	protected function process_order_related_inner( WC_Order $order, \PostFinanceCheckout\Sdk\Model\TransactionCompletion $completion, WC_PostFinanceCheckout_Webhook_Request $request, $legacy_mode = false ) {
-		$entity_state = $legacy_mode ? $completion->getState() : $request->get_state();
+	protected function process_order_related_inner( WC_Order $order, \PostFinanceCheckout\Sdk\Model\TransactionCompletion $completion, WC_PostFinanceCheckout_Webhook_Request $request ) {
+		$entity_state = $request->get_state();
 		switch ( $entity_state ) {
 			case \PostFinanceCheckout\Sdk\Model\TransactionCompletionState::FAILED:
 				$this->failed( $order, $completion );

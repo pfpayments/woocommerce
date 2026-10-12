@@ -18,111 +18,111 @@ defined( 'ABSPATH' ) || exit;
 
 if ( class_exists( 'WP_CLI' ) && ! class_exists( 'WC_PostFinanceCheckout_Commands' ) ) {
 
-    /**
-     * Class WC_PostFinanceCheckout_Commands.
-     * This class contains custom commands for PostFinance Checkout.
-     *
-     * @class WC_PostFinanceCheckout_Commands
-     */
-    class WC_PostFinanceCheckout_Commands {
+	/**
+	 * Class WC_PostFinanceCheckout_Commands.
+	 * This class contains custom commands for PostFinance Checkout.
+	 *
+	 * @class WC_PostFinanceCheckout_Commands
+	 */
+	class WC_PostFinanceCheckout_Commands {
 
-        /**
-         * Register commands.
-         */
-        public static function init() {
-            WP_CLI::add_command(
-                'postfinancecheckout settings init',
-                array(
-                    __CLASS__,
-                    'settings_init'
-                )
-            );
-            WP_CLI::add_command(
-                'postfinancecheckout webhooks install',
-                array(
-                    __CLASS__,
-                    'webhooks_install'
-                )
-            );
-            WP_CLI::add_command(
-                'postfinancecheckout payment-methods sync',
-                array(
-                    __CLASS__,
-                    'payment_methods_sync'
-                )
-            );
-        }
+		/**
+		 * Register commands.
+		 */
+		public static function init() {
+			WP_CLI::add_command(
+				'postfinancecheckout settings init',
+				array(
+					__CLASS__,
+					'settings_init',
+				)
+			);
+			WP_CLI::add_command(
+				'postfinancecheckout webhooks install',
+				array(
+					__CLASS__,
+					'webhooks_install',
+				)
+			);
+			WP_CLI::add_command(
+				'postfinancecheckout payment-methods sync',
+				array(
+					__CLASS__,
+					'payment_methods_sync',
+				)
+			);
+		}
 
-        /**
-         * Initialize PostFinance Checkout settings.
-         * It doesn't reset settings to default, it sets default settings if they haven't been initialized yet.
-         *
-         * ## EXAMPLE
-         *
-         *     $ wp postfinancecheckout settings init
-         *
-         * @param array $args WP-CLI positional arguments.
-         * @param array $assoc_args WP-CLI associative arguments.
-         */
-        public static function settings_init( $args, $assoc_args ) {
-            try {
-                $default_settings = WC_PostFinanceCheckout_Helper::instance()->get_default_settings();
-                foreach ( $default_settings as $setting => $value ) {
-                    $current_setting = get_option( $setting, false );
-                    if ( $current_setting === false ) {
-                        update_option( $setting, $value );
-                    }
-                }
-                WP_CLI::success( "Settings initialized." );
-            } catch ( \Exception $e ) {
-                WooCommerce_PostFinanceCheckout::instance()->log( $e->getMessage(), WC_Log_Levels::ERROR );
-                WP_CLI::error( "Failed to initialize settings: " . $e->getMessage() );
-            }
-        }
+		/**
+		 * Initialize PostFinance Checkout settings.
+		 * It doesn't reset settings to default, it sets default settings if they haven't been initialized yet.
+		 *
+		 * ## EXAMPLE
+		 *
+		 *   $ wp postfinancecheckout settings init
+		 *
+		 * @param array $args WP-CLI positional arguments.
+		 * @param array $assoc_args WP-CLI associative arguments.
+		 */
+		public static function settings_init( $args, $assoc_args ) {
+			try {
+				$default_settings = WC_PostFinanceCheckout_Helper::instance()->get_default_settings();
+				foreach ( $default_settings as $setting => $value ) {
+					$current_setting = get_option( $setting, false );
+					if ( false === $current_setting ) {
+						update_option( $setting, $value );
+					}
+				}
+				WP_CLI::success( 'Settings initialized.' );
+			} catch ( \Exception $e ) {
+				WooCommerce_PostFinanceCheckout::instance()->log( $e->getMessage(), WC_Log_Levels::ERROR );
+				WP_CLI::error( 'Failed to initialize settings: ' . $e->getMessage() );
+			}
+		}
 
-        /**
-         * Create webhook URL and webhook listeners in the portal for PostFinance Checkout.
-         *
-         * ## EXAMPLE
-         *
-         *     $ wp postfinancecheckout webhooks install
-         *
-         * @param array $args WP-CLI positional arguments.
-         * @param array $assoc_args WP-CLI associative arguments.
-         */
-        public static function webhooks_install( $args, $assoc_args ) {
-            try {
-                WC_PostFinanceCheckout_Helper::instance()->reset_api_client();
-                WC_PostFinanceCheckout_Service_Webhook::instance()->install();
-                WP_CLI::success( "Webhooks installed." );
-            } catch ( \Exception $e ) {
-                WooCommerce_PostFinanceCheckout::instance()->log( $e->getMessage(), WC_Log_Levels::ERROR );
-                WP_CLI::error( "Failed to install webhooks: " . $e->getMessage() );
-            }
-        }
+		/**
+		 * Create webhook URL and webhook listeners in the portal for PostFinance Checkout.
+		 *
+		 * ## EXAMPLE
+		 *
+		 *    $ wp postfinancecheckout webhooks install
+		 *
+		 * @param array $args WP-CLI positional arguments.
+		 * @param array $assoc_args WP-CLI associative arguments.
+		 */
+		public static function webhooks_install( $args, $assoc_args ) {
+			try {
+				WC_PostFinanceCheckout_Helper::instance()->reset_api_client();
+				WC_PostFinanceCheckout_Service_Webhook::instance()->install();
+				WP_CLI::success( 'Webhooks installed.' );
+			} catch ( \Exception $e ) {
+				WooCommerce_PostFinanceCheckout::instance()->log( $e->getMessage(), WC_Log_Levels::ERROR );
+				WP_CLI::error( 'Failed to install webhooks: ' . $e->getMessage() );
+			}
+		}
 
-        /**
-         * Synchronizes payment methods in the PostFinance Checkout from the portal.
-         *
-         * ## EXAMPLE
-         *
-         *     $ wp postfinancecheckout payment-methods sync
-         *
-         * @param array $args WP-CLI positional arguments.
-         * @param array $assoc_args WP-CLI associative arguments.
-         */
-        public static function payment_methods_sync( $args, $assoc_args ) {
-            try {
-                WC_PostFinanceCheckout_Helper::instance()->reset_api_client();
-                WC_PostFinanceCheckout_Service_Method_Configuration::instance()->synchronize();
-                WC_PostFinanceCheckout_Helper::instance()->delete_provider_transients();
-                WP_CLI::success( "Payment methods synchronized." );
-            } catch ( \Exception $e ) {
-                WooCommerce_PostFinanceCheckout::instance()->log( $e->getMessage(), WC_Log_Levels::ERROR );
-                WP_CLI::error( "Failed to synchronize payment methods: " . $e->getMessage() );
-            }
-        }
-    }
+		/**
+		 * Synchronizes payment methods in the PostFinance Checkout from the portal.
+		 *
+		 * ## EXAMPLE
+		 *
+		 *    $ wp postfinancecheckout payment-methods sync
+		 *
+		 * @param array $args WP-CLI positional arguments.
+		 * @param array $assoc_args WP-CLI associative arguments.
+		 */
+		public static function payment_methods_sync( $args, $assoc_args ) {
+			try {
+				WC_PostFinanceCheckout_Helper::instance()->reset_api_client();
+				WC_PostFinanceCheckout_Service_Method_Configuration::instance()->synchronize();
+				WC_PostFinanceCheckout_Helper::instance()->delete_provider_transients();
+				WP_CLI::success( 'Payment methods synchronized.' );
+			} catch ( \Exception $e ) {
+				WooCommerce_PostFinanceCheckout::instance()->log( $e->getMessage(), WC_Log_Levels::ERROR );
+				WP_CLI::error( 'Failed to synchronize payment methods: ' . $e->getMessage() );
+			}
+		}
+	}
 }
 
 WC_PostFinanceCheckout_Commands::init();

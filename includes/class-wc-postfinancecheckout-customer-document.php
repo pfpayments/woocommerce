@@ -108,8 +108,8 @@ class WC_PostFinanceCheckout_Customer_Document {
 						add_query_arg(
 							array(
 								'postfinancecheckout_action' => 'download_packing',
-								'post'                         => $order_id,
-								'nonce'                        => wp_create_nonce( 'download_packing' ),
+								'post' => $order_id,
+								'nonce' => wp_create_nonce( 'download_packing' ),
 							)
 						)
 					);
@@ -129,7 +129,9 @@ class WC_PostFinanceCheckout_Customer_Document {
 	 * @return bool
 	 */
 	private static function is_pdf_request() {
+		// phpcs:disable WordPress.Security.NonceVerification.Recommended -- nonce is verified in download_document()
 		return ( isset( $_GET['post'] ) && isset( $_GET['postfinancecheckout_action'] ) && isset( $_GET['nonce'] ) );
+		// phpcs:enable WordPress.Security.NonceVerification.Recommended
 	}
 
 	/**

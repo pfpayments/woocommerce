@@ -277,12 +277,12 @@ class WC_PostFinanceCheckout_Gateway extends WC_Payment_Gateway {
 	public function generate_info_html( $key, $data ) {
 		$field_key = $this->get_field_key( $key );
 		$defaults = array(
-			'title' 			=> '',
-			'class' 			=> '',
-			'css' 				=> '',
-			'placeholder' 		=> '',
-			'desc_tip' 			=> true,
-			'description'		=> '',
+			'title'             => '',
+			'class'             => '',
+			'css'               => '',
+			'placeholder'       => '',
+			'desc_tip'          => true,
+			'description'       => '',
 			'custom_attributes' => array(),
 		);
 		$data = wp_parse_args( $data, $defaults );
@@ -291,7 +291,7 @@ class WC_PostFinanceCheckout_Gateway extends WC_Payment_Gateway {
 		<tr valign="top">
 			<th scope="row" class="titledesc">
 				<label for="<?php echo esc_attr( $field_key ); ?>"><?php echo esc_html( $data['title'] ); ?></label>
-				<?php echo $this->get_tooltip_html( $data ); ?>
+				<?php echo wp_kses_post( $this->get_tooltip_html( $data ) ); ?>
 			</th>
 			<td class="forminp">
 				<fieldset>
@@ -302,7 +302,7 @@ class WC_PostFinanceCheckout_Gateway extends WC_Payment_Gateway {
 						class="input-text regular-input <?php echo esc_attr( $data['class'] ); ?>" 
 						id="<?php echo esc_attr( $field_key ); ?>" 
 						style="<?php echo esc_attr( $data['css'] ); ?>" 
-						<?php echo $this->get_custom_attribute_html( $data ); ?>
+						<?php echo wp_kses_post( $this->get_custom_attribute_html( $data ) ); ?>
 						>
 						<?php echo wp_kses_post( $data['value'] ); ?>
 					</div>
@@ -330,17 +330,17 @@ class WC_PostFinanceCheckout_Gateway extends WC_Payment_Gateway {
 	public function is_available() {
 		static $checking = false;
 		if ( $checking ) {
-			return false; // prevent reentry/loop
+			return false; // prevent reentry/loop.
 		}
 		$checking = true;
 
 		try {
-			// Respect parent availability
+			// Respect parent availability.
 			if ( ! parent::is_available() ) {
 				return false;
 			}
 
-			// Prevent conflict with tax rounding
+			// Prevent conflict with tax rounding.
 			if ( wc_tax_enabled() && 'yes' === get_option( 'woocommerce_tax_round_at_subtotal' ) ) {
 				if ( 'yes' === get_option( WooCommerce_PostFinanceCheckout::POSTFINANCECHECKOUT_CK_ENFORCE_CONSISTENCY ) ) {
 					$error_message = esc_html__( "'WooCommerce > Settings > PostFinanceCheckout > Enforce Consistency' and 'WooCommerce > Settings > Tax > Rounding' are both enabled. Please disable at least one of them.", 'woo-postfinancecheckout' );
@@ -349,7 +349,7 @@ class WC_PostFinanceCheckout_Gateway extends WC_Payment_Gateway {
 				}
 			}
 
-			// Use session cache if available
+			// Use session cache if available.
 			$gateway_available = WC()->session && $this->has_session()
 				? WC()->session->get( 'postfinancecheckout_payment_gateways' )
 				: array();
@@ -358,7 +358,7 @@ class WC_PostFinanceCheckout_Gateway extends WC_Payment_Gateway {
 				return $gateway_available[ $this->pfc_payment_method_configuration_id ];
 			}
 
-			// Allow admin and non-checkout pages to pass
+			// Allow admin and non-checkout pages to pass.
 			if ( apply_filters(
 				'postfinancecheckout_is_method_available',
 				is_admin() || ! is_checkout() || ( isset( $GLOBALS['_postfinancecheckout_calculating'] ) && $GLOBALS['_postfinancecheckout_calculating'] ),
@@ -367,13 +367,13 @@ class WC_PostFinanceCheckout_Gateway extends WC_Payment_Gateway {
 				return $this->get_payment_method_configuration()->get_state() === WC_PostFinanceCheckout_Entity_Method_Configuration::POSTFINANCECHECKOUT_STATE_ACTIVE;
 			}
 
-			// Handle "order received" page logic
+			// Handle "order received" page logic.
 			global $wp;
 			if ( is_checkout() && isset( $wp->query_vars['order-received'] ) ) {
 				return ! empty( $gateway_available[ $this->pfc_payment_method_configuration_id ] );
 			}
 
-			// Handle "order pay" endpoint
+			// Handle "order pay" endpoint.
 			if ( apply_filters( 'wc_postfinancecheckout_is_order_pay_endpoint', is_checkout_pay_page() ) ) {
 				$order = WC_Order_Factory::get_order( $wp->query_vars['order-pay'] ?? 0 );
 				if ( ! $order ) {
@@ -384,7 +384,7 @@ class WC_PostFinanceCheckout_Gateway extends WC_Payment_Gateway {
 				$possible_methods = $this->get_safe_possible_payment_methods_for_cart();
 			}
 
-			// Check if this gateway is among the possible ones
+			// Check if this gateway is among the possible ones.
 			$possible = false;
 			foreach ( $possible_methods as $method_id ) {
 				if ( $method_id == $this->get_payment_method_configuration()->get_configuration_id() ) {
@@ -397,7 +397,7 @@ class WC_PostFinanceCheckout_Gateway extends WC_Payment_Gateway {
 				return false;
 			}
 
-			// Cache success in session
+			// Cache success in session.
 			if ( WC()->session && $this->has_session() ) {
 				$gateway_available[ $this->pfc_payment_method_configuration_id ] = true;
 				WC()->session->set( 'postfinancecheckout_payment_gateways', $gateway_available );
@@ -537,6 +537,9 @@ class WC_PostFinanceCheckout_Gateway extends WC_Payment_Gateway {
 		}
 	}
 
+	/**
+	 * Enqueue checkout scripts.
+	 */
 	public function enqueue_checkout_scripts() {
 		if ( ! is_checkout() && ! is_checkout_pay_page() ) {
 			return;
@@ -564,39 +567,39 @@ class WC_PostFinanceCheckout_Gateway extends WC_Payment_Gateway {
 				$ajax_url = $transaction_service->get_lightbox_url_for_transaction( $transaction );
 			}
 
-            if (get_option( WooCommerce_PostFinanceCheckout::POSTFINANCECHECKOUT_CK_INTEGRATION ) == WC_PostFinanceCheckout_Integration::POSTFINANCECHECKOUT_PAYMENTPAGE) {
-                return false;
+			if ( get_option( WooCommerce_PostFinanceCheckout::POSTFINANCECHECKOUT_CK_INTEGRATION ) == WC_PostFinanceCheckout_Integration::POSTFINANCECHECKOUT_PAYMENTPAGE ) {
+				return false;
 			}
 
 			wp_enqueue_script(
-			  'postfinancecheckout-remote-checkout-js',
-			  $ajax_url,
-			  array(
-				'jquery',
-			  ),
-			  1,
-			  true
+				'postfinancecheckout-remote-checkout-js',
+				$ajax_url,
+				array(
+					'jquery',
+				),
+				1,
+				true
 			);
 			wp_enqueue_script(
-			  'postfinancecheckout-checkout-js',
-			  WooCommerce_PostFinanceCheckout::instance()->plugin_url() . '/assets/js/frontend/checkout.js',
-			  array(
-				'jquery',
-				'jquery-blockui',
-				'postfinancecheckout-remote-checkout-js',
-			  ),
-			  1,
-			  true
+				'postfinancecheckout-checkout-js',
+				WooCommerce_PostFinanceCheckout::instance()->plugin_url() . '/assets/js/frontend/checkout.js',
+				array(
+					'jquery',
+					'jquery-blockui',
+					'postfinancecheckout-remote-checkout-js',
+				),
+				1,
+				true
 			);
 			global $wp_version;
 			$localize = array(
-			  'i18n_not_complete' => esc_html__( 'Please fill out all required fields.', 'woo-postfinancecheckout' ),
-			  'integration' => get_option( WooCommerce_PostFinanceCheckout::POSTFINANCECHECKOUT_CK_INTEGRATION ),
-			  'versions' => array(
-				'wordpress' => $wp_version,
-				'woocommerce' => $woocommerce_data['Version'],
-				'postfinancecheckout' => WC_POSTFINANCECHECKOUT_VERSION,
-			  ),
+				'i18n_not_complete' => esc_html__( 'Please fill out all required fields.', 'woo-postfinancecheckout' ),
+				'integration' => get_option( WooCommerce_PostFinanceCheckout::POSTFINANCECHECKOUT_CK_INTEGRATION ),
+				'versions' => array(
+					'wordpress' => $wp_version,
+					'woocommerce' => $woocommerce_data['Version'],
+					'postfinancecheckout' => WC_POSTFINANCECHECKOUT_VERSION,
+				),
 			);
 			wp_localize_script( 'postfinancecheckout-checkout-js', 'postfinancecheckout_js_params', $localize );
 
@@ -666,7 +669,6 @@ class WC_PostFinanceCheckout_Gateway extends WC_Payment_Gateway {
 
 			[ $result, $transaction ] = $this->process_payment_transaction( $order, $transaction_id, $space_id, $is_order_pay_endpoint, $transaction_service );
 
-
 			$integration_mode = get_option( WooCommerce_PostFinanceCheckout::POSTFINANCECHECKOUT_CK_INTEGRATION );
 
 			$redirect_url = $transaction_service->get_payment_page_url( $transaction->getLinkedSpaceId(), $transaction->getId() );
@@ -716,10 +718,10 @@ class WC_PostFinanceCheckout_Gateway extends WC_Payment_Gateway {
 	 * If the transaction is in a PENDING state, it confirms the transaction and updates the transaction info
 	 * in the order. It also sets up the redirect URL upon successful payment and returns the result and transaction.
 	 *
-	 * @param WC_Order                        $order The WooCommerce order object.
-	 * @param int                             $transaction_id The ID of the transaction.
-	 * @param int                             $space_id The space ID associated with the transaction.
-	 * @param bool                            $is_order_pay_endpoint Flag to determine if the order is being paid for at the order-pay endpoint.
+	 * @param WC_Order                                     $order The WooCommerce order object.
+	 * @param int                                          $transaction_id The ID of the transaction.
+	 * @param int                                          $space_id The space ID associated with the transaction.
+	 * @param bool                                         $is_order_pay_endpoint Flag to determine if the order is being paid for at the order-pay endpoint.
 	 * @param WC_PostFinanceCheckout_Service_Transaction $transaction_service The transaction service instance.
 	 * @return array An array containing the result of the transaction and the transaction object.
 	 *

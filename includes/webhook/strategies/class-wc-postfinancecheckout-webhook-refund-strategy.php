@@ -61,18 +61,6 @@ class WC_PostFinanceCheckout_Webhook_Refund_Strategy extends WC_PostFinanceCheck
 	}
 
 	/**
-	 * Meant to bridge code from deprecated processor.
-	 *
-	 * @param WC_Order $order The WooCommerce order associated with the refund.
-	 * @param \PostFinanceCheckout\Sdk\Model\Refund $refund The transaction refund object.
-	 * @param WC_PostFinanceCheckout_Webhook_Request $request The webhook request object.
-	 * @return void
-	 */
-	public function bridge_process_order_related_inner( WC_Order $order, \PostFinanceCheckout\Sdk\Model\Refund $refund, WC_PostFinanceCheckout_Webhook_Request $request ) {
-        $this->process_order_related_inner( $order, $refund, $request, true );
-    }
-
-	/**
 	 * Processes the incoming webhook request related to refunds.
 	 *
 	 * This method retrieves the refund details from the API and updates the associated order
@@ -96,12 +84,11 @@ class WC_PostFinanceCheckout_Webhook_Refund_Strategy extends WC_PostFinanceCheck
 	 * @param WC_Order $order The WooCommerce order associated with the refund.
 	 * @param \PostFinanceCheckout\Sdk\Model\Refund $refund The transaction refund object.
 	 * @param WC_PostFinanceCheckout_Webhook_Request $request The webhook request object.
-	 * @param bool $legacy_mode legacy code used.
 	 * @return void
 	 */
-	protected function process_order_related_inner( WC_Order $order, \PostFinanceCheckout\Sdk\Model\Refund $refund, WC_PostFinanceCheckout_Webhook_Request $request, $legacy_mode = false ) {
+	protected function process_order_related_inner( WC_Order $order, \PostFinanceCheckout\Sdk\Model\Refund $refund, WC_PostFinanceCheckout_Webhook_Request $request ) {
 		/* @var \PostFinanceCheckout\Sdk\Model\Refund $refund */
-		$entity_state = $legacy_mode ? $refund->getState() : $request->get_state();
+		$entity_state = $request->get_state();
 		switch ( $entity_state ) {
 			case \PostFinanceCheckout\Sdk\Model\RefundState::FAILED:
 				// fallback.

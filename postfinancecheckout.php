@@ -1,9 +1,9 @@
 <?php
 /**
  * Plugin Name: PostFinance Checkout
- * Plugin URI: https://wordpress.org/plugins/woo-postfinance-checkout
+ * Plugin URI: https://wordpress.org/plugins/woo-postfinancecheckout
  * Description: Process WooCommerce payments with PostFinance Checkout.
- * Version: 3.4.8
+ * Version: 3.4.9
  * Author: PostFinance Ltd
  * Author URI: https://postfinance.ch/en/business/products/e-commerce/postfinance-checkout-all-in-one.html
  * Text Domain: woo-postfinancecheckout
@@ -15,7 +15,10 @@
  * WC tested up to 11.0.1
  * License: Apache-2.0
  * License URI: http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * @package PostFinanceCheckout
  */
+
 if ( ! defined( 'ABSPATH' ) ) {
 	exit(); // Exit if accessed directly.
 }
@@ -42,8 +45,8 @@ if ( ! class_exists( 'WooCommerce_PostFinanceCheckout' ) ) {
 		const POSTFINANCECHECKOUT_CK_CHANGE_ORDER_STATUS = 'wc_postfinancecheckout_change_order_status';
 		const POSTFINANCECHECKOUT_CK_DISABLE_PENDING_EMAIL = 'wc_postfinancecheckout_disable_pending_email';
 		const POSTFINANCECHECKOUT_CK_ENABLE_CUSTOM_STATUS_MAPPING = 'wc_postfinancecheckout_enable_custom_status_mapping';
-		const POSTFINANCECHECKOUT_UPGRADE_VERSION = '3.1.1';
-		const WC_MAXIMUM_VERSION = '11.0.1';
+		const POSTFINANCECHECKOUT_UPGRADE_VERSION = '3.1.1'; // Leave this number alone! It was a fix for a problem introduced at this version.
+		const WC_MAXIMUM_VERSION = '11.2.0';
 		const REQUIRED_WC_SUBSCRIPTION_VERSION = '2.5';
 
 		/**
@@ -51,7 +54,7 @@ if ( ! class_exists( 'WooCommerce_PostFinanceCheckout' ) ) {
 		 *
 		 * @var string
 		 */
-		private $version = '3.4.8';
+		private $version = '3.4.9';
 
 		/**
 		 * The single instance of the class.
@@ -88,10 +91,16 @@ if ( ! class_exists( 'WooCommerce_PostFinanceCheckout' ) ) {
 			$this->define_constants();
 		}
 
+		/**
+		 * Define constant if not already set.
+		 */
 		public function boot() {
 			$this->init();
 		}
 
+		/**
+		 * Initialize the plugin.
+		 */
 		private function init() {
 			$this->includes();
 			$this->init_hooks();
@@ -158,7 +167,7 @@ if ( ! class_exists( 'WooCommerce_PostFinanceCheckout' ) ) {
 				__FILE__,
 				array(
 					'WooCommerce_PostFinanceCheckout',
-					'migrate_plugin_data_on_activation'
+					'migrate_plugin_data_on_activation',
 				)
 			);
 
@@ -392,14 +401,14 @@ if ( ! class_exists( 'WooCommerce_PostFinanceCheckout' ) ) {
 		 * @return string|null The version of the plugin or null if not found.
 		 */
 		public static function get_installed_plugin_version( $plugin_slug ) {
-			if (!function_exists( 'get_plugins' ) ) {
+			if ( ! function_exists( 'get_plugins' ) ) {
 				require_once ABSPATH . 'wp-admin/includes/plugin.php';
 			}
 
 			$all_plugins = get_plugins();
 			foreach ( $all_plugins as $plugin_path => $plugin_info ) {
 				if ( strpos( $plugin_path, $plugin_slug ) !== false ) {
-					return $plugin_info[ 'Version' ];
+					return $plugin_info['Version'];
 				}
 			}
 
@@ -456,7 +465,7 @@ if ( ! class_exists( 'WooCommerce_PostFinanceCheckout' ) ) {
 			}
 
 			global $wpdb;
-			$options_to_migrate = [
+			$options_to_migrate = array(
 				$old_option_prefix . WC_PostFinanceCheckout_Migration::POSTFINANCECHECKOUT_CK_DB_VERSION,
 				$old_option_prefix . WC_PostFinanceCheckout_Service_Manual_Task::POSTFINANCECHECKOUT_CONFIG_KEY,
 				$old_option_prefix . self::POSTFINANCECHECKOUT_CK_SPACE_ID,
@@ -471,7 +480,7 @@ if ( ! class_exists( 'WooCommerce_PostFinanceCheckout' ) ) {
 				$old_option_prefix . self::POSTFINANCECHECKOUT_CK_ENFORCE_CONSISTENCY,
 				$old_option_prefix . self::POSTFINANCECHECKOUT_CK_CHANGE_ORDER_STATUS,
 				$old_option_prefix . self::WC_MAXIMUM_VERSION,
-			];
+			);
 
 			// If the old plugin options exist, perform the migration.
 			foreach ( $options_to_migrate as $option_name ) {
@@ -486,8 +495,7 @@ if ( ! class_exists( 'WooCommerce_PostFinanceCheckout' ) ) {
 						// Add the option if it doesn't exist.
 						add_option( $new_option_name, $option_value );
 					}
-					// Delete the old option.
-					//delete_option( $option_name );.
+					// Delete the old option: delete_option( $option_name );.
 				}
 			}
 		}
@@ -497,7 +505,7 @@ if ( ! class_exists( 'WooCommerce_PostFinanceCheckout' ) ) {
 		 * This function is triggered after the plugin is updated
 		 *
 		 * @param object $upgrader_object The upgrader object.
-		 * @param array $options The options array.
+		 * @param array  $options The options array.
 		 */
 		public static function migrate_plugin_data_after_update( $upgrader_object, $options ) {
 			// Check if the plugin was just updated.
@@ -529,19 +537,23 @@ if ( ! class_exists( 'WooCommerce_PostFinanceCheckout' ) ) {
 		public function loaded() {
 
 			// WordPress.org will auto-load translations. No need to call load_plugin_textdomain().
-			// $this->load_plugin_textdomain();
-			add_action('plugins_loaded', function () {
-				if (class_exists('WC_Payment_Gateway')) {
-					require_once WC_POSTFINANCECHECKOUT_ABSPATH . 'includes/class-wc-postfinancecheckout-zero-gateway.php';
-					add_filter(
-					  'woocommerce_payment_gateways',
-					  array(
-						WooCommerce_PostFinanceCheckout::instance(),
-						'add_gateways',
-					  )
-					);
-				}
-			}, 20);
+			// $this->load_plugin_textdomain();.
+			add_action(
+				'plugins_loaded',
+				function () {
+					if ( class_exists( 'WC_Payment_Gateway' ) ) {
+						require_once WC_POSTFINANCECHECKOUT_ABSPATH . 'includes/class-wc-postfinancecheckout-zero-gateway.php';
+						add_filter(
+							'woocommerce_payment_gateways',
+							array(
+								WooCommerce_PostFinanceCheckout::instance(),
+								'add_gateways',
+							)
+						);
+					}
+				},
+				20
+			);
 			add_action(
 				'plugins_loaded',
 				array(
@@ -602,36 +614,42 @@ if ( ! class_exists( 'WooCommerce_PostFinanceCheckout' ) ) {
 			);
 			add_filter(
 				'woocommerce_cart_needs_payment',
-				function($value, $object) {
+				function ( $value, $object ) {
 					return true;
-				}, 10, 2
+				},
+				10,
+				2
 			);
 			add_filter(
-			 	'woocommerce_order_needs_payment',
-			 	function($value, $order) {
+				'woocommerce_order_needs_payment',
+				function ( $value, $order ) {
 					$order_data = $order->get_data();
-					if (substr_count($order_data['payment_method'], "postfinancecheckout")) {
+					if ( substr_count( $order_data['payment_method'], 'postfinancecheckout' ) ) {
 						// If the order is using our payment method, we want to process it
 						// even if the value of the transaction is 0, which woocommerce by default
 						// process it without payment gateway.
 						$transaction_info = WC_PostFinanceCheckout_Entity_Transaction_Info::load_by_order_id( $order->get_id() );
-						if ( in_array(
-						  $transaction_info->get_state(),
-						  array(
-							\PostFinanceCheckout\Sdk\Model\TransactionState::FULFILL,
-							\PostFinanceCheckout\Sdk\Model\TransactionState::AUTHORIZED,
-							\PostFinanceCheckout\Sdk\Model\TransactionState::COMPLETED,
-							\PostFinanceCheckout\Sdk\Model\TransactionState::FAILED,
-							\PostFinanceCheckout\Sdk\Model\TransactionState::DECLINE,
-						  ),
-						  true
-						) ) {
+						if (
+							in_array(
+								$transaction_info->get_state(),
+								array(
+									\PostFinanceCheckout\Sdk\Model\TransactionState::FULFILL,
+									\PostFinanceCheckout\Sdk\Model\TransactionState::AUTHORIZED,
+									\PostFinanceCheckout\Sdk\Model\TransactionState::COMPLETED,
+									\PostFinanceCheckout\Sdk\Model\TransactionState::FAILED,
+									\PostFinanceCheckout\Sdk\Model\TransactionState::DECLINE,
+								),
+								true
+							)
+						) {
 							return false;
 						}
 						return true;
 					}
 					return $value;
-				}, 10, 2
+				},
+				10,
+				2
 			);
 			add_action(
 				'woocommerce_checkout_update_order_review',
@@ -771,17 +789,20 @@ if ( ! class_exists( 'WooCommerce_PostFinanceCheckout' ) ) {
 				}
 			);
 
-			add_filter('the_content', function($content) {
-				if ( is_checkout() && ! is_order_received_page() ) {
-					// When in checkout, we inject the list of payment methods in the HTML.
-					// The goal here is to speed up the process of registering the payment methods.
-					$payment_methods = WC_PostFinanceCheckout_Blocks_Support::get_payment_methods();
-					$json_data = json_encode( $payment_methods );
-					$content .= '<div id="postfinancecheckout-payment-methods" data-json="' . esc_attr( $json_data ) . '"></div>';
-				}
+			add_filter(
+				'the_content',
+				function ( $content ) {
+					if ( is_checkout() && ! is_order_received_page() ) {
+						// When in checkout, we inject the list of payment methods in the HTML.
+						// The goal here is to speed up the process of registering the payment methods.
+						$payment_methods = WC_PostFinanceCheckout_Blocks_Support::get_payment_methods();
+						$json_data = json_encode( $payment_methods );
+						$content .= '<div id="postfinancecheckout-payment-methods" data-json="' . esc_attr( $json_data ) . '"></div>';
+					}
 
-				return $content;
-			});
+					return $content;
+				}
+			);
 		}
 
 		/**
@@ -805,7 +826,7 @@ if ( ! class_exists( 'WooCommerce_PostFinanceCheckout' ) ) {
 		 *
 		 * @return bool
 		 */
-		public static function is_subscriptions_compatible(): bool  {
+		public static function is_subscriptions_compatible(): bool {
 			$plugin_name = 'woocommerce-subscriptions.php';
 			$woocommerce_subscriptions_directory = self::find_plugin_path( $plugin_name );
 			if ( ! $woocommerce_subscriptions_directory ) {
@@ -824,6 +845,7 @@ if ( ! class_exists( 'WooCommerce_PostFinanceCheckout' ) ) {
 		/**
 		 * Looks for legacy subscription plugin's directory.
 		 *
+		 * @param string $plugin_name The plugin file name to search for.
 		 * @return string|null
 		 */
 		public static function find_plugin_path( string $plugin_name ): ?string {
@@ -866,22 +888,22 @@ if ( ! class_exists( 'WooCommerce_PostFinanceCheckout' ) ) {
 			return false;
 		}
 
-	/**
-	 * Register order statuses.
-	 *
-	 * @return void
-	 */
-	public function register_order_statuses() {
-		$common_args = array(
-			'public' => true,
-			'exclude_from_search' => false,
-			'show_in_admin_all_list' => true,
-			'show_in_admin_status_list' => true,
-		);
+		/**
+		 * Register order statuses.
+		 *
+		 * @return void
+		 */
+		public function register_order_statuses() {
+			$common_args = array(
+				'public' => true,
+				'exclude_from_search' => false,
+				'show_in_admin_all_list' => true,
+				'show_in_admin_status_list' => true,
+			);
 
-		register_post_status(
-			'wc-postfi-redirected',
-			array_merge(
+			register_post_status(
+				'wc-postfi-redirected',
+				array_merge(
 					$common_args,
 					array(
 						'label' => 'Processing',
@@ -917,15 +939,15 @@ if ( ! class_exists( 'WooCommerce_PostFinanceCheckout' ) ) {
 		/**
 		 * Add order statuses.
 		 *
-	 * @param mixed $order_statuses order statuses.
-	 * @return mixed
-	 */
-	public function add_order_statuses( $order_statuses ) {
-		$order_statuses['wc-postfi-redirected'] = _x( 'Redirected', 'Order status', 'woo-postfinancecheckout' );
-		$order_statuses['wc-postfi-waiting'] = _x( 'Waiting', 'Order status', 'woo-postfinancecheckout' );
-		$order_statuses['wc-postfi-manual'] = _x( 'Manual Decision', 'Order status', 'woo-postfinancecheckout' );
+		 * @param mixed $order_statuses order statuses.
+		 * @return mixed
+		 */
+		public function add_order_statuses( $order_statuses ) {
+			$order_statuses['wc-postfi-redirected'] = _x( 'Redirected', 'Order status', 'woo-postfinancecheckout' );
+			$order_statuses['wc-postfi-waiting'] = _x( 'Waiting', 'Order status', 'woo-postfinancecheckout' );
+			$order_statuses['wc-postfi-manual'] = _x( 'Manual Decision', 'Order status', 'woo-postfinancecheckout' );
 
-		return $order_statuses;
+			return $order_statuses;
 		}
 
 		/**
@@ -935,13 +957,13 @@ if ( ! class_exists( 'WooCommerce_PostFinanceCheckout' ) ) {
 		 * @param mixed $order order.
 		 * @return mixed
 		 */
-	public function valid_order_statuses_for_payment( $statuses, $order = null ) { //phpcs:ignore
-		if ( WC_PostFinanceCheckout_Helper::is_custom_status_mapping_enabled() ) {
-			$statuses[] = 'postfi-redirected';
-		}
+		public function valid_order_statuses_for_payment( $statuses, $order = null ) { //phpcs:ignore
+			if ( WC_PostFinanceCheckout_Helper::is_custom_status_mapping_enabled() ) {
+				$statuses[] = 'postfi-redirected';
+			}
 
-		return $statuses;
-	}
+			return $statuses;
+		}
 
 		/**
 		 * Handles AJAX request to save order status changes.
@@ -963,19 +985,25 @@ if ( ! class_exists( 'WooCommerce_PostFinanceCheckout' ) ) {
 				wp_die();
 			}
 
-			// Sanitize input properly.
-			$changes = sanitize_text_field( wp_unslash( $_POST['changes'] ) );
+			// phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotSanitized -- $_POST['changes'] array is unslashed with wp_unslash(). We sanitize each field individually with array_map( 'sanitize_text_field' ) and sanitize_key() below.
+			$changes = wp_unslash( $_POST['changes'] );
 
 			// Get the first key inside the 'changes' array.
 			$first_key = key( $changes );
-			$data = $_POST['changes'][$first_key];
+			if ( ! isset( $changes[ $first_key ] ) || ! is_array( $changes[ $first_key ] ) ) {
+				wp_send_json_error( 'invalid_data' );
+				wp_die();
+			}
+			$raw_data = $changes[ $first_key ];
+			$data = array_map( 'sanitize_text_field', $raw_data );
+			$first_key = sanitize_key( $first_key );
 
 			if ( isset( $data['key'] ) ) {
-				$label = str_replace( ['-', '_'], ' ', sanitize_text_field( $data['key'] ) );
+				$label = str_replace( array( '-', '_' ), ' ', sanitize_text_field( $data['key'] ) );
 
 				// Normalize the key by replacing spaces and dashes with underscores.
-				$sanitized_key_underscore = str_replace( [' ', '-'], '_', WC_PostFinanceCheckout_Order_Status_Adapter::POSTFINANCECHECKOUT_CUSTOM_ORDER_STATUS_PREFIX . $first_key );
-				$sanitized_key_hyphen = str_replace( [' ', '_'], '-', $first_key );
+				$sanitized_key_underscore = str_replace( array( '-', '_' ), '_', WC_PostFinanceCheckout_Order_Status_Adapter::POSTFINANCECHECKOUT_CUSTOM_ORDER_STATUS_PREFIX . $first_key );
+				$sanitized_key_hyphen = str_replace( array( ' ', '_' ), '-', $first_key );
 
 				// Construct the full option name with the required prefix.
 				$custom_order_value = 'wc-' . $sanitized_key_hyphen;
@@ -983,27 +1011,34 @@ if ( ! class_exists( 'WooCommerce_PostFinanceCheckout' ) ) {
 				// Save to wp_options.
 				update_option( $custom_order_name, $custom_order_value );
 
-				register_post_status( $custom_order_value, array(
-					'label' => $label,
-					'public' => true,
-					'show_in_admin_status_list' => true,
-					'show_in_admin_all_list' => true,
-					'exclude_from_search' => false,
-					'label_count' => array(
-						'singular' => sprintf( '%s <span class="count">(%s)</span>', $label, '%s' ),
-						'plural'   => sprintf( '%s <span class="count">(%s)</span>', $label, '%s' ),
+				wp_cache_delete( 'postfinancecheckout_custom_order_statuses', 'postfinancecheckout' );
+
+				register_post_status( 
+					$custom_order_value,
+					array(
+						'label' => $label,
+						'public' => true,
+						'show_in_admin_status_list' => true,
+						'show_in_admin_all_list' => true,
+						'exclude_from_search' => false,
+						'label_count' => array(
+							'singular' => sprintf( '%s <span class="count">(%s)</span>', $label, '%s' ),
+							'plural'   => sprintf( '%s <span class="count">(%s)</span>', $label, '%s' ),
+						)
 					)
-				) );
+				);
 
 				// Send a success response with the saved order status details.
-				wp_send_json_success([
-					'message'      => 'Success',
-					'order_status' => [
-						'key'   => $custom_order_value,  // The full key with the prefix.
-						'label' => ucfirst( $label ), // As received from the form data.
-						'type'  => __( 'custom' , 'woo-postfinancecheckout' )
-					]
-				]);
+				wp_send_json_success(
+					array(
+						'message' => 'Success',
+						'order_status' => array(
+							'key' => $custom_order_value,  // The full key with the prefix.
+							'label' => ucfirst( $label ), // As received from the form data.
+							'type' => __( 'custom', 'woo-postfinancecheckout' ),
+						),
+					)
+				);
 			} else {
 				wp_send_json_error( 'invalid_data' );
 			}
@@ -1032,25 +1067,55 @@ if ( ! class_exists( 'WooCommerce_PostFinanceCheckout' ) ) {
 			}
 
 			$sanitized_key = sanitize_text_field( wp_unslash( $_POST['key'] ) );
+			$cache_group = 'postfinancecheckout';
 
-			// Check if this order status is being used in wp_options with key prefix "postfinancecheckout_order_status_mapping_".
-			$like_pattern = WC_PostFinanceCheckout_Order_Status_Adapter::POSTFINANCECHECKOUT_ORDER_STATUS_MAPPING_PREFIX . '%';
-			$is_used = $wpdb->get_var( $wpdb->prepare( "SELECT COUNT(*) FROM {$wpdb->options} WHERE option_name LIKE %s AND option_value = %s", $like_pattern, $sanitized_key ) );
+			$is_used_cache_key = 'postfinancecheckout_status_in_use_' . md5( $sanitized_key );
+			$is_used = wp_cache_get( $is_used_cache_key, $cache_group );
+
+			if ( $is_used === false ) {
+				// Check if this order status is being used in wp_options with key prefix "postfinancecheckout_order_status_mapping_".
+				$like_pattern = WC_PostFinanceCheckout_Order_Status_Adapter::POSTFINANCECHECKOUT_ORDER_STATUS_MAPPING_PREFIX . '%';
+				// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery
+				$is_used = $wpdb->get_var( $wpdb->prepare( "SELECT COUNT(*) FROM {$wpdb->options} WHERE option_name LIKE %s AND option_value = %s", $like_pattern, $sanitized_key ) );
+				wp_cache_set( $is_used_cache_key, $is_used, $cache_group, HOUR_IN_SECONDS );
+			}
 
 			if ( $is_used > 0 ) {
 				// The status is in use, so do not delete it.
-				wp_send_json_error( ['message' => __( 'Cannot delete: this status is currently in use.', 'woo-postfinancecheckout' ), 'key' => ucfirst( $sanitized_key )], 400 );
+				wp_send_json_error(
+					array(
+						'message' => __( 'Cannot delete: this status is currently in use.', 'woo-postfinancecheckout' ),
+						'key' => ucfirst( $sanitized_key ),
+					),
+					400
+				);
 			}
 
-			 // Get the custom order status in wp_options with key prefix "postfinancecheckout_order_status_mapping_".
-			$like_pattern = WC_PostFinanceCheckout_Order_Status_Adapter::POSTFINANCECHECKOUT_CUSTOM_ORDER_STATUS_PREFIX . '%';
-			$custom_order_status_name = $wpdb->get_var( $wpdb->prepare( "SELECT option_name FROM {$wpdb->options} WHERE option_name LIKE %s AND option_value = %s", $like_pattern, $sanitized_key ) );
+			$option_name_cache_key = 'postfinancecheckout_status_option_name_' . md5( $sanitized_key );
+			$custom_order_status_name = wp_cache_get( $option_name_cache_key, $cache_group );
+
+			if ( $custom_order_status_name === false ) {
+				// Get the custom order status in wp_options with key prefix "postfinancecheckout_order_status_mapping_".
+				$like_pattern = WC_PostFinanceCheckout_Order_Status_Adapter::POSTFINANCECHECKOUT_CUSTOM_ORDER_STATUS_PREFIX . '%';
+				// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery
+				$custom_order_status_name = $wpdb->get_var( $wpdb->prepare( "SELECT option_name FROM {$wpdb->options} WHERE option_name LIKE %s AND option_value = %s", $like_pattern, $sanitized_key ) );
+				wp_cache_set( $option_name_cache_key, $custom_order_status_name, $cache_group, HOUR_IN_SECONDS );
+			}
 
 			// Remove from wp_options.
 			delete_option( $custom_order_status_name );
 
+			wp_cache_delete( $is_used_cache_key, $cache_group );
+			wp_cache_delete( $option_name_cache_key, $cache_group );
+			wp_cache_delete( 'postfinancecheckout_custom_order_statuses', $cache_group );
+
 			// Return success response.
-			wp_send_json_success( ['message' => __( 'Deleted successfully', 'woo-postfinancecheckout' ), 'key' => ucfirst( $sanitized_key )] );
+			wp_send_json_success(
+				array(
+					'message' => __( 'Deleted successfully', 'woo-postfinancecheckout' ),
+					'key' => ucfirst( $sanitized_key ),
+				)
+			);
 		}
 
 		/**
@@ -1059,7 +1124,7 @@ if ( ! class_exists( 'WooCommerce_PostFinanceCheckout' ) ) {
 		 * @return void
 		 */
 		public function set_device_id_cookie() {
-			if(!headers_sent()) {
+			if ( ! headers_sent() ) {
 				$value = WC_PostFinanceCheckout_Unique_Id::get_uuid();
 				if ( isset( $_COOKIE['wc_postfinancecheckout_device_id'] ) && ! empty( $_COOKIE['wc_postfinancecheckout_device_id'] ) ) {
 					$value = sanitize_text_field( wp_unslash( $_COOKIE['wc_postfinancecheckout_device_id'] ) );
@@ -1121,7 +1186,7 @@ if ( ! class_exists( 'WooCommerce_PostFinanceCheckout' ) ) {
 		 * @param WC_Order|null $order order.
 		 * @return false|mixed
 		 */
-		public function order_editable_check( $allowed, WC_Order $order = null ) {
+		public function order_editable_check( $allowed, ?WC_Order $order = null ) {
 			if ( is_null( $order ) ) {
 				return $allowed;
 			}
@@ -1138,7 +1203,7 @@ if ( ! class_exists( 'WooCommerce_PostFinanceCheckout' ) ) {
 		 * @param WC_Order|null $order order.
 		 * @return mixed
 		 */
-		public function valid_order_status_for_completion( $statuses, WC_Order $order = null ) { //phpcs:ignore
+		public function valid_order_status_for_completion( $statuses, ?WC_Order $order = null ) { //phpcs:ignore
 			if ( WC_PostFinanceCheckout_Helper::is_custom_status_mapping_enabled() ) {
 				$statuses[] = 'postfi-waiting';
 				$statuses[] = 'postfi-manual';
@@ -1191,7 +1256,7 @@ if ( ! class_exists( 'WooCommerce_PostFinanceCheckout' ) ) {
 			try {
 				foreach ( $method_configurations as $configuration ) {
 					$gateway = new WC_PostFinanceCheckout_Gateway( $configuration );
-					$methods[] = apply_filters('wc_postfinancecheckout_enhance_gateway', $gateway);
+					$methods[] = apply_filters( 'wc_postfinancecheckout_enhance_gateway', $gateway );
 				}
 			} catch ( \PostFinanceCheckout\Sdk\ApiException $e ) {
 				if ( $e->getCode() === 401 ) {
@@ -1351,7 +1416,9 @@ if ( ! class_exists( 'WooCommerce_PostFinanceCheckout' ) ) {
 		 * @return true
 		 */
 		public function register_checkout_error_msg() {
-			if ( ! isset( WC()->session ) ) return false;
+			if ( ! isset( WC()->session ) ) {
+				return false;
+			}
 			$msg = WC()->session->get( 'postfinancecheckout_failure_message', null );
 			if ( ! empty( $msg ) ) {
 				$this->add_notice( (string) $msg, 'error' );
@@ -1379,9 +1446,11 @@ if ( ! class_exists( 'WooCommerce_PostFinanceCheckout' ) ) {
 		 * @param string|bool $value value.
 		 */
 		protected function define( $name, $value ) {
+			// phpcs:disable WordPress.NamingConventions.PrefixAllGlobals.VariableConstantNameFound -- $name is a local, not a global parameter
 			if ( ! defined( $name ) ) {
 				define( $name, $value );
 			}
+			// phpcs:enable WordPress.NamingConventions.PrefixAllGlobals.VariableConstantNameFound
 		}
 
 		/**
@@ -1587,10 +1656,13 @@ if ( ! class_exists( 'WooCommerce_PostFinanceCheckout' ) ) {
 		}
 	}
 
-	add_action( 'woocommerce_loaded', function () {
-		WooCommerce_PostFinanceCheckout::instance()->boot();
-		add_action( 'woocommerce_blocks_loaded', 'WC_PostFinanceCheckout_Blocks_Support' );
-	});
+	add_action(
+		'woocommerce_loaded',
+		function () {
+			WooCommerce_PostFinanceCheckout::instance()->boot();
+			add_action( 'woocommerce_blocks_loaded', 'WC_PostFinanceCheckout_Blocks_Support' );
+		}
+	);
 
 	function WC_PostFinanceCheckout_Blocks_Support() { //phpcs:ignore
 		if ( class_exists( 'Automattic\WooCommerce\Blocks\Payments\Integrations\AbstractPaymentMethodType' ) ) {
