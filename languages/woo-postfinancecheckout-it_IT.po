@@ -974,3 +974,7 @@ msgstr "Caricamento del metodo di pagamento..."
 #: includes/class-wc-postfinancecheckout-blocks-support.php:68
 msgid "Unable to load this payment method. Please refresh the page and try again."
 msgstr "Impossibile caricare questo metodo di pagamento. Aggiorna la pagina e riprova."
+
+#: includes/class-wc-postfinancecheckout-blocks-support.php:69
+msgid "The payment details are invalid. Please check them and try again."
+msgstr "I dati di pagamento non sono validi. Controllali e riprova."

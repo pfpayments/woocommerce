@@ -3,7 +3,7 @@
  * Plugin Name: PostFinance Checkout
  * Plugin URI: https://wordpress.org/plugins/woo-postfinancecheckout
  * Description: Process WooCommerce payments with PostFinance Checkout.
- * Version: 3.4.9
+ * Version: 3.4.10
  * Author: PostFinance Ltd
  * Author URI: https://postfinance.ch/en/business/products/e-commerce/postfinance-checkout-all-in-one.html
  * Text Domain: woo-postfinancecheckout
@@ -45,8 +45,9 @@ if ( ! class_exists( 'WooCommerce_PostFinanceCheckout' ) ) {
 		const POSTFINANCECHECKOUT_CK_CHANGE_ORDER_STATUS = 'wc_postfinancecheckout_change_order_status';
 		const POSTFINANCECHECKOUT_CK_DISABLE_PENDING_EMAIL = 'wc_postfinancecheckout_disable_pending_email';
 		const POSTFINANCECHECKOUT_CK_ENABLE_CUSTOM_STATUS_MAPPING = 'wc_postfinancecheckout_enable_custom_status_mapping';
+		const POSTFINANCECHECKOUT_CK_PENDING_DATA_MIGRATION = 'wc_postfinancecheckout_pending_data_migration';
 		const POSTFINANCECHECKOUT_UPGRADE_VERSION = '3.1.1'; // Leave this number alone! It was a fix for a problem introduced at this version.
-		const WC_MAXIMUM_VERSION = '11.2.0';
+		const WC_MAXIMUM_VERSION = '11.2.1';
 		const REQUIRED_WC_SUBSCRIPTION_VERSION = '2.5';
 
 		/**
@@ -54,7 +55,7 @@ if ( ! class_exists( 'WooCommerce_PostFinanceCheckout' ) ) {
 		 *
 		 * @var string
 		 */
-		private $version = '3.4.9';
+		private $version = '3.4.10';
 
 		/**
 		 * The single instance of the class.
@@ -214,7 +215,7 @@ if ( ! class_exists( 'WooCommerce_PostFinanceCheckout' ) ) {
 				)
 			);
 
-			// Hook to run migration after plugin update.
+			// Hook to flag the data migration after a plugin update.
 			add_action(
 				'upgrader_process_complete',
 				array(
@@ -223,6 +224,15 @@ if ( ! class_exists( 'WooCommerce_PostFinanceCheckout' ) ) {
 				),
 				10,
 				2
+			);
+
+			// The flagged migration runs here, on the first admin request that loads the updated code.
+			add_action(
+				'admin_init',
+				array(
+					'WooCommerce_PostFinanceCheckout',
+					'run_flagged_data_migration',
+				)
 			);
 
 			add_action(
@@ -366,17 +376,6 @@ if ( ! class_exists( 'WooCommerce_PostFinanceCheckout' ) ) {
 				$buffer_started = true;
 			}
 
-			// Hook to run migration after plugin update.
-			add_action(
-				'upgrader_process_complete',
-				array(
-					'WooCommerce_PostFinanceCheckout',
-					'migrate_plugin_data_after_update',
-				),
-				10,
-				2
-			);
-
 			// Clear the permalinks to remove our post type's rules from the database.
 			flush_rewrite_rules();
 
@@ -460,14 +459,19 @@ if ( ! class_exists( 'WooCommerce_PostFinanceCheckout' ) ) {
 			 * Check if the installed version is 3.1.1 or higher.
 			 * If the version is 3.1.1 or higher, do not run the migration.
 			 */
-			if ( version_compare( $installed_version, self::POSTFINANCECHECKOUT_UPGRADE_VERSION, '>=' ) ) {
+			if ( version_compare( (string) $installed_version, self::POSTFINANCECHECKOUT_UPGRADE_VERSION, '>=' ) ) {
 				return;
 			}
 
 			global $wpdb;
 			$options_to_migrate = array(
 				$old_option_prefix . WC_PostFinanceCheckout_Migration::POSTFINANCECHECKOUT_CK_DB_VERSION,
-				$old_option_prefix . WC_PostFinanceCheckout_Service_Manual_Task::POSTFINANCECHECKOUT_CONFIG_KEY,
+				/*
+				 * Keep this key a literal. It mirrors WC_PostFinanceCheckout_Service_Manual_Task::POSTFINANCECHECKOUT_CONFIG_KEY,
+				 * but that class is autoloaded, and an outdated version running this method while the new files are
+				 * already on disk cannot load it any more, which killed the update of every version up to 3.4.7.
+				 */
+				$old_option_prefix . 'wc_postfinancecheckout_manual_task',
 				$old_option_prefix . self::POSTFINANCECHECKOUT_CK_SPACE_ID,
 				$old_option_prefix . self::POSTFINANCECHECKOUT_CK_SPACE_VIEW_ID,
 				$old_option_prefix . self::POSTFINANCECHECKOUT_CK_APP_USER_ID,
@@ -501,22 +505,58 @@ if ( ! class_exists( 'WooCommerce_PostFinanceCheckout' ) ) {
 		}
 
 		/**
-		 * Function to migrate plugin data after update
+		 * Function to flag the data migration after update
 		 * This function is triggered after the plugin is updated
+		 *
+		 * Note: this runs while WordPress still holds the code of the version that is being replaced in
+		 * memory, although the new files are already on disk. Anything that has to load a class file would
+		 * reach for a path of the outdated version, so the migration itself is deferred to the next admin
+		 * request, where the updated code is fully loaded. An automatic update runs in a cron request, with
+		 * no admin context at all, so deferring is required there as well.
 		 *
 		 * @param object $upgrader_object The upgrader object.
 		 * @param array  $options The options array.
 		 */
 		public static function migrate_plugin_data_after_update( $upgrader_object, $options ) {
 			// Check if the plugin was just updated.
-			if ( 'update' == $options['action'] && 'plugin' == $options['type'] ) {
-				$plugin_basename = plugin_basename( __FILE__ );
-				foreach ( $options['plugins'] as $plugin ) {
-					if ( $plugin == $plugin_basename ) {
-						self::migrate_plugin_data_on_activation();
-						break;
-					}
-				}
+			if ( ! isset( $options['action'], $options['type'] ) || 'update' != $options['action'] || 'plugin' != $options['type'] ) {
+				return;
+			}
+
+			// A bulk update reports the updated plugins in 'plugins', while a single and an automatic
+			// update report the one plugin in 'plugin'.
+			$updated_plugins = array();
+			if ( ! empty( $options['plugins'] ) ) {
+				$updated_plugins = (array) $options['plugins'];
+			} elseif ( ! empty( $options['plugin'] ) ) {
+				$updated_plugins = array( $options['plugin'] );
+			}
+
+			if ( in_array( plugin_basename( __FILE__ ), $updated_plugins, true ) ) {
+				update_option( self::POSTFINANCECHECKOUT_CK_PENDING_DATA_MIGRATION, 'yes' );
+			}
+		}
+
+		/**
+		 * Runs the data migration that migrate_plugin_data_after_update() flagged, once.
+		 *
+		 * @return void
+		 */
+		public static function run_flagged_data_migration() {
+			if ( 'yes' !== get_option( self::POSTFINANCECHECKOUT_CK_PENDING_DATA_MIGRATION ) ) {
+				return;
+			}
+
+			// Clear the flag first, so a failing migration cannot repeat on every admin request.
+			delete_option( self::POSTFINANCECHECKOUT_CK_PENDING_DATA_MIGRATION );
+
+			try {
+				self::migrate_plugin_data_on_activation();
+			} catch ( \Throwable $e ) {
+				WooCommerce_PostFinanceCheckout::instance()->log(
+					'Could not migrate the plugin data after the update: ' . $e->getMessage(),
+					WC_Log_Levels::ERROR
+				);
 			}
 		}
 

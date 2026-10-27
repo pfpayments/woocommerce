@@ -11,6 +11,25 @@ const HANDLER_POLL_INTERVAL = 100;
 const HANDLER_POLL_TIMEOUT = 15000;
 
 /**
+ * Turns the portal's validation errors into a single message.
+ *
+ * The portal sends them as an array of strings, the same shape the classic
+ * checkout formats in wc_whitelabelmachinename_checkout.format_error_messages().
+ *
+ * @param {Object} result The result passed to the portal's validation callback.
+ * @returns {string} The joined message, or an empty string if there was none.
+ */
+function formatValidationErrors(result) {
+	const errors = result && result.errors;
+
+	if (Array.isArray(errors)) {
+		return errors.filter((error) => typeof error === 'string' && error).join(' ');
+	}
+
+	return typeof errors === 'string' ? errors : '';
+}
+
+/**
  * Renders the iFrame provided by the Portal.
  *
  * @param {number} paymentMethodConfigurationId
@@ -185,14 +204,22 @@ function IframeComponent({paymentMethodConfigurationId, eventRegistration}) {
 				// that will call the handler's validate method.
 				let returnPromise = new Promise((resolve) => {
 					handler.setValidationCallback(result => {
-						if (result.success !== undefined) {
-							resolve(result.success);
+						if (result && result.success) {
+							resolve(true);
+							return;
 						}
-						else {
-							// Handle the undefined success scenario
-							console.error('Validation was not successful');
-							resolve(false);
-						}
+
+						// A rejected form, a missing success flag or a missing result at all.
+						// WooCommerce only treats an object with a `type` property as an observer
+						// response, so a plain `false` would be dropped and the checkout would keep
+						// processing with invalid payment details.
+						console.error('Validation was not successful');
+						resolve({
+							type: 'error',
+							errorMessage: formatValidationErrors(result) || i18n.validation_error || 'The payment details are invalid. Please check them and try again.',
+							// The validation observer reads `context`, not `messageContext`.
+							context: 'wc/checkout/payments',
+						});
 				    })
 				});
 
